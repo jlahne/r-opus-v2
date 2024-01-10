@@ -1,7 +1,5 @@
 --- 
-title: |
-  ![](img/r-opus-cover.jpg){width=6in}  
-  "The R Opus v2"
+title: "The R Opus v2"
 author: "Jacob Lahne"
 date: "2024-01-10"
 site: bookdown::bookdown_site
@@ -20,6 +18,9 @@ github-repo: jlahne/r-opus-v2
 
 
 # About {-}
+
+
+\begin{center}\includegraphics{img/r-opus-cover} \end{center}
 
 To paraphrase one of my [inspirations for this project](https://bookdown.org/content/3890/) [@kurzDoingBayesianDataAnalysis2023]: This is a labor of love.  In 2015, [Hildegarde Heymann](https://wineserver.ucdavis.edu/people/hildegarde-heymann#/) (from here on: HGH), Distinguished Professor of Viticulture & Enology at UC-Davis, was kind enough to host me as a visiting scholar at her laboratory.  Among many other formative experiences I had as a sensory scientist at UC-Davis, HGH shared with me the [**R Opus**](files/The R Opus - May 2015.pdf), a handbook she had written and compiled of common analytical approaches to multivariate (food-sensory) data in `R`.  Like many of her other mentees, students, and postdocs, I benefited immensely from HGH's practical insight into how to apply abstruse multivariate analyses to real problems in research, and the **R Opus** manifested that knowledge into a hands-on guide for how to implement those tools.
 

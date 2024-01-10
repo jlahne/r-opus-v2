@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title> “The R Opus v2”</title>
+  <title>The R Opus v2</title>
   <meta name="description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
 walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
   <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
 
-  <meta property="og:title" content=" “The R Opus v2”" />
+  <meta property="og:title" content="The R Opus v2" />
   <meta property="og:type" content="book" />
   <meta property="og:image" content="/img/r-opus-cover.jpg" />
   <meta property="og:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
@@ -19,7 +19,7 @@ walkthroughs on common multivariate analyses in <code>R</code> for sensory-evalu
   <meta name="github-repo" content="jlahne/r-opus-v2" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content=" “The R Opus v2”" />
+  <meta name="twitter:title" content="The R Opus v2" />
   
   <meta name="twitter:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
@@ -290,7 +290,10 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="13.1" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html#packages-used-in-this-chapter-12"><i class="fa fa-check"></i><b>13.1</b> Packages used in this chapter</a></li>
 </ul></li>
-<li class="chapter" data-level="14" data-path="wrapping-up-1.html"><a href="wrapping-up-1.html"><i class="fa fa-check"></i><b>14</b> Wrapping up</a></li>
+<li class="chapter" data-level="14" data-path="wrapping-up-1.html"><a href="wrapping-up-1.html"><i class="fa fa-check"></i><b>14</b> Wrapping up</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="wrapping-up-1.html"><a href="wrapping-up-1.html#cited-references"><i class="fa fa-check"></i><b>14.1</b> Cited references</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -303,8 +306,7 @@ div.csl-indent {
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"><p><img src="img/r-opus-cover.jpg" style="width:6in" /><br />
-“The R Opus v2”</p></a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The R Opus v2</a>
           </h1>
         </div>
 
@@ -313,13 +315,13 @@ div.csl-indent {
 
             <section class="normal" id="section-">
 <div id="header">
-<h1 class="title"><p><img src="img/r-opus-cover.jpg" style="width:6in" /><br />
-“The R Opus v2”</p></h1>
+<h1 class="title">The R Opus v2</h1>
 <p class="author"><em>Jacob Lahne</em></p>
 <p class="date"><em>2024-01-10</em></p>
 </div>
 <div id="about" class="section level1 unnumbered hasAnchor">
 <h1>About<a href="index.html#about" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p><img src="img/r-opus-cover.jpg" style="display: block; margin: auto;" /></p>
 <p>To paraphrase one of my <a href="https://bookdown.org/content/3890/">inspirations for this project</a> <span class="citation">(<a href="#ref-kurzDoingBayesianDataAnalysis2023">Kurz 2023</a>)</span>: This is a labor of love. In 2015, <a href="https://wineserver.ucdavis.edu/people/hildegarde-heymann#/">Hildegarde Heymann</a> (from here on: HGH), Distinguished Professor of Viticulture &amp; Enology at UC-Davis, was kind enough to host me as a visiting scholar at her laboratory. Among many other formative experiences I had as a sensory scientist at UC-Davis, HGH shared with me the <a href="files/The%20R%20Opus%20-%20May%202015.pdf"><strong>R Opus</strong></a>, a handbook she had written and compiled of common analytical approaches to multivariate (food-sensory) data in <code>R</code>. Like many of her other mentees, students, and postdocs, I benefited immensely from HGH’s practical insight into how to apply abstruse multivariate analyses to real problems in research, and the <strong>R Opus</strong> manifested that knowledge into a hands-on guide for how to implement those tools.</p>
 <p>In the time since, I have passed on the <strong>R Opus</strong> to my own mentees, students, and postdocs. As <code>R</code> has continued to mature and become more accessible as a scripting language for data analysis–in particular, as <a href="https://r4ds.hadley.nz/">“tidy” programming principles</a> have become more dominant–I have found myself also passing on my own set of tips and tricks for how to transform the tools found in the original <strong>R Opus</strong> into the current vernacular. I began teaching data analytics and coding for researchers using <code>R</code>, and after learning how to (clumsily) transform my course notes into accessible <strong><a href="https://bookdown.org/yihui/bookdown/">bookdowns</a></strong>, I thought: why not the <strong>R Opus</strong>?</p>
 <p>This is that thought put into some sort of action. I hope it is useful for you.</p>
@@ -468,20 +470,20 @@ div.csl-indent {
 <span id="cb2-24"><a href="index.html#cb2-24" tabindex="-1"></a><span class="co">#&gt; [10] tidyverse_2.0.0</span></span>
 <span id="cb2-25"><a href="index.html#cb2-25" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb2-26"><a href="index.html#cb2-26" tabindex="-1"></a><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span id="cb2-27"><a href="index.html#cb2-27" tabindex="-1"></a><span class="co">#&gt;  [1] gtable_0.3.4      jsonlite_1.8.7    compiler_4.3.1   </span></span>
-<span id="cb2-28"><a href="index.html#cb2-28" tabindex="-1"></a><span class="co">#&gt;  [4] tidyselect_1.2.0  jquerylib_0.1.4   scales_1.2.1     </span></span>
-<span id="cb2-29"><a href="index.html#cb2-29" tabindex="-1"></a><span class="co">#&gt;  [7] yaml_2.3.7        fastmap_1.1.1     R6_2.5.1         </span></span>
-<span id="cb2-30"><a href="index.html#cb2-30" tabindex="-1"></a><span class="co">#&gt; [10] generics_0.1.3    knitr_1.43        bookdown_0.37    </span></span>
-<span id="cb2-31"><a href="index.html#cb2-31" tabindex="-1"></a><span class="co">#&gt; [13] munsell_0.5.0     bslib_0.5.1       pillar_1.9.0     </span></span>
-<span id="cb2-32"><a href="index.html#cb2-32" tabindex="-1"></a><span class="co">#&gt; [16] tzdb_0.4.0        rlang_1.1.1       utf8_1.2.3       </span></span>
-<span id="cb2-33"><a href="index.html#cb2-33" tabindex="-1"></a><span class="co">#&gt; [19] stringi_1.7.12    cachem_1.0.8      xfun_0.39        </span></span>
-<span id="cb2-34"><a href="index.html#cb2-34" tabindex="-1"></a><span class="co">#&gt; [22] sass_0.4.7        timechange_0.2.0  cli_3.6.1        </span></span>
-<span id="cb2-35"><a href="index.html#cb2-35" tabindex="-1"></a><span class="co">#&gt; [25] withr_2.5.0       magrittr_2.0.3    digest_0.6.33    </span></span>
-<span id="cb2-36"><a href="index.html#cb2-36" tabindex="-1"></a><span class="co">#&gt; [28] grid_4.3.1        rstudioapi_0.15.0 hms_1.1.3        </span></span>
-<span id="cb2-37"><a href="index.html#cb2-37" tabindex="-1"></a><span class="co">#&gt; [31] lifecycle_1.0.3   vctrs_0.6.3       evaluate_0.21    </span></span>
-<span id="cb2-38"><a href="index.html#cb2-38" tabindex="-1"></a><span class="co">#&gt; [34] glue_1.6.2        fansi_1.0.4       colorspace_2.1-0 </span></span>
-<span id="cb2-39"><a href="index.html#cb2-39" tabindex="-1"></a><span class="co">#&gt; [37] rmarkdown_2.23    tools_4.3.1       pkgconfig_2.0.3  </span></span>
-<span id="cb2-40"><a href="index.html#cb2-40" tabindex="-1"></a><span class="co">#&gt; [40] htmltools_0.5.6</span></span></code></pre></div>
+<span id="cb2-27"><a href="index.html#cb2-27" tabindex="-1"></a><span class="co">#&gt;  [1] gtable_0.3.4      jsonlite_1.8.7    highr_0.10       </span></span>
+<span id="cb2-28"><a href="index.html#cb2-28" tabindex="-1"></a><span class="co">#&gt;  [4] compiler_4.3.1    tidyselect_1.2.0  jquerylib_0.1.4  </span></span>
+<span id="cb2-29"><a href="index.html#cb2-29" tabindex="-1"></a><span class="co">#&gt;  [7] scales_1.2.1      yaml_2.3.7        fastmap_1.1.1    </span></span>
+<span id="cb2-30"><a href="index.html#cb2-30" tabindex="-1"></a><span class="co">#&gt; [10] R6_2.5.1          generics_0.1.3    knitr_1.43       </span></span>
+<span id="cb2-31"><a href="index.html#cb2-31" tabindex="-1"></a><span class="co">#&gt; [13] bookdown_0.37     munsell_0.5.0     bslib_0.5.1      </span></span>
+<span id="cb2-32"><a href="index.html#cb2-32" tabindex="-1"></a><span class="co">#&gt; [16] pillar_1.9.0      tzdb_0.4.0        rlang_1.1.1      </span></span>
+<span id="cb2-33"><a href="index.html#cb2-33" tabindex="-1"></a><span class="co">#&gt; [19] utf8_1.2.3        stringi_1.7.12    cachem_1.0.8     </span></span>
+<span id="cb2-34"><a href="index.html#cb2-34" tabindex="-1"></a><span class="co">#&gt; [22] xfun_0.39         sass_0.4.7        timechange_0.2.0 </span></span>
+<span id="cb2-35"><a href="index.html#cb2-35" tabindex="-1"></a><span class="co">#&gt; [25] cli_3.6.1         withr_2.5.0       magrittr_2.0.3   </span></span>
+<span id="cb2-36"><a href="index.html#cb2-36" tabindex="-1"></a><span class="co">#&gt; [28] digest_0.6.33     grid_4.3.1        rstudioapi_0.15.0</span></span>
+<span id="cb2-37"><a href="index.html#cb2-37" tabindex="-1"></a><span class="co">#&gt; [31] hms_1.1.3         lifecycle_1.0.3   vctrs_0.6.3      </span></span>
+<span id="cb2-38"><a href="index.html#cb2-38" tabindex="-1"></a><span class="co">#&gt; [34] evaluate_0.21     glue_1.6.2        fansi_1.0.4      </span></span>
+<span id="cb2-39"><a href="index.html#cb2-39" tabindex="-1"></a><span class="co">#&gt; [37] colorspace_2.1-0  rmarkdown_2.23    tools_4.3.1      </span></span>
+<span id="cb2-40"><a href="index.html#cb2-40" tabindex="-1"></a><span class="co">#&gt; [40] pkgconfig_2.0.3   htmltools_0.5.6</span></span></code></pre></div>
 
 </div>
 </div>

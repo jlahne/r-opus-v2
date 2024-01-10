@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 7 Cluster analysis |  “The R Opus v2”</title>
+  <title>Chapter 7 Cluster analysis | The R Opus v2</title>
   <meta name="description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
 walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
   <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 7 Cluster analysis |  “The R Opus v2”" />
+  <meta property="og:title" content="Chapter 7 Cluster analysis | The R Opus v2" />
   <meta property="og:type" content="book" />
   <meta property="og:image" content="/img/r-opus-cover.jpg" />
   <meta property="og:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
@@ -19,7 +19,7 @@ walkthroughs on common multivariate analyses in <code>R</code> for sensory-evalu
   <meta name="github-repo" content="jlahne/r-opus-v2" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 7 Cluster analysis |  “The R Opus v2”" />
+  <meta name="twitter:title" content="Chapter 7 Cluster analysis | The R Opus v2" />
   
   <meta name="twitter:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
@@ -290,7 +290,10 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="13.1" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html#packages-used-in-this-chapter-12"><i class="fa fa-check"></i><b>13.1</b> Packages used in this chapter</a></li>
 </ul></li>
-<li class="chapter" data-level="14" data-path="wrapping-up-1.html"><a href="wrapping-up-1.html"><i class="fa fa-check"></i><b>14</b> Wrapping up</a></li>
+<li class="chapter" data-level="14" data-path="wrapping-up-1.html"><a href="wrapping-up-1.html"><i class="fa fa-check"></i><b>14</b> Wrapping up</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="wrapping-up-1.html"><a href="wrapping-up-1.html#cited-references"><i class="fa fa-check"></i><b>14.1</b> Cited references</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -303,8 +306,7 @@ div.csl-indent {
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"><p><img src="img/r-opus-cover.jpg" style="width:6in" /><br />
-“The R Opus v2”</p></a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The R Opus v2</a>
           </h1>
         </div>
 
@@ -624,17 +626,17 @@ div.csl-indent {
 <span id="cb251-5"><a href="cluster-analysis.html#cb251-5" tabindex="-1"></a></span>
 <span id="cb251-6"><a href="cluster-analysis.html#cb251-6" tabindex="-1"></a>clusters_kmeans<span class="sc">$</span>cluster</span></code></pre></div>
 <pre><code>##    C_MERLOT   C_REFOSCO     C_SYRAH C_ZINFANDEL    I_MERLOT I_PRIMITIVO 
-##           2           2           2           2           1           3 
+##           3           3           3           3           1           2 
 ##   I_REFOSCO     I_SYRAH 
-##           1           3</code></pre>
+##           1           2</code></pre>
 <div class="sourceCode" id="cb253"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb253-1"><a href="cluster-analysis.html#cb253-1" tabindex="-1"></a>clusters_kmeans<span class="sc">$</span>centers <span class="sc">%&gt;%</span></span>
 <span id="cb253-2"><a href="cluster-analysis.html#cb253-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;cluster&quot;</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 3 × 21
 ##   cluster Red_berry Dark_berry    Jam Dried_fruit Artificial_frui Chocolate
 ##   &lt;chr&gt;       &lt;dbl&gt;      &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;           &lt;dbl&gt;     &lt;dbl&gt;
 ## 1 1          -0.423     -0.629 -0.729      0.255           -0.544    -1.07 
-## 2 2          -0.456     -0.328 -0.379     -0.139           -0.515     0.444
-## 3 3           1.34       1.29   1.49       0.0234           1.58      0.179
+## 2 2           1.34       1.29   1.49       0.0234           1.58      0.179
+## 3 3          -0.456     -0.328 -0.379     -0.139           -0.515     0.444
 ## # ℹ 14 more variables: Vanilla &lt;dbl&gt;, Oak &lt;dbl&gt;, Burned &lt;dbl&gt;, Leather &lt;dbl&gt;,
 ## #   Earthy &lt;dbl&gt;, Spicy &lt;dbl&gt;, Pepper &lt;dbl&gt;, Grassy &lt;dbl&gt;, Medicinal &lt;dbl&gt;,
 ## #   `Band-aid` &lt;dbl&gt;, Sour &lt;dbl&gt;, Bitter &lt;dbl&gt;, Alcohol &lt;dbl&gt;, Astringent &lt;dbl&gt;</code></pre>

@@ -4,3 +4,4 @@ _main.Rmd
 _main.rds
 _bookdown_files/*
 R-opus-v2.rds
+render*.rds
