@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 9 DISTATIS |  “The R Opus v2”</title>
+  <title>Chapter 9 DISTATIS | The R Opus v2</title>
   <meta name="description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
 walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
   <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 9 DISTATIS |  “The R Opus v2”" />
+  <meta property="og:title" content="Chapter 9 DISTATIS | The R Opus v2" />
   <meta property="og:type" content="book" />
   <meta property="og:image" content="/img/r-opus-cover.jpg" />
   <meta property="og:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
@@ -19,7 +19,7 @@ walkthroughs on common multivariate analyses in <code>R</code> for sensory-evalu
   <meta name="github-repo" content="jlahne/r-opus-v2" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 9 DISTATIS |  “The R Opus v2”" />
+  <meta name="twitter:title" content="Chapter 9 DISTATIS | The R Opus v2" />
   
   <meta name="twitter:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
@@ -290,7 +290,10 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="13.1" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html#packages-used-in-this-chapter-12"><i class="fa fa-check"></i><b>13.1</b> Packages used in this chapter</a></li>
 </ul></li>
-<li class="chapter" data-level="14" data-path="wrapping-up-1.html"><a href="wrapping-up-1.html"><i class="fa fa-check"></i><b>14</b> Wrapping up</a></li>
+<li class="chapter" data-level="14" data-path="wrapping-up-1.html"><a href="wrapping-up-1.html"><i class="fa fa-check"></i><b>14</b> Wrapping up</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="wrapping-up-1.html"><a href="wrapping-up-1.html#cited-references"><i class="fa fa-check"></i><b>14.1</b> Cited references</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -303,8 +306,7 @@ div.csl-indent {
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"><p><img src="img/r-opus-cover.jpg" style="width:6in" /><br />
-“The R Opus v2”</p></a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The R Opus v2</a>
           </h1>
         </div>
 
@@ -417,21 +419,21 @@ div.csl-indent {
 ## 3 &quot;$compact&quot;   &quot;a boolean. TRUE if compact results used.&quot;</code></pre>
 <p>You’ll notice that the output from <code>distatis()</code> is a complex list object that is reasonably well-annotated (similar to what can be found in the <code>FactoMineR</code> package outputs). We’ll dig into this in a minute.</p>
 <div class="sourceCode" id="cb298"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb298-1"><a href="distatis.html#cb298-1" tabindex="-1"></a>distatis_boots <span class="sc">%&gt;%</span> str</span></code></pre></div>
-<pre><code>##  num [1:8, 1:3, 1:1000] -0.2934 0.2344 -0.0325 -0.261 0.0559 ...
+<pre><code>##  num [1:8, 1:3, 1:1000] -0.3434 0.3838 -0.1303 -0.2242 -0.0199 ...
 ##  - attr(*, &quot;dimnames&quot;)=List of 3
 ##   ..$ : chr [1:8] &quot;I_REFOSCO&quot; &quot;I_MERLOT&quot; &quot;I_SYRAH&quot; &quot;I_PRIMITIVO&quot; ...
 ##   ..$ : chr [1:3] &quot;Factor 1&quot; &quot;Factor 2&quot; &quot;Factor 3&quot;
 ##   ..$ : NULL</code></pre>
 <div class="sourceCode" id="cb300"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb300-1"><a href="distatis.html#cb300-1" tabindex="-1"></a>distatis_boots[, , <span class="dv">1</span>]</span></code></pre></div>
-<pre><code>##                Factor 1    Factor 2    Factor 3
-## I_REFOSCO   -0.29337340 -0.15700450  0.46374112
-## I_MERLOT     0.23440209 -0.01144181  0.21062621
-## I_SYRAH     -0.03247023  0.33633656 -0.11449313
-## I_PRIMITIVO -0.26099091  0.32435155 -0.06403496
-## C_SYRAH      0.05587767 -0.36035728 -0.41817518
-## C_REFOSCO   -0.38871277 -0.22952523 -0.04180293
-## C_MERLOT     0.35922034 -0.03031926 -0.11746712
-## C_ZINFANDEL  0.32604720  0.12795996  0.08160598</code></pre>
+<pre><code>##                Factor 1      Factor 2    Factor 3
+## I_REFOSCO   -0.34337930 -1.750001e-01  0.45207641
+## I_MERLOT     0.38382545  2.307817e-05  0.11862638
+## I_SYRAH     -0.13030129  3.317075e-01 -0.13324044
+## I_PRIMITIVO -0.22419023  3.606502e-01 -0.08543207
+## C_SYRAH     -0.01993719 -3.890505e-01 -0.35274536
+## C_REFOSCO   -0.40856163 -2.611229e-01 -0.12088268
+## C_MERLOT     0.36772651  4.154279e-02 -0.01050979
+## C_ZINFANDEL  0.37481768  9.124987e-02  0.13210755</code></pre>
 <p>The <code>BootFromCompromise()</code> function gives us another array: in this case a set of factor scores for the samples on the first 3 factors/components, over 1000 (the default) bootstrapped iterations. Each slice is a single bootstrapped iteration.</p>
 <p>Finally, let’s examine our results. The output from <code>distatis()</code> stores results about the <em>samples</em> in the <code>$res4Splus</code> list, and results about the judges in the <code>$res4Cmat</code> list. These are named after the matrices defined in <span class="citation">H. Abdi et al. (<a href="#ref-abdiAnalyzing2007">2007</a>)</span>: the <span class="math inline">\(\mathbf{C}\)</span> matrix is the matrix of <span class="math inline">\(RV\)</span> coefficients between judges (a measure of multidimensional similarity), and the <span class="math inline">\(\mathbf{S_+}\)</span> matrix contains the compromise matrix of dissimilarities (after double-centering, weighting as I described above, and summing).</p>
 <p>Let’s follow along in the order that HGH did in her workflow. She starts by examining first the overall explained variances. These are found in the <code>distatis_results$res4Splus$tau</code> vector.</p>

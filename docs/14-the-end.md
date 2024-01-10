@@ -11,3 +11,5 @@ I wanted to talk about all of these!  If you look at my [manuscript output](http
 Everything's got to stop somewhere.  If you feel motivated by what I've shown here, or excited to learn how to (for example) fit a Random Forest to predict the consumer liking from the DA data, go do it!  There's no better way of learning data-analysis techniques than getting in, making mistakes, and figuring out how to fix them.  I hope it'll be fun.
 
 Thanks for making it to the end!
+
+## Cited references

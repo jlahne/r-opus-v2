@@ -119,13 +119,12 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
 \hypersetup{
-  pdftitle={ ``The R Opus v2''},
+  pdftitle={The R Opus v2},
   pdfauthor={Jacob Lahne},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 
-\title{\includegraphics[width=6in,height=\textheight]{img/r-opus-cover.jpg}\\
-``The R Opus v2''}
+\title{The R Opus v2}
 \author{Jacob Lahne}
 \date{2024-01-10}
 
@@ -138,6 +137,8 @@
 }
 \chapter*{About}\label{about}
 \addcontentsline{toc}{chapter}{About}
+
+\begin{center}\includegraphics{img/r-opus-cover} \end{center}
 
 To paraphrase one of my \href{https://bookdown.org/content/3890/}{inspirations for this project} \citep{kurzDoingBayesianDataAnalysis2023}: This is a labor of love. In 2015, \href{https://wineserver.ucdavis.edu/people/hildegarde-heymann\#/}{Hildegarde Heymann} (from here on: HGH), Distinguished Professor of Viticulture \& Enology at UC-Davis, was kind enough to host me as a visiting scholar at her laboratory. Among many other formative experiences I had as a sensory scientist at UC-Davis, HGH shared with me the \href{files/The\%20R\%20Opus\%20-\%20May\%202015.pdf}{\textbf{R Opus}}, a handbook she had written and compiled of common analytical approaches to multivariate (food-sensory) data in \texttt{R}. Like many of her other mentees, students, and postdocs, I benefited immensely from HGH's practical insight into how to apply abstruse multivariate analyses to real problems in research, and the \textbf{R Opus} manifested that knowledge into a hands-on guide for how to implement those tools.
 
@@ -2110,7 +2111,7 @@ I am certainly no expert on missing data, but \href{https://www.jstatsoft.org/ar
 ## 
 ## $criterion
 ##          0          1          2          3          4          5 
-## 0.07008772 0.05759964 0.05118433 0.04795663 0.04574107 0.04444935
+## 0.07109081 0.05855418 0.05198735 0.04865616 0.04646830 0.04522971
 \end{verbatim}
 
 \begin{Shaded}
@@ -3608,16 +3609,16 @@ In the original \textbf{R Opus}, HGH provides a function from Helene Hopfer, Pet
 
 \begin{verbatim}
 ## # A tibble: 8 x 3
-##   ProductName    Can1    Can2
-##   <fct>         <dbl>   <dbl>
-## 1 C_MERLOT     0.299   0.0649
-## 2 C_REFOSCO    1.34    0.983 
-## 3 C_SYRAH      0.242   0.0848
-## 4 C_ZINFANDEL -0.0792  0.118 
-## 5 I_MERLOT     0.446  -0.847 
-## 6 I_PRIMITIVO -0.979   0.222 
-## 7 I_REFOSCO   -0.0958 -1.14  
-## 8 I_SYRAH     -1.17    0.515
+##   ProductName    Can1   Can2
+##   <fct>         <dbl>  <dbl>
+## 1 C_MERLOT     0.483   0.202
+## 2 C_REFOSCO    1.22    0.339
+## 3 C_SYRAH      0.115   0.316
+## 4 C_ZINFANDEL -0.283   0.330
+## 5 I_MERLOT     0.404  -0.616
+## 6 I_PRIMITIVO -1.10    0.393
+## 7 I_REFOSCO   -0.0175 -1.26 
+## 8 I_SYRAH     -0.819   0.291
 \end{verbatim}
 
 \begin{Shaded}
@@ -5784,7 +5785,7 @@ You'll notice that the output from \texttt{distatis()} is a complex list object 
 \end{Shaded}
 
 \begin{verbatim}
-##  num [1:8, 1:3, 1:1000] -0.3729 0.3443 -0.0877 -0.283 0.0734 ...
+##  num [1:8, 1:3, 1:1000] -0.30123 0.39586 -0.18592 -0.29075 0.00389 ...
 ##  - attr(*, "dimnames")=List of 3
 ##   ..$ : chr [1:8] "I_REFOSCO" "I_MERLOT" "I_SYRAH" "I_PRIMITIVO" ...
 ##   ..$ : chr [1:3] "Factor 1" "Factor 2" "Factor 3"
@@ -5798,15 +5799,15 @@ You'll notice that the output from \texttt{distatis()} is a complex list object 
 \end{Shaded}
 
 \begin{verbatim}
-##                Factor 1    Factor 2    Factor 3
-## I_REFOSCO   -0.37290008 -0.18993078  0.53541992
-## I_MERLOT     0.34434618 -0.03381469  0.19121393
-## I_SYRAH     -0.08767685  0.36744534 -0.20347707
-## I_PRIMITIVO -0.28296349  0.39322921 -0.06458306
-## C_SYRAH      0.07342328 -0.34201698 -0.41756383
-## C_REFOSCO   -0.41454335 -0.25278523 -0.02365847
-## C_MERLOT     0.38346274 -0.04243239 -0.12752523
-## C_ZINFANDEL  0.35685156  0.10030552  0.11017381
+##                 Factor 1    Factor 2    Factor 3
+## I_REFOSCO   -0.301232034 -0.17985633  0.46256813
+## I_MERLOT     0.395859130 -0.05420109  0.15843479
+## I_SYRAH     -0.185924746  0.43260346 -0.14666114
+## I_PRIMITIVO -0.290747180  0.45436758 -0.13340197
+## C_SYRAH      0.003885975 -0.42048358 -0.31133313
+## C_REFOSCO   -0.395431977 -0.27508540 -0.16539649
+## C_MERLOT     0.368736324 -0.01078124 -0.05411584
+## C_ZINFANDEL  0.404854508  0.05343661  0.18990567
 \end{verbatim}
 
 The \texttt{BootFromCompromise()} function gives us another array: in this case a set of factor scores for the samples on the first 3 factors/components, over 1000 (the default) bootstrapped iterations. Each slice is a single bootstrapped iteration.
@@ -6808,7 +6809,7 @@ OK, now we're ready to start working! Before we do, let's do a little summary wo
 \end{Shaded}
 
 \begin{verbatim}
-## Warning: Removed 21 rows containing missing values (`geom_point()`).
+## Warning: Removed 22 rows containing missing values (`geom_point()`).
 \end{verbatim}
 
 \includegraphics{11-preference-mapping_files/figure-latex/unnamed-chunk-3-1.pdf}
@@ -8364,6 +8365,8 @@ I wanted to talk about all of these! If you look at my \href{https://scholar.goo
 Everything's got to stop somewhere. If you feel motivated by what I've shown here, or excited to learn how to (for example) fit a Random Forest to predict the consumer liking from the DA data, go do it! There's no better way of learning data-analysis techniques than getting in, making mistakes, and figuring out how to fix them. I hope it'll be fun.
 
 Thanks for making it to the end!
+
+\section{Cited references}\label{cited-references}
 
   \bibliography{bib/references.bib,bib/packages.bib}
 
