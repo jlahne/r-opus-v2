@@ -692,16 +692,16 @@ div.csl-indent {
 <span id="cb181-46"><a href="canonical-variate-analysis.html#cb181-46" tabindex="-1"></a><span class="co"># For example, here is the result of our function</span></span>
 <span id="cb181-47"><a href="canonical-variate-analysis.html#cb181-47" tabindex="-1"></a><span class="fu">get_bootstrapped_means</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 8 × 3
-##   ProductName    Can1    Can2
-##   &lt;fct&gt;         &lt;dbl&gt;   &lt;dbl&gt;
-## 1 C_MERLOT     0.408  -0.0395
-## 2 C_REFOSCO    1.25    0.676 
-## 3 C_SYRAH      0.266   0.119 
-## 4 C_ZINFANDEL -0.118   0.306 
-## 5 I_MERLOT     0.540  -0.826 
-## 6 I_PRIMITIVO -1.18    0.620 
-## 7 I_REFOSCO    0.0476 -1.23  
-## 8 I_SYRAH     -1.21    0.377</code></pre>
+##   ProductName     Can1    Can2
+##   &lt;fct&gt;          &lt;dbl&gt;   &lt;dbl&gt;
+## 1 C_MERLOT     0.397    0.0430
+## 2 C_REFOSCO    1.49     0.902 
+## 3 C_SYRAH      0.181   -0.160 
+## 4 C_ZINFANDEL -0.00191  0.0784
+## 5 I_MERLOT     0.383   -0.879 
+## 6 I_PRIMITIVO -1.39     0.648 
+## 7 I_REFOSCO    0.126   -1.08  
+## 8 I_SYRAH     -1.19     0.449</code></pre>
 <div class="sourceCode" id="cb183"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb183-1"><a href="canonical-variate-analysis.html#cb183-1" tabindex="-1"></a><span class="co"># In order to generate a set of resampled confidence ellipses for our results,</span></span>
 <span id="cb183-2"><a href="canonical-variate-analysis.html#cb183-2" tabindex="-1"></a><span class="co"># we&#39;ll run this 100 times for speed (for accuracy, 1000x would be better) and use</span></span>
 <span id="cb183-3"><a href="canonical-variate-analysis.html#cb183-3" tabindex="-1"></a><span class="co"># stat_ellipse() to draw those.</span></span>

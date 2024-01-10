@@ -22,7 +22,7 @@ knitr::knit_hooks$set(output = function(x, options) {
 
 # Multiple Factor(ial) Analysis (MFA)
 
-Multiple Factor Analysis MFA; sometimes called Multiple Factor*ial* Analysis, to distinguish from the "Factor Analysis" approaches related to Exploratory and Confirmatory Factor Analysis, see @rencherMethods2002] is a surprisingly straightforward extension to PCA that allows the comparison of multiple sets of data collected on the same observations.  It is therefore suitable for use on the same sorts of data as PLS and other multi-table approaches.  Unlike those approaches, however, MFA is (in its basic forms) a purely *exploratory* data analysis (in the same was as PCA is!)--PLS-R, by contrast, is inferential, claiming that the $\mathbf{Y}$ matrix can be explained by the variables in the $\mathbf{X}$ matrix.
+Multiple Factor Analysis [MFA: sometimes called Multiple Factor*ial* Analysis, to distinguish from the "Factor Analysis" approaches related to Exploratory and Confirmatory Factor Analysis, see @rencherMethods2002] is a surprisingly straightforward extension to PCA that allows the comparison of multiple sets of data collected on the same observations.  It is therefore suitable for use on the same sorts of data as PLS and other multi-table approaches.  Unlike those approaches, however, MFA is (in its basic forms) a purely *exploratory* data analysis (in the same was as PCA is!)--PLS-R, by contrast, is inferential, claiming that the $\mathbf{Y}$ matrix can be explained by the variables in the $\mathbf{X}$ matrix.
 
 The basic idea of MFA is very simple: given multiple sets of measurements (sets of columns or variables) collected on the same observations (rows), each set can be "normalized" by its first singular value so that all the sets are "commensurate" for a PCA.  To put it another way, MFA consists of a sequence of PCAs: first each set of measurements is analyzed by PCA (really, Singular Value Decompositon) to extract its first singular value; then each element of each set of measurements is divided by its respective singular value; finally, the normalized tables are (row-wise) concatenated into a single table, which is then analyzed by a second PCA (SVD).  A more complete and detailed explanation is given in @abdiMultiple2013.
 
@@ -110,6 +110,9 @@ We can use these projected (partial) coordinates to get some ideas about the con
 library(patchwork)
 
 p_descriptive_mfa <- 
+  
+  # First we need to get our data all into one place
+  
   descriptive_mfa$ind$coord %>%
   as_tibble(rownames = "wine") %>%
   bind_rows(
@@ -118,6 +121,9 @@ p_descriptive_mfa <-
   ) %>%
   separate(wine, into = c("wine", "table"), sep = "\\.") %>%
   mutate(table = replace_na(table, "compromise")) %>%
+  
+  # And then we can make a plot!
+  
   ggplot(aes(x = Dim.1, y = Dim.2, color = wine)) + 
   geom_vline(xintercept = 0, linewidth = 1/10) +
   geom_hline(yintercept = 0, linewidth = 1/10) + 
@@ -145,7 +151,7 @@ p_descriptive_pca <-
   ggrepel::geom_text_repel(aes(label = wine)) + 
   coord_equal(xlim = c(-10, 10), ylim = c(-10, 10)) + 
   scale_color_paletteer_d("RSkittleBrewer::smarties") + 
-  labs(subtitle = "PCA scores plot with projected\nindividual judge evaluations",
+  labs(subtitle = "PCA scores plot",
        x = paste0("Dimension 1, ", round(descriptive_pca$eig[1, 2], 1), "% of variance"),
        y = paste0("Dimension 2, ", round(descriptive_pca$eig[2, 2], 1), "% of variance")) +
   theme_classic() +

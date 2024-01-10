@@ -428,9 +428,9 @@ clusters_kmeans$cluster
 
 ```
 ##    C_MERLOT   C_REFOSCO     C_SYRAH C_ZINFANDEL    I_MERLOT I_PRIMITIVO 
-##           1           1           1           3           1           3 
+##           3           3           3           3           2           1 
 ##   I_REFOSCO     I_SYRAH 
-##           1           2
+##           2           1
 ```
 
 ```r
@@ -442,9 +442,9 @@ clusters_kmeans$centers %>%
 ## # A tibble: 3 x 21
 ##   cluster Red_berry Dark_berry    Jam Dried_fruit Artificial_frui Chocolate
 ##   <chr>       <dbl>      <dbl>  <dbl>       <dbl>           <dbl>     <dbl>
-## 1 1          -0.627     -0.505 -0.611      -0.210          -0.528    0.0545
-## 2 2           0.658      2.13   1.22        1.39            1.75    -0.0527
-## 3 3           1.24       0.198  0.915      -0.168           0.444   -0.110 
+## 1 1           1.34       1.29   1.49       0.0234           1.58      0.179
+## 2 2          -0.423     -0.629 -0.729      0.255           -0.544    -1.07 
+## 3 3          -0.456     -0.328 -0.379     -0.139           -0.515     0.444
 ## # i 14 more variables: Vanilla <dbl>, Oak <dbl>, Burned <dbl>, Leather <dbl>,
 ## #   Earthy <dbl>, Spicy <dbl>, Pepper <dbl>, Grassy <dbl>, Medicinal <dbl>,
 ## #   `Band-aid` <dbl>, Sour <dbl>, Bitter <dbl>, Alcohol <dbl>, Astringent <dbl>

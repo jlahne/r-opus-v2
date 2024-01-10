@@ -2111,7 +2111,7 @@ I am certainly no expert on missing data, but \href{https://www.jstatsoft.org/ar
 ## 
 ## $criterion
 ##          0          1          2          3          4          5 
-## 0.07155345 0.05872768 0.05216177 0.04914276 0.04689665 0.04549486
+## 0.07237303 0.05963937 0.05307163 0.04978856 0.04753247 0.04611633
 \end{verbatim}
 
 \begin{Shaded}
@@ -3609,16 +3609,16 @@ In the original \textbf{R Opus}, HGH provides a function from Helene Hopfer, Pet
 
 \begin{verbatim}
 ## # A tibble: 8 x 3
-##   ProductName    Can1   Can2
-##   <fct>         <dbl>  <dbl>
-## 1 C_MERLOT     0.315   0.159
-## 2 C_REFOSCO    1.37    0.797
-## 3 C_SYRAH      0.0242  0.128
-## 4 C_ZINFANDEL -0.223   0.120
-## 5 I_MERLOT     0.584  -0.923
-## 6 I_PRIMITIVO -1.12    0.310
-## 7 I_REFOSCO    0.140  -1.29 
-## 8 I_SYRAH     -1.10    0.697
+##   ProductName     Can1    Can2
+##   <fct>          <dbl>   <dbl>
+## 1 C_MERLOT     0.423    0.0956
+## 2 C_REFOSCO    1.43     0.601 
+## 3 C_SYRAH      0.190    0.248 
+## 4 C_ZINFANDEL -0.240    0.239 
+## 5 I_MERLOT     0.342   -0.651 
+## 6 I_PRIMITIVO -1.24     0.336 
+## 7 I_REFOSCO    0.00388 -1.29  
+## 8 I_SYRAH     -0.903    0.426
 \end{verbatim}
 
 \begin{Shaded}
@@ -4954,9 +4954,9 @@ A common workflow is to use HCA to get an idea of the appropriate \(k\) for k-me
 
 \begin{verbatim}
 ##    C_MERLOT   C_REFOSCO     C_SYRAH C_ZINFANDEL    I_MERLOT I_PRIMITIVO 
-##           1           1           1           3           1           3 
+##           3           3           3           3           2           1 
 ##   I_REFOSCO     I_SYRAH 
-##           1           2
+##           2           1
 \end{verbatim}
 
 \begin{Shaded}
@@ -4970,9 +4970,9 @@ A common workflow is to use HCA to get an idea of the appropriate \(k\) for k-me
 ## # A tibble: 3 x 21
 ##   cluster Red_berry Dark_berry    Jam Dried_fruit Artificial_frui Chocolate
 ##   <chr>       <dbl>      <dbl>  <dbl>       <dbl>           <dbl>     <dbl>
-## 1 1          -0.627     -0.505 -0.611      -0.210          -0.528    0.0545
-## 2 2           0.658      2.13   1.22        1.39            1.75    -0.0527
-## 3 3           1.24       0.198  0.915      -0.168           0.444   -0.110 
+## 1 1           1.34       1.29   1.49       0.0234           1.58      0.179
+## 2 2          -0.423     -0.629 -0.729      0.255           -0.544    -1.07 
+## 3 3          -0.456     -0.328 -0.379     -0.139           -0.515     0.444
 ## # i 14 more variables: Vanilla <dbl>, Oak <dbl>, Burned <dbl>, Leather <dbl>,
 ## #   Earthy <dbl>, Spicy <dbl>, Pepper <dbl>, Grassy <dbl>, Medicinal <dbl>,
 ## #   `Band-aid` <dbl>, Sour <dbl>, Bitter <dbl>, Alcohol <dbl>, Astringent <dbl>
@@ -5785,7 +5785,7 @@ You'll notice that the output from \texttt{distatis()} is a complex list object 
 \end{Shaded}
 
 \begin{verbatim}
-##  num [1:8, 1:3, 1:1000] -0.2345 0.1825 -0.112 -0.1268 0.0805 ...
+##  num [1:8, 1:3, 1:1000] -0.32576 0.37128 -0.13673 -0.25202 -0.00556 ...
 ##  - attr(*, "dimnames")=List of 3
 ##   ..$ : chr [1:8] "I_REFOSCO" "I_MERLOT" "I_SYRAH" "I_PRIMITIVO" ...
 ##   ..$ : chr [1:3] "Factor 1" "Factor 2" "Factor 3"
@@ -5799,15 +5799,15 @@ You'll notice that the output from \texttt{distatis()} is a complex list object 
 \end{Shaded}
 
 \begin{verbatim}
-##                Factor 1   Factor 2    Factor 3
-## I_REFOSCO   -0.23454004 -0.1891932  0.45380667
-## I_MERLOT     0.18253755 -0.1456857  0.05883192
-## I_SYRAH     -0.11200038  0.3046883 -0.10870947
-## I_PRIMITIVO -0.12684218  0.3180595 -0.10741703
-## C_SYRAH      0.08051505 -0.3733631 -0.24516563
-## C_REFOSCO   -0.34264691 -0.1484034 -0.07703493
-## C_MERLOT     0.26981688  0.1018323 -0.07442875
-## C_ZINFANDEL  0.28316002  0.1320654  0.10011721
+##                 Factor 1     Factor 2    Factor 3
+## I_REFOSCO   -0.325762283 -0.234999695  0.39074493
+## I_MERLOT     0.371277180 -0.003027493  0.16353546
+## I_SYRAH     -0.136734779  0.394274017 -0.14196500
+## I_PRIMITIVO -0.252018600  0.436810628 -0.15259934
+## C_SYRAH     -0.005564724 -0.335995944 -0.27095128
+## C_REFOSCO   -0.392376125 -0.291145253 -0.04957815
+## C_MERLOT     0.367381297 -0.021209623 -0.03525187
+## C_ZINFANDEL  0.373798034  0.055293361  0.09606526
 \end{verbatim}
 
 The \texttt{BootFromCompromise()} function gives us another array: in this case a set of factor scores for the samples on the first 3 factors/components, over 1000 (the default) bootstrapped iterations. Each slice is a single bootstrapped iteration.
@@ -6355,7 +6355,7 @@ The fastest way to do this is to use the \texttt{factoextra::fviz\_ca()} functio
 
 \includegraphics{10-CA_files/figure-latex/unnamed-chunk-5-1.pdf}
 
-In this plot, the columns are plotted in principal coordinates and the rows are plotted in standard coordinates. We can clean up the plot ourselves. Reading through various help files (\texttt{?ca} and \texttt{?plot.ca}), I determined that the difference in scaling we observed between our symmetric CA plot and the default is indeed due to differences in scaling: the \texttt{ca} package by default gives a symmetric plot in ``principal'' coordinates: ``In this map both the row and column points are scaled to have inertias (weighted variances) equal to the principal inertia (eigenvalue or squared singular value) along the principal axes, that is both rows and columns are in principal coordinates.'' {[}\texttt{?plot.ca}; \citet{abdiCorrespondence}{]}. However, in the output of \texttt{ca::ca()}, the \texttt{\$rowcoord}/\texttt{\$colcoord} matrices are given in so-called ``standard coordinates'', and so need to be converted to principal coordinates for plotting {[}\texttt{?ca}; \citet{abdiCorrespondence}{]}. Let's see if we can get there.
+In this plot, the columns are plotted in principal coordinates and the rows are plotted in standard coordinates. We can clean up the plot ourselves. Reading through various help files (\texttt{?ca} and \texttt{?plot.ca}), I determined that the difference in scaling we observed between our symmetric CA plot and the default is indeed due to differences in scaling: the \texttt{ca} package by default gives a symmetric plot in ``principal'' coordinates: ``In this map both the row and column points are scaled to have inertias (weighted variances) equal to the principal inertia (eigenvalue or squared singular value) along the principal axes, that is both rows and columns are in principal coordinates.'' \citep[\texttt{?plot.ca} vs.][]{abdiCorrespondence}. However, in the output of \texttt{ca::ca()}, the \texttt{\$rowcoord}/\texttt{\$colcoord} matrices are given in so-called ``standard coordinates'', and so need to be converted to principal coordinates for plotting \citep[\texttt{?ca} vs.][]{abdiCorrespondence}. Let's see if we can get there.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -6809,7 +6809,7 @@ OK, now we're ready to start working! Before we do, let's do a little summary wo
 \end{Shaded}
 
 \begin{verbatim}
-## Warning: Removed 19 rows containing missing values (`geom_point()`).
+## Warning: Removed 15 rows containing missing values (`geom_point()`).
 \end{verbatim}
 
 \includegraphics{11-preference-mapping_files/figure-latex/unnamed-chunk-3-1.pdf}
@@ -7479,7 +7479,7 @@ Inspecting the results that HGH got for PCR in the original \textbf{R Opus}, it 
 
 \chapter{Multiple Factor(ial) Analysis (MFA)}\label{multiple-factorial-analysis-mfa}
 
-Multiple Factor Analysis MFA; sometimes called Multiple Factor\emph{ial} Analysis, to distinguish from the ``Factor Analysis'' approaches related to Exploratory and Confirmatory Factor Analysis, see \citet{rencherMethods2002}{]} is a surprisingly straightforward extension to PCA that allows the comparison of multiple sets of data collected on the same observations. It is therefore suitable for use on the same sorts of data as PLS and other multi-table approaches. Unlike those approaches, however, MFA is (in its basic forms) a purely \emph{exploratory} data analysis (in the same was as PCA is!)--PLS-R, by contrast, is inferential, claiming that the \(\mathbf{Y}\) matrix can be explained by the variables in the \(\mathbf{X}\) matrix.
+Multiple Factor Analysis \citep[MFA: sometimes called Multiple Factor\emph{ial} Analysis, to distinguish from the ``Factor Analysis'' approaches related to Exploratory and Confirmatory Factor Analysis, see][]{rencherMethods2002} is a surprisingly straightforward extension to PCA that allows the comparison of multiple sets of data collected on the same observations. It is therefore suitable for use on the same sorts of data as PLS and other multi-table approaches. Unlike those approaches, however, MFA is (in its basic forms) a purely \emph{exploratory} data analysis (in the same was as PCA is!)--PLS-R, by contrast, is inferential, claiming that the \(\mathbf{Y}\) matrix can be explained by the variables in the \(\mathbf{X}\) matrix.
 
 The basic idea of MFA is very simple: given multiple sets of measurements (sets of columns or variables) collected on the same observations (rows), each set can be ``normalized'' by its first singular value so that all the sets are ``commensurate'' for a PCA. To put it another way, MFA consists of a sequence of PCAs: first each set of measurements is analyzed by PCA (really, Singular Value Decompositon) to extract its first singular value; then each element of each set of measurements is divided by its respective singular value; finally, the normalized tables are (row-wise) concatenated into a single table, which is then analyzed by a second PCA (SVD). A more complete and detailed explanation is given in \citet{abdiMultiple2013}.
 
@@ -7647,6 +7647,9 @@ We can use these projected (partial) coordinates to get some ideas about the con
 \FunctionTok{library}\NormalTok{(patchwork)}
 
 \NormalTok{p\_descriptive\_mfa }\OtherTok{\textless{}{-}} 
+  
+  \CommentTok{\# First we need to get our data all into one place}
+  
 \NormalTok{  descriptive\_mfa}\SpecialCharTok{$}\NormalTok{ind}\SpecialCharTok{$}\NormalTok{coord }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{as\_tibble}\NormalTok{(}\AttributeTok{rownames =} \StringTok{"wine"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{bind\_rows}\NormalTok{(}
@@ -7655,6 +7658,9 @@ We can use these projected (partial) coordinates to get some ideas about the con
 \NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{separate}\NormalTok{(wine, }\AttributeTok{into =} \FunctionTok{c}\NormalTok{(}\StringTok{"wine"}\NormalTok{, }\StringTok{"table"}\NormalTok{), }\AttributeTok{sep =} \StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{."}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{mutate}\NormalTok{(}\AttributeTok{table =} \FunctionTok{replace\_na}\NormalTok{(table, }\StringTok{"compromise"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  
+  \CommentTok{\# And then we can make a plot!}
+  
   \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Dim}\FloatTok{.1}\NormalTok{, }\AttributeTok{y =}\NormalTok{ Dim}\FloatTok{.2}\NormalTok{, }\AttributeTok{color =}\NormalTok{ wine)) }\SpecialCharTok{+} 
   \FunctionTok{geom\_vline}\NormalTok{(}\AttributeTok{xintercept =} \DecValTok{0}\NormalTok{, }\AttributeTok{linewidth =} \DecValTok{1}\SpecialCharTok{/}\DecValTok{10}\NormalTok{) }\SpecialCharTok{+}
   \FunctionTok{geom\_hline}\NormalTok{(}\AttributeTok{yintercept =} \DecValTok{0}\NormalTok{, }\AttributeTok{linewidth =} \DecValTok{1}\SpecialCharTok{/}\DecValTok{10}\NormalTok{) }\SpecialCharTok{+} 
@@ -7682,7 +7688,7 @@ We can use these projected (partial) coordinates to get some ideas about the con
 \NormalTok{  ggrepel}\SpecialCharTok{::}\FunctionTok{geom\_text\_repel}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =}\NormalTok{ wine)) }\SpecialCharTok{+} 
   \FunctionTok{coord\_equal}\NormalTok{(}\AttributeTok{xlim =} \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{10}\NormalTok{, }\DecValTok{10}\NormalTok{), }\AttributeTok{ylim =} \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{10}\NormalTok{, }\DecValTok{10}\NormalTok{)) }\SpecialCharTok{+} 
   \FunctionTok{scale\_color\_paletteer\_d}\NormalTok{(}\StringTok{"RSkittleBrewer::smarties"}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{labs}\NormalTok{(}\AttributeTok{subtitle =} \StringTok{"PCA scores plot with projected}\SpecialCharTok{\textbackslash{}n}\StringTok{individual judge evaluations"}\NormalTok{,}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{subtitle =} \StringTok{"PCA scores plot"}\NormalTok{,}
        \AttributeTok{x =} \FunctionTok{paste0}\NormalTok{(}\StringTok{"Dimension 1, "}\NormalTok{, }\FunctionTok{round}\NormalTok{(descriptive\_pca}\SpecialCharTok{$}\NormalTok{eig[}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{], }\DecValTok{1}\NormalTok{), }\StringTok{"\% of variance"}\NormalTok{),}
        \AttributeTok{y =} \FunctionTok{paste0}\NormalTok{(}\StringTok{"Dimension 2, "}\NormalTok{, }\FunctionTok{round}\NormalTok{(descriptive\_pca}\SpecialCharTok{$}\NormalTok{eig[}\DecValTok{2}\NormalTok{, }\DecValTok{2}\NormalTok{], }\DecValTok{1}\NormalTok{), }\StringTok{"\% of variance"}\NormalTok{)) }\SpecialCharTok{+}
   \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
