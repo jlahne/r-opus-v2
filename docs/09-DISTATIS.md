@@ -159,7 +159,7 @@ distatis_boots %>% str
 ```
 
 ```
-##  num [1:8, 1:3, 1:1000] -0.30123 0.39586 -0.18592 -0.29075 0.00389 ...
+##  num [1:8, 1:3, 1:1000] -0.2345 0.1825 -0.112 -0.1268 0.0805 ...
 ##  - attr(*, "dimnames")=List of 3
 ##   ..$ : chr [1:8] "I_REFOSCO" "I_MERLOT" "I_SYRAH" "I_PRIMITIVO" ...
 ##   ..$ : chr [1:3] "Factor 1" "Factor 2" "Factor 3"
@@ -171,15 +171,15 @@ distatis_boots[, , 1]
 ```
 
 ```
-##                 Factor 1    Factor 2    Factor 3
-## I_REFOSCO   -0.301232034 -0.17985633  0.46256813
-## I_MERLOT     0.395859130 -0.05420109  0.15843479
-## I_SYRAH     -0.185924746  0.43260346 -0.14666114
-## I_PRIMITIVO -0.290747180  0.45436758 -0.13340197
-## C_SYRAH      0.003885975 -0.42048358 -0.31133313
-## C_REFOSCO   -0.395431977 -0.27508540 -0.16539649
-## C_MERLOT     0.368736324 -0.01078124 -0.05411584
-## C_ZINFANDEL  0.404854508  0.05343661  0.18990567
+##                Factor 1   Factor 2    Factor 3
+## I_REFOSCO   -0.23454004 -0.1891932  0.45380667
+## I_MERLOT     0.18253755 -0.1456857  0.05883192
+## I_SYRAH     -0.11200038  0.3046883 -0.10870947
+## I_PRIMITIVO -0.12684218  0.3180595 -0.10741703
+## C_SYRAH      0.08051505 -0.3733631 -0.24516563
+## C_REFOSCO   -0.34264691 -0.1484034 -0.07703493
+## C_MERLOT     0.26981688  0.1018323 -0.07442875
+## C_ZINFANDEL  0.28316002  0.1320654  0.10011721
 ```
 
 The `BootFromCompromise()` function gives us another array: in this case a set of factor scores for the samples on the first 3 factors/components, over 1000 (the default) bootstrapped iterations.  Each slice is a single bootstrapped iteration.

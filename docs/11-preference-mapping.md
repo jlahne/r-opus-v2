@@ -98,7 +98,7 @@ consumer_data %>%
 ```
 
 ```
-## Warning: Removed 22 rows containing missing values (`geom_point()`).
+## Warning: Removed 19 rows containing missing values (`geom_point()`).
 ```
 
 ![](11-preference-mapping_files/figure-latex/unnamed-chunk-3-1.pdf)<!-- --> 

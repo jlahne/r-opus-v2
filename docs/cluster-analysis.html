@@ -626,17 +626,17 @@ div.csl-indent {
 <span id="cb251-5"><a href="cluster-analysis.html#cb251-5" tabindex="-1"></a></span>
 <span id="cb251-6"><a href="cluster-analysis.html#cb251-6" tabindex="-1"></a>clusters_kmeans<span class="sc">$</span>cluster</span></code></pre></div>
 <pre><code>##    C_MERLOT   C_REFOSCO     C_SYRAH C_ZINFANDEL    I_MERLOT I_PRIMITIVO 
-##           3           3           3           3           1           2 
+##           1           1           1           1           2           3 
 ##   I_REFOSCO     I_SYRAH 
-##           1           2</code></pre>
+##           2           3</code></pre>
 <div class="sourceCode" id="cb253"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb253-1"><a href="cluster-analysis.html#cb253-1" tabindex="-1"></a>clusters_kmeans<span class="sc">$</span>centers <span class="sc">%&gt;%</span></span>
 <span id="cb253-2"><a href="cluster-analysis.html#cb253-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;cluster&quot;</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 3 × 21
 ##   cluster Red_berry Dark_berry    Jam Dried_fruit Artificial_frui Chocolate
 ##   &lt;chr&gt;       &lt;dbl&gt;      &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;           &lt;dbl&gt;     &lt;dbl&gt;
-## 1 1          -0.423     -0.629 -0.729      0.255           -0.544    -1.07 
-## 2 2           1.34       1.29   1.49       0.0234           1.58      0.179
-## 3 3          -0.456     -0.328 -0.379     -0.139           -0.515     0.444
+## 1 1          -0.456     -0.328 -0.379     -0.139           -0.515     0.444
+## 2 2          -0.423     -0.629 -0.729      0.255           -0.544    -1.07 
+## 3 3           1.34       1.29   1.49       0.0234           1.58      0.179
 ## # ℹ 14 more variables: Vanilla &lt;dbl&gt;, Oak &lt;dbl&gt;, Burned &lt;dbl&gt;, Leather &lt;dbl&gt;,
 ## #   Earthy &lt;dbl&gt;, Spicy &lt;dbl&gt;, Pepper &lt;dbl&gt;, Grassy &lt;dbl&gt;, Medicinal &lt;dbl&gt;,
 ## #   `Band-aid` &lt;dbl&gt;, Sour &lt;dbl&gt;, Bitter &lt;dbl&gt;, Alcohol &lt;dbl&gt;, Astringent &lt;dbl&gt;</code></pre>

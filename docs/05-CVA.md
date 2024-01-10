@@ -509,14 +509,14 @@ get_bootstrapped_means()
 ## # A tibble: 8 x 3
 ##   ProductName    Can1   Can2
 ##   <fct>         <dbl>  <dbl>
-## 1 C_MERLOT     0.483   0.202
-## 2 C_REFOSCO    1.22    0.339
-## 3 C_SYRAH      0.115   0.316
-## 4 C_ZINFANDEL -0.283   0.330
-## 5 I_MERLOT     0.404  -0.616
-## 6 I_PRIMITIVO -1.10    0.393
-## 7 I_REFOSCO   -0.0175 -1.26 
-## 8 I_SYRAH     -0.819   0.291
+## 1 C_MERLOT     0.315   0.159
+## 2 C_REFOSCO    1.37    0.797
+## 3 C_SYRAH      0.0242  0.128
+## 4 C_ZINFANDEL -0.223   0.120
+## 5 I_MERLOT     0.584  -0.923
+## 6 I_PRIMITIVO -1.12    0.310
+## 7 I_REFOSCO    0.140  -1.29 
+## 8 I_SYRAH     -1.10    0.697
 ```
 
 ```r

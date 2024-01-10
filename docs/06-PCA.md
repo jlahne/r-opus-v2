@@ -372,13 +372,13 @@ means_pca$var$cor %>%
 ## 6 Chocolate  -0.00940 -0.812
 ```
 
-These are *also* called loadings **REF Abdi 2010**.  The semantics of PCA are a nightmare.  We can see that these reflect our interpretation from the loadings plot pretty accurately.
+These are *also* called loadings [@abdiPrincipal2010].  The semantics of PCA are a nightmare.  We can see that these reflect our interpretation from the loadings plot pretty accurately.
 
 HGH then calculated the "communalities" for variables on the first and second dimensions of the PCA solution.  I had to do some digging to figure out what she meant by this, but she described them as:
 
 > Communality is the sum of the squared loadings for the number of dimensions that you would like to keep.
 
-We know from ***REF Abdi 2010** that the sum of squared loadings (in the sense of *correlations*) for each dimension should sum to 1, so this allows us to speak of "proportion of explained variance" for each variable and each dimension.  But we have to remember the semantic overloadings here, so if we want to see this property we will need to look at the `$svd$V` matrix again.  The `$var$cor` matrix, remember, stores this scaled by the original variables (maybe this is instead storing covariances). We can see this pretty easily:
+We know from @abdiPrincipal2010 that the sum of squared loadings (in the sense of *correlations*) for each dimension should sum to 1, so this allows us to speak of "proportion of explained variance" for each variable and each dimension.  But we have to remember the semantic overloadings here, so if we want to see this property we will need to look at the `$svd$V` matrix again.  The `$var$cor` matrix, remember, stores this scaled by the original variables (maybe this is instead storing covariances). We can see this pretty easily:
 
 
 ```r
@@ -427,7 +427,7 @@ means_pca$svd$V %>%
 
 ### Correlations or (squared) loadings or contributions
 
-The correlations between the variables and the components are also unfortunately called "*loadings*" (cf. Abdi & Williams 2010 **REF** for more info), but these are distinct (although related, argh) from the "loadings" we discussed as the elements of the $\mathbf Q$ matrix from SVD.  
+The correlations between the variables and the components are also unfortunately called "*loadings*" [cf. @abdiPrincipal2010 for more info], but these are distinct (although related, argh) from the "loadings" we discussed as the elements of the $\mathbf Q$ matrix from SVD.  
 
 We could directly calculate these, but we can make use of the `dimdesc()` convenience function
 
@@ -464,7 +464,7 @@ HGH calls these squared correlations the "communalities" of the variables, which
 
 There are a number of other ways to interpret the over-loaded "*loadings*"--the role of the variables in determining the new principal-components space in PCA results.  To return to the progression of the **R Opus**, let's follow HGH in examining the **Contributions** and the **Communalities** in the PCA results.
 
-According to ***REF Abdi & Williams 2010, p.8-9***,
+According to @abdiPrincipal2010[p.8-9],
 
 > ...the importance of an observation for a component can be obtained by the ratio of the squared factor score of this observation by the eigenvalue associated with that component.
 
@@ -536,7 +536,7 @@ HGH says in the original **R Opus** that
 
 > Communality is the sum of the squared loadings for the number of dimensions that you would like to keep.
 
-I am not sure I quite follow what she did, as she then goes on to examine the contributions, which as we've described are the squared loadings divided by the eigenvalues so that they sum to 1.  In **REF Abdi & Williams** they don't discuss *communality*, and if I remember properly the concept is more frequently applied to Factor Analysis **REF Rencher 2012**, so we'll leave it for now.  I think that this is a great example of how closely overlapping concepts can get confusing in the world of components-based methods, since to my understanding Factor Analysis, in some of its simpler forms, can be derived directly from PCA but with different assumptions mapped onto the steps. 
+I am not sure I quite follow what she did, as she then goes on to examine the contributions, which as we've described are the squared loadings divided by the eigenvalues so that they sum to 1.  In @abdiPrincipal2010 they don't discuss *communality*, and if I remember properly the concept is more frequently applied to Factor Analysis @rencherMethods2002, so we'll leave it for now.  I think that this is a great example of how closely overlapping concepts can get confusing in the world of components-based methods, since to my understanding Factor Analysis, in some of its simpler forms, can be derived directly from PCA but with different assumptions mapped onto the steps. 
 
 ## PCA with resampling for confidence intervals
 
@@ -566,7 +566,7 @@ The confidence ellipses are definitely being drawn around 95% of the resampled r
 
 It is also worth noting that the plot produced here is different than that produced in the original **R Opus**, so eithere there is simulation variability (probably) or the underlying program has changed between 2015 and now (also possible).  The overall conclusions are not greatly different but the overlapping areas can vary quite dramatically.
 
-The basic approach (which we saw back in the CVA section of the **R Opus**) is to draw a new set of bootstrapped observations for each product: we need 42 observations per product to calculate a new mean.  We then can use the projection function from our original PCA solution to project these results into our space; in a nod to the truncated bootstrap approach **REF Peltier et al** we will use only the first 2 dimensions of the projection function to get the results so as not to overfit.  Finally, we'll draw ellipses around our results to represent variability.
+The basic approach (which we saw back in the CVA section of the **R Opus**) is to draw a new set of bootstrapped observations for each product: we need 42 observations per product to calculate a new mean.  We then can use the projection function from our original PCA solution to project these results into our space; in a nod to the truncated bootstrap approach [@cadoretConstruction2013] we will use only the first 2 dimensions of the projection function to get the results so as not to overfit.  Finally, we'll draw ellipses around our results to represent variability.
 
 
 ```r
@@ -608,7 +608,7 @@ p_scores +
 
 ![](06-PCA_files/figure-latex/unnamed-chunk-18-1.pdf)<!-- --> 
 
-Our results are pretty close, but not exactly the same.  It seems like our method of generating bootstrapped scores (via resampling followed by projection via the $\mathbf Q$ matrix from SVD) is potentially more liberal in product separation than that from the `panellipse()` function.  Perhaps `panellipse()` is using the "truncated bootstrap" approach **REF Peltier**, which solves a full PCA with the resampled data, then aligns it with the original observed space via Generalized Procrustes Analysis, then repeats that process a large number (e.g., 1000) times.. 
+Our results are pretty close, but not exactly the same.  It seems like our method of generating bootstrapped scores (via resampling followed by projection via the $\mathbf Q$ matrix from SVD) is potentially more liberal in product separation than that from the `panellipse()` function.  Perhaps `panellipse()` is using the "truncated bootstrap" approach [@cadoretConstruction2013], which solves a full PCA with the resampled data, then aligns it with the original observed space via Generalized Procrustes Analysis, then repeats that process a large number (e.g., 1000) times.. 
 
 ## Comparison of products with PCA
 

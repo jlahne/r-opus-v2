@@ -577,12 +577,12 @@ div.csl-indent {
 ## 4 Vanilla     0.660   -0.637
 ## 5 Burned     -0.636   -0.662
 ## 6 Chocolate  -0.00940 -0.812</code></pre>
-<p>These are <em>also</em> called loadings <strong>REF Abdi 2010</strong>. The semantics of PCA are a nightmare. We can see that these reflect our interpretation from the loadings plot pretty accurately.</p>
+<p>These are <em>also</em> called loadings <span class="citation">(<a href="#ref-abdiPrincipal2010">Herve Abdi and Williams 2010</a>)</span>. The semantics of PCA are a nightmare. We can see that these reflect our interpretation from the loadings plot pretty accurately.</p>
 <p>HGH then calculated the “communalities” for variables on the first and second dimensions of the PCA solution. I had to do some digging to figure out what she meant by this, but she described them as:</p>
 <blockquote>
 <p>Communality is the sum of the squared loadings for the number of dimensions that you would like to keep.</p>
 </blockquote>
-<p>We know from <em><strong>REF Abdi 2010</strong> that the sum of squared loadings (in the sense of </em>correlations*) for each dimension should sum to 1, so this allows us to speak of “proportion of explained variance” for each variable and each dimension. But we have to remember the semantic overloadings here, so if we want to see this property we will need to look at the <code>$svd$V</code> matrix again. The <code>$var$cor</code> matrix, remember, stores this scaled by the original variables (maybe this is instead storing covariances). We can see this pretty easily:</p>
+<p>We know from <span class="citation">Herve Abdi and Williams (<a href="#ref-abdiPrincipal2010">2010</a>)</span> that the sum of squared loadings (in the sense of <em>correlations</em>) for each dimension should sum to 1, so this allows us to speak of “proportion of explained variance” for each variable and each dimension. But we have to remember the semantic overloadings here, so if we want to see this property we will need to look at the <code>$svd$V</code> matrix again. The <code>$var$cor</code> matrix, remember, stores this scaled by the original variables (maybe this is instead storing covariances). We can see this pretty easily:</p>
 <div class="sourceCode" id="cb210"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb210-1"><a href="principal-components-analysis-pca.html#cb210-1" tabindex="-1"></a><span class="co"># The &quot;cor&quot; matrix doesn&#39;t seem to really be storing what we think of as </span></span>
 <span id="cb210-2"><a href="principal-components-analysis-pca.html#cb210-2" tabindex="-1"></a><span class="co"># correlations.</span></span>
 <span id="cb210-3"><a href="principal-components-analysis-pca.html#cb210-3" tabindex="-1"></a>means_pca<span class="sc">$</span>var<span class="sc">$</span>cor <span class="sc">%&gt;%</span></span>
@@ -616,7 +616,7 @@ div.csl-indent {
 ## 5 V5     1</code></pre>
 <div id="correlations-or-squared-loadings-or-contributions" class="section level3 hasAnchor" number="6.3.1">
 <h3><span class="header-section-number">6.3.1</span> Correlations or (squared) loadings or contributions<a href="principal-components-analysis-pca.html#correlations-or-squared-loadings-or-contributions" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>The correlations between the variables and the components are also unfortunately called “<em>loadings</em>” (cf. Abdi &amp; Williams 2010 <strong>REF</strong> for more info), but these are distinct (although related, argh) from the “loadings” we discussed as the elements of the <span class="math inline">\(\mathbf Q\)</span> matrix from SVD.</p>
+<p>The correlations between the variables and the components are also unfortunately called “<em>loadings</em>” <span class="citation">(cf. <a href="#ref-abdiPrincipal2010">Herve Abdi and Williams 2010</a> for more info)</span>, but these are distinct (although related, argh) from the “loadings” we discussed as the elements of the <span class="math inline">\(\mathbf Q\)</span> matrix from SVD.</p>
 <p>We could directly calculate these, but we can make use of the <code>dimdesc()</code> convenience function</p>
 <div class="sourceCode" id="cb214"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb214-1"><a href="principal-components-analysis-pca.html#cb214-1" tabindex="-1"></a><span class="fu">dimdesc</span>(means_pca, <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span></code></pre></div>
 <pre><code>## $Dim.1
@@ -642,7 +642,7 @@ div.csl-indent {
 ## Chocolate  -0.8121299 0.014329245</code></pre>
 <p>HGH calls these squared correlations the “communalities” of the variables, which should(?) sum to 1. This is not the case here because we have a typical <span class="math inline">\(n&lt;p\)</span> problem: there are more variables than observations (when we run a PCA on the means of the products across panelists and reps).</p>
 <p>There are a number of other ways to interpret the over-loaded “<em>loadings</em>”–the role of the variables in determining the new principal-components space in PCA results. To return to the progression of the <strong>R Opus</strong>, let’s follow HGH in examining the <strong>Contributions</strong> and the <strong>Communalities</strong> in the PCA results.</p>
-<p>According to <strong><em>REF Abdi &amp; Williams 2010, p.8-9</em></strong>,</p>
+<p>According to <span class="citation">Herve Abdi and Williams (<a href="#ref-abdiPrincipal2010">2010, 8–9</a>)</span>,</p>
 <blockquote>
 <p>…the importance of an observation for a component can be obtained by the ratio of the squared factor score of this observation by the eigenvalue associated with that component.</p>
 </blockquote>
@@ -699,7 +699,7 @@ div.csl-indent {
 <blockquote>
 <p>Communality is the sum of the squared loadings for the number of dimensions that you would like to keep.</p>
 </blockquote>
-<p>I am not sure I quite follow what she did, as she then goes on to examine the contributions, which as we’ve described are the squared loadings divided by the eigenvalues so that they sum to 1. In <strong>REF Abdi &amp; Williams</strong> they don’t discuss <em>communality</em>, and if I remember properly the concept is more frequently applied to Factor Analysis <strong>REF Rencher 2012</strong>, so we’ll leave it for now. I think that this is a great example of how closely overlapping concepts can get confusing in the world of components-based methods, since to my understanding Factor Analysis, in some of its simpler forms, can be derived directly from PCA but with different assumptions mapped onto the steps.</p>
+<p>I am not sure I quite follow what she did, as she then goes on to examine the contributions, which as we’ve described are the squared loadings divided by the eigenvalues so that they sum to 1. In <span class="citation">Herve Abdi and Williams (<a href="#ref-abdiPrincipal2010">2010</a>)</span> they don’t discuss <em>communality</em>, and if I remember properly the concept is more frequently applied to Factor Analysis <span class="citation">Rencher (<a href="#ref-rencherMethods2002">2002</a>)</span>, so we’ll leave it for now. I think that this is a great example of how closely overlapping concepts can get confusing in the world of components-based methods, since to my understanding Factor Analysis, in some of its simpler forms, can be derived directly from PCA but with different assumptions mapped onto the steps.</p>
 </div>
 </div>
 <div id="pca-with-resampling-for-confidence-intervals" class="section level2 hasAnchor" number="6.4">
@@ -716,7 +716,7 @@ div.csl-indent {
 <p><img src="06-PCA_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 <p>The confidence ellipses are definitely being drawn around 95% of the resampled results from the bootstrapping procedure, but I’m not sure if this is a bootstrap based on, for example, the “partial bootstrap” or the “truncated bootstrap”. We will us a naive approach to producing a partial bootstrap in order to do some resampling and compare it.</p>
 <p>It is also worth noting that the plot produced here is different than that produced in the original <strong>R Opus</strong>, so eithere there is simulation variability (probably) or the underlying program has changed between 2015 and now (also possible). The overall conclusions are not greatly different but the overlapping areas can vary quite dramatically.</p>
-<p>The basic approach (which we saw back in the CVA section of the <strong>R Opus</strong>) is to draw a new set of bootstrapped observations for each product: we need 42 observations per product to calculate a new mean. We then can use the projection function from our original PCA solution to project these results into our space; in a nod to the truncated bootstrap approach <strong>REF Peltier et al</strong> we will use only the first 2 dimensions of the projection function to get the results so as not to overfit. Finally, we’ll draw ellipses around our results to represent variability.</p>
+<p>The basic approach (which we saw back in the CVA section of the <strong>R Opus</strong>) is to draw a new set of bootstrapped observations for each product: we need 42 observations per product to calculate a new mean. We then can use the projection function from our original PCA solution to project these results into our space; in a nod to the truncated bootstrap approach <span class="citation">(<a href="#ref-cadoretConstruction2013">Cadoret and Husson 2013</a>)</span> we will use only the first 2 dimensions of the projection function to get the results so as not to overfit. Finally, we’ll draw ellipses around our results to represent variability.</p>
 <div class="sourceCode" id="cb221"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb221-1"><a href="principal-components-analysis-pca.html#cb221-1" tabindex="-1"></a>get_bootstrapped_pca_means <span class="ot">&lt;-</span> <span class="cf">function</span>(){</span>
 <span id="cb221-2"><a href="principal-components-analysis-pca.html#cb221-2" tabindex="-1"></a>  </span>
 <span id="cb221-3"><a href="principal-components-analysis-pca.html#cb221-3" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
@@ -752,7 +752,7 @@ div.csl-indent {
 <span id="cb221-33"><a href="principal-components-analysis-pca.html#cb221-33" tabindex="-1"></a>  <span class="fu">stat_ellipse</span>(<span class="at">data =</span> pca_boots, <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb221-34"><a href="principal-components-analysis-pca.html#cb221-34" tabindex="-1"></a>               <span class="fu">aes</span>(<span class="at">x =</span> pc1, <span class="at">y =</span> pc2, <span class="at">color =</span> ProductName))</span></code></pre></div>
 <p><img src="06-PCA_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
-<p>Our results are pretty close, but not exactly the same. It seems like our method of generating bootstrapped scores (via resampling followed by projection via the <span class="math inline">\(\mathbf Q\)</span> matrix from SVD) is potentially more liberal in product separation than that from the <code>panellipse()</code> function. Perhaps <code>panellipse()</code> is using the “truncated bootstrap” approach <strong>REF Peltier</strong>, which solves a full PCA with the resampled data, then aligns it with the original observed space via Generalized Procrustes Analysis, then repeats that process a large number (e.g., 1000) times..</p>
+<p>Our results are pretty close, but not exactly the same. It seems like our method of generating bootstrapped scores (via resampling followed by projection via the <span class="math inline">\(\mathbf Q\)</span> matrix from SVD) is potentially more liberal in product separation than that from the <code>panellipse()</code> function. Perhaps <code>panellipse()</code> is using the “truncated bootstrap” approach <span class="citation">(<a href="#ref-cadoretConstruction2013">Cadoret and Husson 2013</a>)</span>, which solves a full PCA with the resampled data, then aligns it with the original observed space via Generalized Procrustes Analysis, then repeats that process a large number (e.g., 1000) times..</p>
 </div>
 <div id="comparison-of-products-with-pca" class="section level2 hasAnchor" number="6.5">
 <h2><span class="header-section-number">6.5</span> Comparison of products with PCA<a href="principal-components-analysis-pca.html#comparison-of-products-with-pca" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -871,6 +871,18 @@ div.csl-indent {
 ## [85] class_7.3-22         DescTools_0.99.50    Rcpp_1.0.11         
 ## [88] coda_0.19-4          xfun_0.39            pkgconfig_2.0.3</code></pre>
 
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-abdiPrincipal2010" class="csl-entry">
+Abdi, Herve, and Lynne J Williams. 2010. <span>“Principal <span>Component Analysis</span>.”</span> <em>Wiley Interdisciplinary Reviews: Computational Statistics</em> 2: 433–59.
+</div>
+<div id="ref-cadoretConstruction2013" class="csl-entry">
+Cadoret, Marine, and François Husson. 2013. <span>“Construction and Evaluation of Confidence Ellipses Applied at Sensory Data.”</span> <em>Food Quality and Preference</em> 28 (1): 106–15. <a href="https://doi.org/10.1016/j.foodqual.2012.09.005">https://doi.org/10.1016/j.foodqual.2012.09.005</a>.
+</div>
+<div id="ref-rencherMethods2002" class="csl-entry">
+Rencher, Alvin C. 2002. <em>Methods of Multivariate Analysis</em>. 2nd ed. Wiley Series in Probability and Mathematical Statistics. <span>New York</span>: <span>J. Wiley</span>.
 </div>
 </div>
             </section>

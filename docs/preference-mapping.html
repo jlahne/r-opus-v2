@@ -571,7 +571,7 @@ div.csl-indent {
 <span id="cb351-6"><a href="preference-mapping.html#cb351-6" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
 <span id="cb351-7"><a href="preference-mapping.html#cb351-7" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">&quot;mean liking ± se&quot;</span>) <span class="sc">+</span> </span>
 <span id="cb351-8"><a href="preference-mapping.html#cb351-8" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">9</span>))</span></code></pre></div>
-<pre><code>## Warning: Removed 23 rows containing missing values (`geom_point()`).</code></pre>
+<pre><code>## Warning: Removed 20 rows containing missing values (`geom_point()`).</code></pre>
 <p><img src="11-preference-mapping_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>See how I scaled that to include the entire range of possible responses on the 9-pt scale? It shows how little variability there actually is in our data.</p>
 <p>Anyway, we can see that on average the Californian wines seem to be rated a bit higher in terms of overall liking. If we were interested we might consider pairing the wine types across region (in this case, <a href="https://en.wikipedia.org/wiki/Zinfandel">we would assume Zinfandel and Primitivo are chosen to be matches for each other</a>) and treat this as a 2-factor design. But that is outside our remit at the moment.</p>
