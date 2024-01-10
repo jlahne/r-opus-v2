@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 7 Cluster analysis | The R Opus v2</title>
+  <meta name="description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 7 Cluster analysis | The R Opus v2" />
+  <meta property="og:type" content="book" />
+  <meta property="og:image" content="/img/r-opus-cover.jpg" />
+  <meta property="og:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="github-repo" content="jlahne/r-opus-v2" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 7 Cluster analysis | The R Opus v2" />
+  
+  <meta name="twitter:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="twitter:image" content="/img/r-opus-cover.jpg" />
+
+<meta name="author" content="Jacob Lahne" />
+
+
+<meta name="date" content="2024-01-10" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="principal-components-analysis-pca.html"/>
+<link rel="next" href="multidimensional-scaling-mds.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">The R Opus v2</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#usage"><i class="fa fa-check"></i>Usage</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#r-setup"><i class="fa fa-check"></i><code>R</code> Setup</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#what-this-is-not"><i class="fa fa-check"></i>What this is not</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#about-me"><i class="fa fa-check"></i>About me</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#session-info"><i class="fa fa-check"></i>Session Info</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html"><i class="fa fa-check"></i><b>1</b> Data import and set up</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#exploring-our-data"><i class="fa fa-check"></i><b>1.1</b> Exploring our data</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#the-descriptive-data"><i class="fa fa-check"></i><b>1.1.1</b> The descriptive data</a></li>
+<li class="chapter" data-level="1.1.2" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#consumer-data"><i class="fa fa-check"></i><b>1.1.2</b> Consumer data</a></li>
+<li class="chapter" data-level="1.1.3" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#the-other-data-frames"><i class="fa fa-check"></i><b>1.1.3</b> The other data frames</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#wranglingtidying-data"><i class="fa fa-check"></i><b>1.2</b> Wrangling/tidying data</a></li>
+<li class="chapter" data-level="1.3" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#wrap-up-and-summary"><i class="fa fa-check"></i><b>1.3</b> Wrap up and summary</a></li>
+<li class="chapter" data-level="1.4" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#packages-used-in-this-chapter"><i class="fa fa-check"></i><b>1.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html"><i class="fa fa-check"></i><b>2</b> Analysis of Variance</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#univariate-analysis-with-the-linear-model"><i class="fa fa-check"></i><b>2.1</b> Univariate analysis with the linear model</a></li>
+<li class="chapter" data-level="2.2" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#pseudo-mixed-anova"><i class="fa fa-check"></i><b>2.2</b> Pseudo-mixed ANOVA</a></li>
+<li class="chapter" data-level="2.3" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#mean-comparison-post-hoc-testing"><i class="fa fa-check"></i><b>2.3</b> Mean comparison (post-hoc testing)</a></li>
+<li class="chapter" data-level="2.4" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#bonus-bayesian-approaches-to-anova"><i class="fa fa-check"></i><b>2.4</b> BONUS: Bayesian approaches to ANOVA</a></li>
+<li class="chapter" data-level="2.5" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#packages-used-in-this-chapter-1"><i class="fa fa-check"></i><b>2.5</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html"><i class="fa fa-check"></i><b>3</b> Dealing with missing data</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#exploring-missing-data"><i class="fa fa-check"></i><b>3.1</b> Exploring missing data</a></li>
+<li class="chapter" data-level="3.2" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#imputing-missing-data"><i class="fa fa-check"></i><b>3.2</b> Imputing missing data</a></li>
+<li class="chapter" data-level="3.3" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#alternative-approaches-to-imputation"><i class="fa fa-check"></i><b>3.3</b> Alternative approaches to imputation</a></li>
+<li class="chapter" data-level="3.4" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#packages-used-in-this-chapter-2"><i class="fa fa-check"></i><b>3.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html"><i class="fa fa-check"></i><b>4</b> MANOVA (Multivariate Analysis of Variance)</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#running-manova"><i class="fa fa-check"></i><b>4.1</b> Running MANOVA</a></li>
+<li class="chapter" data-level="4.2" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#what-does-manova-test"><i class="fa fa-check"></i><b>4.2</b> What does MANOVA test?</a></li>
+<li class="chapter" data-level="4.3" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#bonus-hierarchical-bayes-instead-of-manova"><i class="fa fa-check"></i><b>4.3</b> BONUS: Hierarchical Bayes instead of MANOVA</a></li>
+<li class="chapter" data-level="4.4" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#packages-used-in-this-chapter-3"><i class="fa fa-check"></i><b>4.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html"><i class="fa fa-check"></i><b>5</b> Canonical Variate Analysis</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#what-is-cva"><i class="fa fa-check"></i><b>5.1</b> What is CVA?</a></li>
+<li class="chapter" data-level="5.2" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#application-of-cva"><i class="fa fa-check"></i><b>5.2</b> Application of CVA</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#basic-visualization-of-cva"><i class="fa fa-check"></i><b>5.2.1</b> Basic visualization of CVA</a></li>
+<li class="chapter" data-level="5.2.2" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#an-aside-on-exporting-r-plots"><i class="fa fa-check"></i><b>5.2.2</b> An aside on exporting R plots</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#plotting-uncertainty-in-cva"><i class="fa fa-check"></i><b>5.3</b> Plotting uncertainty in CVA</a></li>
+<li class="chapter" data-level="5.4" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#packages-used-in-this-chapter-4"><i class="fa fa-check"></i><b>5.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html"><i class="fa fa-check"></i><b>6</b> Principal Components Analysis (PCA)</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#what-does-pca-do"><i class="fa fa-check"></i><b>6.1</b> What does PCA do?</a></li>
+<li class="chapter" data-level="6.2" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#lets-do-pca"><i class="fa fa-check"></i><b>6.2</b> Let’s do PCA!</a></li>
+<li class="chapter" data-level="6.3" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#in-depth-interpretation"><i class="fa fa-check"></i><b>6.3</b> In-depth interpretation</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#correlations-or-squared-loadings-or-contributions"><i class="fa fa-check"></i><b>6.3.1</b> Correlations or (squared) loadings or contributions</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#pca-with-resampling-for-confidence-intervals"><i class="fa fa-check"></i><b>6.4</b> PCA with resampling for confidence intervals</a></li>
+<li class="chapter" data-level="6.5" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#comparison-of-products-with-pca"><i class="fa fa-check"></i><b>6.5</b> Comparison of products with PCA</a></li>
+<li class="chapter" data-level="6.6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#packages-used-in-this-chapter-5"><i class="fa fa-check"></i><b>6.6</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="cluster-analysis.html"><a href="cluster-analysis.html"><i class="fa fa-check"></i><b>7</b> Cluster analysis</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="cluster-analysis.html"><a href="cluster-analysis.html#hierarchical-clustering-on-distances"><i class="fa fa-check"></i><b>7.1</b> Hierarchical clustering on distances</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="cluster-analysis.html"><a href="cluster-analysis.html#wards-method"><i class="fa fa-check"></i><b>7.1.1</b> Ward’s Method</a></li>
+<li class="chapter" data-level="7.1.2" data-path="cluster-analysis.html"><a href="cluster-analysis.html#single-linkage"><i class="fa fa-check"></i><b>7.1.2</b> Single linkage</a></li>
+<li class="chapter" data-level="7.1.3" data-path="cluster-analysis.html"><a href="cluster-analysis.html#complete-linkage"><i class="fa fa-check"></i><b>7.1.3</b> Complete Linkage</a></li>
+<li class="chapter" data-level="7.1.4" data-path="cluster-analysis.html"><a href="cluster-analysis.html#average-linkage"><i class="fa fa-check"></i><b>7.1.4</b> Average Linkage</a></li>
+<li class="chapter" data-level="7.1.5" data-path="cluster-analysis.html"><a href="cluster-analysis.html#comparing-methods"><i class="fa fa-check"></i><b>7.1.5</b> Comparing methods</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="cluster-analysis.html"><a href="cluster-analysis.html#using-cluster-ids"><i class="fa fa-check"></i><b>7.2</b> Using cluster IDs</a></li>
+<li class="chapter" data-level="7.3" data-path="cluster-analysis.html"><a href="cluster-analysis.html#k-means-clustering"><i class="fa fa-check"></i><b>7.3</b> K-means clustering</a></li>
+<li class="chapter" data-level="7.4" data-path="cluster-analysis.html"><a href="cluster-analysis.html#packages-used-in-this-chapter-6"><i class="fa fa-check"></i><b>7.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html"><i class="fa fa-check"></i><b>8</b> Multidimensional Scaling (MDS)</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#metric-vs-non-metric"><i class="fa fa-check"></i><b>8.1</b> Metric vs non-metric</a></li>
+<li class="chapter" data-level="8.2" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#metric-mds"><i class="fa fa-check"></i><b>8.2</b> Metric MDS</a></li>
+<li class="chapter" data-level="8.3" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#non-metric-mds"><i class="fa fa-check"></i><b>8.3</b> Non-metric MDS</a></li>
+<li class="chapter" data-level="8.4" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#wrap-up"><i class="fa fa-check"></i><b>8.4</b> Wrap up</a></li>
+<li class="chapter" data-level="8.5" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#packages-used-in-this-chapter-7"><i class="fa fa-check"></i><b>8.5</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="distatis.html"><a href="distatis.html"><i class="fa fa-check"></i><b>9</b> DISTATIS</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="distatis.html"><a href="distatis.html#the-dataset-sorting-wines-by-color"><i class="fa fa-check"></i><b>9.1</b> The dataset: sorting wines by color</a></li>
+<li class="chapter" data-level="9.2" data-path="distatis.html"><a href="distatis.html#distatis-demonstrated"><i class="fa fa-check"></i><b>9.2</b> DISTATIS demonstrated</a></li>
+<li class="chapter" data-level="9.3" data-path="distatis.html"><a href="distatis.html#comparison-to-mds"><i class="fa fa-check"></i><b>9.3</b> Comparison to MDS</a></li>
+<li class="chapter" data-level="9.4" data-path="distatis.html"><a href="distatis.html#packages-used-in-this-chapter-8"><i class="fa fa-check"></i><b>9.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="correspondence-analysis-ca.html"><a href="correspondence-analysis-ca.html"><i class="fa fa-check"></i><b>10</b> Correspondence Analysis (CA)</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="correspondence-analysis-ca.html"><a href="correspondence-analysis-ca.html#packages-used-in-this-chapter-9"><i class="fa fa-check"></i><b>10.1</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="preference-mapping.html"><a href="preference-mapping.html"><i class="fa fa-check"></i><b>11</b> Preference Mapping</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="preference-mapping.html"><a href="preference-mapping.html#data"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
+<li class="chapter" data-level="11.2" data-path="preference-mapping.html"><a href="preference-mapping.html#internal-preference-mapping"><i class="fa fa-check"></i><b>11.2</b> Internal preference mapping</a></li>
+<li class="chapter" data-level="11.3" data-path="preference-mapping.html"><a href="preference-mapping.html#external-preference-mapping"><i class="fa fa-check"></i><b>11.3</b> External preference mapping</a>
+<ul>
+<li class="chapter" data-level="11.3.1" data-path="preference-mapping.html"><a href="preference-mapping.html#partial-least-squares-regression"><i class="fa fa-check"></i><b>11.3.1</b> Partial Least Squares Regression</a></li>
+</ul></li>
+<li class="chapter" data-level="11.4" data-path="preference-mapping.html"><a href="preference-mapping.html#other-approaches"><i class="fa fa-check"></i><b>11.4</b> Other approaches</a></li>
+<li class="chapter" data-level="11.5" data-path="preference-mapping.html"><a href="preference-mapping.html#principal-components-regression"><i class="fa fa-check"></i><b>11.5</b> Principal Components Regression</a></li>
+<li class="chapter" data-level="11.6" data-path="preference-mapping.html"><a href="preference-mapping.html#packages-used-in-this-chapter-10"><i class="fa fa-check"></i><b>11.6</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html"><i class="fa fa-check"></i><b>12</b> Multiple Factor(ial) Analysis (MFA)</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#mfa-vs-pca"><i class="fa fa-check"></i><b>12.1</b> MFA vs PCA</a></li>
+<li class="chapter" data-level="12.2" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#mfa-with-different-measurements"><i class="fa fa-check"></i><b>12.2</b> MFA with different measurements</a></li>
+<li class="chapter" data-level="12.3" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#wrapping-up"><i class="fa fa-check"></i><b>12.3</b> Wrapping up</a></li>
+<li class="chapter" data-level="12.4" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#packages-used-in-this-chapter-11"><i class="fa fa-check"></i><b>12.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html"><i class="fa fa-check"></i><b>13</b> Generalized Procrustes Analysis</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html#packages-used-in-this-chapter-12"><i class="fa fa-check"></i><b>13.1</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="wrapping-up-1.html"><a href="wrapping-up-1.html"><i class="fa fa-check"></i><b>14</b> Wrapping up</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The R Opus v2</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="cluster-analysis" class="section level1 hasAnchor" number="7">
+<h1><span class="header-section-number">Chapter 7</span> Cluster analysis<a href="cluster-analysis.html#cluster-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>The goal of any cluster analysis is to find groups (“clusters”) of observations that are “close to” each other in some sense, so as to reveal underlying structure in the data: typically, we would want to know that groups of more than one observation are very “close” so that we can speak about the group instead of the original observations. In most sensory evaluation, “close” is usually taken to mean “similar”, as the definitions of “close” we will operationalize are based on the sensory descriptors, so that observations that are “close” to each other will, in some sense, have similar sensory profiles.</p>
+<p>We could also use cluster analysis to explore possible hypotheses, if we have some hypotheses about the underlying group structure that exists–for example, if we think that wines made from the same grape would be more similar to each other, we’d expect those wines to show up in the same group. We’ll explore this more as we look at our results.</p>
+<p>We start by loading our results, as before. We will also define a tibble of product means, which will be our main data input to start with.</p>
+<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="cluster-analysis.html#cb230-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb230-2"><a href="cluster-analysis.html#cb230-2" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb230-3"><a href="cluster-analysis.html#cb230-3" tabindex="-1"></a><span class="fu">library</span>(factoextra) <span class="co"># this is new</span></span>
+<span id="cb230-4"><a href="cluster-analysis.html#cb230-4" tabindex="-1"></a></span>
+<span id="cb230-5"><a href="cluster-analysis.html#cb230-5" tabindex="-1"></a><span class="co"># I&#39;ve decided to use the `across()` syntax instead of the scoped mutate_*()</span></span>
+<span id="cb230-6"><a href="cluster-analysis.html#cb230-6" tabindex="-1"></a><span class="co"># functions, for documentation check out ?across()</span></span>
+<span id="cb230-7"><a href="cluster-analysis.html#cb230-7" tabindex="-1"></a>descriptive_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriDAFinal.csv&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb230-8"><a href="cluster-analysis.html#cb230-8" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="sc">~</span><span class="fu">as.factor</span>(.)))</span>
+<span id="cb230-9"><a href="cluster-analysis.html#cb230-9" tabindex="-1"></a></span>
+<span id="cb230-10"><a href="cluster-analysis.html#cb230-10" tabindex="-1"></a>descriptive_means <span class="ot">&lt;-</span> </span>
+<span id="cb230-11"><a href="cluster-analysis.html#cb230-11" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb230-12"><a href="cluster-analysis.html#cb230-12" tabindex="-1"></a>  <span class="fu">group_by</span>(ProductName) <span class="sc">%&gt;%</span></span>
+<span id="cb230-13"><a href="cluster-analysis.html#cb230-13" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span><span class="fu">mean</span>(.)))</span></code></pre></div>
+<p>We’re going to mostly use the built in <code>stats::hclust()</code> function for most of this workflow, but do know that this is the simplest (and perhaps not best) clustering tool available in <code>R</code>. It will do for our purposes.</p>
+<p>In the <strong>R Opus</strong>, HGH <em>scales</em> the mean data to have zero-means and unit-variance. This choice (it is not necessary for calculation) means that all descriptors will have equal impact on our estimates of proximity for the purpose of clustering. We’ll follow along.</p>
+<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb231-1"><a href="cluster-analysis.html#cb231-1" tabindex="-1"></a>descriptive_means_scaled <span class="ot">&lt;-</span> </span>
+<span id="cb231-2"><a href="cluster-analysis.html#cb231-2" tabindex="-1"></a>  descriptive_means <span class="sc">%&gt;%</span></span>
+<span id="cb231-3"><a href="cluster-analysis.html#cb231-3" tabindex="-1"></a>  <span class="co"># This line is desnse - notice the &quot;lambda&quot; (&quot;~&quot;) function that uses multiple</span></span>
+<span id="cb231-4"><a href="cluster-analysis.html#cb231-4" tabindex="-1"></a>  <span class="co"># references to the same column: we are subtracting the column mean and</span></span>
+<span id="cb231-5"><a href="cluster-analysis.html#cb231-5" tabindex="-1"></a>  <span class="co"># dividing by the column sd for each column.</span></span>
+<span id="cb231-6"><a href="cluster-analysis.html#cb231-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> (. <span class="sc">-</span> <span class="fu">mean</span>(.)) <span class="sc">/</span> <span class="fu">sd</span>(.)))</span></code></pre></div>
+<p>Now we’re ready to think about “close”. As the word implies, we’re going to examine the distances among all of our products. The built in function in <code>R</code> to calculate distance is <code>stats::dist()</code>. This will serve our purposes well.</p>
+<div class="sourceCode" id="cb232"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb232-1"><a href="cluster-analysis.html#cb232-1" tabindex="-1"></a>descriptive_distance <span class="ot">&lt;-</span> </span>
+<span id="cb232-2"><a href="cluster-analysis.html#cb232-2" tabindex="-1"></a>  descriptive_means_scaled <span class="sc">%&gt;%</span></span>
+<span id="cb232-3"><a href="cluster-analysis.html#cb232-3" tabindex="-1"></a>  <span class="co"># We need to remember to move our variable column to the &quot;rownames&quot; attribute</span></span>
+<span id="cb232-4"><a href="cluster-analysis.html#cb232-4" tabindex="-1"></a>  <span class="co"># so that the older function keeps it (and doesn&#39;t try to find distances</span></span>
+<span id="cb232-5"><a href="cluster-analysis.html#cb232-5" tabindex="-1"></a>  <span class="co"># between character vectors)</span></span>
+<span id="cb232-6"><a href="cluster-analysis.html#cb232-6" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;ProductName&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb232-7"><a href="cluster-analysis.html#cb232-7" tabindex="-1"></a>  <span class="fu">dist</span>(<span class="at">method =</span> <span class="st">&quot;euclidean&quot;</span>)</span>
+<span id="cb232-8"><a href="cluster-analysis.html#cb232-8" tabindex="-1"></a></span>
+<span id="cb232-9"><a href="cluster-analysis.html#cb232-9" tabindex="-1"></a>descriptive_distance</span></code></pre></div>
+<pre><code>##             C_MERLOT C_REFOSCO  C_SYRAH C_ZINFANDEL I_MERLOT I_PRIMITIVO
+## C_REFOSCO   5.083950                                                    
+## C_SYRAH     4.525147  5.472269                                          
+## C_ZINFANDEL 3.909011  5.856348 4.817566                                 
+## I_MERLOT    4.503404  6.405151 6.153529    6.522035                     
+## I_PRIMITIVO 6.129930  7.853063 5.998705    5.543431 7.842528            
+## I_REFOSCO   6.272963  6.992652 5.408757    6.917554 4.452965    8.514098
+## I_SYRAH     6.911105  8.427799 6.359281    6.170264 7.546229    5.747512
+##             I_REFOSCO
+## C_REFOSCO            
+## C_SYRAH              
+## C_ZINFANDEL          
+## I_MERLOT             
+## I_PRIMITIVO          
+## I_REFOSCO            
+## I_SYRAH      7.537424</code></pre>
+<p>The <code>dist()</code> function produces a lower-triangular matrix of the distances between each pair of mean vectors. Because we selected <code>method = "euclidean"</code> the distance is calculated as the typical (L2) norm: the square-root of the the sum of the squared differences between each attribute mean for the two products. Other common options are available, see <code>?dist</code>.</p>
+<p>Technically, all (mathematical) distances must fulfill 4 properties:</p>
+<ol style="list-style-type: decimal">
+<li>For any object, <span class="math inline">\(dist(a,a) = 0\)</span> (the distance of an object to itself is always 0)</li>
+<li>For all pairs of objects, <span class="math inline">\(dist(a,b) ≥ 0\)</span> (all distances are positive or 0)</li>
+<li>For any pair of objects, <span class="math inline">\(dist(a,b) = dist(b,a)\)</span> (distane is symmetric)</li>
+<li>For any three objects, <span class="math inline">\(dist(a,b) + dist(b,c) ≥ dist(a,c)\)</span> (the triangle inequality - I like the <a href="https://en.wikipedia.org/wiki/Distance#Mathematical_formalization">Wikipedia description</a> as “intermediate objects can’t speed you up”)</li>
+</ol>
+<p>Enough about distance! Let’s get on with it. We can see that our distance matrix is all positive entries that give us some idea of “how close” each pair of objects is. Smaller numbers indicate proximity.</p>
+<div id="hierarchical-clustering-on-distances" class="section level2 hasAnchor" number="7.1">
+<h2><span class="header-section-number">7.1</span> Hierarchical clustering on distances<a href="cluster-analysis.html#hierarchical-clustering-on-distances" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>One of the major families of clustering is called “hierarchical” clustering (HCA: Hierarchical Clustering Analysis). In plain language, hierarchical methods are iterative methods that start with the assumption that each object (sample) starts in its own group and then, for each step in the process, the two “closest” objects are merged into a group. Different strategies for calculating distance (between the merged groups, as we will typically stick with Euclidean distance as our base metric for singlets) and different methods for making the merge define the different hierarchical clustering approaches.</p>
+<p>In the original <strong>R Opus</strong>, HGH demonstrates 4 different HCA methods. We’ll look at each briefly.</p>
+<div id="wards-method" class="section level3 hasAnchor" number="7.1.1">
+<h3><span class="header-section-number">7.1.1</span> Ward’s Method<a href="cluster-analysis.html#wards-method" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Ward’s Method is probably the most commonly used (and intellectually satisfying approach). For Ward’s method, to quote <span class="citation">Rencher (<a href="#ref-rencherMethods2002">2002, 466</a>)</span>:</p>
+<blockquote>
+<p>Ward’s method, also called the incremental sum of squares method, uses the within cluster (squared) distances and the between-cluster (squared) distances… Ward’s method joins the two clusters A and B that minimize the increase in [the difference between the new AB cluster’s within-distance and the old A and B within-distances].</p>
+</blockquote>
+<p>Ward’s method, qualitatively, tends to find balanced clusters that result from the merge of smaller clusters.</p>
+<div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="cluster-analysis.html#cb234-1" tabindex="-1"></a>cluster_ward <span class="ot">&lt;-</span></span>
+<span id="cb234-2"><a href="cluster-analysis.html#cb234-2" tabindex="-1"></a>  descriptive_distance <span class="sc">%&gt;%</span></span>
+<span id="cb234-3"><a href="cluster-analysis.html#cb234-3" tabindex="-1"></a>  <span class="fu">hclust</span>(<span class="at">method =</span> <span class="st">&quot;ward.D2&quot;</span>)</span></code></pre></div>
+<p>Note that the original <strong>R Opus</strong> used <code>method = "ward"</code>–according to the documentation in <code>?hclust</code>:</p>
+<blockquote>
+<p>Two different algorithms are found in the literature for Ward clustering. The one used by option “ward.D” (equivalent to the only Ward option “ward” in R versions ≤ 3.0.3) does not implement Ward’s (1963) clustering criterion, whereas option “ward.D2” implements that criterion (Murtagh and Legendre 2014). With the latter, the dissimilarities are squared before cluster updating. Note that agnes(<em>, method=“ward”) corresponds to hclust(</em>, “ward.D2”).</p>
+</blockquote>
+<div class="sourceCode" id="cb235"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb235-1"><a href="cluster-analysis.html#cb235-1" tabindex="-1"></a>p_ward <span class="ot">&lt;-</span> </span>
+<span id="cb235-2"><a href="cluster-analysis.html#cb235-2" tabindex="-1"></a>  cluster_ward <span class="sc">%&gt;%</span></span>
+<span id="cb235-3"><a href="cluster-analysis.html#cb235-3" tabindex="-1"></a>  <span class="fu">fviz_dend</span>(<span class="at">k =</span> <span class="dv">3</span>, <span class="at">cex =</span> <span class="dv">2</span><span class="sc">/</span><span class="dv">3</span>)</span></code></pre></div>
+<p>We’re going to use the <code>factoextra::fviz_dend()</code> function for drawing our clusters. Long-story-short, the native <code>ggplot2</code> functions for plotting tree- and graph-like structures like “dendrograms” (the tree plots that are common for HCA results) don’t really exist, and <code>fviz_dend()</code> is going to do a lot of heavy lifting for us in the background by giving us a basic dendrogram <code>ggplot2</code> object that we can alter as we see fit using more familiar syntax.</p>
+<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="cluster-analysis.html#cb236-1" tabindex="-1"></a>p_ward <span class="ot">&lt;-</span> </span>
+<span id="cb236-2"><a href="cluster-analysis.html#cb236-2" tabindex="-1"></a>  p_ward <span class="sc">+</span> </span>
+<span id="cb236-3"><a href="cluster-analysis.html#cb236-3" tabindex="-1"></a>  <span class="co"># Stretch out the y-axis so that we can see the labels</span></span>
+<span id="cb236-4"><a href="cluster-analysis.html#cb236-4" tabindex="-1"></a>  <span class="fu">expand_limits</span>(<span class="at">y =</span> <span class="sc">-</span><span class="dv">6</span>) <span class="sc">+</span> </span>
+<span id="cb236-5"><a href="cluster-analysis.html#cb236-5" tabindex="-1"></a>  <span class="co"># Clean up the messiness</span></span>
+<span id="cb236-6"><a href="cluster-analysis.html#cb236-6" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Clustering with Ward&#39;s method&quot;</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb236-7"><a href="cluster-analysis.html#cb236-7" tabindex="-1"></a>  <span class="fu">scale_color_viridis_d</span>()</span>
+<span id="cb236-8"><a href="cluster-analysis.html#cb236-8" tabindex="-1"></a></span>
+<span id="cb236-9"><a href="cluster-analysis.html#cb236-9" tabindex="-1"></a>p_ward</span></code></pre></div>
+<p><img src="07-HCA_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Notice that we had to <em>tell</em> the program (in this case <code>fviz_dend()</code>) how many groups we wanted to label separately (<code>k = 3</code>). We’re following HGH here. In general, while there are methods for attempting to determine the “right” number of groups from HCA, this involves “researcher degrees of freedom” (i.e., “good judgment”).</p>
+</div>
+<div id="single-linkage" class="section level3 hasAnchor" number="7.1.2">
+<h3><span class="header-section-number">7.1.2</span> Single linkage<a href="cluster-analysis.html#single-linkage" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Single linkage is also called “nearest neighbor” clustering. In single-linkage, the key element is that the distance between any two <em>clusters</em> <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> is defined as the <em>minimum</em> distance between a point <span class="math inline">\(a\)</span> in <span class="math inline">\(A\)</span> and a point <span class="math inline">\(b\)</span> in <span class="math inline">\(B\)</span>. Single linkage is, therefore, “greedy”, because big clusters will tend to get bigger: there is a greater chance that a large cluster will have a small distance between <em>some</em> point within it and another point outside it.</p>
+<div class="sourceCode" id="cb237"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb237-1"><a href="cluster-analysis.html#cb237-1" tabindex="-1"></a>cluster_single <span class="ot">&lt;-</span> </span>
+<span id="cb237-2"><a href="cluster-analysis.html#cb237-2" tabindex="-1"></a>  descriptive_distance <span class="sc">%&gt;%</span></span>
+<span id="cb237-3"><a href="cluster-analysis.html#cb237-3" tabindex="-1"></a>  <span class="fu">hclust</span>(<span class="at">method =</span> <span class="st">&quot;single&quot;</span>)</span></code></pre></div>
+<p>We can use the same number of groups (<code>k = 3</code>) so we can have a consistent comparison among the methods.</p>
+<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb238-1"><a href="cluster-analysis.html#cb238-1" tabindex="-1"></a>p_single <span class="ot">&lt;-</span> </span>
+<span id="cb238-2"><a href="cluster-analysis.html#cb238-2" tabindex="-1"></a>  cluster_single <span class="sc">%&gt;%</span></span>
+<span id="cb238-3"><a href="cluster-analysis.html#cb238-3" tabindex="-1"></a>  <span class="fu">fviz_dend</span>(<span class="at">k =</span> <span class="dv">3</span>, <span class="at">cex =</span> <span class="dv">2</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb238-4"><a href="cluster-analysis.html#cb238-4" tabindex="-1"></a>  <span class="fu">expand_limits</span>(<span class="at">y =</span> <span class="sc">-</span><span class="dv">6</span>) <span class="sc">+</span> </span>
+<span id="cb238-5"><a href="cluster-analysis.html#cb238-5" tabindex="-1"></a>  <span class="fu">scale_color_viridis_d</span>() <span class="sc">+</span></span>
+<span id="cb238-6"><a href="cluster-analysis.html#cb238-6" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="cn">NULL</span>, <span class="at">title =</span> <span class="st">&quot;Clustering with Single Linkage&quot;</span>)</span>
+<span id="cb238-7"><a href="cluster-analysis.html#cb238-7" tabindex="-1"></a></span>
+<span id="cb238-8"><a href="cluster-analysis.html#cb238-8" tabindex="-1"></a>p_single</span></code></pre></div>
+<p><img src="07-HCA_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Notice the “greediness”: large single group keeps adding a single new observation at each step of the algorithm, resulting in this characteristic “step” pattern. For most situations, single linkage is a not a recommended approach for clustering.</p>
+</div>
+<div id="complete-linkage" class="section level3 hasAnchor" number="7.1.3">
+<h3><span class="header-section-number">7.1.3</span> Complete Linkage<a href="cluster-analysis.html#complete-linkage" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The complete linkage approach is just the opposite of the single linkage method: the distance between two clusters is the <em>maximum</em> distance between all two points <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> in clusters <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, respectively. With this definition, the same iterative approach is carried out and the two closest clusters are merged at each step.</p>
+<div class="sourceCode" id="cb239"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb239-1"><a href="cluster-analysis.html#cb239-1" tabindex="-1"></a>cluster_complete <span class="ot">&lt;-</span> </span>
+<span id="cb239-2"><a href="cluster-analysis.html#cb239-2" tabindex="-1"></a>  descriptive_distance <span class="sc">%&gt;%</span></span>
+<span id="cb239-3"><a href="cluster-analysis.html#cb239-3" tabindex="-1"></a>  <span class="fu">hclust</span>(<span class="at">method =</span> <span class="st">&quot;complete&quot;</span>)</span>
+<span id="cb239-4"><a href="cluster-analysis.html#cb239-4" tabindex="-1"></a></span>
+<span id="cb239-5"><a href="cluster-analysis.html#cb239-5" tabindex="-1"></a>p_complete <span class="ot">&lt;-</span></span>
+<span id="cb239-6"><a href="cluster-analysis.html#cb239-6" tabindex="-1"></a>  cluster_complete <span class="sc">%&gt;%</span></span>
+<span id="cb239-7"><a href="cluster-analysis.html#cb239-7" tabindex="-1"></a>  <span class="fu">fviz_dend</span>(<span class="at">k =</span> <span class="dv">3</span>, <span class="at">cex =</span> <span class="dv">2</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb239-8"><a href="cluster-analysis.html#cb239-8" tabindex="-1"></a>  <span class="fu">expand_limits</span>(<span class="at">y =</span> <span class="sc">-</span><span class="dv">6</span>) <span class="sc">+</span> </span>
+<span id="cb239-9"><a href="cluster-analysis.html#cb239-9" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="cn">NULL</span>, <span class="at">title =</span> <span class="st">&quot;Clustering with Complete Linkage&quot;</span>) <span class="sc">+</span></span>
+<span id="cb239-10"><a href="cluster-analysis.html#cb239-10" tabindex="-1"></a>  <span class="fu">scale_color_viridis_d</span>()</span>
+<span id="cb239-11"><a href="cluster-analysis.html#cb239-11" tabindex="-1"></a></span>
+<span id="cb239-12"><a href="cluster-analysis.html#cb239-12" tabindex="-1"></a>p_complete</span></code></pre></div>
+<p><img src="07-HCA_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>Intuitively, complete linkage avoids the “greediness” problem of single linkage. It is the default method used in <code>hclust()</code>: see <code>?hclust</code>.</p>
+</div>
+<div id="average-linkage" class="section level3 hasAnchor" number="7.1.4">
+<h3><span class="header-section-number">7.1.4</span> Average Linkage<a href="cluster-analysis.html#average-linkage" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>As the name implies, in the average linkage method, the distance between two clusters is defined as the average distance between all objects <span class="math inline">\(a_i\)</span> in <span class="math inline">\(A\)</span> and all objects <span class="math inline">\(b_j\)</span> in <span class="math inline">\(B\)</span>.</p>
+<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb240-1"><a href="cluster-analysis.html#cb240-1" tabindex="-1"></a>cluster_average <span class="ot">&lt;-</span></span>
+<span id="cb240-2"><a href="cluster-analysis.html#cb240-2" tabindex="-1"></a>  descriptive_distance <span class="sc">%&gt;%</span></span>
+<span id="cb240-3"><a href="cluster-analysis.html#cb240-3" tabindex="-1"></a>  <span class="fu">hclust</span>(<span class="at">method =</span> <span class="st">&quot;average&quot;</span>)</span>
+<span id="cb240-4"><a href="cluster-analysis.html#cb240-4" tabindex="-1"></a></span>
+<span id="cb240-5"><a href="cluster-analysis.html#cb240-5" tabindex="-1"></a>p_average <span class="ot">&lt;-</span> </span>
+<span id="cb240-6"><a href="cluster-analysis.html#cb240-6" tabindex="-1"></a>  cluster_average <span class="sc">%&gt;%</span></span>
+<span id="cb240-7"><a href="cluster-analysis.html#cb240-7" tabindex="-1"></a>  <span class="fu">fviz_dend</span>(<span class="at">k =</span> <span class="dv">3</span>, <span class="at">cex =</span> <span class="dv">2</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb240-8"><a href="cluster-analysis.html#cb240-8" tabindex="-1"></a>  <span class="fu">expand_limits</span>(<span class="at">y =</span> <span class="sc">-</span><span class="dv">6</span>) <span class="sc">+</span> </span>
+<span id="cb240-9"><a href="cluster-analysis.html#cb240-9" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Clustering with Average Linkage&quot;</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span> </span>
+<span id="cb240-10"><a href="cluster-analysis.html#cb240-10" tabindex="-1"></a>  <span class="fu">scale_color_viridis_d</span>()</span>
+<span id="cb240-11"><a href="cluster-analysis.html#cb240-11" tabindex="-1"></a></span>
+<span id="cb240-12"><a href="cluster-analysis.html#cb240-12" tabindex="-1"></a>p_average</span></code></pre></div>
+<p><img src="07-HCA_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+<div id="comparing-methods" class="section level3 hasAnchor" number="7.1.5">
+<h3><span class="header-section-number">7.1.5</span> Comparing methods<a href="cluster-analysis.html#comparing-methods" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Let’s look at the results of our cluster analyses side by side.</p>
+<div class="sourceCode" id="cb241"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb241-1"><a href="cluster-analysis.html#cb241-1" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb241-2"><a href="cluster-analysis.html#cb241-2" tabindex="-1"></a></span>
+<span id="cb241-3"><a href="cluster-analysis.html#cb241-3" tabindex="-1"></a>(p_ward <span class="sc">+</span> p_single) <span class="sc">/</span> (p_complete <span class="sc">+</span> p_average)</span></code></pre></div>
+<p><img src="07-HCA_files/figure-html/unnamed-chunk-11-1.png" width="864" /></p>
+<p>Only single linkage gives us very different results; the others are a matter of scaling. This could be quite different if we had a larger number of more dissimilar objects - recall our distance matrix:</p>
+<div class="sourceCode" id="cb242"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb242-1"><a href="cluster-analysis.html#cb242-1" tabindex="-1"></a>descriptive_distance</span></code></pre></div>
+<pre><code>##             C_MERLOT C_REFOSCO  C_SYRAH C_ZINFANDEL I_MERLOT I_PRIMITIVO
+## C_REFOSCO   5.083950                                                    
+## C_SYRAH     4.525147  5.472269                                          
+## C_ZINFANDEL 3.909011  5.856348 4.817566                                 
+## I_MERLOT    4.503404  6.405151 6.153529    6.522035                     
+## I_PRIMITIVO 6.129930  7.853063 5.998705    5.543431 7.842528            
+## I_REFOSCO   6.272963  6.992652 5.408757    6.917554 4.452965    8.514098
+## I_SYRAH     6.911105  8.427799 6.359281    6.170264 7.546229    5.747512
+##             I_REFOSCO
+## C_REFOSCO            
+## C_SYRAH              
+## C_ZINFANDEL          
+## I_MERLOT             
+## I_PRIMITIVO          
+## I_REFOSCO            
+## I_SYRAH      7.537424</code></pre>
+<p>Not actually that much variation!</p>
+<p>We can do the same thing with our individual observations.</p>
+<div class="sourceCode" id="cb244"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb244-1"><a href="cluster-analysis.html#cb244-1" tabindex="-1"></a>individual_distances <span class="ot">&lt;-</span> </span>
+<span id="cb244-2"><a href="cluster-analysis.html#cb244-2" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb244-3"><a href="cluster-analysis.html#cb244-3" tabindex="-1"></a>  <span class="fu">unite</span>(NJ, ProductName, NR, <span class="at">col =</span> <span class="st">&quot;ID&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb244-4"><a href="cluster-analysis.html#cb244-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> (. <span class="sc">-</span> <span class="fu">mean</span>(.)) <span class="sc">/</span> <span class="fu">sd</span>(.))) <span class="sc">%&gt;%</span></span>
+<span id="cb244-5"><a href="cluster-analysis.html#cb244-5" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;ID&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb244-6"><a href="cluster-analysis.html#cb244-6" tabindex="-1"></a>  <span class="fu">dist</span>()</span>
+<span id="cb244-7"><a href="cluster-analysis.html#cb244-7" tabindex="-1"></a></span>
+<span id="cb244-8"><a href="cluster-analysis.html#cb244-8" tabindex="-1"></a>clusters_individual <span class="ot">&lt;-</span> </span>
+<span id="cb244-9"><a href="cluster-analysis.html#cb244-9" tabindex="-1"></a>  individual_distances <span class="sc">%&gt;%</span></span>
+<span id="cb244-10"><a href="cluster-analysis.html#cb244-10" tabindex="-1"></a>  <span class="fu">hclust</span>(<span class="at">method =</span> <span class="st">&quot;ward.D2&quot;</span>)</span>
+<span id="cb244-11"><a href="cluster-analysis.html#cb244-11" tabindex="-1"></a></span>
+<span id="cb244-12"><a href="cluster-analysis.html#cb244-12" tabindex="-1"></a><span class="co"># Here we drop the original unique IDs for just the ProductName</span></span>
+<span id="cb244-13"><a href="cluster-analysis.html#cb244-13" tabindex="-1"></a>clusters_individual<span class="sc">$</span>labels <span class="ot">&lt;-</span> <span class="fu">str_extract</span>(clusters_individual<span class="sc">$</span>labels, <span class="st">&quot;[A-Z]_[A-Z]+&quot;</span>)</span>
+<span id="cb244-14"><a href="cluster-analysis.html#cb244-14" tabindex="-1"></a></span>
+<span id="cb244-15"><a href="cluster-analysis.html#cb244-15" tabindex="-1"></a>p <span class="ot">&lt;-</span> clusters_individual <span class="sc">%&gt;%</span></span>
+<span id="cb244-16"><a href="cluster-analysis.html#cb244-16" tabindex="-1"></a>  <span class="fu">fviz_dend</span>(<span class="at">cex =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>,</span>
+<span id="cb244-17"><a href="cluster-analysis.html#cb244-17" tabindex="-1"></a>            <span class="at">k =</span> <span class="dv">8</span>,</span>
+<span id="cb244-18"><a href="cluster-analysis.html#cb244-18" tabindex="-1"></a>            <span class="at">label_cols =</span> clusters_individual<span class="sc">$</span>labels <span class="sc">%&gt;%</span> <span class="fu">as.factor</span>() <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()) <span class="sc">+</span> </span>
+<span id="cb244-19"><a href="cluster-analysis.html#cb244-19" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Clustering raw data with Ward&#39;s method&quot;</span>) <span class="sc">+</span></span>
+<span id="cb244-20"><a href="cluster-analysis.html#cb244-20" tabindex="-1"></a>  <span class="fu">scale_color_viridis_d</span>()</span>
+<span id="cb244-21"><a href="cluster-analysis.html#cb244-21" tabindex="-1"></a></span>
+<span id="cb244-22"><a href="cluster-analysis.html#cb244-22" tabindex="-1"></a>p</span></code></pre></div>
+<p><img src="07-HCA_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>We tried looking for 8 clusters (since there are 8 wines) and giving each label (the individual row observation representing a single judge rating a single wine sample) the color of the rated wine. It is obvious that the wines don’t cluster together based on their sample ID.</p>
+</div>
+</div>
+<div id="using-cluster-ids" class="section level2 hasAnchor" number="7.2">
+<h2><span class="header-section-number">7.2</span> Using cluster IDs<a href="cluster-analysis.html#using-cluster-ids" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Above we played a little bit to see if, for the raw data, clustering provided a structure that mirrored product ID. But that was more for demonstration purposes than because it was a good data-analysis practice. More standard in sensory evaluation workflow would be to conduct a clustering analysis and then determine whether that cluster “explained” sensory variation in the base data.</p>
+<p>From our original clustering results, we can pull out a tibble that tells us which sample belongs to which cluster:</p>
+<div class="sourceCode" id="cb245"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb245-1"><a href="cluster-analysis.html#cb245-1" tabindex="-1"></a><span class="co"># We use `cutree()` with `k = 3` to get 3 groups from the &quot;tree&quot; (clustering)</span></span>
+<span id="cb245-2"><a href="cluster-analysis.html#cb245-2" tabindex="-1"></a>groups_from_ward <span class="ot">&lt;-</span> </span>
+<span id="cb245-3"><a href="cluster-analysis.html#cb245-3" tabindex="-1"></a>  cluster_ward <span class="sc">%&gt;%</span></span>
+<span id="cb245-4"><a href="cluster-analysis.html#cb245-4" tabindex="-1"></a>  <span class="fu">cutree</span>(<span class="at">k =</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb245-5"><a href="cluster-analysis.html#cb245-5" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;ProductName&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb245-6"><a href="cluster-analysis.html#cb245-6" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">ward_group =</span> value) <span class="sc">%&gt;%</span></span>
+<span id="cb245-7"><a href="cluster-analysis.html#cb245-7" tabindex="-1"></a>  <span class="co"># It will be helpful to treat group membership as a nominal variable</span></span>
+<span id="cb245-8"><a href="cluster-analysis.html#cb245-8" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ward_group =</span> <span class="fu">factor</span>(ward_group))</span>
+<span id="cb245-9"><a href="cluster-analysis.html#cb245-9" tabindex="-1"></a></span>
+<span id="cb245-10"><a href="cluster-analysis.html#cb245-10" tabindex="-1"></a><span class="co"># The `dplyr::left_join()` function matches up the two tibbles based on the</span></span>
+<span id="cb245-11"><a href="cluster-analysis.html#cb245-11" tabindex="-1"></a><span class="co"># value of a shared column(s): in this case, `ProductName`</span></span>
+<span id="cb245-12"><a href="cluster-analysis.html#cb245-12" tabindex="-1"></a>descriptive_data <span class="ot">&lt;-</span> </span>
+<span id="cb245-13"><a href="cluster-analysis.html#cb245-13" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb245-14"><a href="cluster-analysis.html#cb245-14" tabindex="-1"></a>  <span class="fu">left_join</span>(groups_from_ward)</span>
+<span id="cb245-15"><a href="cluster-analysis.html#cb245-15" tabindex="-1"></a></span>
+<span id="cb245-16"><a href="cluster-analysis.html#cb245-16" tabindex="-1"></a><span class="fu">glimpse</span>(descriptive_data)</span></code></pre></div>
+<pre><code>## Rows: 336
+## Columns: 24
+## $ NJ              &lt;fct&gt; 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1400, …
+## $ ProductName     &lt;chr&gt; &quot;C_MERLOT&quot;, &quot;C_SYRAH&quot;, &quot;C_ZINFANDEL&quot;, &quot;C_REFOSCO&quot;, &quot;I_…
+## $ NR              &lt;fct&gt; 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, …
+## $ Red_berry       &lt;dbl&gt; 5.1, 5.6, 4.9, 5.0, 3.3, 5.7, 2.9, 3.2, 0.1, 1.6, 4.5,…
+## $ Dark_berry      &lt;dbl&gt; 5.8, 1.9, 2.6, 1.9, 7.2, 3.6, 5.1, 6.0, 0.1, 0.7, 2.9,…
+## $ Jam             &lt;dbl&gt; 2.1, 3.9, 1.4, 7.8, 0.5, 8.7, 8.7, 4.0, 0.2, 0.0, 0.3,…
+## $ Dried_fruit     &lt;dbl&gt; 4.7, 1.2, 5.9, 0.6, 5.8, 1.9, 0.4, 0.7, 2.9, 6.4, 2.4,…
+## $ Artificial_frui &lt;dbl&gt; 1.0, 7.9, 0.8, 6.6, 0.7, 7.4, 6.2, 4.1, 0.1, 0.1, 0.1,…
+## $ Chocolate       &lt;dbl&gt; 2.9, 1.0, 2.0, 6.4, 2.1, 3.3, 3.4, 3.6, 0.2, 1.0, 0.2,…
+## $ Vanilla         &lt;dbl&gt; 5.0, 8.3, 2.7, 5.5, 1.3, 6.9, 8.1, 4.8, 2.0, 0.8, 1.9,…
+## $ Oak             &lt;dbl&gt; 5.0, 2.3, 5.6, 3.6, 2.1, 1.5, 1.8, 2.6, 3.0, 5.4, 6.1,…
+## $ Burned          &lt;dbl&gt; 1.4, 1.8, 1.9, 3.2, 5.6, 0.2, 0.4, 4.7, 7.5, 5.1, 0.3,…
+## $ Leather         &lt;dbl&gt; 2.3, 3.5, 4.3, 0.3, 6.5, 1.5, 4.1, 6.5, 0.7, 0.8, 0.2,…
+## $ Earthy          &lt;dbl&gt; 0.6, 1.0, 0.6, 0.2, 4.7, 0.3, 0.5, 1.9, 0.7, 3.0, 1.3,…
+## $ Spicy           &lt;dbl&gt; 3.2, 0.7, 1.4, 2.9, 0.7, 3.1, 0.7, 1.4, 0.3, 3.2, 3.1,…
+## $ Pepper          &lt;dbl&gt; 5.4, 3.0, 4.1, 0.9, 2.8, 1.6, 3.6, 4.5, 0.1, 2.0, 0.9,…
+## $ Grassy          &lt;dbl&gt; 2.1, 0.6, 3.6, 1.8, 3.8, 0.9, 2.3, 0.8, 0.1, 1.3, 0.4,…
+## $ Medicinal       &lt;dbl&gt; 0.4, 2.2, 1.7, 0.2, 2.6, 0.5, 0.2, 3.8, 0.1, 2.1, 0.1,…
+## $ `Band-aid`      &lt;dbl&gt; 0.4, 0.4, 0.1, 0.2, 5.1, 1.2, 0.2, 6.2, 0.1, 1.1, 0.1,…
+## $ Sour            &lt;dbl&gt; 5.0, 9.7, 7.8, 8.3, 7.6, 7.2, 5.9, 6.3, 5.7, 6.4, 5.4,…
+## $ Bitter          &lt;dbl&gt; 5.9, 5.2, 3.5, 3.0, 1.9, 9.8, 2.9, 0.2, 0.6, 2.9, 0.1,…
+## $ Alcohol         &lt;dbl&gt; 9.0, 7.2, 4.7, 8.9, 2.8, 8.7, 1.6, 7.0, 1.6, 5.4, 4.9,…
+## $ Astringent      &lt;dbl&gt; 8.7, 8.3, 5.0, 7.8, 5.9, 8.0, 2.6, 4.2, 5.5, 5.1, 5.9,…
+## $ ward_group      &lt;fct&gt; 1, 1, 1, 1, 2, 3, 3, 2, 1, 1, 1, 1, 2, 3, 3, 2, 1, 1, …</code></pre>
+<p>Now we have a <code>factor</code> identifying which cluster (from an HCA with Ward’s Method and 3 groups) each wine belongs to. We can use this structure as a new possible input for M/ANOVA, like we did in <a href="manova-multivariate-analysis-of-variance.html#manova-multivariate-analysis-of-variance">MANOVA (Multivariate Analysis of Variance)</a>.</p>
+<div class="sourceCode" id="cb247"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb247-1"><a href="cluster-analysis.html#cb247-1" tabindex="-1"></a>cluster_manova <span class="ot">&lt;-</span> </span>
+<span id="cb247-2"><a href="cluster-analysis.html#cb247-2" tabindex="-1"></a>  <span class="fu">manova</span>(<span class="at">formula =</span> <span class="fu">as.matrix</span>(descriptive_data[, <span class="dv">4</span><span class="sc">:</span><span class="dv">23</span>]) <span class="sc">~</span> ward_group, </span>
+<span id="cb247-3"><a href="cluster-analysis.html#cb247-3" tabindex="-1"></a>         <span class="at">data =</span> descriptive_data)</span>
+<span id="cb247-4"><a href="cluster-analysis.html#cb247-4" tabindex="-1"></a></span>
+<span id="cb247-5"><a href="cluster-analysis.html#cb247-5" tabindex="-1"></a><span class="co"># We get a &quot;significant&quot; 1-way MANOVA result for the effect of cluster</span></span>
+<span id="cb247-6"><a href="cluster-analysis.html#cb247-6" tabindex="-1"></a><span class="co"># membership on overall sensory profile.</span></span>
+<span id="cb247-7"><a href="cluster-analysis.html#cb247-7" tabindex="-1"></a><span class="fu">summary</span>(cluster_manova, <span class="at">test =</span> <span class="st">&quot;W&quot;</span>)</span></code></pre></div>
+<pre><code>##             Df   Wilks approx F num Df den Df    Pr(&gt;F)    
+## ward_group   2 0.52896   5.8867     40    628 &lt; 2.2e-16 ***
+## Residuals  333                                             
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb249"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb249-1"><a href="cluster-analysis.html#cb249-1" tabindex="-1"></a><span class="co"># Let&#39;s review how to use nest() and map() functions to tidily apply 1-way ANOVA</span></span>
+<span id="cb249-2"><a href="cluster-analysis.html#cb249-2" tabindex="-1"></a><span class="co"># to each variable.</span></span>
+<span id="cb249-3"><a href="cluster-analysis.html#cb249-3" tabindex="-1"></a></span>
+<span id="cb249-4"><a href="cluster-analysis.html#cb249-4" tabindex="-1"></a>descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb249-5"><a href="cluster-analysis.html#cb249-5" tabindex="-1"></a>  <span class="co"># We are going to ignore (marginalize) reps and judges and even products</span></span>
+<span id="cb249-6"><a href="cluster-analysis.html#cb249-6" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>NR, <span class="sc">-</span>NJ, <span class="sc">-</span>ProductName) <span class="sc">%&gt;%</span></span>
+<span id="cb249-7"><a href="cluster-analysis.html#cb249-7" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>ward_group,</span>
+<span id="cb249-8"><a href="cluster-analysis.html#cb249-8" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;descriptor&quot;</span>,</span>
+<span id="cb249-9"><a href="cluster-analysis.html#cb249-9" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;rating&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb249-10"><a href="cluster-analysis.html#cb249-10" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">data =</span> <span class="sc">-</span>descriptor) <span class="sc">%&gt;%</span></span>
+<span id="cb249-11"><a href="cluster-analysis.html#cb249-11" tabindex="-1"></a>  <span class="co"># run 1-way ANOVAs</span></span>
+<span id="cb249-12"><a href="cluster-analysis.html#cb249-12" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">anova_results =</span> <span class="fu">map</span>(<span class="at">.x =</span> data,</span>
+<span id="cb249-13"><a href="cluster-analysis.html#cb249-13" tabindex="-1"></a>                             <span class="at">.f =</span> <span class="sc">~</span><span class="fu">aov</span>(rating <span class="sc">~</span> ward_group, <span class="at">data =</span> .))) <span class="sc">%&gt;%</span></span>
+<span id="cb249-14"><a href="cluster-analysis.html#cb249-14" tabindex="-1"></a>  <span class="co"># use broom::tidy() to get tibble-ized summaries out of the `aov` objects</span></span>
+<span id="cb249-15"><a href="cluster-analysis.html#cb249-15" tabindex="-1"></a>  <span class="fu">transmute</span>(descriptor,</span>
+<span id="cb249-16"><a href="cluster-analysis.html#cb249-16" tabindex="-1"></a>            <span class="at">tidy_summary =</span> <span class="fu">map</span>(anova_results, broom<span class="sc">::</span>tidy)) <span class="sc">%&gt;%</span></span>
+<span id="cb249-17"><a href="cluster-analysis.html#cb249-17" tabindex="-1"></a>  <span class="fu">unnest</span>(<span class="fu">everything</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb249-18"><a href="cluster-analysis.html#cb249-18" tabindex="-1"></a>  <span class="fu">filter</span>(term  <span class="sc">!=</span> <span class="st">&quot;Residuals&quot;</span>,</span>
+<span id="cb249-19"><a href="cluster-analysis.html#cb249-19" tabindex="-1"></a>         p.value <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb249-20"><a href="cluster-analysis.html#cb249-20" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span><span class="fu">round</span>(., <span class="dv">3</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb249-21"><a href="cluster-analysis.html#cb249-21" tabindex="-1"></a>  <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">13</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 13 × 7
+##    descriptor      term          df sumsq meansq statistic p.value
+##    &lt;chr&gt;           &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+##  1 Red_berry       ward_group     2  49.7  24.9       3.97   0.02 
+##  2 Dark_berry      ward_group     2  81.5  40.8       5.54   0.004
+##  3 Jam             ward_group     2 243.  122.       23.7    0    
+##  4 Artificial_frui ward_group     2 134.   66.9      18.7    0    
+##  5 Chocolate       ward_group     2  20.6  10.3       3.41   0.034
+##  6 Vanilla         ward_group     2  59.6  29.8       7.74   0.001
+##  7 Oak             ward_group     2  37.5  18.8       4.89   0.008
+##  8 Burned          ward_group     2 106.   53.1      13.7    0    
+##  9 Leather         ward_group     2  70.2  35.1       8.90   0    
+## 10 Earthy          ward_group     2  20.0  10.0       4.18   0.016
+## 11 Grassy          ward_group     2  16.6   8.28      4.07   0.018
+## 12 Medicinal       ward_group     2 109.   54.4      14.7    0    
+## 13 Band-aid        ward_group     2  96.5  48.3      12.4    0</code></pre>
+<p>We find that 13 descriptors have significantly different means for the 3 different clusters. This seems to contradict HGH’s results–she found 7 in the original <strong>R Opus</strong>. I am not quite sure what the difference could be here; when I reran the code from the actual original <strong>R Opus</strong> my results match the tidy workflow shown above (not shown). I wonder if some data got lost somewhere in the original?</p>
+</div>
+<div id="k-means-clustering" class="section level2 hasAnchor" number="7.3">
+<h2><span class="header-section-number">7.3</span> K-means clustering<a href="cluster-analysis.html#k-means-clustering" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In hierarchical clustering, we use an iterative process to merge our items into groups–if we let the process run long enough we end up with a single group. We decide on the “right” number of groups by examining results like the <em>dendrogram</em> produced from the set of merges throughout the process (e.g., we apply <code>cutree(k = 3)</code>).</p>
+<p>If we had some idea <em>a priori</em> of how many groups we were expecting, we could use some alternative processes. The most popular–and possibly intuitive–of these is <em>k-means clustering</em>. The <span class="math inline">\(k\)</span> in “k-means” stands in for the same thing it does in the <code>k =</code> argument in <code>cutree()</code>: how many groups are we looking for. However, in k-means clustering, we don’t proceed hierarchically. Instead, we start with some initial <span class="math inline">\(k\)</span> “seeds” - the initial 1-item groups. These can be chosen at random or purposively, although if the former it is important to note that the choice of seed can be influential on the solution, and so multiple runs of k-means clustering may produce different results.</p>
+<p>Once the <span class="math inline">\(k\)</span> seeds are chosen, every other item that is to be clustered is assigned to the group for which it is closest to the seed (again, “closest” can be defined by any distance metric). Once a group has more than 1 item, its centroid (the “mean” in the name “k-means”) replaces the initial seed for distance measurements. After an initial run, it is possible that items are in the “wrong” group–that a new, different group centroid is closer to them than is their current group centroid. These items are re-assigned, centroids are re-calculated, and the procedure iterates until no items are re-assigned. This reassignment is not possible with hierarchical methods, and so k-means can sometimes find better results. As might be imagined, different choices of methods for calculating centroid and for distance can affect the results of k-means clustering.</p>
+<p>A common workflow is to use HCA to get an idea of the appropriate <span class="math inline">\(k\)</span> for k-means clustering, and then to use k-means clustering to get a final, optimized clustering solution. We will take this approach, using <code>k = 3</code>.</p>
+<div class="sourceCode" id="cb251"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb251-1"><a href="cluster-analysis.html#cb251-1" tabindex="-1"></a>clusters_kmeans <span class="ot">&lt;-</span></span>
+<span id="cb251-2"><a href="cluster-analysis.html#cb251-2" tabindex="-1"></a>  descriptive_means_scaled <span class="sc">%&gt;%</span></span>
+<span id="cb251-3"><a href="cluster-analysis.html#cb251-3" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;ProductName&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb251-4"><a href="cluster-analysis.html#cb251-4" tabindex="-1"></a>  <span class="fu">kmeans</span>(<span class="at">centers =</span> <span class="dv">3</span>)</span>
+<span id="cb251-5"><a href="cluster-analysis.html#cb251-5" tabindex="-1"></a></span>
+<span id="cb251-6"><a href="cluster-analysis.html#cb251-6" tabindex="-1"></a>clusters_kmeans<span class="sc">$</span>cluster</span></code></pre></div>
+<pre><code>##    C_MERLOT   C_REFOSCO     C_SYRAH C_ZINFANDEL    I_MERLOT I_PRIMITIVO 
+##           3           3           3           3           2           1 
+##   I_REFOSCO     I_SYRAH 
+##           2           1</code></pre>
+<div class="sourceCode" id="cb253"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb253-1"><a href="cluster-analysis.html#cb253-1" tabindex="-1"></a>clusters_kmeans<span class="sc">$</span>centers <span class="sc">%&gt;%</span></span>
+<span id="cb253-2"><a href="cluster-analysis.html#cb253-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;cluster&quot;</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 3 × 21
+##   cluster Red_berry Dark_berry    Jam Dried_fruit Artificial_frui Chocolate
+##   &lt;chr&gt;       &lt;dbl&gt;      &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;           &lt;dbl&gt;     &lt;dbl&gt;
+## 1 1           1.34       1.29   1.49       0.0234           1.58      0.179
+## 2 2          -0.423     -0.629 -0.729      0.255           -0.544    -1.07 
+## 3 3          -0.456     -0.328 -0.379     -0.139           -0.515     0.444
+## # ℹ 14 more variables: Vanilla &lt;dbl&gt;, Oak &lt;dbl&gt;, Burned &lt;dbl&gt;, Leather &lt;dbl&gt;,
+## #   Earthy &lt;dbl&gt;, Spicy &lt;dbl&gt;, Pepper &lt;dbl&gt;, Grassy &lt;dbl&gt;, Medicinal &lt;dbl&gt;,
+## #   `Band-aid` &lt;dbl&gt;, Sour &lt;dbl&gt;, Bitter &lt;dbl&gt;, Alcohol &lt;dbl&gt;, Astringent &lt;dbl&gt;</code></pre>
+<p>HGH shows how to replicate the same workflow as we did above with the HCA results: using the group assignments to run a 1-way M/ANOVA to determine which attributes vary significantly. I am going to leave this as an exercise to the reader, but we’ll instead look at how we might visualize these results, since we can’t draw a dendrogram in the same way as an HCA.</p>
+<p>We’ll first run a simple means PCA to get the product score plot, and then we’ll draw some hulls around the groups.</p>
+<div class="sourceCode" id="cb255"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb255-1"><a href="cluster-analysis.html#cb255-1" tabindex="-1"></a>means_pca <span class="ot">&lt;-</span> </span>
+<span id="cb255-2"><a href="cluster-analysis.html#cb255-2" tabindex="-1"></a>  descriptive_means <span class="sc">%&gt;%</span></span>
+<span id="cb255-3"><a href="cluster-analysis.html#cb255-3" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;ProductName&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb255-4"><a href="cluster-analysis.html#cb255-4" tabindex="-1"></a>  FactoMineR<span class="sc">::</span><span class="fu">PCA</span>(<span class="at">scale.unit =</span> <span class="cn">FALSE</span>, <span class="at">graph =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb255-5"><a href="cluster-analysis.html#cb255-5" tabindex="-1"></a></span>
+<span id="cb255-6"><a href="cluster-analysis.html#cb255-6" tabindex="-1"></a><span class="co"># Join the PCA scores to the k-means cluster IDs</span></span>
+<span id="cb255-7"><a href="cluster-analysis.html#cb255-7" tabindex="-1"></a>p1 <span class="ot">&lt;-</span></span>
+<span id="cb255-8"><a href="cluster-analysis.html#cb255-8" tabindex="-1"></a>  means_pca<span class="sc">$</span>ind<span class="sc">$</span>coord <span class="sc">%&gt;%</span></span>
+<span id="cb255-9"><a href="cluster-analysis.html#cb255-9" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;ProductName&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb255-10"><a href="cluster-analysis.html#cb255-10" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb255-11"><a href="cluster-analysis.html#cb255-11" tabindex="-1"></a>    clusters_kmeans<span class="sc">$</span>cluster <span class="sc">%&gt;%</span></span>
+<span id="cb255-12"><a href="cluster-analysis.html#cb255-12" tabindex="-1"></a>      <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;ProductName&quot;</span>)</span>
+<span id="cb255-13"><a href="cluster-analysis.html#cb255-13" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb255-14"><a href="cluster-analysis.html#cb255-14" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">value =</span> <span class="fu">factor</span>(value)) <span class="sc">%&gt;%</span></span>
+<span id="cb255-15"><a href="cluster-analysis.html#cb255-15" tabindex="-1"></a>  <span class="co"># And plot!</span></span>
+<span id="cb255-16"><a href="cluster-analysis.html#cb255-16" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>)) <span class="sc">+</span> </span>
+<span id="cb255-17"><a href="cluster-analysis.html#cb255-17" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb255-18"><a href="cluster-analysis.html#cb255-18" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb255-19"><a href="cluster-analysis.html#cb255-19" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> value)) <span class="sc">+</span> </span>
+<span id="cb255-20"><a href="cluster-analysis.html#cb255-20" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">color =</span> value, <span class="at">label =</span> ProductName)) <span class="sc">+</span> </span>
+<span id="cb255-21"><a href="cluster-analysis.html#cb255-21" tabindex="-1"></a>  ggforce<span class="sc">::</span><span class="fu">geom_mark_ellipse</span>(<span class="fu">aes</span>(<span class="at">color =</span> value)) <span class="sc">+</span> </span>
+<span id="cb255-22"><a href="cluster-analysis.html#cb255-22" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb255-23"><a href="cluster-analysis.html#cb255-23" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> </span>
+<span id="cb255-24"><a href="cluster-analysis.html#cb255-24" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span>
+<span id="cb255-25"><a href="cluster-analysis.html#cb255-25" tabindex="-1"></a>p1</span></code></pre></div>
+<p><img src="07-HCA_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p>Looks like those California wines end up grouped together even though there is a fair bit of spread. I looked into the PC3 to see if that explained it, but they are even more spread there (not shown–see if you can make the small code tweak to do so). I think this is a case where arguably 3 clusters is not a good solution. We might consider examining some measures of cluster fit, perhaps through something like the <code>NbClust</code> package, to determine if we should consider other solutions.</p>
+</div>
+<div id="packages-used-in-this-chapter-6" class="section level2 hasAnchor" number="7.4">
+<h2><span class="header-section-number">7.4</span> Packages used in this chapter<a href="cluster-analysis.html#packages-used-in-this-chapter-6" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb256"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb256-1"><a href="cluster-analysis.html#cb256-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.3.1 (2023-06-16)
+## Platform: aarch64-apple-darwin20 (64-bit)
+## Running under: macOS Ventura 13.6.1
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## time zone: America/New_York
+## tzcode source: internal
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] patchwork_1.1.2  factoextra_1.0.7 here_1.0.1       lubridate_1.9.2 
+##  [5] forcats_1.0.0    stringr_1.5.0    dplyr_1.1.2      purrr_1.0.1     
+##  [9] readr_2.1.4      tidyr_1.3.0      tibble_3.2.1     ggplot2_3.4.3   
+## [13] tidyverse_2.0.0 
+## 
+## loaded via a namespace (and not attached):
+##  [1] tidyselect_1.2.0     viridisLite_0.4.2    farver_2.1.1        
+##  [4] viridis_0.6.4        fastmap_1.1.1        tweenr_2.0.2        
+##  [7] digest_0.6.33        timechange_0.2.0     estimability_1.4.1  
+## [10] lifecycle_1.0.3      cluster_2.1.4        multcompView_0.1-9  
+## [13] magrittr_2.0.3       compiler_4.3.1       rlang_1.1.1         
+## [16] sass_0.4.7           tools_4.3.1          utf8_1.2.3          
+## [19] yaml_2.3.7           knitr_1.43           ggsignif_0.6.4      
+## [22] labeling_0.4.3       htmlwidgets_1.6.2    bit_4.0.5           
+## [25] scatterplot3d_0.3-44 abind_1.4-5          withr_2.5.0         
+## [28] grid_4.3.1           polyclip_1.10-4      fansi_1.0.4         
+## [31] ggpubr_0.6.0         xtable_1.8-4         colorspace_2.1-0    
+## [34] emmeans_1.8.7        scales_1.2.1         MASS_7.3-60         
+## [37] flashClust_1.01-2    cli_3.6.1            mvtnorm_1.2-2       
+## [40] rmarkdown_2.23       crayon_1.5.2         generics_0.1.3      
+## [43] rstudioapi_0.15.0    tzdb_0.4.0           cachem_1.0.8        
+## [46] ggforce_0.4.1        parallel_4.3.1       vctrs_0.6.3         
+## [49] jsonlite_1.8.7       carData_3.0-5        bookdown_0.37       
+## [52] car_3.1-2            hms_1.1.3            bit64_4.0.5         
+## [55] rstatix_0.7.2        ggrepel_0.9.3        FactoMineR_2.8      
+## [58] dendextend_1.17.1    jquerylib_0.1.4      glue_1.6.2          
+## [61] DT_0.28              stringi_1.7.12       gtable_0.3.4        
+## [64] munsell_0.5.0        pillar_1.9.0         htmltools_0.5.6     
+## [67] R6_2.5.1             rprojroot_2.0.3      vroom_1.6.3         
+## [70] evaluate_0.21        lattice_0.21-8       highr_0.10          
+## [73] backports_1.4.1      leaps_3.1            broom_1.0.5         
+## [76] bslib_0.5.1          Rcpp_1.0.11          coda_0.19-4         
+## [79] gridExtra_2.3        xfun_0.39            pkgconfig_2.0.3</code></pre>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-rencherMethods2002" class="csl-entry">
+Rencher, Alvin C. 2002. <em>Methods of Multivariate Analysis</em>. 2nd ed. Wiley Series in Probability and Mathematical Statistics. <span>New York</span>: <span>J. Wiley</span>.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="principal-components-analysis-pca.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="multidimensional-scaling-mds.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/07-HCA.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": true
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

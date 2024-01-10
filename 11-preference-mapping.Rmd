@@ -1,0 +1,474 @@
+---
+output: html_document
+---
+
+```{r setup-11, include=FALSE}
+# save the built-in output hook
+hook_output <- knitr::knit_hooks$get("output")
+
+# set a new output hook to truncate text output
+knitr::knit_hooks$set(output = function(x, options) {
+  if (!is.null(n <- options$out.lines)) {
+    x <- xfun::split_lines(x)
+    if (length(x) > n) {
+      # truncate the output
+      x <- c(head(x, n), "....\n")
+    }
+    x <- paste(x, collapse = "\n")
+  }
+  hook_output(x, options)
+})
+```
+
+
+# Preference Mapping
+
+In general, preference mapping is the name for a broad set of methods that attempts to produce cartesian representations of consumer preferences for a set of products.  **External** preference mapping uses some sort of other data (the "external" data)--chemical data, DA data, even product-ingredient data--to explain patterns in consumer liking.  **Internal** preference mapping treats consumers themselves as variables explaining the products, and uses simple approaches like PCA to produce a low-dimensional but hopefully informative insight into the patterns of consumer liking.  
+
+One of the challenges of preference mapping is the seemingly endless set of options for performing it.  As reviewed by @yenketCOMPARISON2011, there are at least 10 distinct approaches to external preference mapping, possibly even more.  They each solve slightly different optimization problems, and so produce slightly different results.  Therefore, there is a real danger of an analyst going method-by-method until they find one that supports their prior intuition.  
+
+On top of that, I personally find that many of the approaches are technically and analytically convoluted and difficult to follow, producing outputs that are prone to misinterpretation.  Therefore, in this section we're going to depart pretty strongly from HGH's approach: we're going to entirely ignore `SensoMineR::carto()` and the related workflow, because I find the method itself opaque and the outputs less-than-useful.  Instead, we're going to focus on (what I believe to be) the simplest tractable tools for these use cases.
+
+## Data
+
+To do preference mapping, we of course need some consumer data.  We have data on consumer responses to the wines profiled in our DA example in the `torriconsFinal.csv` file.  Let's load our standard packages and import the data.
+
+```{r message=FALSE}
+library(tidyverse)
+library(here)
+
+consumer_data <-read_csv(here("data/torriconsFinal.csv"))
+
+# We'll also need the DA data
+descriptive_data <- read_csv(here("data/torriDAFinal.csv")) %>%
+  mutate_at(.vars = vars(1:3), ~as.factor(.))
+
+# And finally let's take a look at our data
+skimr::skim(consumer_data) %>% 
+  # This is purely to allow the skimr::skim() to be rendered in PDF, ignore otherwise
+  knitr::kable()
+```
+
+So we have a lot of rows, each one of which represents a judge.  In fact, we have two kinds of data in this wide data frame: data about consumer preferences (titled with wine names, like `I_SYRAH`) and data about the judges themselves (`Wine Frequency`, `Age`, etc).  Let's break these up for ease of use.
+
+```{r}
+consumer_demo <- 
+  consumer_data %>%
+  select(Judge:Age) %>%
+  # Everything but Age is a factor anyway, let's fix it
+  mutate(across(-Age, ~as.factor(.)))
+
+consumer_data <- 
+  consumer_data %>%
+  select(Judge, C_MERLOT:I_REFOSCO) %>%
+  mutate(Judge = as.factor(Judge))
+```
+
+OK, now we're ready to start working!  Before we do, let's do a little summary work to get some insight into the data.  We might be curious, for example, to get some kind of $mean±se$ estimate for our liking for each wine.  Easy enough to do with what we've learned so far:
+
+```{r message = FALSE}
+consumer_data %>%
+  pivot_longer(-Judge) %>%
+  ggplot(aes(x = name, y = value)) + 
+  geom_jitter(alpha = 1/5, width = 0.1, color = "lightblue") +
+  stat_summary() +
+  theme_bw() + 
+  labs(x = NULL, y = "mean liking ± se") + 
+  scale_y_continuous(limits = c(1, 9))
+```
+
+See how I scaled that to include the entire range of possible responses on the 9-pt scale?  It shows how little variability there actually is in our data. 
+
+Anyway, we can see that on average the Californian wines seem to be rated a bit higher in terms of overall liking.  If we were interested we might consider pairing the wine types across region (in this case, [we would assume Zinfandel and Primitivo are chosen to be matches for each other](https://en.wikipedia.org/wiki/Zinfandel)) and treat this as a 2-factor design.   But that is outside our remit at the moment.
+
+## Internal preference mapping
+
+We'll start out nice and easy with an **internal preference map**.  In this approach, we treat each consumer as a variable measured on the wine, and we look for combinations of variables that best explain the variation in the wines.  Sound familiar?  We're just describing a (covariance) PCA on the consumer data!  Let's dive in.
+
+First, we need to transpose our table so that judges are the variables and wines are the observations:
+
+```{r}
+internal_map <- 
+  consumer_data %>%
+  column_to_rownames("Judge") %>%
+  # Pretty easy - `t()` is the base-`R` transpose function
+  t() %>%
+  FactoMineR::PCA(graph = FALSE, scale.unit = FALSE)
+```
+
+Notice that I just used `t()` to transpose; HGH demonstrated a workflow using the `reshape` package, which we could replicate with some combination of `pivot_*()` functions, but this seemed easier for the application.
+
+Let's take a look at what we got.  
+
+```{r}
+internal_coordinates <- 
+  tibble(point_type = c("subject", "product"),
+         data = list(internal_map$var$coord,
+                     internal_map$ind$coord)) %>%
+  mutate(data = map(data, as_tibble, rownames = "label")) %>%
+  unnest(everything())
+
+# The scales for our factor scores are very different, so we will want to plot
+# separately and join them up via `patchwork`.
+
+internal_coordinates %>%
+  group_by(point_type) %>%
+  summarize(across(where(is.numeric), ~mean(abs(.))))
+
+# This is just to avoid re-typing
+
+axis_labels <- 
+  labs(x = paste0("Dimension 1, ", round(internal_map$eig[1, 2], 2), "% of variance"),
+       y = paste0("Dimension 2, ", round(internal_map$eig[2, 2], 2), "% of variance"))
+
+# First the product map
+
+p_internal_products <- 
+  internal_coordinates %>%
+  filter(point_type == "product") %>%
+  ggplot(aes(x = Dim.1, y = Dim.2)) + 
+  geom_vline(xintercept = 0, linewidth = 1/10) + 
+  geom_hline(yintercept = 0, linewidth = 1/10) + 
+  geom_point() + 
+  ggrepel::geom_text_repel(aes(label = label)) + 
+  coord_equal() + 
+  labs(subtitle = "Wines, plotted in consumer-liking space") + 
+  axis_labels +
+  theme_bw()
+
+# Then the consumer map
+
+p_internal_consumers <- 
+  internal_coordinates %>%
+  filter(point_type == "subject") %>%
+  ggplot(aes(x = Dim.1, y = Dim.2)) + 
+  geom_vline(xintercept = 0, linewidth = 1/10) + 
+  geom_hline(yintercept = 0, linewidth = 1/10) +
+  geom_segment(aes(xend = 0, yend = 0),
+               arrow = arrow(length = unit(0.05, units = "in"), ends = "first"),
+               linewidth = 1/4, alpha = 1/2) + 
+  ggrepel::geom_text_repel(aes(label = label), size = 3) + 
+  coord_equal() + 
+  axis_labels + 
+  labs(subtitle = "Consumers, plotted in wine-linking space") + 
+  theme_bw()
+
+library(patchwork)
+
+p_internal_consumers + p_internal_products
+
+```
+
+In the original **R Opus**, HGH filtered the consumers to show those with the highest $cos^2$ values: this measures their effect (in my head I always read "leverage") on the spatial arrangement of the plotted dimensions.  She did this using the base-`R` plotting options for the `carto()` function, and I have no idea how it specifies selection - I have not tried to figure out how that function works in detail.  Instead, if we wanted to do something similar we could look into the output of `PCA()` and create a list of influential subjects:
+
+```{r}
+influential_subjects <- 
+  internal_map$var$cos2 %>%
+  as_tibble(rownames = "subject") %>%
+  filter(Dim.1 > 0.6 | Dim.2 > 0.6) %>%
+  pull(subject)
+
+# We can then use these to filter our plot:
+
+internal_coordinates %>%
+  filter(point_type == "subject",
+         label %in% influential_subjects) %>%
+  ggplot(aes(x = Dim.1, y = Dim.2)) + 
+  geom_vline(xintercept = 0, linewidth = 1/10) + 
+  geom_hline(yintercept = 0, linewidth = 1/10) +
+  geom_segment(aes(xend = 0, yend = 0),
+               arrow = arrow(length = unit(0.05, units = "in"), ends = "first"),
+               linewidth = 1/4, alpha = 1/2) + 
+  ggrepel::geom_text_repel(aes(label = label), size = 3) + 
+  coord_equal() + 
+  axis_labels + 
+  labs(subtitle = "Influential consumers on the first 2 dimensions") + 
+  theme_bw()
+```
+
+We get fewer points than HGH did; I am assuming that the `SensoMineR` function is filtering its subjects that are influential on ANY of the dimensions of the PCA, not just on the first 2 dimensions, but that seems to be counterindicated (to me) for looking at these 2-dimensional biplots.
+
+One step that HGH didn't take was to cluster the consumers according to their patterns of liking.  This is a common end goal of preference mapping in general, and HGH pursued it in the original **R Opus** section on *external* preference mapping.  However, there is no reason we can't do it with the results of an internal preference map:
+
+```{r warning = FALSE}
+internal_consumer_cluster <- 
+  consumer_data %>%
+  column_to_rownames("Judge") %>%
+  dist(method = "euclidean") %>%
+  hclust(method = "ward.D2") 
+
+internal_consumer_cluster %>%
+  factoextra::fviz_dend(k = 3, rect = TRUE) +
+  scale_color_viridis_d()
+```
+
+I think there are plausibly 3 clusters of consumers; we could also explore the possibility that there are 2, 4, or even 5.  However, 3 seems good to me, because the distance between groups 2 and 3 (blue and green) is quite large, so forcing them to remain in a single group seems less plausible than splitting them.  
+
+We can take this grouping information and project it back into our preference maps in different ways.  I am going to opt for simply replacing the original labels with labels colored by group membership. 
+
+```{r}
+p_internal_consumers <- 
+  p_internal_consumers %>%
+  ggedit::remove_geom(geom = "text") +
+  ggrepel::geom_text_repel(aes(label = label, 
+                               color = as.factor(cutree(internal_consumer_cluster, k = 3))),
+                           size = 3, fontface = "bold") + 
+  scale_color_viridis_d("group", end = 0.8) + 
+  theme(legend.position = "bottom") 
+
+
+p_internal_consumers + p_internal_products
+
+```
+
+We can see that the purple and teal-ish groups are well-separated in this space, whereas the bright green group is not.  I suspect (and leave it as an exercise to find out) that this group would be better separated in a third dimension.
+
+We can then use the clusteres identified here to ask questions about, for example, consumer demographic groups.  A quick way to do per-group summaries of (often qualitative) variables is using the `skimr::skim()` function with `group_by()`.
+
+```{r}
+consumer_demo %>%
+  bind_cols(cluster = cutree(internal_consumer_cluster, k = 3)) %>%
+  group_by(cluster) %>%
+  skimr::skim() %>% 
+  # This is purely to allow the skimr::skim() to be rendered in PDF, ignore otherwise
+  knitr::kable()
+```
+
+We can see some interesting (if minor!) differences in these groups.  Group 1, for example, has more answers for "2" and "1" for wine consumption frequency, proportionally--since I don't have the original data, I have no idea if this is more or less frequent.  I am guessing less, though, because group 1 also has a lower mean age and less of a long tale in the Age variable.
+
+## External preference mapping
+
+As I mentioned above, the range of possible approaches to external preference mapping is quite large [@yenketCOMPARISON2011], and I have little interest in exploring all of them.  In particular, I find both the interface and the documentation for `SensoMineR` a little hard to grasp, so I am going to avoid its use in favor of approaches that will yield largely the same answers but with more transparencyt (for me).  
+
+### Partial Least Squares Regression
+
+I believe the most common tool for preference mapping currently used in sensory evaluation is Partial Least Squares Regression (PLS-R).  PLS-R is one of a larger family of PLS methods.  All PLS methods are concerned with the explanation of two data tables that contain measurements on the same set of observations: in other words, the data tables have the same rows (the observations, say, in our case, *wines*) but different columns (measurements, in our case we have one table with DA ratings and one with consumer ratings).  This kind of dual-table data structure is common in food science: we might have a set of chemical measurements and a set of descriptive ratings, or a set of descriptive ratings and consumer liking measurements (as we do  here), or many other possible configurations.
+
+There are other PLS approaches we will not consider here: correlation (in which the two tables are simultaneously explained) and path modeling (which proposes causal links among the variables in multiple tables).  We like PLS-Regression in this case because we want to model an *explanatory* relationship: we want to know how the profiles of (mean) DA ratings in our `descriptive_data` table explains the patterns of consumer liking we see in our `consumer_data` table.  In addition, to quote @abdiPartial2013[p.567]: 
+
+> As a regression technique, PLSR [sic] is used to predict a whole table of data (by contrast with standard regression which predicts one variable only), and it can also handle the case of multicolinear predictors (i.e., when the predictors are not linearly independent). These features make PLSR [sic] a very versatile tool because it can be used with very large data sets for which standard regression methods fail.
+
+That all sounds pretty good!  To paraphrase the same authors, PLS-R finds a *single set* of latent variables from the predictor matrix (`descriptive_data` for us) that best explains the variation in `consumer_data`.
+
+I am not going to try to do further explanation of PLS-R, because it is a rather complex, iterative fitting procedure.  The outcome, however, is relatively easy to understand, and we will talk through it once we generate it.  For this, we're going to need to load some new packages!
+
+```{r, message = FALSE, out.lines = 10}
+library(pls)
+
+descriptive_means <- 
+  descriptive_data %>%
+  select(ProductName, Red_berry:Astringent) %>%
+  group_by(ProductName) %>%
+  summarize(across(where(is.numeric), mean)) %>%
+  column_to_rownames("ProductName") %>%
+  as.matrix()
+
+consumer_data_wide <- 
+  consumer_data %>%
+  column_to_rownames("Judge") %>%
+  t() %>%
+  as.matrix()
+
+pls_data <- 
+  list(x = descriptive_means,
+       y = consumer_data_wide)
+
+# `plsr()` has an interface that is built to act like `lm()` or `aov()`
+pls_fit <- 
+  plsr(y ~ x, 
+       data = pls_data, 
+       scale = TRUE)
+
+summary(pls_fit)
+```
+
+I only printed out the first few lines (as otherwise the `summary()` function will print several hundred lines).  Overall we see *almost* the same results as HGH did (good news).  However, we are not exactly the same in terms of variance explained.  I wonder if this is because HGH lost subject #1 in data wrangling?  I can't explain the difference otherwise.  We'll see that our solutions do start to diverge as we go on.
+
+HGH decided to only examine 2 components, but I believe that if we investigate cross-validation we would probably choose to retain only a single component based on $PRESS$ values:
+
+```{r}
+pls_val <- plsr(y ~ x, data = pls_data, scale = TRUE, validation = "LOO")
+
+# PRESS values for the predictor (DA) variables
+pls_val$validation$PRESS[1, ]
+```
+
+We can see that $PRESS$ is lowest with only a single component.
+
+...but, I am lazy and more interested in showing *how* to do things than making the multiple plots and analyses we'd need for 3 dimensions.  I leave investigating the 3rd component as an exercise for the reader.
+
+Following our typical practice, we will see how to extract elements of the output of `plsr()` to produce nicer looking plots in `ggplot2`.  This will take a little digging because the `pls` package makes use of a lot of (what I consider) tricky and obtuse indexing and object formats.  Bear with me.
+
+```{r}
+# The "scores" are the factor scores for the observations (wines) based on the
+# predictor (DA) variables
+pls_scores <- scores(pls_fit)
+
+# Note this ugly output object of class "scores".  This is a problem.
+pls_scores
+
+# My solution is old-fashioned class coercion: 
+class(pls_scores) <- "matrix"
+
+pls_scores <- 
+  pls_scores %>% 
+  as_tibble(rownames = "wine")
+
+pls_scores
+```
+
+We have to take the same approach for the loadings:
+
+```{r}
+# The "scores" are the factor loadings for the predictor (DA) variables that
+# explain how the scores for the wines are generated.
+pls_loadings <- loadings(pls_fit)
+
+class(pls_loadings) <- "matrix"
+
+pls_loadings <- 
+  pls_loadings %>%
+  as_tibble(rownames = "descriptor")
+
+pls_loadings
+```
+
+Now we can make the first two plots that HGH showed:
+
+```{r}
+# We'll reuse this
+
+axis_labels <- 
+  labs(x = paste0("Dimension 1, ", round(explvar(pls_fit)[1], 1), "% of predictor (DA) variance"),
+       y = paste0("Dimension 2, ", round(explvar(pls_fit)[2], 1), "% of predictor (DA) variance"))
+
+pls_scores %>%
+  ggplot(aes(x = `Comp 1`, y = `Comp 2`)) + 
+  geom_vline(xintercept = 0, linewidth = 1/4) + 
+  geom_hline(yintercept = 0, linewidth = 1/4) + 
+  geom_point() + 
+  ggrepel::geom_text_repel(aes(label = wine)) + 
+  coord_equal() +
+  theme_bw() +
+  axis_labels + 
+  labs(subtitle = "Scores plot for wines, based on DA (predictor) data")
+```
+
+This plot is quite different from HGH's, but I confirmed that even using the same base-`R` plotting methods, I got the same plot shown here (but uglier).  Is it possible subject #1 made that big a difference?
+
+As you might guess, our loadings are also going to end up somewhat different:
+
+```{r}
+pls_loadings %>%
+  ggplot(aes(x = `Comp 1`, y = `Comp 2`)) + 
+  geom_vline(xintercept = 0, linewidth = 1/4) + 
+  geom_hline(yintercept = 0, linewidth = 1/4) + 
+  geom_segment(aes(xend = 0, yend = 0),
+               arrow = arrow(length = unit(0.05, units = "in"), ends = "first"),
+               linewidth = 1/2, alpha = 2/3) + 
+  ggrepel::geom_text_repel(aes(label = descriptor)) + 
+  coord_equal() + 
+  axis_labels + 
+  labs(subtitle = "Loadings plot for wines, based on DA (predictor) data") +
+  theme_bw()
+```
+
+
+
+```{r, warning = FALSE}
+# We start with calculating the correlation betwee the original predictors and
+# the factor scores for the wines from the DA in the PLS fit.
+cor(pls_data$x, column_to_rownames(pls_scores, "wine")) %>%
+  as_tibble(rownames = "descriptor") %>%
+  ggplot(aes(x = `Comp 1`, y = `Comp 2`)) + 
+  geom_vline(xintercept = 0, linewidth = 1/4) + 
+  geom_hline(yintercept = 0, linewidth = 1/4) + 
+  ggforce::geom_circle(aes(x0 = x, y0 = y, r = r),
+                       data = crossing(x = 0, y = 0, r = c(sqrt(0.5), 1)),
+                       inherit.aes = FALSE,
+                       linetype = 2) + 
+  geom_segment(aes(xend = 0, yend = 0),
+               arrow = arrow(length = unit(0.05, units = "in"), ends = "first"),
+               linewidth = 1/2,
+               alpha = 2/3) + 
+  ggrepel::geom_label_repel(aes(label = descriptor), size = 3) + 
+  coord_equal(xlim = c(-1, 1), ylim = c(-1, 1)) + 
+  axis_labels + 
+  labs(subtitle = "Correlation between predictor (DA) variables and PLS scores") +
+  theme_classic()
+```
+
+The correlation plot gives us similar information to the loadings plot, above, but it is scaled so that the squared distance between each descriptor and the origin represents the amount of variance for that variable explained by the two dimensions visualized.  The dashed circles are a visual aid for 50% and 100% of variance. For this, it is clear that our 2-dimensional PLS-R fit does a good job of explaining most of the variation in the large majority of descriptors; notable exceptions are `Alcohol`, `Dried_fruit`, and `Spicy`.  
+
+We can take the same approach to understand our outcome (consumer) variables:
+
+```{r}
+cor(pls_data$y, column_to_rownames(pls_scores, "wine")) %>%
+  as_tibble(rownames = "consumer") %>%
+  ggplot(aes(x = `Comp 1`, y = `Comp 2`)) + 
+  geom_vline(xintercept = 0, linewidth = 1/4) + 
+  geom_hline(yintercept = 0, linewidth = 1/4) + 
+  ggforce::geom_circle(aes(x0 = x, y0 = y, r = r),
+                       data = crossing(x = 0, y = 0, r = c(sqrt(0.5), 1)),
+                       inherit.aes = FALSE,
+                       linetype = 2) + 
+  geom_point() +
+  ggrepel::geom_text_repel(aes(label = consumer), size = 3) + 
+  coord_equal(xlim = c(-1, 1), ylim = c(-1, 1)) + 
+  axis_labels + 
+  labs(subtitle = "Correlation between predicted (consumer) variables and PLS scores") +
+  theme_classic()
+```
+
+And this is where our external preference map can come in.  Let's go ahead and segment these consumers by the clusters we identified previously:
+
+```{r}
+cor(pls_data$y, column_to_rownames(pls_scores, "wine")) %>%
+  as_tibble(rownames = "consumer") %>% 
+  # Notice we are relying on positional matching here, generally a bad idea
+  mutate(cluster = as.factor(cutree(internal_consumer_cluster, k = 3))) %>%
+  ggplot(aes(x = `Comp 1`, y = `Comp 2`)) + 
+  geom_vline(xintercept = 0, linewidth = 1/4) + 
+  geom_hline(yintercept = 0, linewidth = 1/4) + 
+  ggforce::geom_circle(aes(x0 = x, y0 = y, r = r),
+                       data = crossing(x = 0, y = 0, r = c(sqrt(0.5), 1)),
+                       inherit.aes = FALSE,
+                       linetype = 2) + 
+  geom_point(aes(color = cluster)) + 
+  # Here we are adding the correlations of the descriptor data, filtered so that
+  # the total variance explained in the 1st 2 dimensions is > 0.75 (pretty
+  # arbitrarily)
+  ggrepel::geom_label_repel(data = cor(pls_data$x, column_to_rownames(pls_scores, "wine")) %>%
+                              as_tibble(rownames = "descriptor") %>%
+                              filter(sqrt(`Comp 1`^2 + `Comp 2`^2) > 3/4),
+                            mapping = aes(label = descriptor),
+                            alpha = 2/3, size = 3) + 
+coord_equal(xlim = c(-1, 1), ylim = c(-1, 1)) + 
+  axis_labels + 
+  labs(subtitle = "PLS for external preference mapping") +
+  theme_classic() + 
+  scale_color_viridis_d("group", end = 0.8) + 
+  theme(legend.position = "bottom")
+```
+
+We're doing a lot in this plot, but hopefully the previous ones have prepared you!  This shows us the same consumer plot as above, but we've clustered the consumers by the similarity between their liking scores, as we did in the internal preference mapping above.  We could change this choice--perhaps cluster them based on their loadings in the 1st 2 dimensions of the PLS-R space--but I decided this was the way I wanted to go.  
+
+We see a similar pattern of separation of these groups as we did with the internal preference mapping, but now we have the ability to explain the data optimally: it appears the largest cluster (cluster 1) prefers wines that have proportionally higher ratings in attributes like `Oak`, `Burned`, and `Earthy`, while cluster 2 prefers `Sour` wines that are more characterized witht the various fruit flavors.  As before, cluster 3 appears to be poorly represented in this space.  We'd have to look into the further components to understand their preferences better (and it's not clear to me whether or not we should, based on the $PRESS$ values).
+
+## Other approaches
+
+Beyond PLS-R and the models provided in `SensoMineR`, there are MANY models that can fit the goals of preference mapping: simultaneously explaining 2 data tables that have a variable linking them.  One I have used more extensively in the past is Clustering around Latent Variables (CLV), which [has its own `R` package and good tutorial here](https://pdfs.semanticscholar.org/6f83/755c961579c891a63579a7a5a3bdf5df51e8.pdf).  Hopefully going this extensively through PLS-R gives you enough of a background to tackle this approach (and others!) if you choose to use them.  
+
+Whatever approach you choose, though, I would recommend you err on the side of analytical simplicity: preference mapping is one of those areas in sensory evaluation in which apparently unending analytical sophistication is possible, but I have found that the gains in explanatory power or insight is limited.  Remember that we are typically working with "small" data that is likely prone to random and sampling error, and so bringing huge power to bear on it is probably overkill.  In addition, excessively complex methods are more likely to trip you up (it's happened to me!) and to lose your audience, thus reducing your overall impact.
+
+## Principal Components Regression
+
+To my understanding, Principal Components Regression (PCR) is a type of regression procedure that models a *univariate* outcome (a single $\mathbf{y}$ variable) based on the principal components (estimated through typical SVD) of a set of $\mathbf{X}$ predictors.  So I am not entirely sure why HGH chose to apply PCR to the 2-table data (with a set of $\mathbf{Y}$ consumer liking outcomes), or even how it fit properly!  PCR is not widely used in sensory evaluation, and so I am a little less familiar with it.  The documentation for `?pls::pcr` is not at all detailed.  
+
+Inspecting the results that HGH got for PCR in the original **R Opus**, it appears that the results are almost *identical* to those of PLS-R with a rotation around the $y$-axis.  So I can't imagine this is worth our time, especially for a method that is a) ill-defined in the documentation and b) seems to have been superseded by PLS methods in our field (and superseded by ridge/lasso regression elsewhere).
+
+## Packages used in this chapter
+
+```{r}
+sessionInfo()
+```

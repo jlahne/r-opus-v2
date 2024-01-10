@@ -1,0 +1,260 @@
+---
+output: html_document
+---
+
+# Correspondence Analysis (CA)
+
+Correspondence Analysis (CA) is a close relative of PCA that can be applied to count data.  While PCA is appropriate for application when all observations are interval or ratio data, CA is built for the case when cell counts are positive integers.  CA in its modern was developed for application to survey data by French quantitative sociologists, and the most comprehensive introduction to it is probably Michael Greenacre's *Correspondence Analysis in Practice* [@greenacre2017correspondence].  In sensory evaluation, we often apply CA to check-all-that-apply (CATA) data or to data derived from free-comment/text analysis, because these data involve positive counts.  Sometimes these data meet the theoretical requirements for CA, and sometimes they do not.  We won't dig into those details here, but I also recommend checking out [Abdi and Bera's more succinct articles](https://personal.utdallas.edu/~herve/abdi-AB2014_CA.pdf) on the topic [@abdiCorrespondence].
+
+None of the data we've been using for is exactly suited for CA (although *Multiple* Correspondence Analysis can be effectively used to analyze sorting data), so HGH used the `author` dataset that is included in the `ca` package (i.e., `ca::author`) to demonstrate the approach.  We'll follow suit.
+
+```{r, message=FALSE}
+library(tidyverse)
+library(here)
+library(ca)
+
+# We have to load the `author` dataset ourselves
+data(author)
+
+author
+```
+
+The `author` dataset is a `matrix` of counts for each letter of the English alphabet in several published works by various authors.  As such, it's suitable for analysis by CA.  We are, in effect, asking which authors (rows) are most associated with which letters (columns) and vice versa.
+
+The `ca::ca()` function has various options, but HGH used it with default settings, which we will do as well:
+
+```{r}
+author_ca <- ca(author)
+
+author_ca
+```
+
+Printing the `author_ca` object gives us details about the analysis, which we are going to follow HGH in not interpreting over-much.  We are going to treat CA largely as a visualization method, and not get too into the math: it's not overly complicated, but it involves a lot of saying things like "for rows (correspondingly, columns)" and I just don't see it being worthwhile.
+
+As always, we're going to replace base-`R` plotting with `ggplot2`.  We'll do this in a couple of ways.  First off, we can get the "standard coordinates" (per the `?ca` documentation) in `$colcoord` and `$rowcoord`.  Let's see what happens if we pull them out and plot them directly
+
+```{r}
+book_coords <- 
+  author_ca$rowcoord %>%
+  as_tibble(rownames = "name") %>%
+  mutate(point_type = "book")
+
+letter_coords <- 
+  author_ca$colcoord %>%
+  as_tibble(rownames = "name") %>%
+  mutate(point_type = "letter")
+
+# Now we can bind these together and plot them easily
+p_symmetric <- 
+  bind_rows(book_coords, letter_coords) %>%
+  ggplot(aes(x = Dim1, y = Dim2)) + 
+  geom_vline(xintercept = 0, linewidth = 1/10) + 
+  geom_hline(yintercept = 0, linewidth = 1/10) +
+  geom_point(aes(color = point_type)) + 
+  ggrepel::geom_text_repel(aes(label = name, color = point_type),
+                           max.overlaps = 12, size = 3) +
+  scale_color_manual(values = c("darkgreen", "darkorange")) +
+  theme_bw() + 
+  # I am not sure if I mentioned it before, but `coord_equal()` constrains the
+  # axes to have equal unit spacing, which is important when we are interested
+  # in plotting something, like CA, that spatially imputes similarity.
+  coord_equal() +
+  theme(legend.position = "none") +
+  labs(x = "Dimension 1, 40.9% variance",
+       y = "Dimension 2, 19.7% variance",
+       subtitle = "CA plot for `author` table - Symmetric")
+
+p_symmetric
+```
+
+If we compare this to the base-`R` plotting version, you can see that ours is a (nicer) version:
+
+```{r}
+plot(author_ca)
+```
+
+I am not sure why there is a difference in scaling for these two maps - but it appears to be a uniform expansion factor.  This "symmetric" map is **not** a biplot: we cannot interpret the proximity of books (rows, in green) to the letter (columns, in orange).
+
+We can also generate various non-"symmetric" plots.  In a nutshell, in CA the rows and columns of the contingency table explain the same amount of the variance [because of the sum to marginality/sum to one constraint, @abdiCorrespondence], and so in order to actually produce a biplot in which the direct proximity of the row and column points is meaningful, we need to scale appropriately.  I'm going to quote @abdiCorrespondence[p.279] directly and extensively, so that I don't get myself reversed:
+
+> In a CA map when two row (respectively, column) points are close to each other, this means that these points have similar profiles, and when two points have the same profile, they will be located exactly at the same place (this is a consequence of the distributional equivalence principle). The proximity between row and column points is more delicate to interpret because of the barycentric principle (see section on “The Transition Formula”): The position of a row (respectively, column) point is determined from its barycenter on the column (respectively, row), and therefore, the proximity between a row point and one column point cannot be interpreted directly
+
+But
+
+> ...  the plots can reflect [any] asymmetry by normalizing one set [of either rows or columns] such that the variance of its factor scores is equal to 1 for each factor... [i]n the asymmetric plot obtained... [t]he distances between the rows and columns can now be interpreted meaningfully: the distance between a row point and column point reflects their association...
+
+In other words, by construction the standard, symmetric plot tells us that when two row (respectively, column) points are close together, we can say that their profiles are similar, but there is no direct interpretation of the proximity of a row and column point.  In the asymmetric plots, the proximity of row and column points becomes meaningful.
+
+The fastest way to do this is to use the `factoextra::fviz_ca()` function, which will show an improved version of the plots HGH noted "look terrible":
+
+```{r message = FALSE}
+library(factoextra)
+
+p_biplot <- 
+  fviz_ca(author_ca, 
+          map = "colprincipal",
+          repel = TRUE) +
+  coord_equal()
+
+p_biplot
+
+```
+
+In this plot, the columns are plotted in principal coordinates and the rows are plotted in standard coordinates.  We can clean up the plot ourselves.  Reading through various help files (`?ca` and `?plot.ca`), I determined that the difference in scaling we observed between our symmetric CA plot and the default is indeed due to differences in scaling: the `ca` package by default gives a symmetric plot in "principal" coordinates: "In this map both the row and column points are scaled to have inertias (weighted variances) equal to the principal inertia (eigenvalue or squared singular value) along the principal axes, that is both rows and columns are in principal coordinates." [`?plot.ca`; @abdiCorrespondence].  However, in the output of `ca::ca()`, the `$rowcoord`/`$colcoord` matrices are given in so-called "standard coordinates", and so need to be converted to principal coordinates for plotting [`?ca`; @abdiCorrespondence].  Let's see if we can get there.
+
+```{r fig.show='hide'}
+# First off, we see that `plot.ca()` invisibly returns coordinates, so we can
+# grab those to check our work.
+author_ca_asymmetric_coords <- 
+  plot.ca(author_ca, map = "colprincipal")
+
+# Here is where I get puzzled: if we look at the total scaled output for this,
+# neither the rows or the colums have inertia equal to the (squared) singular
+# values:
+
+author_ca_asymmetric_coords$rows %>% colSums()
+author_ca_asymmetric_coords$cols %>% colSums()
+author_ca$sv[1:2]
+author_ca$sv[1:2]^2
+```
+
+So you've got me, there!  I am not sure what the `ca()` function is doing here.  If you understand better than me, please let me know!  However, just to demonstrate how we can go on to use these to build prettier versions of our asymmetric maps, we will take the saved results and pipe them into `ggplot2`.
+
+```{r}
+author_column_asymmetric <- 
+  author_ca_asymmetric_coords %>%
+  # `enframe()` takes a list and puts it into a tibble, so we can use `map()` on
+  # it!
+  enframe() %>%
+  # We'll make sure to capture those matrix rownames properly... note the use of
+  # ordered arguments passed directly to `map()`, instead of the lambda function
+  # ("~") form
+  mutate(tbl = map(value, as_tibble, rownames = "label")) %>%
+  unnest(tbl)
+
+p_asymmetric <- 
+  author_column_asymmetric %>%
+  ggplot(aes(x = Dim1, y = Dim2)) + 
+  geom_vline(xintercept = 0, linewidth = 1/10) + 
+  geom_hline(yintercept = 0, linewidth = 1/10) +
+  geom_point(aes(color = name)) + 
+  ggrepel::geom_text_repel(aes(label = label, color = name),
+                           max.overlaps = 12, size = 3) +
+  scale_color_manual(values = c("darkgreen", "darkorange")) +
+  theme_bw() + 
+  # I am not sure if I mentioned it before, but `coord_equal()` constrains the
+  # axes to have equal unit spacing, which is important when we are interested
+  # in plotting something, like CA, that spatially imputes similarity.
+  coord_equal() +
+  theme(legend.position = "none") +
+  labs(x = "Dimension 1, 40.9% variance",
+       y = "Dimension 2, 19.7% variance",
+       subtitle = "CA plot for `author` table:\nasymmetric w/ column-principle")
+
+p_asymmetric
+
+```
+
+We can see the same kind of difficult-to-parse plot that HGH complained of, although the use of `ggrepel` and some other aesthetic adjustments make it easier to use.  We can also use it to illustrate the principle that @abdiCorrespondence note in their paper:
+
+> ... a row [read column here for our case] is positioned exactly at the barycenter of the columns [read: row]
+
+```{r}
+author_ca_x_data <-
+  author_ca_asymmetric_coords$rows %>%
+  as_tibble(rownames = "label") %>%
+  # We will demonstrate with the letter "x", since it appears to be one of the
+  # more discriminating column points.
+  mutate(xend = author_ca_asymmetric_coords$cols["x", 1],
+         yend = author_ca_asymmetric_coords$cols["x", 2])
+
+p_asymmetric + 
+  geom_segment(data = author_ca_x_data,
+               aes(x = Dim1, y = Dim2, xend = xend, yend = yend),
+               linetype = 2, linewidth = 1/3, color = "orange") + 
+  labs(subtitle = "The point for the 'x' column profile lies at the\nbarycenter of all the row points.")
+```
+
+Let's look at the actual column profile for "x":
+
+```{r}
+(author[, "x"] / sum(author[, "x"])) %>%
+  round(3) %>%
+  as_tibble(rownames = "book") %>%
+  arrange(-value)
+
+```
+
+This tells us what books have the highest count of "x"; looking at the plot, we can see that indeed "x" is closest to those novels... for the most part.  Let's keep digging a little bit.  If we look at, for example, `profiles of future (clark)`, we can see that while it is important for "x", "x" is not so important for it...
+
+```{r}
+(author["profiles of future (clark)", ] / sum(author["profiles of future (clark)", ])) %>%
+  round(5) %>%
+  as_tibble(rownames = "letter") %>%
+  arrange(value)
+```
+
+But for `drifters (michener)`, maybe the story is different.
+
+```{r}
+(author["drifters (michener)", ] / sum(author["drifters (michener)", ])) %>%
+  round(5) %>%
+  as_tibble(rownames = "letter") %>%
+  arrange(value)
+```
+
+...nope!  Well, sort of.  In fact, we have run into a common problem with Correspondence Analysis: the plots are over-influenced by uncommon observations.  "x", of course is an uncommon letter of the alphabet, and so minor variations (probably by chance in the `author` sample) have a large effect on the spatial arrangement of the biplot.
+
+One way to combat this problem is to look at some other measures of configuration quality.  A common quality to examine is the *contribution* of a variable (row or column) to each dimension.  We can calculate conrtibutions from the output as the squared factor score for the row, multiplied by the row mass, and divided by the eigenvalue for the corresponding dimension, e.g., for row $i$ and dimension/component/factor $l$:
+
+$$ctr_i=\frac{f_{i,l}^2r_{i}}{\lambda_l}$$
+
+```{r}
+author_ctrs <- 
+  tibble(
+  letter = author_ca$colnames,
+  ctr_1 = (author_ca$colmass * (author_ca$colcoord[, 1])^2 / author_ca$sv[1]),
+  ctr_2 = (author_ca$colmass * (author_ca$colcoord[, 2])^2 / author_ca$sv[2])
+) %>%
+  mutate(across(where(is.numeric), ~round(., 2)))
+
+author_ctrs %>%
+  ggplot(aes(x = ctr_1, y = ctr_2)) + 
+  geom_point() + 
+  ggrepel::geom_text_repel(aes(label = letter)) +
+  theme_bw() + 
+  labs(x = "Contribution to Dimension 1",
+       y = "Contribution to Dimension 2")
+```
+
+We can see that "y" contributes disproportionately to Dimension 2, and that "d", "w", and "h" are the largest contributors to Dimension 1.  We can take this information to help build a potentially more useful visualization:
+
+```{r}
+# Neat functionality: remove a layer from a compiled ggplot2 to avoid more work.  You can see what layers are in a `gg` object by using [object]$layers
+ggedit::remove_geom(p_symmetric, geom = "point") +
+  geom_point(data = . %>% 
+               filter(point_type == "letter") %>%
+               left_join(author_ctrs, by = c("name" = "letter")),
+             mapping = aes(size = map2_dbl(ctr_1, ctr_2, sum)),
+             color = "orange") +
+  scale_size_continuous(range = c(0, 3)) +
+  labs(subtitle = "CA symmetric plot with point size representing summed\ncontribution to Dimensions 1 and 2")
+```
+
+Now even though we cannot directly interpret proximity of books to letters, we can say that the fact that `sound and fury 7 (faulkner)` is strongly separated by Dimension 2 is probably due to an unusual proportion of "y" in the text: and we'd be right!  It is the 11th most common letter in that row, as compared to many of the other examples we looked at above (scroll up and check to see if I'm right!).  
+
+```{r}
+(author["sound and fury 7 (faulkner)", ] / sum(author["sound and fury 7 (faulkner)", ])) %>%
+  round(5) %>%
+  as_tibble(rownames = "letter") %>%
+  arrange(-value) %>%
+  print(n = 12)
+```
+
+Thus, we can use some careful exploration of data combined with some additional quantities to help us use CA to really explore a data set.
+
+## Packages used in this chapter
+
+```{r}
+sessionInfo()
+```

@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 13 Generalized Procrustes Analysis | The R Opus v2</title>
+  <meta name="description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 13 Generalized Procrustes Analysis | The R Opus v2" />
+  <meta property="og:type" content="book" />
+  <meta property="og:image" content="/img/r-opus-cover.jpg" />
+  <meta property="og:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="github-repo" content="jlahne/r-opus-v2" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 13 Generalized Procrustes Analysis | The R Opus v2" />
+  
+  <meta name="twitter:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="twitter:image" content="/img/r-opus-cover.jpg" />
+
+<meta name="author" content="Jacob Lahne" />
+
+
+<meta name="date" content="2024-01-10" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="multiple-factorial-analysis-mfa.html"/>
+<link rel="next" href="wrapping-up-1.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">The R Opus v2</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#usage"><i class="fa fa-check"></i>Usage</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#r-setup"><i class="fa fa-check"></i><code>R</code> Setup</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#what-this-is-not"><i class="fa fa-check"></i>What this is not</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#about-me"><i class="fa fa-check"></i>About me</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#session-info"><i class="fa fa-check"></i>Session Info</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html"><i class="fa fa-check"></i><b>1</b> Data import and set up</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#exploring-our-data"><i class="fa fa-check"></i><b>1.1</b> Exploring our data</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#the-descriptive-data"><i class="fa fa-check"></i><b>1.1.1</b> The descriptive data</a></li>
+<li class="chapter" data-level="1.1.2" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#consumer-data"><i class="fa fa-check"></i><b>1.1.2</b> Consumer data</a></li>
+<li class="chapter" data-level="1.1.3" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#the-other-data-frames"><i class="fa fa-check"></i><b>1.1.3</b> The other data frames</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#wranglingtidying-data"><i class="fa fa-check"></i><b>1.2</b> Wrangling/tidying data</a></li>
+<li class="chapter" data-level="1.3" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#wrap-up-and-summary"><i class="fa fa-check"></i><b>1.3</b> Wrap up and summary</a></li>
+<li class="chapter" data-level="1.4" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#packages-used-in-this-chapter"><i class="fa fa-check"></i><b>1.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html"><i class="fa fa-check"></i><b>2</b> Analysis of Variance</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#univariate-analysis-with-the-linear-model"><i class="fa fa-check"></i><b>2.1</b> Univariate analysis with the linear model</a></li>
+<li class="chapter" data-level="2.2" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#pseudo-mixed-anova"><i class="fa fa-check"></i><b>2.2</b> Pseudo-mixed ANOVA</a></li>
+<li class="chapter" data-level="2.3" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#mean-comparison-post-hoc-testing"><i class="fa fa-check"></i><b>2.3</b> Mean comparison (post-hoc testing)</a></li>
+<li class="chapter" data-level="2.4" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#bonus-bayesian-approaches-to-anova"><i class="fa fa-check"></i><b>2.4</b> BONUS: Bayesian approaches to ANOVA</a></li>
+<li class="chapter" data-level="2.5" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#packages-used-in-this-chapter-1"><i class="fa fa-check"></i><b>2.5</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html"><i class="fa fa-check"></i><b>3</b> Dealing with missing data</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#exploring-missing-data"><i class="fa fa-check"></i><b>3.1</b> Exploring missing data</a></li>
+<li class="chapter" data-level="3.2" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#imputing-missing-data"><i class="fa fa-check"></i><b>3.2</b> Imputing missing data</a></li>
+<li class="chapter" data-level="3.3" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#alternative-approaches-to-imputation"><i class="fa fa-check"></i><b>3.3</b> Alternative approaches to imputation</a></li>
+<li class="chapter" data-level="3.4" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#packages-used-in-this-chapter-2"><i class="fa fa-check"></i><b>3.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html"><i class="fa fa-check"></i><b>4</b> MANOVA (Multivariate Analysis of Variance)</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#running-manova"><i class="fa fa-check"></i><b>4.1</b> Running MANOVA</a></li>
+<li class="chapter" data-level="4.2" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#what-does-manova-test"><i class="fa fa-check"></i><b>4.2</b> What does MANOVA test?</a></li>
+<li class="chapter" data-level="4.3" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#bonus-hierarchical-bayes-instead-of-manova"><i class="fa fa-check"></i><b>4.3</b> BONUS: Hierarchical Bayes instead of MANOVA</a></li>
+<li class="chapter" data-level="4.4" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#packages-used-in-this-chapter-3"><i class="fa fa-check"></i><b>4.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html"><i class="fa fa-check"></i><b>5</b> Canonical Variate Analysis</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#what-is-cva"><i class="fa fa-check"></i><b>5.1</b> What is CVA?</a></li>
+<li class="chapter" data-level="5.2" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#application-of-cva"><i class="fa fa-check"></i><b>5.2</b> Application of CVA</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#basic-visualization-of-cva"><i class="fa fa-check"></i><b>5.2.1</b> Basic visualization of CVA</a></li>
+<li class="chapter" data-level="5.2.2" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#an-aside-on-exporting-r-plots"><i class="fa fa-check"></i><b>5.2.2</b> An aside on exporting R plots</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#plotting-uncertainty-in-cva"><i class="fa fa-check"></i><b>5.3</b> Plotting uncertainty in CVA</a></li>
+<li class="chapter" data-level="5.4" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#packages-used-in-this-chapter-4"><i class="fa fa-check"></i><b>5.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html"><i class="fa fa-check"></i><b>6</b> Principal Components Analysis (PCA)</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#what-does-pca-do"><i class="fa fa-check"></i><b>6.1</b> What does PCA do?</a></li>
+<li class="chapter" data-level="6.2" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#lets-do-pca"><i class="fa fa-check"></i><b>6.2</b> Let’s do PCA!</a></li>
+<li class="chapter" data-level="6.3" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#in-depth-interpretation"><i class="fa fa-check"></i><b>6.3</b> In-depth interpretation</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#correlations-or-squared-loadings-or-contributions"><i class="fa fa-check"></i><b>6.3.1</b> Correlations or (squared) loadings or contributions</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#pca-with-resampling-for-confidence-intervals"><i class="fa fa-check"></i><b>6.4</b> PCA with resampling for confidence intervals</a></li>
+<li class="chapter" data-level="6.5" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#comparison-of-products-with-pca"><i class="fa fa-check"></i><b>6.5</b> Comparison of products with PCA</a></li>
+<li class="chapter" data-level="6.6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#packages-used-in-this-chapter-5"><i class="fa fa-check"></i><b>6.6</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="cluster-analysis.html"><a href="cluster-analysis.html"><i class="fa fa-check"></i><b>7</b> Cluster analysis</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="cluster-analysis.html"><a href="cluster-analysis.html#hierarchical-clustering-on-distances"><i class="fa fa-check"></i><b>7.1</b> Hierarchical clustering on distances</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="cluster-analysis.html"><a href="cluster-analysis.html#wards-method"><i class="fa fa-check"></i><b>7.1.1</b> Ward’s Method</a></li>
+<li class="chapter" data-level="7.1.2" data-path="cluster-analysis.html"><a href="cluster-analysis.html#single-linkage"><i class="fa fa-check"></i><b>7.1.2</b> Single linkage</a></li>
+<li class="chapter" data-level="7.1.3" data-path="cluster-analysis.html"><a href="cluster-analysis.html#complete-linkage"><i class="fa fa-check"></i><b>7.1.3</b> Complete Linkage</a></li>
+<li class="chapter" data-level="7.1.4" data-path="cluster-analysis.html"><a href="cluster-analysis.html#average-linkage"><i class="fa fa-check"></i><b>7.1.4</b> Average Linkage</a></li>
+<li class="chapter" data-level="7.1.5" data-path="cluster-analysis.html"><a href="cluster-analysis.html#comparing-methods"><i class="fa fa-check"></i><b>7.1.5</b> Comparing methods</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="cluster-analysis.html"><a href="cluster-analysis.html#using-cluster-ids"><i class="fa fa-check"></i><b>7.2</b> Using cluster IDs</a></li>
+<li class="chapter" data-level="7.3" data-path="cluster-analysis.html"><a href="cluster-analysis.html#k-means-clustering"><i class="fa fa-check"></i><b>7.3</b> K-means clustering</a></li>
+<li class="chapter" data-level="7.4" data-path="cluster-analysis.html"><a href="cluster-analysis.html#packages-used-in-this-chapter-6"><i class="fa fa-check"></i><b>7.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html"><i class="fa fa-check"></i><b>8</b> Multidimensional Scaling (MDS)</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#metric-vs-non-metric"><i class="fa fa-check"></i><b>8.1</b> Metric vs non-metric</a></li>
+<li class="chapter" data-level="8.2" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#metric-mds"><i class="fa fa-check"></i><b>8.2</b> Metric MDS</a></li>
+<li class="chapter" data-level="8.3" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#non-metric-mds"><i class="fa fa-check"></i><b>8.3</b> Non-metric MDS</a></li>
+<li class="chapter" data-level="8.4" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#wrap-up"><i class="fa fa-check"></i><b>8.4</b> Wrap up</a></li>
+<li class="chapter" data-level="8.5" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#packages-used-in-this-chapter-7"><i class="fa fa-check"></i><b>8.5</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="distatis.html"><a href="distatis.html"><i class="fa fa-check"></i><b>9</b> DISTATIS</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="distatis.html"><a href="distatis.html#the-dataset-sorting-wines-by-color"><i class="fa fa-check"></i><b>9.1</b> The dataset: sorting wines by color</a></li>
+<li class="chapter" data-level="9.2" data-path="distatis.html"><a href="distatis.html#distatis-demonstrated"><i class="fa fa-check"></i><b>9.2</b> DISTATIS demonstrated</a></li>
+<li class="chapter" data-level="9.3" data-path="distatis.html"><a href="distatis.html#comparison-to-mds"><i class="fa fa-check"></i><b>9.3</b> Comparison to MDS</a></li>
+<li class="chapter" data-level="9.4" data-path="distatis.html"><a href="distatis.html#packages-used-in-this-chapter-8"><i class="fa fa-check"></i><b>9.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="correspondence-analysis-ca.html"><a href="correspondence-analysis-ca.html"><i class="fa fa-check"></i><b>10</b> Correspondence Analysis (CA)</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="correspondence-analysis-ca.html"><a href="correspondence-analysis-ca.html#packages-used-in-this-chapter-9"><i class="fa fa-check"></i><b>10.1</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="preference-mapping.html"><a href="preference-mapping.html"><i class="fa fa-check"></i><b>11</b> Preference Mapping</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="preference-mapping.html"><a href="preference-mapping.html#data"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
+<li class="chapter" data-level="11.2" data-path="preference-mapping.html"><a href="preference-mapping.html#internal-preference-mapping"><i class="fa fa-check"></i><b>11.2</b> Internal preference mapping</a></li>
+<li class="chapter" data-level="11.3" data-path="preference-mapping.html"><a href="preference-mapping.html#external-preference-mapping"><i class="fa fa-check"></i><b>11.3</b> External preference mapping</a>
+<ul>
+<li class="chapter" data-level="11.3.1" data-path="preference-mapping.html"><a href="preference-mapping.html#partial-least-squares-regression"><i class="fa fa-check"></i><b>11.3.1</b> Partial Least Squares Regression</a></li>
+</ul></li>
+<li class="chapter" data-level="11.4" data-path="preference-mapping.html"><a href="preference-mapping.html#other-approaches"><i class="fa fa-check"></i><b>11.4</b> Other approaches</a></li>
+<li class="chapter" data-level="11.5" data-path="preference-mapping.html"><a href="preference-mapping.html#principal-components-regression"><i class="fa fa-check"></i><b>11.5</b> Principal Components Regression</a></li>
+<li class="chapter" data-level="11.6" data-path="preference-mapping.html"><a href="preference-mapping.html#packages-used-in-this-chapter-10"><i class="fa fa-check"></i><b>11.6</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html"><i class="fa fa-check"></i><b>12</b> Multiple Factor(ial) Analysis (MFA)</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#mfa-vs-pca"><i class="fa fa-check"></i><b>12.1</b> MFA vs PCA</a></li>
+<li class="chapter" data-level="12.2" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#mfa-with-different-measurements"><i class="fa fa-check"></i><b>12.2</b> MFA with different measurements</a></li>
+<li class="chapter" data-level="12.3" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#wrapping-up"><i class="fa fa-check"></i><b>12.3</b> Wrapping up</a></li>
+<li class="chapter" data-level="12.4" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#packages-used-in-this-chapter-11"><i class="fa fa-check"></i><b>12.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html"><i class="fa fa-check"></i><b>13</b> Generalized Procrustes Analysis</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html#packages-used-in-this-chapter-12"><i class="fa fa-check"></i><b>13.1</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="wrapping-up-1.html"><a href="wrapping-up-1.html"><i class="fa fa-check"></i><b>14</b> Wrapping up</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The R Opus v2</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="generalized-procrustes-analysis" class="section level1 hasAnchor" number="13">
+<h1><span class="header-section-number">Chapter 13</span> Generalized Procrustes Analysis<a href="generalized-procrustes-analysis.html#generalized-procrustes-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Generalized Procrustes Analysis (GPA) is the second-to-last topic HGH tackles in the original <strong>R Opus</strong>. As a spoiler, this will be our last (substantive) topic: the coverage that HGH gave to Conjoint Analysis was cursory, and I believe that analysis of these data has moved very far forward since the original <strong>R Opus</strong>. I don’t ever use Conjoint Analysis (I leave that to my consumer-economist friends), and so I will not be including this chapter.</p>
+<p>GPA is a “multi-table” method like MFA or DISTATIS. GPA involves a set of (I believe) linear transformations of each data table through translation, rotation, and isotropic scaling, with the goal to minimize the difference between the original tables and the consensus table. GPA was an early and popular method of aligning data from multiple subjects on the same sets of samples when those subjects are not trained. Based on my understanding, it has fallen somewhat out of favor as MFA anecdotally and actually can provide very similar results <span class="citation">(<a href="#ref-tomicComparison2015">Tomic, Berget, and Næs 2015</a>)</span>. This can be seen in the less-updated GPA function in the <code>FactoMineR</code> function, and by the fact that HGH does not bother to give it much time or interpretation. GPA tends to be applied to (Ultra) Flash Profiling and Napping/Projective Mapping results, and it seems to me that those methods are less popular than they once were.</p>
+<p>However, the same authors point out several advantages of GPA, and so it is worth digging into it a little bit! We’re going to be using the same two-table dataset: DA and consumer data.</p>
+<div class="sourceCode" id="cb407"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb407-1"><a href="generalized-procrustes-analysis.html#cb407-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb407-2"><a href="generalized-procrustes-analysis.html#cb407-2" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb407-3"><a href="generalized-procrustes-analysis.html#cb407-3" tabindex="-1"></a><span class="fu">library</span>(FactoMineR)</span>
+<span id="cb407-4"><a href="generalized-procrustes-analysis.html#cb407-4" tabindex="-1"></a><span class="fu">library</span>(paletteer)</span>
+<span id="cb407-5"><a href="generalized-procrustes-analysis.html#cb407-5" tabindex="-1"></a></span>
+<span id="cb407-6"><a href="generalized-procrustes-analysis.html#cb407-6" tabindex="-1"></a><span class="co"># This is all just standard set up</span></span>
+<span id="cb407-7"><a href="generalized-procrustes-analysis.html#cb407-7" tabindex="-1"></a></span>
+<span id="cb407-8"><a href="generalized-procrustes-analysis.html#cb407-8" tabindex="-1"></a>descriptive_data <span class="ot">&lt;-</span> </span>
+<span id="cb407-9"><a href="generalized-procrustes-analysis.html#cb407-9" tabindex="-1"></a>  <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriDAFinal.csv&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb407-10"><a href="generalized-procrustes-analysis.html#cb407-10" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="sc">~</span><span class="fu">as.factor</span>(.)))</span>
+<span id="cb407-11"><a href="generalized-procrustes-analysis.html#cb407-11" tabindex="-1"></a></span>
+<span id="cb407-12"><a href="generalized-procrustes-analysis.html#cb407-12" tabindex="-1"></a>consumer_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriconsFinal.csv&quot;</span>))</span>
+<span id="cb407-13"><a href="generalized-procrustes-analysis.html#cb407-13" tabindex="-1"></a></span>
+<span id="cb407-14"><a href="generalized-procrustes-analysis.html#cb407-14" tabindex="-1"></a>consumer_demo <span class="ot">&lt;-</span> </span>
+<span id="cb407-15"><a href="generalized-procrustes-analysis.html#cb407-15" tabindex="-1"></a>  consumer_data <span class="sc">%&gt;%</span></span>
+<span id="cb407-16"><a href="generalized-procrustes-analysis.html#cb407-16" tabindex="-1"></a>  <span class="fu">select</span>(Judge<span class="sc">:</span>Age) <span class="sc">%&gt;%</span></span>
+<span id="cb407-17"><a href="generalized-procrustes-analysis.html#cb407-17" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(Judge<span class="sc">:</span>Age, <span class="sc">~</span><span class="fu">as.factor</span>(.)))</span>
+<span id="cb407-18"><a href="generalized-procrustes-analysis.html#cb407-18" tabindex="-1"></a></span>
+<span id="cb407-19"><a href="generalized-procrustes-analysis.html#cb407-19" tabindex="-1"></a>consumer_data <span class="ot">&lt;-</span> </span>
+<span id="cb407-20"><a href="generalized-procrustes-analysis.html#cb407-20" tabindex="-1"></a>  consumer_data <span class="sc">%&gt;%</span></span>
+<span id="cb407-21"><a href="generalized-procrustes-analysis.html#cb407-21" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>(<span class="st">`</span><span class="at">Wine Frequency</span><span class="st">`</span><span class="sc">:</span>Age)) <span class="sc">%&gt;%</span></span>
+<span id="cb407-22"><a href="generalized-procrustes-analysis.html#cb407-22" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Judge =</span> <span class="fu">as.factor</span>(Judge))</span></code></pre></div>
+<p>We then follow steps that will seem very familiar from MFA:</p>
+<div class="sourceCode" id="cb408"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb408-1"><a href="generalized-procrustes-analysis.html#cb408-1" tabindex="-1"></a>preference_gpa <span class="ot">&lt;-</span> </span>
+<span id="cb408-2"><a href="generalized-procrustes-analysis.html#cb408-2" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb408-3"><a href="generalized-procrustes-analysis.html#cb408-3" tabindex="-1"></a>  <span class="fu">group_by</span>(ProductName) <span class="sc">%&gt;%</span></span>
+<span id="cb408-4"><a href="generalized-procrustes-analysis.html#cb408-4" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), mean)) <span class="sc">%&gt;%</span></span>
+<span id="cb408-5"><a href="generalized-procrustes-analysis.html#cb408-5" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb408-6"><a href="generalized-procrustes-analysis.html#cb408-6" tabindex="-1"></a>    consumer_data <span class="sc">%&gt;%</span></span>
+<span id="cb408-7"><a href="generalized-procrustes-analysis.html#cb408-7" tabindex="-1"></a>      <span class="fu">pivot_longer</span>(<span class="sc">-</span>Judge, <span class="at">names_to =</span> <span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb408-8"><a href="generalized-procrustes-analysis.html#cb408-8" tabindex="-1"></a>      <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Judge, <span class="at">values_from =</span> value),</span>
+<span id="cb408-9"><a href="generalized-procrustes-analysis.html#cb408-9" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;ProductName&quot;</span> <span class="ot">=</span> <span class="st">&quot;wine&quot;</span>)</span>
+<span id="cb408-10"><a href="generalized-procrustes-analysis.html#cb408-10" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb408-11"><a href="generalized-procrustes-analysis.html#cb408-11" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;ProductName&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb408-12"><a href="generalized-procrustes-analysis.html#cb408-12" tabindex="-1"></a>  <span class="fu">GPA</span>(<span class="at">group =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">106</span>), <span class="at">graph =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<p>I initially was confused about how it is possible to run GPA with two tables with such different number of measurements: in methods like STATIS we get around the difficulty by in fact analyzing the <span class="math inline">\(\mathbf{X_iX_i^T}\)</span>, which will have the same dimensionality because each <span class="math inline">\(\mathbf{X_i}\)</span> has the same number of rows, even if the number of colums is different. According to <span class="citation">Gower (<a href="#ref-gowerGeneralized1975">1975</a>)</span>, GPA solves this problem by instead just adding null columns to the column-wise smaller <span class="math inline">\(\mathbf{X_i}\)</span>.</p>
+<p>I believe that the GPA alignment is followed by a PCA on the consensus positions, since our points are still in 8-dimensional space (<span class="math inline">\(min(n, k_1, k_2) = 8\)</span> for our data with <span class="math inline">\(n=8\)</span> wines and <span class="math inline">\(k_1=20\)</span> wines and <span class="math inline">\(k_2=106\)</span> consumers), but this isn’t explicitly clarified by the <code>?GPA</code> documentation–let’s assume so!</p>
+<p>Typically we haven’t even wanted to <em>look</em> at base-<code>R</code> plots, but it is worthwhile to note that we can tell <code>GPA()</code> is less loved, because the function still outputs these, instead of the <code>factoextra</code>-flavored plots that other <code>FactoMineR</code> functions like <code>MFA()</code> and <code>PCA()</code> give us:</p>
+<div class="sourceCode" id="cb409"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb409-1"><a href="generalized-procrustes-analysis.html#cb409-1" tabindex="-1"></a><span class="fu">plot</span>(preference_gpa)</span></code></pre></div>
+<p><img src="13-GPA_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>We know how to do better, though!</p>
+<div class="sourceCode" id="cb410"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb410-1"><a href="generalized-procrustes-analysis.html#cb410-1" tabindex="-1"></a><span class="co"># The `$consensus` table gives us the center points</span></span>
+<span id="cb410-2"><a href="generalized-procrustes-analysis.html#cb410-2" tabindex="-1"></a>p_gpa_base <span class="ot">&lt;-</span> </span>
+<span id="cb410-3"><a href="generalized-procrustes-analysis.html#cb410-3" tabindex="-1"></a>  preference_gpa<span class="sc">$</span>consensus <span class="sc">%&gt;%</span></span>
+<span id="cb410-4"><a href="generalized-procrustes-analysis.html#cb410-4" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb410-5"><a href="generalized-procrustes-analysis.html#cb410-5" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> V1, <span class="at">y =</span> V2)) <span class="sc">+</span> </span>
+<span id="cb410-6"><a href="generalized-procrustes-analysis.html#cb410-6" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb410-7"><a href="generalized-procrustes-analysis.html#cb410-7" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb410-8"><a href="generalized-procrustes-analysis.html#cb410-8" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> wine)) <span class="sc">+</span> </span>
+<span id="cb410-9"><a href="generalized-procrustes-analysis.html#cb410-9" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> wine, <span class="at">color =</span> wine)) <span class="sc">+</span> </span>
+<span id="cb410-10"><a href="generalized-procrustes-analysis.html#cb410-10" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> </span>
+<span id="cb410-11"><a href="generalized-procrustes-analysis.html#cb410-11" tabindex="-1"></a>  <span class="fu">scale_color_paletteer_d</span>(<span class="st">&quot;RSkittleBrewer::smarties&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb410-12"><a href="generalized-procrustes-analysis.html#cb410-12" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb410-13"><a href="generalized-procrustes-analysis.html#cb410-13" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="sc">+</span></span>
+<span id="cb410-14"><a href="generalized-procrustes-analysis.html#cb410-14" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;GPA consensus for DA and consumer data&quot;</span>,</span>
+<span id="cb410-15"><a href="generalized-procrustes-analysis.html#cb410-15" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Dimension 1&quot;</span>,</span>
+<span id="cb410-16"><a href="generalized-procrustes-analysis.html#cb410-16" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Dimension 2&quot;</span>)</span></code></pre></div>
+<pre><code>## Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if
+## `.name_repair` is omitted as of tibble 2.0.0.
+## ℹ Using compatibility `.name_repair`.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.</code></pre>
+<div class="sourceCode" id="cb412"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb412-1"><a href="generalized-procrustes-analysis.html#cb412-1" tabindex="-1"></a>p_gpa_base</span></code></pre></div>
+<p><img src="13-GPA_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>We can then add layers showing the projected position of our two original tables:</p>
+<div class="sourceCode" id="cb413"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb413-1"><a href="generalized-procrustes-analysis.html#cb413-1" tabindex="-1"></a>p_gpa_partials <span class="ot">&lt;-</span></span>
+<span id="cb413-2"><a href="generalized-procrustes-analysis.html#cb413-2" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">type =</span> <span class="fu">c</span>(<span class="st">&quot;consensus&quot;</span>, <span class="st">&quot;DA&quot;</span>, <span class="st">&quot;consumer&quot;</span>),</span>
+<span id="cb413-3"><a href="generalized-procrustes-analysis.html#cb413-3" tabindex="-1"></a>       <span class="at">coord =</span> <span class="fu">list</span>(preference_gpa<span class="sc">$</span>consensus,</span>
+<span id="cb413-4"><a href="generalized-procrustes-analysis.html#cb413-4" tabindex="-1"></a>                    preference_gpa<span class="sc">$</span>Xfin[, , <span class="dv">1</span>],</span>
+<span id="cb413-5"><a href="generalized-procrustes-analysis.html#cb413-5" tabindex="-1"></a>                    preference_gpa<span class="sc">$</span>Xfin[, , <span class="dv">2</span>])) <span class="sc">%&gt;%</span></span>
+<span id="cb413-6"><a href="generalized-procrustes-analysis.html#cb413-6" tabindex="-1"></a>  <span class="co"># Get everything into a tibble</span></span>
+<span id="cb413-7"><a href="generalized-procrustes-analysis.html#cb413-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">coord =</span> <span class="fu">map</span>(coord, as_tibble, <span class="at">rownames =</span> <span class="st">&quot;wine&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb413-8"><a href="generalized-procrustes-analysis.html#cb413-8" tabindex="-1"></a>  <span class="co"># Give every dimension the same name, since `GPA()` doesn&#39;t do this right</span></span>
+<span id="cb413-9"><a href="generalized-procrustes-analysis.html#cb413-9" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">coord =</span> <span class="fu">map</span>(coord, set_names, <span class="fu">c</span>(<span class="st">&quot;wine&quot;</span>, <span class="fu">paste0</span>(<span class="st">&quot;dim_&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>)))) <span class="sc">%&gt;%</span></span>
+<span id="cb413-10"><a href="generalized-procrustes-analysis.html#cb413-10" tabindex="-1"></a>  <span class="fu">unnest</span>(<span class="fu">everything</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb413-11"><a href="generalized-procrustes-analysis.html#cb413-11" tabindex="-1"></a>  <span class="co"># We&#39;re just going to do the first 2 dimensions here</span></span>
+<span id="cb413-12"><a href="generalized-procrustes-analysis.html#cb413-12" tabindex="-1"></a>  <span class="fu">select</span>(type<span class="sc">:</span>dim_2) <span class="sc">%&gt;%</span></span>
+<span id="cb413-13"><a href="generalized-procrustes-analysis.html#cb413-13" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(dim_1<span class="sc">:</span>dim_2) <span class="sc">%&gt;%</span></span>
+<span id="cb413-14"><a href="generalized-procrustes-analysis.html#cb413-14" tabindex="-1"></a>  <span class="fu">unite</span>(type, name, <span class="at">col =</span> <span class="st">&quot;dim&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb413-15"><a href="generalized-procrustes-analysis.html#cb413-15" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> dim, <span class="at">values_from =</span> value) <span class="sc">%&gt;%</span></span>
+<span id="cb413-16"><a href="generalized-procrustes-analysis.html#cb413-16" tabindex="-1"></a>  <span class="co"># Plot!</span></span>
+<span id="cb413-17"><a href="generalized-procrustes-analysis.html#cb413-17" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> consensus_dim_1, <span class="at">y =</span> consensus_dim_2)) <span class="sc">+</span> </span>
+<span id="cb413-18"><a href="generalized-procrustes-analysis.html#cb413-18" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb413-19"><a href="generalized-procrustes-analysis.html#cb413-19" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb413-20"><a href="generalized-procrustes-analysis.html#cb413-20" tabindex="-1"></a>  <span class="co"># The projected DA data</span></span>
+<span id="cb413-21"><a href="generalized-procrustes-analysis.html#cb413-21" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> DA_dim_1, <span class="at">y =</span> DA_dim_2),</span>
+<span id="cb413-22"><a href="generalized-procrustes-analysis.html#cb413-22" tabindex="-1"></a>             <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">&quot;darkgreen&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb413-23"><a href="generalized-procrustes-analysis.html#cb413-23" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> DA_dim_1, <span class="at">y =</span> DA_dim_2, <span class="at">xend =</span> consensus_dim_1, <span class="at">yend =</span> consensus_dim_2),</span>
+<span id="cb413-24"><a href="generalized-procrustes-analysis.html#cb413-24" tabindex="-1"></a>               <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">&quot;darkgreen&quot;</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb413-25"><a href="generalized-procrustes-analysis.html#cb413-25" tabindex="-1"></a>  <span class="co"># The projected consumer data</span></span>
+<span id="cb413-26"><a href="generalized-procrustes-analysis.html#cb413-26" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> consumer_dim_1, <span class="at">y =</span> consumer_dim_2),</span>
+<span id="cb413-27"><a href="generalized-procrustes-analysis.html#cb413-27" tabindex="-1"></a>             <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">&quot;tan&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb413-28"><a href="generalized-procrustes-analysis.html#cb413-28" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> consumer_dim_1, <span class="at">y =</span> consumer_dim_2, <span class="at">xend =</span> consensus_dim_1, <span class="at">yend =</span> consensus_dim_2),</span>
+<span id="cb413-29"><a href="generalized-procrustes-analysis.html#cb413-29" tabindex="-1"></a>               <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">&quot;tan&quot;</span>, <span class="at">linetype =</span> <span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb413-30"><a href="generalized-procrustes-analysis.html#cb413-30" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> wine), <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb413-31"><a href="generalized-procrustes-analysis.html#cb413-31" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> wine, <span class="at">color =</span> wine)) <span class="sc">+</span> </span>
+<span id="cb413-32"><a href="generalized-procrustes-analysis.html#cb413-32" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> </span>
+<span id="cb413-33"><a href="generalized-procrustes-analysis.html#cb413-33" tabindex="-1"></a>  <span class="fu">scale_color_paletteer_d</span>(<span class="st">&quot;RSkittleBrewer::smarties&quot;</span>) <span class="sc">+</span></span>
+<span id="cb413-34"><a href="generalized-procrustes-analysis.html#cb413-34" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb413-35"><a href="generalized-procrustes-analysis.html#cb413-35" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="sc">+</span></span>
+<span id="cb413-36"><a href="generalized-procrustes-analysis.html#cb413-36" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;GPA consensus for DA and consumer data with</span><span class="sc">\n</span><span class="st">partial configurations&quot;</span>,</span>
+<span id="cb413-37"><a href="generalized-procrustes-analysis.html#cb413-37" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Dimension 1&quot;</span>,</span>
+<span id="cb413-38"><a href="generalized-procrustes-analysis.html#cb413-38" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Dimension 2&quot;</span>,</span>
+<span id="cb413-39"><a href="generalized-procrustes-analysis.html#cb413-39" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">&quot;Green points represent DA data, tan points represent consumer data&quot;</span>)</span>
+<span id="cb413-40"><a href="generalized-procrustes-analysis.html#cb413-40" tabindex="-1"></a></span>
+<span id="cb413-41"><a href="generalized-procrustes-analysis.html#cb413-41" tabindex="-1"></a>p_gpa_partials</span></code></pre></div>
+<p><img src="13-GPA_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>We can compare this to our MFA map for reference (and to see the similarity between the methods.)</p>
+<div class="sourceCode" id="cb414"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb414-1"><a href="generalized-procrustes-analysis.html#cb414-1" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb414-2"><a href="generalized-procrustes-analysis.html#cb414-2" tabindex="-1"></a></span>
+<span id="cb414-3"><a href="generalized-procrustes-analysis.html#cb414-3" tabindex="-1"></a>(p_gpa_partials <span class="sc">+</span> p_mfa) <span class="sc">&amp;</span> </span>
+<span id="cb414-4"><a href="generalized-procrustes-analysis.html#cb414-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">caption =</span> <span class="cn">NULL</span>) <span class="sc">&amp;</span></span>
+<span id="cb414-5"><a href="generalized-procrustes-analysis.html#cb414-5" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">&amp;</span></span>
+<span id="cb414-6"><a href="generalized-procrustes-analysis.html#cb414-6" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="13-GPA_files/figure-html/unnamed-chunk-6-1.png" width="768" /></p>
+<p>We can see that we get close but not exactly similar configurations!</p>
+<p>Returning to our GPA solution, we can inspect how close our configurations are, using both <span class="math inline">\(RV\)</span> and Procrustean similarity coefficients:</p>
+<div class="sourceCode" id="cb415"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb415-1"><a href="generalized-procrustes-analysis.html#cb415-1" tabindex="-1"></a>preference_gpa<span class="sc">$</span>RV</span></code></pre></div>
+<pre><code>##           group.1   group.2
+## group.1 1.0000000 0.6674211
+## group.2 0.6674211 1.0000000</code></pre>
+<div class="sourceCode" id="cb417"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb417-1"><a href="generalized-procrustes-analysis.html#cb417-1" tabindex="-1"></a>preference_gpa<span class="sc">$</span>simi</span></code></pre></div>
+<pre><code>##           group.1   group.2
+## group.1 1.0000000 0.8712266
+## group.2 0.8712266 1.0000000</code></pre>
+<p>We’ve already encountered <span class="math inline">\(RV\)</span>, but to be honest I am not entirely sure what the definition of Procrustes similarity is. A quick search doesn’t really get me much more detail, nor does reviewing <span class="citation">Gower (<a href="#ref-gowerGeneralized1975">1975</a>)</span>. However, from <span class="citation">Qannari, MacFie, and Courcoux (<a href="#ref-qannariPerformance1998">1998</a>)</span> I was able to find that Procrustes similarity is defined as</p>
+<p><span class="math display">\[s(X,Y)=\frac{trace(\mathbf{X^TYH})}{\sqrt{trace(\mathbf{X^TX})}\sqrt{trace(\mathbf{Y^TY})}}\]</span></p>
+<p>This is clearly very close to the definition of the <span class="math inline">\(RV\)</span> coefficient, differing mainly in that the numerator is the Procrustes rotation that adjusts <span class="math inline">\(\mathbf{Y}\)</span> to <span class="math inline">\(\mathbf{X}\)</span>, whereas for <span class="math inline">\(RV\)</span> the numerator instead represents the two double-centered cross-product matrices. I am not sure what the Procrustes similarity emphasizes over the <span class="math inline">\(RV\)</span>, but I believe it is more evenly influenced by dimensions in the data beyond the first principal component based on discussion in <span class="citation">Tomic, Berget, and Næs (<a href="#ref-tomicComparison2015">2015</a>)</span>]. So which should we pay attention to? I don’t have a good answer to that–it probably depends on the situation.</p>
+<div id="packages-used-in-this-chapter-12" class="section level2 hasAnchor" number="13.1">
+<h2><span class="header-section-number">13.1</span> Packages used in this chapter<a href="generalized-procrustes-analysis.html#packages-used-in-this-chapter-12" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb419"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb419-1"><a href="generalized-procrustes-analysis.html#cb419-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.3.1 (2023-06-16)
+## Platform: aarch64-apple-darwin20 (64-bit)
+## Running under: macOS Ventura 13.6.1
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## time zone: America/New_York
+## tzcode source: internal
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] patchwork_1.1.2 paletteer_1.5.0 FactoMineR_2.8  here_1.0.1     
+##  [5] lubridate_1.9.2 forcats_1.0.0   stringr_1.5.0   dplyr_1.1.2    
+##  [9] purrr_1.0.1     readr_2.1.4     tidyr_1.3.0     tibble_3.2.1   
+## [13] ggplot2_3.4.3   tidyverse_2.0.0
+## 
+## loaded via a namespace (and not attached):
+##  [1] gtable_0.3.4         xfun_0.39            bslib_0.5.1         
+##  [4] htmlwidgets_1.6.2    ggrepel_0.9.3        lattice_0.21-8      
+##  [7] tzdb_0.4.0           vctrs_0.6.3          tools_4.3.1         
+## [10] generics_0.1.3       parallel_4.3.1       fansi_1.0.4         
+## [13] highr_0.10           cluster_2.1.4        pkgconfig_2.0.3     
+## [16] scatterplot3d_0.3-44 lifecycle_1.0.3      farver_2.1.1        
+## [19] compiler_4.3.1       munsell_0.5.0        leaps_3.1           
+## [22] htmltools_0.5.6      sass_0.4.7           yaml_2.3.7          
+## [25] pillar_1.9.0         crayon_1.5.2         jquerylib_0.1.4     
+## [28] MASS_7.3-60          flashClust_1.01-2    DT_0.28             
+## [31] cachem_1.0.8         tidyselect_1.2.0     digest_0.6.33       
+## [34] mvtnorm_1.2-2        stringi_1.7.12       rematch2_2.1.2      
+## [37] bookdown_0.37        labeling_0.4.3       rprojroot_2.0.3     
+## [40] fastmap_1.1.1        grid_4.3.1           colorspace_2.1-0    
+## [43] cli_3.6.1            magrittr_2.0.3       utf8_1.2.3          
+## [46] withr_2.5.0          scales_1.2.1         bit64_4.0.5         
+## [49] estimability_1.4.1   timechange_0.2.0     rmarkdown_2.23      
+## [52] emmeans_1.8.7        bit_4.0.5            hms_1.1.3           
+## [55] coda_0.19-4          evaluate_0.21        knitr_1.43          
+## [58] rlang_1.1.1          Rcpp_1.0.11          xtable_1.8-4        
+## [61] glue_1.6.2           rstudioapi_0.15.0    vroom_1.6.3         
+## [64] jsonlite_1.8.7       R6_2.5.1             prismatic_1.1.1     
+## [67] multcompView_0.1-9</code></pre>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-gowerGeneralized1975" class="csl-entry">
+Gower, John C. 1975. <span>“Generalized Procrustes Analysis.”</span> <em>Psychometrika</em> 40: 33–51.
+</div>
+<div id="ref-qannariPerformance1998" class="csl-entry">
+Qannari, El Mostafa, Halliday J. H MacFie, and Philippe Courcoux. 1998. <span>“Performance Indices and Isotropic Scaling Factors in Sensory Profiling.”</span> <em>Food Quality and Preference</em> 10 (1): 17–21. <a href="https://doi.org/10.1016/S0950-3293(98)00033-0">https://doi.org/10.1016/S0950-3293(98)00033-0</a>.
+</div>
+<div id="ref-tomicComparison2015" class="csl-entry">
+Tomic, O., I. Berget, and T. Næs. 2015. <span>“A Comparison of Generalised Procrustes Analysis and Multiple Factor Analysis for Projective Mapping Data.”</span> <em>Food Quality and Preference</em> 43 (July): 34–46. <a href="https://doi.org/10.1016/j.foodqual.2015.02.004">https://doi.org/10.1016/j.foodqual.2015.02.004</a>.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="multiple-factorial-analysis-mfa.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="wrapping-up-1.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/13-GPA.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": true
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

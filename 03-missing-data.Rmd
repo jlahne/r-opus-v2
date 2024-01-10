@@ -1,0 +1,148 @@
+---
+output: html_document
+---
+
+# Dealing with missing data
+
+In this short section, we'll look at "single imputation" using the Expectation Maximization approach.  First, let's get our data imported and our packages set up.
+
+```{r, message = FALSE}
+library(tidyverse)
+library(here)
+
+descriptive_data <- read_csv(here("data/torriDAFinal.csv"))
+missing_data_example <-read_csv(here("data/torrimiss.csv"))
+```
+
+## Exploring missing data
+
+In the original **R Opus**, HGH used the `missmda` package, from Susan Josse and Francois Husson, which to my understanding uses a PCA approach to do single imputation.  Reading through their documentation, they note that this is equivalent to the "expectation maximization" (EM) approach to single imputation.  We're going to use a slightly more modern package that combines approaches from a number of different missing-data packages, called `simputation`.  It gives standard syntax for a number of different formula-based methods for imputation.  We're going to also use the `skimr` package to easily see where we have missing data, and the `naniar` package to visualize.
+
+```{r, message = FALSE}
+library(simputation)
+library(skimr)
+library(naniar)
+```
+
+First off, let's take a look at our `missing_data_example` data set using the `skim()` method.
+
+```{r}
+skim(missing_data_example) %>% 
+  # This is purely to allow the skimr::skim() to be rendered in PDF, ignore otherwise
+  knitr::kable()
+```
+
+This shows us that we have (induced) missingness in all of our outcome variables (the sensory descriptors), but our predictors (`ProductName`, `NJ`, and `NR`) have no missingness, which is good.  It also shows us that we need to `mutate()` the latter two of those 3 variables into factors, as right now `R` will treat them as numeric predictors.
+
+```{r}
+# Here we mutate the first 3 variables to all be factors
+missing_data_example <- 
+  missing_data_example %>%
+  mutate_at(vars(1:3), ~as.factor(.))
+
+# let's also fix this in our complete dataset before we forget
+descriptive_data <-
+  descriptive_data %>%
+  mutate_at(vars(1:3), ~as.factor(.))
+```
+
+We can then get a look at the patternness of missingness using `naniar`, which has a bunch of utilities for easily visualizing missing data.
+
+```{r, warning = FALSE}
+missing_data_example %>%
+  vis_miss()
+
+# We see above that HGH just replaced some rows with NAs.  In this case, the
+# data is NOT missing "completely at random", as we can confirm with a
+# statistical test.
+missing_data_example %>%
+  mcar_test()
+```
+
+As we know that every row in our dataset is a "case" rather than an observation (i.e., our data is *wide* rather than *long*), we can use the `miss_case_summary()` function from `naniar` to give us a bit more info about how the missingness was introduced:
+
+```{r}
+missing_data_example %>%
+  miss_case_summary() %>%
+  filter(n_miss > 0)
+```
+
+The problem of missing data is a complex one, and if you have large quantities of missing data you will need to account for it in your reports.  In this case, however, we're just going to accept the missingness (perhaps those subjects missed those sessions) and move on.
+
+## Imputing missing data
+
+I am certainly no expert on missing data, but [after doing some reading into the package HGH used in the original **R Opus**, `missMDA`](https://www.jstatsoft.org/article/view/v070i01), my understanding is that this package uses a Principal Component Analysis (PCA)-based approach to imputation which is both useful for the unique problems that sensory scientists typically tackle (e.g., dealing with highly multivariate data with high uncertainty and high multicollinearity) and is competitive with current methods.  Therefore, we'll use this package for imputation here, as well as showing some alternatives below.
+
+```{r}
+library(missMDA)
+
+# We can first estimate the number of components to use in our imputation.
+# NB: This may take a few minutes.
+estim_ncpFAMD(missing_data_example, verbose = FALSE)
+
+# Then we run the imputation itself with the recommended number of components.
+# In contrast to the original R Opus, which used ncp = 2, this function
+# recommends we use ncp = 5.
+
+missing_data_imputed <- imputeFAMD(missing_data_example, ncp = 5)
+
+missing_data_imputed$completeObs %>%
+  as_tibble()
+```
+
+We see that values have been filled in.  Let's compare them to our original data visually.
+
+```{r}
+descriptive_data
+```
+
+In the first row, both `Red_berry` and `Vanilla` were imputed.  These get reasonably close.  Let's compare the results of an ANOVA on the `Red_berry` variable for the imputed and the original data.
+
+```{r}
+# Imputed data
+aov(Red_berry ~ (ProductName + NJ + NR)^2, 
+    data = missing_data_imputed$completeObs) %>%
+  summary()
+
+# Complete data
+aov(Red_berry ~ (ProductName + NJ + NR)^2, 
+    data = descriptive_data) %>%
+  summary()
+```
+
+You'll notice that the *p*-value for the imputed data is actually lower!  But this is an artifact, as we have not adjusted our degrees of freedom--we need to reduce our numerator degrees of freedom to account for the number of imputed values, as those values are based on the other, observed values.  This will reverse this trend.  We'd see something similar in the rest of the data set.
+
+## Alternative approaches to imputation
+
+While it is powerful, `missMDA` is not very fast, and may not be the best tool for imputation in all cases.  In general, the `simputation` package has a really easy to use interface, which you can learn about by using `vignette("intro", package = "simputation")`.  It offers a lot of competitive methods.  For example, let's use a multiple regression model to predict missing variables in the dataset.
+
+Something I've found with `simputation` is that it is flummoxed by non-syntactic names in `R`, such as `Band-aid` (you cannot typically use "-" in a name in `R`).  We're going to quickly fix the names of our dataset in order to make it play nice before we proceed.
+
+```{r}
+missing_data_imputed_lm <-
+  missing_data_example %>%
+  rename_all(~str_replace_all(., "-", "_")) %>%
+  impute_lm(formula = . ~ ProductName + NR + NJ)
+```
+
+If we run the same checks as before on `Red_berry`, let's see what we get:
+
+```{r}
+# Imputed data
+aov(Red_berry ~ (ProductName + NJ + NR)^2, 
+    data = missing_data_imputed_lm) %>%
+  summary()
+
+# Complete data
+aov(Red_berry ~ (ProductName + NJ + NR)^2, 
+    data = descriptive_data) %>%
+  summary()
+```
+
+Why is our *p*-value even smaller?  If you think about it, we've filled in missing values *using a linear model like the one we are analyzing*.  Therefore, our hypothesis--that ratings for descriptors depend on the wine, the judge, and the rep--is leaking into our imputation.  This is one reason it's critical to adjust our degrees of freedom for any hypothesis tests we use on these imputed data... or to use non-parametric models for imputation (like the ones from `missMDA`) that don't encode our hypotheses in the first place.
+
+## Packages used in this chapter
+
+```{r}
+sessionInfo()
+```

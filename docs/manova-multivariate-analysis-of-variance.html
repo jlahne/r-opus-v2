@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 MANOVA (Multivariate Analysis of Variance) | The R Opus v2</title>
+  <meta name="description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 MANOVA (Multivariate Analysis of Variance) | The R Opus v2" />
+  <meta property="og:type" content="book" />
+  <meta property="og:image" content="/img/r-opus-cover.jpg" />
+  <meta property="og:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="github-repo" content="jlahne/r-opus-v2" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 MANOVA (Multivariate Analysis of Variance) | The R Opus v2" />
+  
+  <meta name="twitter:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="twitter:image" content="/img/r-opus-cover.jpg" />
+
+<meta name="author" content="Jacob Lahne" />
+
+
+<meta name="date" content="2024-01-10" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="dealing-with-missing-data.html"/>
+<link rel="next" href="canonical-variate-analysis.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">The R Opus v2</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#usage"><i class="fa fa-check"></i>Usage</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#r-setup"><i class="fa fa-check"></i><code>R</code> Setup</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#what-this-is-not"><i class="fa fa-check"></i>What this is not</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#about-me"><i class="fa fa-check"></i>About me</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#session-info"><i class="fa fa-check"></i>Session Info</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html"><i class="fa fa-check"></i><b>1</b> Data import and set up</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#exploring-our-data"><i class="fa fa-check"></i><b>1.1</b> Exploring our data</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#the-descriptive-data"><i class="fa fa-check"></i><b>1.1.1</b> The descriptive data</a></li>
+<li class="chapter" data-level="1.1.2" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#consumer-data"><i class="fa fa-check"></i><b>1.1.2</b> Consumer data</a></li>
+<li class="chapter" data-level="1.1.3" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#the-other-data-frames"><i class="fa fa-check"></i><b>1.1.3</b> The other data frames</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#wranglingtidying-data"><i class="fa fa-check"></i><b>1.2</b> Wrangling/tidying data</a></li>
+<li class="chapter" data-level="1.3" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#wrap-up-and-summary"><i class="fa fa-check"></i><b>1.3</b> Wrap up and summary</a></li>
+<li class="chapter" data-level="1.4" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#packages-used-in-this-chapter"><i class="fa fa-check"></i><b>1.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html"><i class="fa fa-check"></i><b>2</b> Analysis of Variance</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#univariate-analysis-with-the-linear-model"><i class="fa fa-check"></i><b>2.1</b> Univariate analysis with the linear model</a></li>
+<li class="chapter" data-level="2.2" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#pseudo-mixed-anova"><i class="fa fa-check"></i><b>2.2</b> Pseudo-mixed ANOVA</a></li>
+<li class="chapter" data-level="2.3" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#mean-comparison-post-hoc-testing"><i class="fa fa-check"></i><b>2.3</b> Mean comparison (post-hoc testing)</a></li>
+<li class="chapter" data-level="2.4" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#bonus-bayesian-approaches-to-anova"><i class="fa fa-check"></i><b>2.4</b> BONUS: Bayesian approaches to ANOVA</a></li>
+<li class="chapter" data-level="2.5" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#packages-used-in-this-chapter-1"><i class="fa fa-check"></i><b>2.5</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html"><i class="fa fa-check"></i><b>3</b> Dealing with missing data</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#exploring-missing-data"><i class="fa fa-check"></i><b>3.1</b> Exploring missing data</a></li>
+<li class="chapter" data-level="3.2" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#imputing-missing-data"><i class="fa fa-check"></i><b>3.2</b> Imputing missing data</a></li>
+<li class="chapter" data-level="3.3" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#alternative-approaches-to-imputation"><i class="fa fa-check"></i><b>3.3</b> Alternative approaches to imputation</a></li>
+<li class="chapter" data-level="3.4" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#packages-used-in-this-chapter-2"><i class="fa fa-check"></i><b>3.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html"><i class="fa fa-check"></i><b>4</b> MANOVA (Multivariate Analysis of Variance)</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#running-manova"><i class="fa fa-check"></i><b>4.1</b> Running MANOVA</a></li>
+<li class="chapter" data-level="4.2" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#what-does-manova-test"><i class="fa fa-check"></i><b>4.2</b> What does MANOVA test?</a></li>
+<li class="chapter" data-level="4.3" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#bonus-hierarchical-bayes-instead-of-manova"><i class="fa fa-check"></i><b>4.3</b> BONUS: Hierarchical Bayes instead of MANOVA</a></li>
+<li class="chapter" data-level="4.4" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#packages-used-in-this-chapter-3"><i class="fa fa-check"></i><b>4.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html"><i class="fa fa-check"></i><b>5</b> Canonical Variate Analysis</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#what-is-cva"><i class="fa fa-check"></i><b>5.1</b> What is CVA?</a></li>
+<li class="chapter" data-level="5.2" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#application-of-cva"><i class="fa fa-check"></i><b>5.2</b> Application of CVA</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#basic-visualization-of-cva"><i class="fa fa-check"></i><b>5.2.1</b> Basic visualization of CVA</a></li>
+<li class="chapter" data-level="5.2.2" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#an-aside-on-exporting-r-plots"><i class="fa fa-check"></i><b>5.2.2</b> An aside on exporting R plots</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#plotting-uncertainty-in-cva"><i class="fa fa-check"></i><b>5.3</b> Plotting uncertainty in CVA</a></li>
+<li class="chapter" data-level="5.4" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#packages-used-in-this-chapter-4"><i class="fa fa-check"></i><b>5.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html"><i class="fa fa-check"></i><b>6</b> Principal Components Analysis (PCA)</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#what-does-pca-do"><i class="fa fa-check"></i><b>6.1</b> What does PCA do?</a></li>
+<li class="chapter" data-level="6.2" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#lets-do-pca"><i class="fa fa-check"></i><b>6.2</b> Let’s do PCA!</a></li>
+<li class="chapter" data-level="6.3" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#in-depth-interpretation"><i class="fa fa-check"></i><b>6.3</b> In-depth interpretation</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#correlations-or-squared-loadings-or-contributions"><i class="fa fa-check"></i><b>6.3.1</b> Correlations or (squared) loadings or contributions</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#pca-with-resampling-for-confidence-intervals"><i class="fa fa-check"></i><b>6.4</b> PCA with resampling for confidence intervals</a></li>
+<li class="chapter" data-level="6.5" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#comparison-of-products-with-pca"><i class="fa fa-check"></i><b>6.5</b> Comparison of products with PCA</a></li>
+<li class="chapter" data-level="6.6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#packages-used-in-this-chapter-5"><i class="fa fa-check"></i><b>6.6</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="cluster-analysis.html"><a href="cluster-analysis.html"><i class="fa fa-check"></i><b>7</b> Cluster analysis</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="cluster-analysis.html"><a href="cluster-analysis.html#hierarchical-clustering-on-distances"><i class="fa fa-check"></i><b>7.1</b> Hierarchical clustering on distances</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="cluster-analysis.html"><a href="cluster-analysis.html#wards-method"><i class="fa fa-check"></i><b>7.1.1</b> Ward’s Method</a></li>
+<li class="chapter" data-level="7.1.2" data-path="cluster-analysis.html"><a href="cluster-analysis.html#single-linkage"><i class="fa fa-check"></i><b>7.1.2</b> Single linkage</a></li>
+<li class="chapter" data-level="7.1.3" data-path="cluster-analysis.html"><a href="cluster-analysis.html#complete-linkage"><i class="fa fa-check"></i><b>7.1.3</b> Complete Linkage</a></li>
+<li class="chapter" data-level="7.1.4" data-path="cluster-analysis.html"><a href="cluster-analysis.html#average-linkage"><i class="fa fa-check"></i><b>7.1.4</b> Average Linkage</a></li>
+<li class="chapter" data-level="7.1.5" data-path="cluster-analysis.html"><a href="cluster-analysis.html#comparing-methods"><i class="fa fa-check"></i><b>7.1.5</b> Comparing methods</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="cluster-analysis.html"><a href="cluster-analysis.html#using-cluster-ids"><i class="fa fa-check"></i><b>7.2</b> Using cluster IDs</a></li>
+<li class="chapter" data-level="7.3" data-path="cluster-analysis.html"><a href="cluster-analysis.html#k-means-clustering"><i class="fa fa-check"></i><b>7.3</b> K-means clustering</a></li>
+<li class="chapter" data-level="7.4" data-path="cluster-analysis.html"><a href="cluster-analysis.html#packages-used-in-this-chapter-6"><i class="fa fa-check"></i><b>7.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html"><i class="fa fa-check"></i><b>8</b> Multidimensional Scaling (MDS)</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#metric-vs-non-metric"><i class="fa fa-check"></i><b>8.1</b> Metric vs non-metric</a></li>
+<li class="chapter" data-level="8.2" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#metric-mds"><i class="fa fa-check"></i><b>8.2</b> Metric MDS</a></li>
+<li class="chapter" data-level="8.3" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#non-metric-mds"><i class="fa fa-check"></i><b>8.3</b> Non-metric MDS</a></li>
+<li class="chapter" data-level="8.4" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#wrap-up"><i class="fa fa-check"></i><b>8.4</b> Wrap up</a></li>
+<li class="chapter" data-level="8.5" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#packages-used-in-this-chapter-7"><i class="fa fa-check"></i><b>8.5</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="distatis.html"><a href="distatis.html"><i class="fa fa-check"></i><b>9</b> DISTATIS</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="distatis.html"><a href="distatis.html#the-dataset-sorting-wines-by-color"><i class="fa fa-check"></i><b>9.1</b> The dataset: sorting wines by color</a></li>
+<li class="chapter" data-level="9.2" data-path="distatis.html"><a href="distatis.html#distatis-demonstrated"><i class="fa fa-check"></i><b>9.2</b> DISTATIS demonstrated</a></li>
+<li class="chapter" data-level="9.3" data-path="distatis.html"><a href="distatis.html#comparison-to-mds"><i class="fa fa-check"></i><b>9.3</b> Comparison to MDS</a></li>
+<li class="chapter" data-level="9.4" data-path="distatis.html"><a href="distatis.html#packages-used-in-this-chapter-8"><i class="fa fa-check"></i><b>9.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="correspondence-analysis-ca.html"><a href="correspondence-analysis-ca.html"><i class="fa fa-check"></i><b>10</b> Correspondence Analysis (CA)</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="correspondence-analysis-ca.html"><a href="correspondence-analysis-ca.html#packages-used-in-this-chapter-9"><i class="fa fa-check"></i><b>10.1</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="preference-mapping.html"><a href="preference-mapping.html"><i class="fa fa-check"></i><b>11</b> Preference Mapping</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="preference-mapping.html"><a href="preference-mapping.html#data"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
+<li class="chapter" data-level="11.2" data-path="preference-mapping.html"><a href="preference-mapping.html#internal-preference-mapping"><i class="fa fa-check"></i><b>11.2</b> Internal preference mapping</a></li>
+<li class="chapter" data-level="11.3" data-path="preference-mapping.html"><a href="preference-mapping.html#external-preference-mapping"><i class="fa fa-check"></i><b>11.3</b> External preference mapping</a>
+<ul>
+<li class="chapter" data-level="11.3.1" data-path="preference-mapping.html"><a href="preference-mapping.html#partial-least-squares-regression"><i class="fa fa-check"></i><b>11.3.1</b> Partial Least Squares Regression</a></li>
+</ul></li>
+<li class="chapter" data-level="11.4" data-path="preference-mapping.html"><a href="preference-mapping.html#other-approaches"><i class="fa fa-check"></i><b>11.4</b> Other approaches</a></li>
+<li class="chapter" data-level="11.5" data-path="preference-mapping.html"><a href="preference-mapping.html#principal-components-regression"><i class="fa fa-check"></i><b>11.5</b> Principal Components Regression</a></li>
+<li class="chapter" data-level="11.6" data-path="preference-mapping.html"><a href="preference-mapping.html#packages-used-in-this-chapter-10"><i class="fa fa-check"></i><b>11.6</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html"><i class="fa fa-check"></i><b>12</b> Multiple Factor(ial) Analysis (MFA)</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#mfa-vs-pca"><i class="fa fa-check"></i><b>12.1</b> MFA vs PCA</a></li>
+<li class="chapter" data-level="12.2" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#mfa-with-different-measurements"><i class="fa fa-check"></i><b>12.2</b> MFA with different measurements</a></li>
+<li class="chapter" data-level="12.3" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#wrapping-up"><i class="fa fa-check"></i><b>12.3</b> Wrapping up</a></li>
+<li class="chapter" data-level="12.4" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#packages-used-in-this-chapter-11"><i class="fa fa-check"></i><b>12.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html"><i class="fa fa-check"></i><b>13</b> Generalized Procrustes Analysis</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html#packages-used-in-this-chapter-12"><i class="fa fa-check"></i><b>13.1</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="wrapping-up-1.html"><a href="wrapping-up-1.html"><i class="fa fa-check"></i><b>14</b> Wrapping up</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The R Opus v2</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="manova-multivariate-analysis-of-variance" class="section level1 hasAnchor" number="4">
+<h1><span class="header-section-number">Chapter 4</span> MANOVA (Multivariate Analysis of Variance)<a href="manova-multivariate-analysis-of-variance.html#manova-multivariate-analysis-of-variance" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>In this extremely brief section we’ll apply a multivariate ANOVA (MANOVA) to our data. MANOVA analyzes changes in the mean vectors of outcome variables based on categorical factors. We’ll spend slightly more time than HGH did in the original <strong>R Opus</strong> on these concepts, although <em>only</em> slightly.</p>
+<p>First, let’s reload our packages and data:</p>
+<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb118-1"><a href="manova-multivariate-analysis-of-variance.html#cb118-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb118-2"><a href="manova-multivariate-analysis-of-variance.html#cb118-2" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb118-3"><a href="manova-multivariate-analysis-of-variance.html#cb118-3" tabindex="-1"></a></span>
+<span id="cb118-4"><a href="manova-multivariate-analysis-of-variance.html#cb118-4" tabindex="-1"></a>descriptive_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriDAFinal.csv&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb118-5"><a href="manova-multivariate-analysis-of-variance.html#cb118-5" tabindex="-1"></a>  </span>
+<span id="cb118-6"><a href="manova-multivariate-analysis-of-variance.html#cb118-6" tabindex="-1"></a>  <span class="co"># Don&#39;t forget to change the independent variables here to factors...</span></span>
+<span id="cb118-7"><a href="manova-multivariate-analysis-of-variance.html#cb118-7" tabindex="-1"></a>  </span>
+<span id="cb118-8"><a href="manova-multivariate-analysis-of-variance.html#cb118-8" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="at">.vars =</span> <span class="fu">vars</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>), <span class="sc">~</span><span class="fu">as.factor</span>(.))</span></code></pre></div>
+<div id="running-manova" class="section level2 hasAnchor" number="4.1">
+<h2><span class="header-section-number">4.1</span> Running MANOVA<a href="manova-multivariate-analysis-of-variance.html#running-manova" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The syntax for MANOVA in <code>R</code> is very similar to that for ANOVA. However, as far as I know there isn’t a <em>great</em> way to use a tidy approach with <code>map()</code> and <code>nest()</code> to get <code>manova()</code> to work; from what I can tell, this has to do with <code>R</code>’s formula syntax: we can’t easily specify the outcome variable (on the left side of the <code>~</code> in the formula) using the named elements of a typical <code>R</code> formula as we did in the ANOVA section. There, we could write a formula like <code>rating ~ ProductName</code> (I’m simplifying to save myself typing). <code>R</code> is able to interpret a single name in the formula syntax, but it will not parse something like <code>Red_berry:Astringent ~ ProductName</code>, which would be necessary for MANOVA.</p>
+<p>Instead, we have to supply the multivariate outcomes as a (named) matrix <em>in the same (case or wide) order</em> as the categorical predictors. Since we don’t really need this for anything else, we’ll use nested function calls.</p>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="manova-multivariate-analysis-of-variance.html#cb119-1" tabindex="-1"></a>manova_res <span class="ot">&lt;-</span> </span>
+<span id="cb119-2"><a href="manova-multivariate-analysis-of-variance.html#cb119-2" tabindex="-1"></a>  <span class="fu">manova</span>(<span class="fu">as.matrix</span>(descriptive_data[, <span class="dv">4</span><span class="sc">:</span><span class="dv">23</span>]) <span class="sc">~</span> (ProductName <span class="sc">+</span> NJ <span class="sc">+</span> NR)<span class="sc">^</span><span class="dv">2</span>, </span>
+<span id="cb119-3"><a href="manova-multivariate-analysis-of-variance.html#cb119-3" tabindex="-1"></a>         <span class="at">data =</span> descriptive_data)</span></code></pre></div>
+<p>We can get a summary MANOVA table using the typical <code>summary()</code> function.</p>
+<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb120-1"><a href="manova-multivariate-analysis-of-variance.html#cb120-1" tabindex="-1"></a><span class="fu">summary</span>(manova_res, <span class="at">test =</span> <span class="st">&quot;W&quot;</span>)</span></code></pre></div>
+<pre><code>##                 Df   Wilks approx F num Df den Df    Pr(&gt;F)    
+## ProductName      7 0.04243   4.7575    140 1093.6 &lt; 2.2e-16 ***
+## NJ              13 0.00001  12.5493    260 1819.7 &lt; 2.2e-16 ***
+## NR               2 0.64784   1.9756     40  326.0 0.0007056 ***
+## ProductName:NJ  91 0.00000   1.7583   1820 3331.1 &lt; 2.2e-16 ***
+## ProductName:NR  14 0.22673   0.9414    280 1916.9 0.7387371    
+## NJ:NR           26 0.02215   1.3926    520 2672.6 1.873e-07 ***
+## Residuals      182                                             
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>The <code>test = "W"</code> argument asks for Wilk’s <span class="math inline">\(\Lambda\)</span>, which is for whatever reason the preferred test in sensory evaluation (HGH also prefers it). The default test provided by <code>R</code> is Pillai’s <span class="math inline">\(V\)</span>. Only in rare edge cases will the two tests disagree, which you are unlikely to encounter.</p>
+<p>In this particular case, we see that there are significant differences in group mean vectors for wine (<code>ProductName</code>) and judge (<code>NJ</code>), as well as an interaction effect (<code>ProductName:NJ</code>).</p>
+</div>
+<div id="what-does-manova-test" class="section level2 hasAnchor" number="4.2">
+<h2><span class="header-section-number">4.2</span> What does MANOVA test?<a href="manova-multivariate-analysis-of-variance.html#what-does-manova-test" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>This isn’t a statistics course. But I do feel that HGH didn’t give much detail in the original <strong>R Opus</strong>, so let’s take a second to think about MANOVA (and practice some wrangling while we’re at it).</p>
+<p>In typical ANOVA, we are interested in whether knowing the categorical predictor variables tells us something about expected value for an observation. In our case, we might want to know if knowing the wine identity (<code>C_ZINFANDEL</code> for example) tells us something about the expected level of a sensory descriptor (for example, <code>Red_berry</code>). With elaboration, this is always the question we are answering with ANOVA.</p>
+<p>What are we measuring in MANOVA? Well, if we treat our data in the wide, case-based way, we are asking whether the categorical predictor variables tell us anything about <em>all of the expected values, simultaneously</em>. This makes a lot of sense for our particular case: we might expect correlations among variables, and so rather than investigating variables one-by-one, as we did when we ran ANOVA, we want to take advantage of this <em>correlation structure</em>.</p>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="manova-multivariate-analysis-of-variance.html#cb122-1" tabindex="-1"></a>descriptive_data[, <span class="dv">4</span><span class="sc">:</span><span class="dv">23</span>] <span class="sc">%&gt;%</span></span>
+<span id="cb122-2"><a href="manova-multivariate-analysis-of-variance.html#cb122-2" tabindex="-1"></a>  <span class="fu">cor</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb122-3"><a href="manova-multivariate-analysis-of-variance.html#cb122-3" tabindex="-1"></a>  <span class="fu">heatmap</span>(<span class="at">revC =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="04-MANOVA_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Without getting too outside our remit in the <strong>R Opus</strong>, MANOVA attemps to explain the variation of individual observations from their <em>group mean-vectors</em>. A “mean-vector” is just the mean of all dependent variables for a particular set of classifying categorical predictors. So, for our data, the dependent variables are all the sensory variables. We (generally) are interested in the variation around the <strong>wine</strong> mean-vectors. We can see these easily using the split-apply-combine approach:</p>
+<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb123-1"><a href="manova-multivariate-analysis-of-variance.html#cb123-1" tabindex="-1"></a>wine_mean_vectors <span class="ot">&lt;-</span> </span>
+<span id="cb123-2"><a href="manova-multivariate-analysis-of-variance.html#cb123-2" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb123-3"><a href="manova-multivariate-analysis-of-variance.html#cb123-3" tabindex="-1"></a>  <span class="fu">group_by</span>(ProductName) <span class="sc">%&gt;%</span></span>
+<span id="cb123-4"><a href="manova-multivariate-analysis-of-variance.html#cb123-4" tabindex="-1"></a>  <span class="fu">summarize_if</span>(<span class="at">.predicate =</span> <span class="sc">~</span><span class="fu">is.numeric</span>(.),</span>
+<span id="cb123-5"><a href="manova-multivariate-analysis-of-variance.html#cb123-5" tabindex="-1"></a>               <span class="at">.funs =</span> <span class="sc">~</span><span class="fu">mean</span>(.))</span>
+<span id="cb123-6"><a href="manova-multivariate-analysis-of-variance.html#cb123-6" tabindex="-1"></a></span>
+<span id="cb123-7"><a href="manova-multivariate-analysis-of-variance.html#cb123-7" tabindex="-1"></a>wine_mean_vectors</span></code></pre></div>
+<pre><code>## # A tibble: 8 × 21
+##   ProductName Red_berry Dark_berry   Jam Dried_fruit Artificial_frui Chocolate
+##   &lt;fct&gt;           &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;           &lt;dbl&gt;     &lt;dbl&gt;
+## 1 C_MERLOT         2.46       3.05 1.37         1.86           0.776     1.19 
+## 2 C_REFOSCO        2.47       2.46 1.03         1.42           0.924     2.00 
+## 3 C_SYRAH          2.46       2.93 1.75         1.68           0.883     1.42 
+## 4 C_ZINFANDEL      3.08       3.06 1.98         2.06           0.864     0.969
+## 5 I_MERLOT         2.79       2.35 0.843        1.85           0.574     0.783
+## 6 I_PRIMITIVO      3.85       3.38 3.61         1.44           2.19      1.38 
+## 7 I_REFOSCO        2.48       3.01 1.54         1.87           1.11      0.810
+## 8 I_SYRAH          3.17       4.48 3.10         2.16           2.43      1.20 
+## # ℹ 14 more variables: Vanilla &lt;dbl&gt;, Oak &lt;dbl&gt;, Burned &lt;dbl&gt;, Leather &lt;dbl&gt;,
+## #   Earthy &lt;dbl&gt;, Spicy &lt;dbl&gt;, Pepper &lt;dbl&gt;, Grassy &lt;dbl&gt;, Medicinal &lt;dbl&gt;,
+## #   `Band-aid` &lt;dbl&gt;, Sour &lt;dbl&gt;, Bitter &lt;dbl&gt;, Alcohol &lt;dbl&gt;, Astringent &lt;dbl&gt;</code></pre>
+<p>We want to know whether an observation from a particular wine is significantly “closer” to that wine’s mean-vector than it is to other wine’s mean-vectors. We test this using the <a href="https://en.wikipedia.org/wiki/Mahalanobis_distance">Mahalanobis Distance</a>, which is a generalization of the normalized distance (or <em>z</em>-score) from univariate statistics. Intuitively, we ask about the (multi-dimensional) distance of an observation from a mean-vector, divided by the covariance of the observations (the multivariate equivalent of standard deviation). Without getting into mathematics, we can ask about this distance using the <code>mahalanobis()</code> function.</p>
+<div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb125-1"><a href="manova-multivariate-analysis-of-variance.html#cb125-1" tabindex="-1"></a>distance_from_grand_mean <span class="ot">&lt;-</span> </span>
+<span id="cb125-2"><a href="manova-multivariate-analysis-of-variance.html#cb125-2" tabindex="-1"></a>  descriptive_data[, <span class="sc">-</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)] <span class="sc">%&gt;%</span></span>
+<span id="cb125-3"><a href="manova-multivariate-analysis-of-variance.html#cb125-3" tabindex="-1"></a>  <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb125-4"><a href="manova-multivariate-analysis-of-variance.html#cb125-4" tabindex="-1"></a>  <span class="fu">mahalanobis</span>(<span class="at">x =</span> ., <span class="at">center =</span> <span class="fu">colMeans</span>(.), <span class="at">cov =</span> <span class="fu">cov</span>(.))</span>
+<span id="cb125-5"><a href="manova-multivariate-analysis-of-variance.html#cb125-5" tabindex="-1"></a></span>
+<span id="cb125-6"><a href="manova-multivariate-analysis-of-variance.html#cb125-6" tabindex="-1"></a>descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb125-7"><a href="manova-multivariate-analysis-of-variance.html#cb125-7" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>NJ, <span class="sc">-</span>NR) <span class="sc">%&gt;%</span></span>
+<span id="cb125-8"><a href="manova-multivariate-analysis-of-variance.html#cb125-8" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">data =</span> <span class="sc">-</span>ProductName) <span class="sc">%&gt;%</span></span>
+<span id="cb125-9"><a href="manova-multivariate-analysis-of-variance.html#cb125-9" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">data =</span> <span class="fu">map</span>(data, <span class="sc">~</span><span class="fu">as.matrix</span>(.x)), </span>
+<span id="cb125-10"><a href="manova-multivariate-analysis-of-variance.html#cb125-10" tabindex="-1"></a>         <span class="at">distance_from_group_mean =</span> <span class="fu">map</span>(data, <span class="sc">~</span><span class="fu">mahalanobis</span>(<span class="at">x =</span> .x, <span class="at">center =</span> <span class="fu">colMeans</span>(.x), <span class="at">cov =</span> <span class="fu">cov</span>(.x)))) <span class="sc">%&gt;%</span></span>
+<span id="cb125-11"><a href="manova-multivariate-analysis-of-variance.html#cb125-11" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>data) <span class="sc">%&gt;%</span></span>
+<span id="cb125-12"><a href="manova-multivariate-analysis-of-variance.html#cb125-12" tabindex="-1"></a>  <span class="fu">unnest</span>(distance_from_group_mean) <span class="sc">%&gt;%</span></span>
+<span id="cb125-13"><a href="manova-multivariate-analysis-of-variance.html#cb125-13" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">distance_from_grand_mean =</span> distance_from_grand_mean) <span class="sc">%&gt;%</span></span>
+<span id="cb125-14"><a href="manova-multivariate-analysis-of-variance.html#cb125-14" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>ProductName) <span class="sc">%&gt;%</span></span>
+<span id="cb125-15"><a href="manova-multivariate-analysis-of-variance.html#cb125-15" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">color =</span> ProductName, <span class="at">linetype =</span> name)) <span class="sc">+</span></span>
+<span id="cb125-16"><a href="manova-multivariate-analysis-of-variance.html#cb125-16" tabindex="-1"></a>  <span class="fu">geom_density</span>() <span class="sc">+</span></span>
+<span id="cb125-17"><a href="manova-multivariate-analysis-of-variance.html#cb125-17" tabindex="-1"></a>  <span class="fu">geom_rug</span>() <span class="sc">+</span></span>
+<span id="cb125-18"><a href="manova-multivariate-analysis-of-variance.html#cb125-18" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb125-19"><a href="manova-multivariate-analysis-of-variance.html#cb125-19" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Mahalanobis distance from wine (group) and grand (overall) mean&quot;</span>) <span class="sc">+</span></span>
+<span id="cb125-20"><a href="manova-multivariate-analysis-of-variance.html#cb125-20" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>ProductName)</span></code></pre></div>
+<p><img src="04-MANOVA_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>In this plot, we’re able to see how far each individual row (observation) is, in a standardized, multivariate space, from the group mean (the dashed line) and the grand mean (the solid line). We can see that our groups are not necessarily well-defined: often, the grand mean seems to do a better job of describing our samples than the group mean for the specific wine. This might be a sign of our panelists needing further training, but recall that this (simple) visualization doesn’t account for variance stemming from replicate and individual judge scaling behavior, nuisance factors that we actually included in the real MANOVA we ran above. When we include these, we find that in fact group membership (the type of wine) is important for predicting the sample mean vector.</p>
+<div class="sourceCode" id="cb126"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb126-1"><a href="manova-multivariate-analysis-of-variance.html#cb126-1" tabindex="-1"></a>descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb126-2"><a href="manova-multivariate-analysis-of-variance.html#cb126-2" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>ProductName, <span class="sc">-</span>NJ) <span class="sc">%&gt;%</span></span>
+<span id="cb126-3"><a href="manova-multivariate-analysis-of-variance.html#cb126-3" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">data =</span> <span class="sc">-</span>NR) <span class="sc">%&gt;%</span></span>
+<span id="cb126-4"><a href="manova-multivariate-analysis-of-variance.html#cb126-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">data =</span> <span class="fu">map</span>(data, <span class="sc">~</span><span class="fu">as.matrix</span>(.x)), </span>
+<span id="cb126-5"><a href="manova-multivariate-analysis-of-variance.html#cb126-5" tabindex="-1"></a>         <span class="at">distance_from_group_mean =</span> <span class="fu">map</span>(data, <span class="sc">~</span><span class="fu">mahalanobis</span>(<span class="at">x =</span> .x, <span class="at">center =</span> <span class="fu">colMeans</span>(.x), <span class="at">cov =</span> <span class="fu">cov</span>(.x)))) <span class="sc">%&gt;%</span></span>
+<span id="cb126-6"><a href="manova-multivariate-analysis-of-variance.html#cb126-6" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>data) <span class="sc">%&gt;%</span></span>
+<span id="cb126-7"><a href="manova-multivariate-analysis-of-variance.html#cb126-7" tabindex="-1"></a>  <span class="fu">unnest</span>(distance_from_group_mean) <span class="sc">%&gt;%</span></span>
+<span id="cb126-8"><a href="manova-multivariate-analysis-of-variance.html#cb126-8" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">distance_from_grand_mean =</span> distance_from_grand_mean) <span class="sc">%&gt;%</span></span>
+<span id="cb126-9"><a href="manova-multivariate-analysis-of-variance.html#cb126-9" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>NR) <span class="sc">%&gt;%</span></span>
+<span id="cb126-10"><a href="manova-multivariate-analysis-of-variance.html#cb126-10" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">color =</span> NR, <span class="at">linetype =</span> name)) <span class="sc">+</span></span>
+<span id="cb126-11"><a href="manova-multivariate-analysis-of-variance.html#cb126-11" tabindex="-1"></a>  <span class="fu">geom_density</span>() <span class="sc">+</span></span>
+<span id="cb126-12"><a href="manova-multivariate-analysis-of-variance.html#cb126-12" tabindex="-1"></a>  <span class="fu">geom_rug</span>() <span class="sc">+</span></span>
+<span id="cb126-13"><a href="manova-multivariate-analysis-of-variance.html#cb126-13" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb126-14"><a href="manova-multivariate-analysis-of-variance.html#cb126-14" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Mahalanobis distance from rep (group) and grand (overall) mean&quot;</span>) <span class="sc">+</span></span>
+<span id="cb126-15"><a href="manova-multivariate-analysis-of-variance.html#cb126-15" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>NR)</span></code></pre></div>
+<p><img src="04-MANOVA_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>Here we can see that the distribution is almost identical, meaning that knowing what replication (<code>NR</code>) the observation comes from gives us almost no new information. This is good news, because we don’t <em>want</em> the replication to predict anything about the sensory quality of our wines!</p>
+<p>We would display the same plot for our judges (<code>NJ</code>), but some of our judges are TOO repeatable: they have singular covariance matrices (we can tell because the determinant of their covariance matrices is 0), which indicates that the rank of their covariance matrix is less than the number of attributes. This in turn leads to a situation in which their product descriptions are lower-dimensional than the data.</p>
+<div class="sourceCode" id="cb127"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb127-1"><a href="manova-multivariate-analysis-of-variance.html#cb127-1" tabindex="-1"></a>descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb127-2"><a href="manova-multivariate-analysis-of-variance.html#cb127-2" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>ProductName, <span class="sc">-</span>NR) <span class="sc">%&gt;%</span></span>
+<span id="cb127-3"><a href="manova-multivariate-analysis-of-variance.html#cb127-3" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">data =</span> <span class="sc">-</span>NJ) <span class="sc">%&gt;%</span></span>
+<span id="cb127-4"><a href="manova-multivariate-analysis-of-variance.html#cb127-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">data =</span> <span class="fu">map</span>(data, <span class="sc">~</span><span class="fu">as.matrix</span>(.x)),</span>
+<span id="cb127-5"><a href="manova-multivariate-analysis-of-variance.html#cb127-5" tabindex="-1"></a>         <span class="at">covariance_matrix =</span> <span class="fu">map</span>(data, <span class="sc">~</span><span class="fu">cov</span>(.x)),</span>
+<span id="cb127-6"><a href="manova-multivariate-analysis-of-variance.html#cb127-6" tabindex="-1"></a>         <span class="at">determinant =</span> <span class="fu">map_dbl</span>(covariance_matrix, <span class="sc">~</span><span class="fu">det</span>(.x)))</span></code></pre></div>
+<pre><code>## # A tibble: 14 × 4
+##    NJ    data            covariance_matrix determinant
+##    &lt;fct&gt; &lt;list&gt;          &lt;list&gt;                  &lt;dbl&gt;
+##  1 1331  &lt;dbl [24 × 20]&gt; &lt;dbl [20 × 20]&gt;      5.21e+ 2
+##  2 1400  &lt;dbl [24 × 20]&gt; &lt;dbl [20 × 20]&gt;      1.86e- 6
+##  3 1401  &lt;dbl [24 × 20]&gt; &lt;dbl [20 × 20]&gt;      1.57e-10
+##  4 1402  &lt;dbl [24 × 20]&gt; &lt;dbl [20 × 20]&gt;      1.56e-16
+##  5 1404  &lt;dbl [24 × 20]&gt; &lt;dbl [20 × 20]&gt;      0       
+##  6 1405  &lt;dbl [24 × 20]&gt; &lt;dbl [20 × 20]&gt;      5.16e- 1
+##  7 1408  &lt;dbl [24 × 20]&gt; &lt;dbl [20 × 20]&gt;      2.73e-21
+##  8 1409  &lt;dbl [24 × 20]&gt; &lt;dbl [20 × 20]&gt;      5.75e-13
+##  9 1412  &lt;dbl [24 × 20]&gt; &lt;dbl [20 × 20]&gt;      3.09e- 3
+## 10 1413  &lt;dbl [24 × 20]&gt; &lt;dbl [20 × 20]&gt;      0       
+## 11 1414  &lt;dbl [24 × 20]&gt; &lt;dbl [20 × 20]&gt;      1.68e- 8
+## 12 1415  &lt;dbl [24 × 20]&gt; &lt;dbl [20 × 20]&gt;      5.55e+ 5
+## 13 1416  &lt;dbl [24 × 20]&gt; &lt;dbl [20 × 20]&gt;      7.86e+ 1
+## 14 1417  &lt;dbl [24 × 20]&gt; &lt;dbl [20 × 20]&gt;      1.31e- 4</code></pre>
+<p>Let’s take a quick look at subject 1404’s ratings:</p>
+<div class="sourceCode" id="cb129"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb129-1"><a href="manova-multivariate-analysis-of-variance.html#cb129-1" tabindex="-1"></a>descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb129-2"><a href="manova-multivariate-analysis-of-variance.html#cb129-2" tabindex="-1"></a>  <span class="fu">filter</span>(NJ <span class="sc">==</span> <span class="st">&quot;1404&quot;</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 24 × 23
+##    NJ    ProductName NR    Red_berry Dark_berry   Jam Dried_fruit
+##    &lt;fct&gt; &lt;fct&gt;       &lt;fct&gt;     &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
+##  1 1404  C_MERLOT    7           4          5.6   0           0  
+##  2 1404  C_SYRAH     7           0.5        7.5   0           4.4
+##  3 1404  C_ZINFANDEL 7           4.9        7.9   0.5         1.9
+##  4 1404  C_REFOSCO   7           0.3        1.8   0           0  
+##  5 1404  I_MERLOT    7           0.7        5.1   0           5.2
+##  6 1404  I_SYRAH     7           5.2        4     4           2.9
+##  7 1404  I_PRIMITIVO 7           6.4        8.8   7.6         1  
+##  8 1404  I_REFOSCO   7           3.7        4.8   3.8         3.9
+##  9 1404  C_MERLOT    8           3.4        8.3   3.5         4.6
+## 10 1404  C_SYRAH     8           3          8.8   3           4.3
+## # ℹ 14 more rows
+## # ℹ 16 more variables: Artificial_frui &lt;dbl&gt;, Chocolate &lt;dbl&gt;, Vanilla &lt;dbl&gt;,
+## #   Oak &lt;dbl&gt;, Burned &lt;dbl&gt;, Leather &lt;dbl&gt;, Earthy &lt;dbl&gt;, Spicy &lt;dbl&gt;,
+## #   Pepper &lt;dbl&gt;, Grassy &lt;dbl&gt;, Medicinal &lt;dbl&gt;, `Band-aid` &lt;dbl&gt;, Sour &lt;dbl&gt;,
+## #   Bitter &lt;dbl&gt;, Alcohol &lt;dbl&gt;, Astringent &lt;dbl&gt;</code></pre>
+<p>Because this subject never used “Chocolate” or “Band-aid” descriptors, they end up with a rank-deficient covariance matrix:</p>
+<div class="sourceCode" id="cb131"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb131-1"><a href="manova-multivariate-analysis-of-variance.html#cb131-1" tabindex="-1"></a>descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb131-2"><a href="manova-multivariate-analysis-of-variance.html#cb131-2" tabindex="-1"></a>  <span class="fu">filter</span>(NJ <span class="sc">==</span> <span class="st">&quot;1404&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb131-3"><a href="manova-multivariate-analysis-of-variance.html#cb131-3" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb131-4"><a href="manova-multivariate-analysis-of-variance.html#cb131-4" tabindex="-1"></a>  <span class="fu">cov</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb131-5"><a href="manova-multivariate-analysis-of-variance.html#cb131-5" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div>
+<pre><code>##                 Red_berry Dark_berry   Jam Dried_fruit Artificial_frui
+## Red_berry            5.42       3.66  5.73        0.65            1.81
+## Dark_berry           3.66       6.83  4.92        2.96            0.82
+## Jam                  5.73       4.92  8.92        1.95            2.48
+## Dried_fruit          0.65       2.96  1.95        3.61            0.22
+## Artificial_frui      1.81       0.82  2.48        0.22            1.65
+## Chocolate            0.00       0.00  0.00        0.00            0.00
+## Vanilla              0.38       0.91 -0.48        0.22           -0.10
+## Oak                 -0.28      -0.02 -2.02       -0.56           -0.66
+## Burned              -4.74      -4.98 -5.14       -3.26           -1.65
+## Leather             -0.29      -0.31 -0.28       -0.08           -0.09
+## Earthy              -0.15      -0.20 -0.35       -0.18           -0.05
+## Spicy                0.10      -0.30 -0.58       -0.19           -0.21
+## Pepper              -0.53      -0.10 -1.45       -0.33           -0.53
+## Grassy               0.14       0.07  0.12       -0.06            0.05
+## Medicinal           -1.20      -1.46 -0.80        1.31           -0.39
+## Band-aid             0.00       0.00  0.00        0.00            0.00
+## Sour                -0.33       0.15 -0.72        0.81           -0.34
+## Bitter              -0.10      -0.13 -0.38       -0.04           -0.20
+## Alcohol             -0.29       0.37 -0.64       -0.12           -0.05
+## Astringent          -0.38       0.19 -0.45        0.55           -0.26
+##                 Chocolate Vanilla   Oak Burned Leather Earthy Spicy Pepper
+## Red_berry               0    0.38 -0.28  -4.74   -0.29  -0.15  0.10  -0.53
+## Dark_berry              0    0.91 -0.02  -4.98   -0.31  -0.20 -0.30  -0.10
+## Jam                     0   -0.48 -2.02  -5.14   -0.28  -0.35 -0.58  -1.45
+## Dried_fruit             0    0.22 -0.56  -3.26   -0.08  -0.18 -0.19  -0.33
+## Artificial_frui         0   -0.10 -0.66  -1.65   -0.09  -0.05 -0.21  -0.53
+## Chocolate               0    0.00  0.00   0.00    0.00   0.00  0.00   0.00
+## Vanilla                 0    1.47  1.25  -0.72   -0.04  -0.19  0.25   0.47
+## Oak                     0    1.25  2.66  -0.15   -0.03   0.02  0.47   0.66
+## Burned                  0   -0.72 -0.15  10.72    0.44   0.17 -0.51   1.08
+## Leather                 0   -0.04 -0.03   0.44    0.08  -0.01 -0.05   0.04
+## Earthy                  0   -0.19  0.02   0.17   -0.01   0.17  0.05   0.03
+## Spicy                   0    0.25  0.47  -0.51   -0.05   0.05  0.45   0.12
+## Pepper                  0    0.47  0.66   1.08    0.04   0.03  0.12   0.68
+## Grassy                  0    0.02 -0.01  -0.13   -0.01   0.00  0.04  -0.02
+## Medicinal               0    0.11 -0.16  -2.25    0.16  -0.36  0.11  -0.56
+## Band-aid                0    0.00  0.00   0.00    0.00   0.00  0.00   0.00
+## Sour                    0    0.31  0.41  -2.06    0.01  -0.09  0.35   0.06
+## Bitter                  0    0.10  0.29  -0.41   -0.01  -0.06  0.32  -0.02
+## Alcohol                 0    0.39  0.59   0.61   -0.02  -0.03 -0.07   0.31
+## Astringent              0    0.16  0.59  -0.18   -0.02  -0.01 -0.01   0.07
+##                 Grassy Medicinal Band-aid  Sour Bitter Alcohol Astringent
+## Red_berry         0.14     -1.20        0 -0.33  -0.10   -0.29      -0.38
+## Dark_berry        0.07     -1.46        0  0.15  -0.13    0.37       0.19
+## Jam               0.12     -0.80        0 -0.72  -0.38   -0.64      -0.45
+## Dried_fruit      -0.06      1.31        0  0.81  -0.04   -0.12       0.55
+## Artificial_frui   0.05     -0.39        0 -0.34  -0.20   -0.05      -0.26
+## Chocolate         0.00      0.00        0  0.00   0.00    0.00       0.00
+## Vanilla           0.02      0.11        0  0.31   0.10    0.39       0.16
+## Oak              -0.01     -0.16        0  0.41   0.29    0.59       0.59
+## Burned           -0.13     -2.25        0 -2.06  -0.41    0.61      -0.18
+## Leather          -0.01      0.16        0  0.01  -0.01   -0.02      -0.02
+## Earthy            0.00     -0.36        0 -0.09  -0.06   -0.03      -0.01
+## Spicy             0.04      0.11        0  0.35   0.32   -0.07      -0.01
+## Pepper           -0.02     -0.56        0  0.06  -0.02    0.31       0.07
+## Grassy            0.02     -0.06        0  0.03   0.03   -0.02      -0.05
+## Medicinal        -0.06      6.46        0  1.82   0.41   -0.66       0.04
+## Band-aid          0.00      0.00        0  0.00   0.00    0.00       0.00
+## Sour              0.03      1.82        0  1.64   0.41   -0.27       0.17
+## Bitter            0.03      0.41        0  0.41   0.76    0.01       0.05
+## Alcohol          -0.02     -0.66        0 -0.27   0.01    0.59       0.21
+## Astringent       -0.05      0.04        0  0.17   0.05    0.21       0.52</code></pre>
+<p>The rows (columns) for “Chocolate” and “Band-aid” are exact scaled multiples of each other (they are in fact both entirely <code>0</code>), and so this matrix is of rank less than its dimensionality, leading to a singularity problem.</p>
+</div>
+<div id="bonus-hierarchical-bayes-instead-of-manova" class="section level2 hasAnchor" number="4.3">
+<h2><span class="header-section-number">4.3</span> BONUS: Hierarchical Bayes instead of MANOVA<a href="manova-multivariate-analysis-of-variance.html#bonus-hierarchical-bayes-instead-of-manova" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In the section on <a href="analysis-of-variance.html#analysis-of-variance">ANOVA</a>, we explored applying an ANOVA-like model to our rating data. But we really have a set of correlated dependent variables:</p>
+<div class="sourceCode" id="cb133"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb133-1"><a href="manova-multivariate-analysis-of-variance.html#cb133-1" tabindex="-1"></a><span class="co"># For correlation tibbles</span></span>
+<span id="cb133-2"><a href="manova-multivariate-analysis-of-variance.html#cb133-2" tabindex="-1"></a><span class="fu">library</span>(corrr)</span>
+<span id="cb133-3"><a href="manova-multivariate-analysis-of-variance.html#cb133-3" tabindex="-1"></a></span>
+<span id="cb133-4"><a href="manova-multivariate-analysis-of-variance.html#cb133-4" tabindex="-1"></a>descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb133-5"><a href="manova-multivariate-analysis-of-variance.html#cb133-5" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb133-6"><a href="manova-multivariate-analysis-of-variance.html#cb133-6" tabindex="-1"></a>  <span class="fu">correlate</span>(<span class="at">quiet =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 20 × 21
+##    term       Red_berry Dark_berry     Jam Dried_fruit Artificial_frui Chocolate
+##    &lt;chr&gt;          &lt;dbl&gt;      &lt;dbl&gt;   &lt;dbl&gt;       &lt;dbl&gt;           &lt;dbl&gt;     &lt;dbl&gt;
+##  1 Red_berry    NA          0.339   0.286        0.231          0.169     0.143 
+##  2 Dark_berry    0.339     NA       0.420        0.294          0.111     0.359 
+##  3 Jam           0.286      0.420  NA            0.247          0.438     0.385 
+##  4 Dried_fru…    0.231      0.294   0.247       NA              0.145     0.256 
+##  5 Artificia…    0.169      0.111   0.438        0.145         NA         0.285 
+##  6 Chocolate     0.143      0.359   0.385        0.256          0.285    NA     
+##  7 Vanilla       0.122      0.206   0.404        0.119          0.399     0.455 
+##  8 Oak           0.113      0.183   0.0261       0.320          0.0649    0.201 
+##  9 Burned       -0.0493    -0.0555 -0.0655       0.149          0.0127    0.107 
+## 10 Leather       0.0668     0.184   0.116        0.340          0.0953    0.324 
+## 11 Earthy        0.139      0.210   0.124        0.354          0.143     0.308 
+## 12 Spicy         0.254      0.107   0.146        0.301          0.268     0.285 
+## 13 Pepper        0.319      0.307   0.204        0.329          0.166     0.344 
+## 14 Grassy        0.246      0.0908  0.157        0.222          0.284     0.238 
+## 15 Medicinal     0.0721     0.0880  0.142        0.351          0.0739    0.221 
+## 16 Band-aid      0.0513     0.112   0.146        0.292          0.125     0.289 
+## 17 Sour          0.193      0.157   0.0909       0.308          0.103     0.105 
+## 18 Bitter        0.0727     0.115   0.116        0.119          0.0968    0.0363
+## 19 Alcohol       0.0960     0.210   0.160        0.221          0.160     0.162 
+## 20 Astringent    0.143      0.236   0.145        0.196          0.185     0.102 
+## # ℹ 14 more variables: Vanilla &lt;dbl&gt;, Oak &lt;dbl&gt;, Burned &lt;dbl&gt;, Leather &lt;dbl&gt;,
+## #   Earthy &lt;dbl&gt;, Spicy &lt;dbl&gt;, Pepper &lt;dbl&gt;, Grassy &lt;dbl&gt;, Medicinal &lt;dbl&gt;,
+## #   `Band-aid` &lt;dbl&gt;, Sour &lt;dbl&gt;, Bitter &lt;dbl&gt;, Alcohol &lt;dbl&gt;, Astringent &lt;dbl&gt;</code></pre>
+<p>I wonder if we can use a Bayesian hierarchical approach to simultaneously model all of the descriptor ratings. We can do this by treating <code>descriptor</code> as a factor in an ANOVA-like model:</p>
+<div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb135-1"><a href="manova-multivariate-analysis-of-variance.html#cb135-1" tabindex="-1"></a>rating <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> descriptor) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ProductName) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> NJ) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> NR) <span class="sc">+</span> </span>
+<span id="cb135-2"><a href="manova-multivariate-analysis-of-variance.html#cb135-2" tabindex="-1"></a>  (<span class="dv">1</span> <span class="sc">|</span> ProductName<span class="sc">:</span>NJ) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ProductName<span class="sc">:</span>descriptor) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> NJ<span class="sc">:</span>descriptor)</span></code></pre></div>
+<p>This is only kind of theoretically justified. We are implying that all descriptors have some hierarchical source of variation. In one way, this makes no sense, but in another it isn’t entirely crazy. Let’s see if this model if fittable.</p>
+<div class="sourceCode" id="cb136"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb136-1"><a href="manova-multivariate-analysis-of-variance.html#cb136-1" tabindex="-1"></a><span class="co"># First, get the data into the right shape:</span></span>
+<span id="cb136-2"><a href="manova-multivariate-analysis-of-variance.html#cb136-2" tabindex="-1"></a></span>
+<span id="cb136-3"><a href="manova-multivariate-analysis-of-variance.html#cb136-3" tabindex="-1"></a>descriptive_data_tidy <span class="ot">&lt;-</span> </span>
+<span id="cb136-4"><a href="manova-multivariate-analysis-of-variance.html#cb136-4" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb136-5"><a href="manova-multivariate-analysis-of-variance.html#cb136-5" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(NJ, NR, ProductName),</span>
+<span id="cb136-6"><a href="manova-multivariate-analysis-of-variance.html#cb136-6" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;descriptor&quot;</span>,</span>
+<span id="cb136-7"><a href="manova-multivariate-analysis-of-variance.html#cb136-7" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;rating&quot;</span>)</span>
+<span id="cb136-8"><a href="manova-multivariate-analysis-of-variance.html#cb136-8" tabindex="-1"></a></span>
+<span id="cb136-9"><a href="manova-multivariate-analysis-of-variance.html#cb136-9" tabindex="-1"></a><span class="fu">library</span>(brms)</span>
+<span id="cb136-10"><a href="manova-multivariate-analysis-of-variance.html#cb136-10" tabindex="-1"></a><span class="fu">library</span>(tidybayes)</span>
+<span id="cb136-11"><a href="manova-multivariate-analysis-of-variance.html#cb136-11" tabindex="-1"></a></span>
+<span id="cb136-12"><a href="manova-multivariate-analysis-of-variance.html#cb136-12" tabindex="-1"></a><span class="co"># Note: this took about an hour to run on my early-2020 MacBook.  It&#39;s a silly</span></span>
+<span id="cb136-13"><a href="manova-multivariate-analysis-of-variance.html#cb136-13" tabindex="-1"></a><span class="co"># idea that I am exploring, and so probably not worth that time!</span></span>
+<span id="cb136-14"><a href="manova-multivariate-analysis-of-variance.html#cb136-14" tabindex="-1"></a>b_all <span class="ot">&lt;-</span> </span>
+<span id="cb136-15"><a href="manova-multivariate-analysis-of-variance.html#cb136-15" tabindex="-1"></a>  <span class="fu">brm</span>(<span class="at">data =</span> descriptive_data_tidy,</span>
+<span id="cb136-16"><a href="manova-multivariate-analysis-of-variance.html#cb136-16" tabindex="-1"></a>      <span class="at">family =</span> gaussian,</span>
+<span id="cb136-17"><a href="manova-multivariate-analysis-of-variance.html#cb136-17" tabindex="-1"></a>      <span class="at">formula =</span> rating <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> descriptor) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ProductName) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> NJ) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> NR) <span class="sc">+</span> </span>
+<span id="cb136-18"><a href="manova-multivariate-analysis-of-variance.html#cb136-18" tabindex="-1"></a>        (<span class="dv">1</span> <span class="sc">|</span> ProductName<span class="sc">:</span>NJ) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ProductName<span class="sc">:</span>descriptor) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> NJ<span class="sc">:</span>descriptor),</span>
+<span id="cb136-19"><a href="manova-multivariate-analysis-of-variance.html#cb136-19" tabindex="-1"></a>      <span class="at">iter =</span> <span class="dv">4000</span>, <span class="at">warmup =</span> <span class="dv">1000</span>, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">seed =</span> <span class="dv">4</span>,</span>
+<span id="cb136-20"><a href="manova-multivariate-analysis-of-variance.html#cb136-20" tabindex="-1"></a>      <span class="at">control =</span> <span class="fu">list</span>(<span class="at">adapt_delta =</span> <span class="fl">0.999</span>, <span class="at">max_treedepth =</span> <span class="dv">13</span>),</span>
+<span id="cb136-21"><a href="manova-multivariate-analysis-of-variance.html#cb136-21" tabindex="-1"></a>      <span class="at">file =</span> <span class="fu">here</span>(<span class="st">&quot;fits/fit_04_all_descriptors&quot;</span>))</span></code></pre></div>
+<p>We can inspect the overall model fit, although plotting posterior draws for all parameters would take up so much space that we are not going to do so. Let’s look at the overall model summary:</p>
+<div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb137-1"><a href="manova-multivariate-analysis-of-variance.html#cb137-1" tabindex="-1"></a>b_all</span></code></pre></div>
+<pre><code>## Warning: There were 2 divergent transitions after warmup. Increasing
+## adapt_delta above 0.999 may help. See
+## http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</code></pre>
+<pre><code>##  Family: gaussian 
+##   Links: mu = identity; sigma = identity 
+## Formula: rating ~ 1 + (1 | descriptor) + (1 | ProductName) + (1 | NJ) + (1 | NR) + (1 | ProductName:NJ) + (1 | ProductName:descriptor) + (1 | NJ:descriptor) 
+##    Data: descriptive_data_tidy (Number of observations: 6720) 
+##   Draws: 4 chains, each with iter = 4000; warmup = 1000; thin = 1;
+##          total post-warmup draws = 12000
+## 
+## Group-Level Effects: 
+## ~descriptor (Number of levels: 20) 
+##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sd(Intercept)     1.21      0.23     0.84     1.75 1.00     2099     3868
+## 
+## ~NJ (Number of levels: 14) 
+##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sd(Intercept)     1.11      0.25     0.73     1.71 1.00     2178     4357
+## 
+## ~NJ:descriptor (Number of levels: 280) 
+##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sd(Intercept)     1.01      0.05     0.92     1.12 1.00     2721     4913
+## 
+## ~NR (Number of levels: 3) 
+##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sd(Intercept)     0.15      0.29     0.00     0.92 1.00     2345     4231
+## 
+## ~ProductName (Number of levels: 8) 
+##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sd(Intercept)     0.08      0.07     0.00     0.26 1.00     1830     4353
+## 
+## ~ProductName:descriptor (Number of levels: 160) 
+##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sd(Intercept)     0.49      0.04     0.42     0.57 1.00     3718     6474
+## 
+## ~ProductName:NJ (Number of levels: 112) 
+##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sd(Intercept)     0.13      0.04     0.04     0.20 1.00     2299     1574
+## 
+## Population-Level Effects: 
+##           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## Intercept     2.09      0.44     1.21     2.96 1.00     1434     2814
+## 
+## Family Specific Parameters: 
+##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sigma     1.64      0.01     1.61     1.67 1.00    10759     9035
+## 
+## Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+## and Tail_ESS are effective sample size measures, and Rhat is the potential
+## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+<p>I am genuinely surprised that we were able to fit a model with only 2 divergent transitions. Looking at <span class="math inline">\(\hat{R}\)</span> and <span class="math inline">\(ESS\)</span>, it appears that we don’t have huge problems with the estimation part of the task. The question is whether this approach makes any sense. Let’s take a look at the overall estimated standard deviation, <span class="math inline">\(\sigma_{rating}\)</span>, which is held constant across all groups:</p>
+<div class="sourceCode" id="cb140"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb140-1"><a href="manova-multivariate-analysis-of-variance.html#cb140-1" tabindex="-1"></a>draws <span class="ot">&lt;-</span> <span class="fu">as_draws_df</span>(b_all)</span>
+<span id="cb140-2"><a href="manova-multivariate-analysis-of-variance.html#cb140-2" tabindex="-1"></a></span>
+<span id="cb140-3"><a href="manova-multivariate-analysis-of-variance.html#cb140-3" tabindex="-1"></a>draws <span class="sc">%&gt;%</span> </span>
+<span id="cb140-4"><a href="manova-multivariate-analysis-of-variance.html#cb140-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sigma)) <span class="sc">+</span> </span>
+<span id="cb140-5"><a href="manova-multivariate-analysis-of-variance.html#cb140-5" tabindex="-1"></a>  <span class="fu">stat_dotsinterval</span>(<span class="at">point_interval =</span> mode_hdi, <span class="at">.width =</span> <span class="fl">0.95</span>,</span>
+<span id="cb140-6"><a href="manova-multivariate-analysis-of-variance.html#cb140-6" tabindex="-1"></a>                    <span class="at">shape =</span> <span class="dv">23</span>, <span class="at">stroke =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>, <span class="at">point_size =</span> <span class="dv">3</span>, <span class="at">slab_size =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>,</span>
+<span id="cb140-7"><a href="manova-multivariate-analysis-of-variance.html#cb140-7" tabindex="-1"></a>                    <span class="at">quantiles =</span> <span class="dv">100</span>) <span class="sc">+</span> </span>
+<span id="cb140-8"><a href="manova-multivariate-analysis-of-variance.html#cb140-8" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div>
+<p><img src="04-MANOVA_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p>We can see that the standard deviation is pretty large, which makes sense with the approach we’ve chosen, because the individual standard deviation in different subgroups of observations (within descriptors, within subjects, and within reps) is quite large (for example, with the descriptors):</p>
+<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb141-1"><a href="manova-multivariate-analysis-of-variance.html#cb141-1" tabindex="-1"></a>descriptive_data_tidy <span class="sc">%&gt;%</span></span>
+<span id="cb141-2"><a href="manova-multivariate-analysis-of-variance.html#cb141-2" tabindex="-1"></a>  <span class="fu">group_by</span>(descriptor) <span class="sc">%&gt;%</span></span>
+<span id="cb141-3"><a href="manova-multivariate-analysis-of-variance.html#cb141-3" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">sd =</span> <span class="fu">sd</span>(rating)) <span class="sc">%&gt;%</span></span>
+<span id="cb141-4"><a href="manova-multivariate-analysis-of-variance.html#cb141-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sd, <span class="at">y =</span> descriptor)) <span class="sc">+</span> </span>
+<span id="cb141-5"><a href="manova-multivariate-analysis-of-variance.html#cb141-5" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb141-6"><a href="manova-multivariate-analysis-of-variance.html#cb141-6" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="04-MANOVA_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p>Some of our descriptors have observed standard deviations less than 1.5, and some are almost 3! That’s a pretty big spread. <a href="https://bookdown.org/content/3686/metric-predicted-variable-with-multiple-nominal-predictors.html#heterogeneous-variances-and-robustness-against-outliers-1">There are ways to model variance heterogeneously</a>, and this would be a better approach in this situation, but since this is mostly exploration on my part, and it already took ~1 hour to run this model, I am not going to run a more intensive model. Check out that link if you want to learn more.</p>
+<p>We can see that a consequence of this hierarchical model is that the overall mean rating tendency influences the estimates for subgroups. For example, our more extreme mean ratings get more shrunk back towards the grand mean for all ratings:</p>
+<div class="sourceCode" id="cb142"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb142-1"><a href="manova-multivariate-analysis-of-variance.html#cb142-1" tabindex="-1"></a><span class="co"># First, we&#39;ll reformulate our model to look at the main effect of descriptors</span></span>
+<span id="cb142-2"><a href="manova-multivariate-analysis-of-variance.html#cb142-2" tabindex="-1"></a></span>
+<span id="cb142-3"><a href="manova-multivariate-analysis-of-variance.html#cb142-3" tabindex="-1"></a><span class="co"># We need to tell the `fitted()` function that we are requesting posterior draws</span></span>
+<span id="cb142-4"><a href="manova-multivariate-analysis-of-variance.html#cb142-4" tabindex="-1"></a><span class="co"># for each distinct descriptor group mean (mu) parameter</span></span>
+<span id="cb142-5"><a href="manova-multivariate-analysis-of-variance.html#cb142-5" tabindex="-1"></a>nd <span class="ot">&lt;-</span> descriptive_data_tidy <span class="sc">%&gt;%</span> <span class="fu">distinct</span>(descriptor)</span>
+<span id="cb142-6"><a href="manova-multivariate-analysis-of-variance.html#cb142-6" tabindex="-1"></a></span>
+<span id="cb142-7"><a href="manova-multivariate-analysis-of-variance.html#cb142-7" tabindex="-1"></a>f <span class="ot">&lt;-</span> </span>
+<span id="cb142-8"><a href="manova-multivariate-analysis-of-variance.html#cb142-8" tabindex="-1"></a>  <span class="fu">fitted</span>(b_all,</span>
+<span id="cb142-9"><a href="manova-multivariate-analysis-of-variance.html#cb142-9" tabindex="-1"></a>         <span class="at">re_formula =</span> <span class="sc">~</span> (<span class="dv">1</span> <span class="sc">|</span> descriptor),</span>
+<span id="cb142-10"><a href="manova-multivariate-analysis-of-variance.html#cb142-10" tabindex="-1"></a>         <span class="at">newdata =</span> nd) <span class="sc">%&gt;%</span></span>
+<span id="cb142-11"><a href="manova-multivariate-analysis-of-variance.html#cb142-11" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb142-12"><a href="manova-multivariate-analysis-of-variance.html#cb142-12" tabindex="-1"></a>  <span class="fu">bind_cols</span>(nd) <span class="sc">%&gt;%</span></span>
+<span id="cb142-13"><a href="manova-multivariate-analysis-of-variance.html#cb142-13" tabindex="-1"></a>  <span class="fu">select</span>(descriptor, Estimate) <span class="sc">%&gt;%</span></span>
+<span id="cb142-14"><a href="manova-multivariate-analysis-of-variance.html#cb142-14" tabindex="-1"></a>  <span class="fu">left_join</span>(descriptive_data_tidy <span class="sc">%&gt;%</span></span>
+<span id="cb142-15"><a href="manova-multivariate-analysis-of-variance.html#cb142-15" tabindex="-1"></a>              <span class="fu">group_by</span>(descriptor) <span class="sc">%&gt;%</span></span>
+<span id="cb142-16"><a href="manova-multivariate-analysis-of-variance.html#cb142-16" tabindex="-1"></a>              <span class="fu">summarize</span>(<span class="at">Observed =</span> <span class="fu">mean</span>(rating)))</span></code></pre></div>
+<pre><code>## Joining with `by = join_by(descriptor)`</code></pre>
+<div class="sourceCode" id="cb144"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb144-1"><a href="manova-multivariate-analysis-of-variance.html#cb144-1" tabindex="-1"></a>f <span class="sc">%&gt;%</span></span>
+<span id="cb144-2"><a href="manova-multivariate-analysis-of-variance.html#cb144-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> descriptor)) <span class="sc">+</span></span>
+<span id="cb144-3"><a href="manova-multivariate-analysis-of-variance.html#cb144-3" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">fixef</span>(b_all)[, <span class="dv">1</span>], </span>
+<span id="cb144-4"><a href="manova-multivariate-analysis-of-variance.html#cb144-4" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">&quot;darkred&quot;</span>, <span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb144-5"><a href="manova-multivariate-analysis-of-variance.html#cb144-5" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Estimate), <span class="at">color =</span> <span class="st">&quot;forestgreen&quot;</span>) <span class="sc">+</span></span>
+<span id="cb144-6"><a href="manova-multivariate-analysis-of-variance.html#cb144-6" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Observed), <span class="at">color =</span> <span class="st">&quot;tan&quot;</span>, </span>
+<span id="cb144-7"><a href="manova-multivariate-analysis-of-variance.html#cb144-7" tabindex="-1"></a>             <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">height =</span> <span class="dv">0</span>, <span class="at">width =</span> <span class="fl">0.01</span>, <span class="at">seed =</span> <span class="dv">4</span>)) <span class="sc">+</span></span>
+<span id="cb144-8"><a href="manova-multivariate-analysis-of-variance.html#cb144-8" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">yend =</span> descriptor, <span class="at">x =</span> Observed, <span class="at">xend =</span> Estimate), </span>
+<span id="cb144-9"><a href="manova-multivariate-analysis-of-variance.html#cb144-9" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="at">x =</span> <span class="fl">0.05</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>), <span class="at">ends =</span> <span class="st">&quot;last&quot;</span>),</span>
+<span id="cb144-10"><a href="manova-multivariate-analysis-of-variance.html#cb144-10" tabindex="-1"></a>               <span class="at">alpha =</span> <span class="dv">2</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb144-11"><a href="manova-multivariate-analysis-of-variance.html#cb144-11" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb144-12"><a href="manova-multivariate-analysis-of-variance.html#cb144-12" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
+<span id="cb144-13"><a href="manova-multivariate-analysis-of-variance.html#cb144-13" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;Estimated means (green) are shrunken towards the</span><span class="sc">\n</span><span class="st">grand mean (red line) by the hierarchical model&quot;</span>)</span></code></pre></div>
+<pre><code>## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+## ℹ Please use `linewidth` instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.</code></pre>
+<p><img src="04-MANOVA_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p>Whether this is a reasonable consequence depends on our assumptions about the data. I think there might be something to this approach for helping to combat heterogeneity in rating approaches among subjects, but I am not really enough of an expert in this area to determine if that really makes sense.</p>
+<p>What we can do with the current model is use it investigate useful contrasts. We take the same approach as above to get the marginalized posterior across the descriptors and the wines.</p>
+<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="manova-multivariate-analysis-of-variance.html#cb146-1" tabindex="-1"></a>nd <span class="ot">&lt;-</span></span>
+<span id="cb146-2"><a href="manova-multivariate-analysis-of-variance.html#cb146-2" tabindex="-1"></a>  descriptive_data_tidy <span class="sc">%&gt;%</span></span>
+<span id="cb146-3"><a href="manova-multivariate-analysis-of-variance.html#cb146-3" tabindex="-1"></a>  <span class="fu">distinct</span>(descriptor, ProductName) <span class="sc">%&gt;%</span></span>
+<span id="cb146-4"><a href="manova-multivariate-analysis-of-variance.html#cb146-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">col_names =</span> <span class="fu">str_c</span>(ProductName, <span class="st">&quot;:&quot;</span>, descriptor)) </span>
+<span id="cb146-5"><a href="manova-multivariate-analysis-of-variance.html#cb146-5" tabindex="-1"></a></span>
+<span id="cb146-6"><a href="manova-multivariate-analysis-of-variance.html#cb146-6" tabindex="-1"></a></span>
+<span id="cb146-7"><a href="manova-multivariate-analysis-of-variance.html#cb146-7" tabindex="-1"></a>f <span class="ot">&lt;-</span></span>
+<span id="cb146-8"><a href="manova-multivariate-analysis-of-variance.html#cb146-8" tabindex="-1"></a>  nd <span class="sc">%&gt;%</span></span>
+<span id="cb146-9"><a href="manova-multivariate-analysis-of-variance.html#cb146-9" tabindex="-1"></a>  <span class="fu">fitted</span>(b_all, </span>
+<span id="cb146-10"><a href="manova-multivariate-analysis-of-variance.html#cb146-10" tabindex="-1"></a>         <span class="at">newdata =</span> .,</span>
+<span id="cb146-11"><a href="manova-multivariate-analysis-of-variance.html#cb146-11" tabindex="-1"></a>         <span class="co"># We need to marginalize across both `NJ` and `NR` for this</span></span>
+<span id="cb146-12"><a href="manova-multivariate-analysis-of-variance.html#cb146-12" tabindex="-1"></a>         <span class="at">re_formula =</span> <span class="sc">~</span> (<span class="dv">1</span> <span class="sc">|</span> ProductName) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> descriptor) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ProductName<span class="sc">:</span>descriptor),</span>
+<span id="cb146-13"><a href="manova-multivariate-analysis-of-variance.html#cb146-13" tabindex="-1"></a>         <span class="at">summary =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb146-14"><a href="manova-multivariate-analysis-of-variance.html#cb146-14" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb146-15"><a href="manova-multivariate-analysis-of-variance.html#cb146-15" tabindex="-1"></a>  <span class="fu">set_names</span>(nd <span class="sc">%&gt;%</span> <span class="fu">pull</span>(col_names))</span></code></pre></div>
+<pre><code>## Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if
+## `.name_repair` is omitted as of tibble 2.0.0.
+## ℹ Using compatibility `.name_repair`.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.</code></pre>
+<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb148-1"><a href="manova-multivariate-analysis-of-variance.html#cb148-1" tabindex="-1"></a><span class="fu">head</span>(f)</span></code></pre></div>
+<pre><code>## # A tibble: 6 × 160
+##   `C_MERLOT:Red_berry` `C_MERLOT:Dark_berry` `C_MERLOT:Jam`
+##                  &lt;dbl&gt;                 &lt;dbl&gt;          &lt;dbl&gt;
+## 1                 2.54                  3.36           2.26
+## 2                 2.50                  3.42           1.40
+## 3                 2.45                  3.68           1.41
+## 4                 3.07                  3.78           1.75
+## 5                 2.90                  3.85           2.04
+## 6                 3.05                  3.91           1.74
+## # ℹ 157 more variables: `C_MERLOT:Dried_fruit` &lt;dbl&gt;,
+## #   `C_MERLOT:Artificial_frui` &lt;dbl&gt;, `C_MERLOT:Chocolate` &lt;dbl&gt;,
+## #   `C_MERLOT:Vanilla` &lt;dbl&gt;, `C_MERLOT:Oak` &lt;dbl&gt;, `C_MERLOT:Burned` &lt;dbl&gt;,
+## #   `C_MERLOT:Leather` &lt;dbl&gt;, `C_MERLOT:Earthy` &lt;dbl&gt;, `C_MERLOT:Spicy` &lt;dbl&gt;,
+## #   `C_MERLOT:Pepper` &lt;dbl&gt;, `C_MERLOT:Grassy` &lt;dbl&gt;,
+## #   `C_MERLOT:Medicinal` &lt;dbl&gt;, `C_MERLOT:Band-aid` &lt;dbl&gt;,
+## #   `C_MERLOT:Sour` &lt;dbl&gt;, `C_MERLOT:Bitter` &lt;dbl&gt;, `C_MERLOT:Alcohol` &lt;dbl&gt;, …</code></pre>
+<p>This gets us a rather large table of the estimates for each descriptor at each wine. These are the estimated mean parameters for the “simple effects” that can let us examine contrasts. This full data table is too large to be wieldy, so we can trim it down for individual inquiries. For example, let’s examine <code>Vanilla</code> and <code>Chocolate</code>, since they are often confusable, and see if there is a difference in the way <code>rating</code> changes for them in across two different wines… let’s say <code>C_MERLOT</code> and <code>I_MERLOT</code>.</p>
+<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="manova-multivariate-analysis-of-variance.html#cb150-1" tabindex="-1"></a>interactions <span class="ot">&lt;-</span> </span>
+<span id="cb150-2"><a href="manova-multivariate-analysis-of-variance.html#cb150-2" tabindex="-1"></a>  f <span class="sc">%&gt;%</span></span>
+<span id="cb150-3"><a href="manova-multivariate-analysis-of-variance.html#cb150-3" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="st">`</span><span class="at">C_MERLOT - I_MERLOT @ Vanilla</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">C_MERLOT:Vanilla</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">I_MERLOT:Vanilla</span><span class="st">`</span>,</span>
+<span id="cb150-4"><a href="manova-multivariate-analysis-of-variance.html#cb150-4" tabindex="-1"></a>            <span class="st">`</span><span class="at">C_MERLOT - I_MERLOT @ Chocolate</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">C_MERLOT:Chocolate</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">I_MERLOT:Chocolate</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb150-5"><a href="manova-multivariate-analysis-of-variance.html#cb150-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">C_MERLOT v. I_MERLOT</span><span class="sc">\n</span><span class="at">(x)</span><span class="sc">\n</span><span class="at">Vanilla v. Chocolate</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">C_MERLOT - I_MERLOT @ Vanilla</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">C_MERLOT - I_MERLOT @ Chocolate</span><span class="st">`</span>)</span>
+<span id="cb150-6"><a href="manova-multivariate-analysis-of-variance.html#cb150-6" tabindex="-1"></a></span>
+<span id="cb150-7"><a href="manova-multivariate-analysis-of-variance.html#cb150-7" tabindex="-1"></a><span class="co"># What does this look like?</span></span>
+<span id="cb150-8"><a href="manova-multivariate-analysis-of-variance.html#cb150-8" tabindex="-1"></a><span class="fu">head</span>(interactions)</span></code></pre></div>
+<pre><code>## # A tibble: 6 × 3
+##   `C_MERLOT - I_MERLOT @ Vanilla` C_MERLOT - I_MERLOT @…¹ C_MERLOT v. I_MERLOT…²
+##                             &lt;dbl&gt;                   &lt;dbl&gt;                  &lt;dbl&gt;
+## 1                         -0.0537                   0.626                 -0.679
+## 2                          0.816                    0.285                  0.531
+## 3                          0.292                    0.103                  0.189
+## 4                          0.442                    0.612                 -0.170
+## 5                          0.259                    0.413                 -0.154
+## 6                          0.542                    0.162                  0.380
+## # ℹ abbreviated names: ¹​`C_MERLOT - I_MERLOT @ Chocolate`,
+## #   ²​`C_MERLOT v. I_MERLOT\n(x)\nVanilla v. Chocolate`</code></pre>
+<p>Now we can plot this, with just a little bit more wrangling:</p>
+<div class="sourceCode" id="cb152"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb152-1"><a href="manova-multivariate-analysis-of-variance.html#cb152-1" tabindex="-1"></a>levels <span class="ot">&lt;-</span> <span class="fu">colnames</span>(interactions)</span>
+<span id="cb152-2"><a href="manova-multivariate-analysis-of-variance.html#cb152-2" tabindex="-1"></a></span>
+<span id="cb152-3"><a href="manova-multivariate-analysis-of-variance.html#cb152-3" tabindex="-1"></a>interactions <span class="sc">%&gt;%</span></span>
+<span id="cb152-4"><a href="manova-multivariate-analysis-of-variance.html#cb152-4" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb152-5"><a href="manova-multivariate-analysis-of-variance.html#cb152-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">name =</span> <span class="fu">factor</span>(name, <span class="at">levels =</span> levels)) <span class="sc">%&gt;%</span></span>
+<span id="cb152-6"><a href="manova-multivariate-analysis-of-variance.html#cb152-6" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> value)) <span class="sc">+</span> </span>
+<span id="cb152-7"><a href="manova-multivariate-analysis-of-variance.html#cb152-7" tabindex="-1"></a>  <span class="co"># Throw in a ROPE of [-0.05, 0.05] around 0</span></span>
+<span id="cb152-8"><a href="manova-multivariate-analysis-of-variance.html#cb152-8" tabindex="-1"></a>  <span class="fu">geom_rect</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> <span class="sc">-</span><span class="fl">0.05</span>, <span class="at">xmax =</span> <span class="fl">0.05</span>,</span>
+<span id="cb152-9"><a href="manova-multivariate-analysis-of-variance.html#cb152-9" tabindex="-1"></a>                <span class="at">ymin =</span> <span class="sc">-</span><span class="cn">Inf</span>, <span class="at">ymax =</span> <span class="cn">Inf</span>),</span>
+<span id="cb152-10"><a href="manova-multivariate-analysis-of-variance.html#cb152-10" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">&quot;transparent&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;lightgrey&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb152-11"><a href="manova-multivariate-analysis-of-variance.html#cb152-11" tabindex="-1"></a>  <span class="fu">stat_dotsinterval</span>(<span class="at">point_interval =</span> mode_hdi, <span class="at">.width =</span> <span class="fl">0.95</span>,</span>
+<span id="cb152-12"><a href="manova-multivariate-analysis-of-variance.html#cb152-12" tabindex="-1"></a>                    <span class="at">shape =</span> <span class="dv">23</span>, <span class="at">stroke =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>, <span class="at">point_size =</span> <span class="dv">3</span>, <span class="at">slab_size =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>,</span>
+<span id="cb152-13"><a href="manova-multivariate-analysis-of-variance.html#cb152-13" tabindex="-1"></a>                    <span class="at">quantiles =</span> <span class="dv">100</span>, <span class="at">fill =</span> <span class="st">&quot;darkgreen&quot;</span>) <span class="sc">+</span></span>
+<span id="cb152-14"><a href="manova-multivariate-analysis-of-variance.html#cb152-14" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>name, <span class="at">scales =</span> <span class="st">&quot;free_x&quot;</span>) <span class="sc">+</span></span>
+<span id="cb152-15"><a href="manova-multivariate-analysis-of-variance.html#cb152-15" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div>
+<p><img src="04-MANOVA_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p>In retrospect, this isn’t a very interesting comparison: it turns out both the simple effects and (unsurprisingly, given the former statement) contrast effect both have HDIs that firmly include a ROPE around 0. Again, this was more of an exercise in exploring this tool than something I was expecting to find necessarily immediately useful.</p>
+</div>
+<div id="packages-used-in-this-chapter-3" class="section level2 hasAnchor" number="4.4">
+<h2><span class="header-section-number">4.4</span> Packages used in this chapter<a href="manova-multivariate-analysis-of-variance.html#packages-used-in-this-chapter-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb153-1"><a href="manova-multivariate-analysis-of-variance.html#cb153-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.3.1 (2023-06-16)
+## Platform: aarch64-apple-darwin20 (64-bit)
+## Running under: macOS Ventura 13.6.1
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## time zone: America/New_York
+## tzcode source: internal
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] tidybayes_3.0.6 brms_2.20.1     Rcpp_1.0.11     corrr_0.4.4    
+##  [5] here_1.0.1      lubridate_1.9.2 forcats_1.0.0   stringr_1.5.0  
+##  [9] dplyr_1.1.2     purrr_1.0.1     readr_2.1.4     tidyr_1.3.0    
+## [13] tibble_3.2.1    ggplot2_3.4.3   tidyverse_2.0.0
+## 
+## loaded via a namespace (and not attached):
+##   [1] gridExtra_2.3        inline_0.3.19        rlang_1.1.1         
+##   [4] magrittr_2.0.3       matrixStats_1.0.0    compiler_4.3.1      
+##   [7] loo_2.6.0            callr_3.7.3          vctrs_0.6.3         
+##  [10] reshape2_1.4.4       quadprog_1.5-8       arrayhelpers_1.1-0  
+##  [13] pkgconfig_2.0.3      crayon_1.5.2         fastmap_1.1.1       
+##  [16] backports_1.4.1      ellipsis_0.3.2       labeling_0.4.3      
+##  [19] utf8_1.2.3           threejs_0.3.3        promises_1.2.1      
+##  [22] rmarkdown_2.23       markdown_1.8         tzdb_0.4.0          
+##  [25] ps_1.7.5             bit_4.0.5            xfun_0.39           
+##  [28] cachem_1.0.8         jsonlite_1.8.7       highr_0.10          
+##  [31] later_1.3.1          prettyunits_1.1.1    parallel_4.3.1      
+##  [34] R6_2.5.1             dygraphs_1.1.1.6     StanHeaders_2.26.27 
+##  [37] bslib_0.5.1          stringi_1.7.12       estimability_1.4.1  
+##  [40] jquerylib_0.1.4      rstan_2.21.8         bookdown_0.37       
+##  [43] knitr_1.43           zoo_1.8-12           base64enc_0.1-3     
+##  [46] bayesplot_1.10.0     httpuv_1.6.11        Matrix_1.6-0        
+##  [49] igraph_1.5.0.1       timechange_0.2.0     tidyselect_1.2.0    
+##  [52] rstudioapi_0.15.0    abind_1.4-5          yaml_2.3.7          
+##  [55] codetools_0.2-19     miniUI_0.1.1.1       processx_3.8.2      
+##  [58] pkgbuild_1.4.2       lattice_0.21-8       plyr_1.8.8          
+##  [61] shiny_1.7.5          withr_2.5.0          bridgesampling_1.1-2
+##  [64] posterior_1.4.1      coda_0.19-4          evaluate_0.21       
+##  [67] RcppParallel_5.1.7   ggdist_3.3.0         xts_0.13.1          
+##  [70] pillar_1.9.0         tensorA_0.36.2       stats4_4.3.1        
+##  [73] checkmate_2.2.0      DT_0.28              shinyjs_2.1.0       
+##  [76] distributional_0.3.2 generics_0.1.3       vroom_1.6.3         
+##  [79] rprojroot_2.0.3      hms_1.1.3            rstantools_2.3.1.1  
+##  [82] munsell_0.5.0        scales_1.2.1         gtools_3.9.4        
+##  [85] xtable_1.8-4         glue_1.6.2           emmeans_1.8.7       
+##  [88] tools_4.3.1          shinystan_2.6.0      colourpicker_1.3.0  
+##  [91] mvtnorm_1.2-2        grid_4.3.1           crosstalk_1.2.0     
+##  [94] colorspace_2.1-0     nlme_3.1-162         cli_3.6.1           
+##  [97] svUnit_1.0.6         fansi_1.0.4          Brobdingnag_1.2-9   
+## [100] gtable_0.3.4         sass_0.4.7           digest_0.6.33       
+## [103] htmlwidgets_1.6.2    farver_2.1.1         htmltools_0.5.6     
+## [106] lifecycle_1.0.3      mime_0.12            bit64_4.0.5         
+## [109] shinythemes_1.2.0</code></pre>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="dealing-with-missing-data.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="canonical-variate-analysis.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/04-MANOVA.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": true
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

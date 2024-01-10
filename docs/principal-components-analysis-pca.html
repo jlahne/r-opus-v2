@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 6 Principal Components Analysis (PCA) | The R Opus v2</title>
+  <meta name="description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 6 Principal Components Analysis (PCA) | The R Opus v2" />
+  <meta property="og:type" content="book" />
+  <meta property="og:image" content="/img/r-opus-cover.jpg" />
+  <meta property="og:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="github-repo" content="jlahne/r-opus-v2" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 6 Principal Components Analysis (PCA) | The R Opus v2" />
+  
+  <meta name="twitter:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="twitter:image" content="/img/r-opus-cover.jpg" />
+
+<meta name="author" content="Jacob Lahne" />
+
+
+<meta name="date" content="2024-01-10" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="canonical-variate-analysis.html"/>
+<link rel="next" href="cluster-analysis.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">The R Opus v2</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#usage"><i class="fa fa-check"></i>Usage</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#r-setup"><i class="fa fa-check"></i><code>R</code> Setup</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#what-this-is-not"><i class="fa fa-check"></i>What this is not</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#about-me"><i class="fa fa-check"></i>About me</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#session-info"><i class="fa fa-check"></i>Session Info</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html"><i class="fa fa-check"></i><b>1</b> Data import and set up</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#exploring-our-data"><i class="fa fa-check"></i><b>1.1</b> Exploring our data</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#the-descriptive-data"><i class="fa fa-check"></i><b>1.1.1</b> The descriptive data</a></li>
+<li class="chapter" data-level="1.1.2" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#consumer-data"><i class="fa fa-check"></i><b>1.1.2</b> Consumer data</a></li>
+<li class="chapter" data-level="1.1.3" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#the-other-data-frames"><i class="fa fa-check"></i><b>1.1.3</b> The other data frames</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#wranglingtidying-data"><i class="fa fa-check"></i><b>1.2</b> Wrangling/tidying data</a></li>
+<li class="chapter" data-level="1.3" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#wrap-up-and-summary"><i class="fa fa-check"></i><b>1.3</b> Wrap up and summary</a></li>
+<li class="chapter" data-level="1.4" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#packages-used-in-this-chapter"><i class="fa fa-check"></i><b>1.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html"><i class="fa fa-check"></i><b>2</b> Analysis of Variance</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#univariate-analysis-with-the-linear-model"><i class="fa fa-check"></i><b>2.1</b> Univariate analysis with the linear model</a></li>
+<li class="chapter" data-level="2.2" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#pseudo-mixed-anova"><i class="fa fa-check"></i><b>2.2</b> Pseudo-mixed ANOVA</a></li>
+<li class="chapter" data-level="2.3" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#mean-comparison-post-hoc-testing"><i class="fa fa-check"></i><b>2.3</b> Mean comparison (post-hoc testing)</a></li>
+<li class="chapter" data-level="2.4" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#bonus-bayesian-approaches-to-anova"><i class="fa fa-check"></i><b>2.4</b> BONUS: Bayesian approaches to ANOVA</a></li>
+<li class="chapter" data-level="2.5" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#packages-used-in-this-chapter-1"><i class="fa fa-check"></i><b>2.5</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html"><i class="fa fa-check"></i><b>3</b> Dealing with missing data</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#exploring-missing-data"><i class="fa fa-check"></i><b>3.1</b> Exploring missing data</a></li>
+<li class="chapter" data-level="3.2" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#imputing-missing-data"><i class="fa fa-check"></i><b>3.2</b> Imputing missing data</a></li>
+<li class="chapter" data-level="3.3" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#alternative-approaches-to-imputation"><i class="fa fa-check"></i><b>3.3</b> Alternative approaches to imputation</a></li>
+<li class="chapter" data-level="3.4" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#packages-used-in-this-chapter-2"><i class="fa fa-check"></i><b>3.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html"><i class="fa fa-check"></i><b>4</b> MANOVA (Multivariate Analysis of Variance)</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#running-manova"><i class="fa fa-check"></i><b>4.1</b> Running MANOVA</a></li>
+<li class="chapter" data-level="4.2" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#what-does-manova-test"><i class="fa fa-check"></i><b>4.2</b> What does MANOVA test?</a></li>
+<li class="chapter" data-level="4.3" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#bonus-hierarchical-bayes-instead-of-manova"><i class="fa fa-check"></i><b>4.3</b> BONUS: Hierarchical Bayes instead of MANOVA</a></li>
+<li class="chapter" data-level="4.4" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#packages-used-in-this-chapter-3"><i class="fa fa-check"></i><b>4.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html"><i class="fa fa-check"></i><b>5</b> Canonical Variate Analysis</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#what-is-cva"><i class="fa fa-check"></i><b>5.1</b> What is CVA?</a></li>
+<li class="chapter" data-level="5.2" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#application-of-cva"><i class="fa fa-check"></i><b>5.2</b> Application of CVA</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#basic-visualization-of-cva"><i class="fa fa-check"></i><b>5.2.1</b> Basic visualization of CVA</a></li>
+<li class="chapter" data-level="5.2.2" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#an-aside-on-exporting-r-plots"><i class="fa fa-check"></i><b>5.2.2</b> An aside on exporting R plots</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#plotting-uncertainty-in-cva"><i class="fa fa-check"></i><b>5.3</b> Plotting uncertainty in CVA</a></li>
+<li class="chapter" data-level="5.4" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#packages-used-in-this-chapter-4"><i class="fa fa-check"></i><b>5.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html"><i class="fa fa-check"></i><b>6</b> Principal Components Analysis (PCA)</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#what-does-pca-do"><i class="fa fa-check"></i><b>6.1</b> What does PCA do?</a></li>
+<li class="chapter" data-level="6.2" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#lets-do-pca"><i class="fa fa-check"></i><b>6.2</b> Let’s do PCA!</a></li>
+<li class="chapter" data-level="6.3" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#in-depth-interpretation"><i class="fa fa-check"></i><b>6.3</b> In-depth interpretation</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#correlations-or-squared-loadings-or-contributions"><i class="fa fa-check"></i><b>6.3.1</b> Correlations or (squared) loadings or contributions</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#pca-with-resampling-for-confidence-intervals"><i class="fa fa-check"></i><b>6.4</b> PCA with resampling for confidence intervals</a></li>
+<li class="chapter" data-level="6.5" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#comparison-of-products-with-pca"><i class="fa fa-check"></i><b>6.5</b> Comparison of products with PCA</a></li>
+<li class="chapter" data-level="6.6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#packages-used-in-this-chapter-5"><i class="fa fa-check"></i><b>6.6</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="cluster-analysis.html"><a href="cluster-analysis.html"><i class="fa fa-check"></i><b>7</b> Cluster analysis</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="cluster-analysis.html"><a href="cluster-analysis.html#hierarchical-clustering-on-distances"><i class="fa fa-check"></i><b>7.1</b> Hierarchical clustering on distances</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="cluster-analysis.html"><a href="cluster-analysis.html#wards-method"><i class="fa fa-check"></i><b>7.1.1</b> Ward’s Method</a></li>
+<li class="chapter" data-level="7.1.2" data-path="cluster-analysis.html"><a href="cluster-analysis.html#single-linkage"><i class="fa fa-check"></i><b>7.1.2</b> Single linkage</a></li>
+<li class="chapter" data-level="7.1.3" data-path="cluster-analysis.html"><a href="cluster-analysis.html#complete-linkage"><i class="fa fa-check"></i><b>7.1.3</b> Complete Linkage</a></li>
+<li class="chapter" data-level="7.1.4" data-path="cluster-analysis.html"><a href="cluster-analysis.html#average-linkage"><i class="fa fa-check"></i><b>7.1.4</b> Average Linkage</a></li>
+<li class="chapter" data-level="7.1.5" data-path="cluster-analysis.html"><a href="cluster-analysis.html#comparing-methods"><i class="fa fa-check"></i><b>7.1.5</b> Comparing methods</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="cluster-analysis.html"><a href="cluster-analysis.html#using-cluster-ids"><i class="fa fa-check"></i><b>7.2</b> Using cluster IDs</a></li>
+<li class="chapter" data-level="7.3" data-path="cluster-analysis.html"><a href="cluster-analysis.html#k-means-clustering"><i class="fa fa-check"></i><b>7.3</b> K-means clustering</a></li>
+<li class="chapter" data-level="7.4" data-path="cluster-analysis.html"><a href="cluster-analysis.html#packages-used-in-this-chapter-6"><i class="fa fa-check"></i><b>7.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html"><i class="fa fa-check"></i><b>8</b> Multidimensional Scaling (MDS)</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#metric-vs-non-metric"><i class="fa fa-check"></i><b>8.1</b> Metric vs non-metric</a></li>
+<li class="chapter" data-level="8.2" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#metric-mds"><i class="fa fa-check"></i><b>8.2</b> Metric MDS</a></li>
+<li class="chapter" data-level="8.3" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#non-metric-mds"><i class="fa fa-check"></i><b>8.3</b> Non-metric MDS</a></li>
+<li class="chapter" data-level="8.4" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#wrap-up"><i class="fa fa-check"></i><b>8.4</b> Wrap up</a></li>
+<li class="chapter" data-level="8.5" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#packages-used-in-this-chapter-7"><i class="fa fa-check"></i><b>8.5</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="distatis.html"><a href="distatis.html"><i class="fa fa-check"></i><b>9</b> DISTATIS</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="distatis.html"><a href="distatis.html#the-dataset-sorting-wines-by-color"><i class="fa fa-check"></i><b>9.1</b> The dataset: sorting wines by color</a></li>
+<li class="chapter" data-level="9.2" data-path="distatis.html"><a href="distatis.html#distatis-demonstrated"><i class="fa fa-check"></i><b>9.2</b> DISTATIS demonstrated</a></li>
+<li class="chapter" data-level="9.3" data-path="distatis.html"><a href="distatis.html#comparison-to-mds"><i class="fa fa-check"></i><b>9.3</b> Comparison to MDS</a></li>
+<li class="chapter" data-level="9.4" data-path="distatis.html"><a href="distatis.html#packages-used-in-this-chapter-8"><i class="fa fa-check"></i><b>9.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="correspondence-analysis-ca.html"><a href="correspondence-analysis-ca.html"><i class="fa fa-check"></i><b>10</b> Correspondence Analysis (CA)</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="correspondence-analysis-ca.html"><a href="correspondence-analysis-ca.html#packages-used-in-this-chapter-9"><i class="fa fa-check"></i><b>10.1</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="preference-mapping.html"><a href="preference-mapping.html"><i class="fa fa-check"></i><b>11</b> Preference Mapping</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="preference-mapping.html"><a href="preference-mapping.html#data"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
+<li class="chapter" data-level="11.2" data-path="preference-mapping.html"><a href="preference-mapping.html#internal-preference-mapping"><i class="fa fa-check"></i><b>11.2</b> Internal preference mapping</a></li>
+<li class="chapter" data-level="11.3" data-path="preference-mapping.html"><a href="preference-mapping.html#external-preference-mapping"><i class="fa fa-check"></i><b>11.3</b> External preference mapping</a>
+<ul>
+<li class="chapter" data-level="11.3.1" data-path="preference-mapping.html"><a href="preference-mapping.html#partial-least-squares-regression"><i class="fa fa-check"></i><b>11.3.1</b> Partial Least Squares Regression</a></li>
+</ul></li>
+<li class="chapter" data-level="11.4" data-path="preference-mapping.html"><a href="preference-mapping.html#other-approaches"><i class="fa fa-check"></i><b>11.4</b> Other approaches</a></li>
+<li class="chapter" data-level="11.5" data-path="preference-mapping.html"><a href="preference-mapping.html#principal-components-regression"><i class="fa fa-check"></i><b>11.5</b> Principal Components Regression</a></li>
+<li class="chapter" data-level="11.6" data-path="preference-mapping.html"><a href="preference-mapping.html#packages-used-in-this-chapter-10"><i class="fa fa-check"></i><b>11.6</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html"><i class="fa fa-check"></i><b>12</b> Multiple Factor(ial) Analysis (MFA)</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#mfa-vs-pca"><i class="fa fa-check"></i><b>12.1</b> MFA vs PCA</a></li>
+<li class="chapter" data-level="12.2" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#mfa-with-different-measurements"><i class="fa fa-check"></i><b>12.2</b> MFA with different measurements</a></li>
+<li class="chapter" data-level="12.3" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#wrapping-up"><i class="fa fa-check"></i><b>12.3</b> Wrapping up</a></li>
+<li class="chapter" data-level="12.4" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#packages-used-in-this-chapter-11"><i class="fa fa-check"></i><b>12.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html"><i class="fa fa-check"></i><b>13</b> Generalized Procrustes Analysis</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html#packages-used-in-this-chapter-12"><i class="fa fa-check"></i><b>13.1</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="wrapping-up-1.html"><a href="wrapping-up-1.html"><i class="fa fa-check"></i><b>14</b> Wrapping up</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The R Opus v2</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="principal-components-analysis-pca" class="section level1 hasAnchor" number="6">
+<h1><span class="header-section-number">Chapter 6</span> Principal Components Analysis (PCA)<a href="principal-components-analysis-pca.html#principal-components-analysis-pca" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>While HGH is a strong proponent of Canonical Variate Analysis (CVA), it is hard to argue that Principal Components Analysis is not the “workhorse” tool for analysis of multivariate sensory datasets. In fact, PCA is probably the most common tool for multivariate analysis, hard stop. This is because it is so closely related to eigendecomposition and Singular Value Decomposition (SVD).</p>
+<p>We’ll start with setting up our data as usual. This time, we’ll use the <code>FactoMineR</code> package for PCA because of its comprehensive outputs. You could also use the base <code>R</code> function <code>princomp()</code>, but it provides fewer sensory-specific options.</p>
+<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="principal-components-analysis-pca.html#cb187-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb187-2"><a href="principal-components-analysis-pca.html#cb187-2" tabindex="-1"></a><span class="fu">library</span>(FactoMineR) <span class="co"># this is new</span></span>
+<span id="cb187-3"><a href="principal-components-analysis-pca.html#cb187-3" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb187-4"><a href="principal-components-analysis-pca.html#cb187-4" tabindex="-1"></a></span>
+<span id="cb187-5"><a href="principal-components-analysis-pca.html#cb187-5" tabindex="-1"></a>descriptive_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriDAFinal.csv&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb187-6"><a href="principal-components-analysis-pca.html#cb187-6" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="at">.vars =</span> <span class="fu">vars</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>), <span class="sc">~</span><span class="fu">as.factor</span>(.))</span></code></pre></div>
+<div id="what-does-pca-do" class="section level2 hasAnchor" number="6.1">
+<h2><span class="header-section-number">6.1</span> What does PCA do?<a href="principal-components-analysis-pca.html#what-does-pca-do" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>As a reminder, in a dataset with multiple variables measured on the same observations, PCA finds <em>linear combinations</em> of the original variables that maximally explain the covariance among the original variables. Thus, the criterion maximized by PCA is explanation of (co)variance. We often describe this as “amount of variation explained” by the subsequent, new linear combinations. In highly correlated data, which is usually the case in sensory data, PCA is very effective at finding a few new linear combinations of the original variables that explain most of the observed variance.</p>
+<p>Typically, PCA is conducted on mean vectors.</p>
+<p>Speaking of CVA, recall that CVA finds linear combinations of variables that best explain <em>mean-vector</em> separation in the original data. Thus, while CVA operates on raw data, it is looking to separate the mean-vectors or “barycenters” of the data. PCA “knows” less information about the data: in fact, PCA is an “unsupervised” learning approach, in comparison to the “supervision” provided by the group IDs in CVA. PCA is also generally lax about assumptions: the main assumption is that the observed variables are continuous. If they are categorical, it is probably more appropriate to use (multiple) Correspondence Analysis.</p>
+<p>PCA is equivalent to the eigendecomposition of the covariance matrix of our original variables. If we standardize our variables (convert them to <em>z</em>-scores, or equivalently center our variables and standardize them to have unit variance) we will be conducting eigendecomposition on a correlation matrix. Thus, you will often see discussion of “correlation” vs “covariance” PCA. There are times in which one or the other is most appropriate for sensory results, but here we’ll focus on correlation PCA.</p>
+<p>A final note on PCA is that, because of the nature of eigendecomposition, the components are mutually orthogonal: they are uncorrelated and, geometrically, form right angles in the multivariate space.</p>
+<p>For more details on PCA, I strongly recommend Hervé Abdi’s excellent and detailed chapter on the topic, <a href="https://personal.utdallas.edu/~herve/">available on his website (I think A77 is the entry in his pub list)</a>.</p>
+</div>
+<div id="lets-do-pca" class="section level2 hasAnchor" number="6.2">
+<h2><span class="header-section-number">6.2</span> Let’s do PCA!<a href="principal-components-analysis-pca.html#lets-do-pca" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>HGH starts the original <strong>R Opus</strong> with a function to take column and group means of the data in <code>descriptive_data</code> that she calls <code>mtable()</code>, for “means table”. Luckily for us, this functionality is a basic part of the <code>tidyverse</code>, and we’ve already used this approach in previous sections. So let’s generate a means table using <code>tidyverse</code>:</p>
+<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="principal-components-analysis-pca.html#cb188-1" tabindex="-1"></a>descriptive_means <span class="ot">&lt;-</span></span>
+<span id="cb188-2"><a href="principal-components-analysis-pca.html#cb188-2" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb188-3"><a href="principal-components-analysis-pca.html#cb188-3" tabindex="-1"></a>  <span class="co"># What defines the group for which we want means?</span></span>
+<span id="cb188-4"><a href="principal-components-analysis-pca.html#cb188-4" tabindex="-1"></a>  <span class="fu">group_by</span>(ProductName) <span class="sc">%&gt;%</span></span>
+<span id="cb188-5"><a href="principal-components-analysis-pca.html#cb188-5" tabindex="-1"></a>  <span class="co"># Then we take the group means for every numeric variable (ignore NR, NJ)</span></span>
+<span id="cb188-6"><a href="principal-components-analysis-pca.html#cb188-6" tabindex="-1"></a>  <span class="fu">summarize_if</span>(is.numeric, <span class="sc">~</span><span class="fu">mean</span>(.))</span>
+<span id="cb188-7"><a href="principal-components-analysis-pca.html#cb188-7" tabindex="-1"></a></span>
+<span id="cb188-8"><a href="principal-components-analysis-pca.html#cb188-8" tabindex="-1"></a>descriptive_means</span></code></pre></div>
+<pre><code>## # A tibble: 8 × 21
+##   ProductName Red_berry Dark_berry   Jam Dried_fruit Artificial_frui Chocolate
+##   &lt;fct&gt;           &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;           &lt;dbl&gt;     &lt;dbl&gt;
+## 1 C_MERLOT         2.46       3.05 1.37         1.86           0.776     1.19 
+## 2 C_REFOSCO        2.47       2.46 1.03         1.42           0.924     2.00 
+## 3 C_SYRAH          2.46       2.93 1.75         1.68           0.883     1.42 
+## 4 C_ZINFANDEL      3.08       3.06 1.98         2.06           0.864     0.969
+## 5 I_MERLOT         2.79       2.35 0.843        1.85           0.574     0.783
+## 6 I_PRIMITIVO      3.85       3.38 3.61         1.44           2.19      1.38 
+## 7 I_REFOSCO        2.48       3.01 1.54         1.87           1.11      0.810
+## 8 I_SYRAH          3.17       4.48 3.10         2.16           2.43      1.20 
+## # ℹ 14 more variables: Vanilla &lt;dbl&gt;, Oak &lt;dbl&gt;, Burned &lt;dbl&gt;, Leather &lt;dbl&gt;,
+## #   Earthy &lt;dbl&gt;, Spicy &lt;dbl&gt;, Pepper &lt;dbl&gt;, Grassy &lt;dbl&gt;, Medicinal &lt;dbl&gt;,
+## #   `Band-aid` &lt;dbl&gt;, Sour &lt;dbl&gt;, Bitter &lt;dbl&gt;, Alcohol &lt;dbl&gt;, Astringent &lt;dbl&gt;</code></pre>
+<p>The <code>FactoMineR::PCA()</code> function is great, but it also tries to do way too much. One of its annoying habits is a desire to give you a lot of plots you don’t want. So be sure to use the <code>graph = FALSE</code> argument so you have more control over plotting. It also uses an older standard which relies on storing observation IDs in <code>row.names</code>–this isn’t great programming practice and we have to explicitly do so. Following HGH, we are going to conduct a covariance PCA by setting <code>scale.unit = FALSE</code>.</p>
+<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="principal-components-analysis-pca.html#cb190-1" tabindex="-1"></a>means_pca <span class="ot">&lt;-</span> </span>
+<span id="cb190-2"><a href="principal-components-analysis-pca.html#cb190-2" tabindex="-1"></a>  descriptive_means <span class="sc">%&gt;%</span></span>
+<span id="cb190-3"><a href="principal-components-analysis-pca.html#cb190-3" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;ProductName&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb190-4"><a href="principal-components-analysis-pca.html#cb190-4" tabindex="-1"></a>  <span class="fu">PCA</span>(<span class="at">scale.unit =</span> <span class="cn">FALSE</span>, <span class="at">graph =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb190-5"><a href="principal-components-analysis-pca.html#cb190-5" tabindex="-1"></a></span>
+<span id="cb190-6"><a href="principal-components-analysis-pca.html#cb190-6" tabindex="-1"></a>means_pca</span></code></pre></div>
+<pre><code>## **Results for the Principal Component Analysis (PCA)**
+## The analysis was performed on 8 individuals, described by 20 variables
+## *The results are available in the following objects:
+## 
+##    name               description                          
+## 1  &quot;$eig&quot;             &quot;eigenvalues&quot;                        
+## 2  &quot;$var&quot;             &quot;results for the variables&quot;          
+## 3  &quot;$var$coord&quot;       &quot;coord. for the variables&quot;           
+## 4  &quot;$var$cor&quot;         &quot;correlations variables - dimensions&quot;
+## 5  &quot;$var$cos2&quot;        &quot;cos2 for the variables&quot;             
+## 6  &quot;$var$contrib&quot;     &quot;contributions of the variables&quot;     
+## 7  &quot;$ind&quot;             &quot;results for the individuals&quot;        
+## 8  &quot;$ind$coord&quot;       &quot;coord. for the individuals&quot;         
+## 9  &quot;$ind$cos2&quot;        &quot;cos2 for the individuals&quot;           
+## 10 &quot;$ind$contrib&quot;     &quot;contributions of the individuals&quot;   
+## 11 &quot;$call&quot;            &quot;summary statistics&quot;                 
+## 12 &quot;$call$centre&quot;     &quot;mean of the variables&quot;              
+## 13 &quot;$call$ecart.type&quot; &quot;standard error of the variables&quot;    
+## 14 &quot;$call$row.w&quot;      &quot;weights for the individuals&quot;        
+## 15 &quot;$call$col.w&quot;      &quot;weights for the variables&quot;</code></pre>
+<p>The nice thing about <code>PCA()</code> is that it gives a well-structured list of results that we can do a lot with. First off, let’s make a quick “scree plot”, describing the variance explained by each of the principal components.</p>
+<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="principal-components-analysis-pca.html#cb192-1" tabindex="-1"></a><span class="co"># Here are the actual numeric results.</span></span>
+<span id="cb192-2"><a href="principal-components-analysis-pca.html#cb192-2" tabindex="-1"></a>means_pca<span class="sc">$</span>eig</span></code></pre></div>
+<pre><code>##        eigenvalue percentage of variance cumulative percentage of variance
+## comp 1 2.65480006              50.496451                          50.49645
+## comp 2 1.24849044              23.747301                          74.24375
+## comp 3 0.53223903              10.123618                          84.36737
+## comp 4 0.32433613               6.169136                          90.53651
+## comp 5 0.31577131               6.006227                          96.54273
+## comp 6 0.12584413               2.393657                          98.93639
+## comp 7 0.05591818               1.063609                         100.00000</code></pre>
+<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="principal-components-analysis-pca.html#cb194-1" tabindex="-1"></a><span class="co"># And now we can plot</span></span>
+<span id="cb194-2"><a href="principal-components-analysis-pca.html#cb194-2" tabindex="-1"></a>means_pca<span class="sc">$</span>eig <span class="sc">%&gt;%</span></span>
+<span id="cb194-3"><a href="principal-components-analysis-pca.html#cb194-3" tabindex="-1"></a>  <span class="co"># Note that we need to use `rownames=` to capture the rownames from PCA()</span></span>
+<span id="cb194-4"><a href="principal-components-analysis-pca.html#cb194-4" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;component&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb194-5"><a href="principal-components-analysis-pca.html#cb194-5" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> component, <span class="at">y =</span> <span class="st">`</span><span class="at">percentage of variance</span><span class="st">`</span>, <span class="at">group =</span> <span class="dv">1</span>)) <span class="sc">+</span> </span>
+<span id="cb194-6"><a href="principal-components-analysis-pca.html#cb194-6" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb194-7"><a href="principal-components-analysis-pca.html#cb194-7" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="06-PCA_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>We can see that the “elbow” here occurs at the third or fourth component, but we’re going to only examine the first 2 components. Keep in mind that this means some variation might not be apparent.</p>
+<p>The so-called “loadings” in a PCA are the weights of the linear combination of original variables that make up each component. We access them in the <code>$var$coord</code> table in the results from <code>PCA()</code>.</p>
+<div class="sourceCode" id="cb195"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb195-1"><a href="principal-components-analysis-pca.html#cb195-1" tabindex="-1"></a>means_pca<span class="sc">$</span>var<span class="sc">$</span>coord</span></code></pre></div>
+<pre><code>##                        Dim.1       Dim.2        Dim.3         Dim.4
+## Red_berry        0.392823276  0.01215638 -0.121346852  0.0825451624
+## Dark_berry       0.520232898  0.08267522  0.199523469 -0.1864158541
+## Jam              0.888495244  0.04433424  0.073820850  0.1720938632
+## Dried_fruit      0.050212647  0.10009820 -0.019690630 -0.1664223919
+## Artificial_frui  0.572309456  0.05751255  0.238851293 -0.0038853644
+## Chocolate       -0.003475125 -0.30028443  0.170378617  0.0938653125
+## Vanilla          0.314478467 -0.30349435  0.018229231  0.1585583125
+## Oak             -0.193340853 -0.22147313 -0.071362551 -0.0086868023
+## Burned          -0.586302217 -0.61025517  0.337991587 -0.0004488918
+## Leather         -0.382862924  0.27891331  0.103734732  0.0930246719
+## Earthy          -0.257608328  0.09856678  0.079461250  0.0145072272
+## Spicy           -0.049183026 -0.02852180  0.031255722 -0.0507807926
+## Pepper          -0.153720418  0.07222224 -0.133757042 -0.2058682953
+## Grassy           0.162497315  0.10272633 -0.002515019 -0.1016081718
+## Medicinal       -0.365073070  0.48842639  0.031051449  0.2422723514
+## Band-aid        -0.432054073  0.33143313  0.129721753  0.0777846772
+## Sour             0.040307189  0.34354213  0.186317776  0.0065371842
+## Bitter           0.126467903  0.18466794  0.285051403 -0.1458235340
+## Alcohol          0.082923788 -0.04864986  0.221354178  0.1389696519
+## Astringent      -0.143108623  0.12443684  0.217756015 -0.1479925430
+##                        Dim.5
+## Red_berry        0.157522934
+## Dark_berry      -0.097453593
+## Jam              0.079902737
+## Dried_fruit     -0.135993046
+## Artificial_frui  0.168622742
+## Chocolate        0.078682732
+## Vanilla         -0.039447653
+## Oak             -0.178016939
+## Burned           0.135757837
+## Leather         -0.022575394
+## Earthy           0.040315580
+## Spicy            0.050007545
+## Pepper           0.124049258
+## Grassy           0.109061848
+## Medicinal       -0.003582952
+## Band-aid         0.175578114
+## Sour            -0.064779269
+## Bitter          -0.029549547
+## Alcohol         -0.320004547
+## Astringent       0.007052281</code></pre>
+<p>Technically, the number of dimensions we <em>could</em> get from a PCA is equal to the <span class="math inline">\(min(n-1, k)\)</span>, where <span class="math inline">\(n\)</span> is the number of product means we have and <span class="math inline">\(k\)</span> is the number of measured variables, but in practice we won’t typically examine more than 3-4 components/dimensions, as having to examine more for our purposes would indicate that PCA may not be the right tool for dimension reduction.</p>
+<div class="sourceCode" id="cb197"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb197-1"><a href="principal-components-analysis-pca.html#cb197-1" tabindex="-1"></a>p_loadings <span class="ot">&lt;-</span> </span>
+<span id="cb197-2"><a href="principal-components-analysis-pca.html#cb197-2" tabindex="-1"></a>  means_pca<span class="sc">$</span>var<span class="sc">$</span>coord <span class="sc">%&gt;%</span></span>
+<span id="cb197-3"><a href="principal-components-analysis-pca.html#cb197-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;descriptor&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb197-4"><a href="principal-components-analysis-pca.html#cb197-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>)) <span class="sc">+</span> </span>
+<span id="cb197-5"><a href="principal-components-analysis-pca.html#cb197-5" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>, <span class="at">size =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb197-6"><a href="principal-components-analysis-pca.html#cb197-6" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>, <span class="at">size =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb197-7"><a href="principal-components-analysis-pca.html#cb197-7" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> <span class="dv">0</span>, <span class="at">yend =</span> <span class="dv">0</span>), </span>
+<span id="cb197-8"><a href="principal-components-analysis-pca.html#cb197-8" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.1</span>, <span class="st">&quot;in&quot;</span>), <span class="at">ends =</span> <span class="st">&quot;first&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb197-9"><a href="principal-components-analysis-pca.html#cb197-9" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> descriptor)) <span class="sc">+</span> </span>
+<span id="cb197-10"><a href="principal-components-analysis-pca.html#cb197-10" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb197-11"><a href="principal-components-analysis-pca.html#cb197-11" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span> </span>
+<span id="cb197-12"><a href="principal-components-analysis-pca.html#cb197-12" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Loadings plot for PCA of product means&quot;</span>,</span>
+<span id="cb197-13"><a href="principal-components-analysis-pca.html#cb197-13" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 1 (&quot;</span>, <span class="fu">round</span>(means_pca<span class="sc">$</span>eig[<span class="dv">1</span>, <span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
+<span id="cb197-14"><a href="principal-components-analysis-pca.html#cb197-14" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 2 (&quot;</span>, <span class="fu">round</span>(means_pca<span class="sc">$</span>eig[<span class="dv">2</span>, <span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>)) </span></code></pre></div>
+<pre><code>## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+## ℹ Please use `linewidth` instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.</code></pre>
+<div class="sourceCode" id="cb199"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb199-1"><a href="principal-components-analysis-pca.html#cb199-1" tabindex="-1"></a>p_loadings</span></code></pre></div>
+<p><img src="06-PCA_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Typically, we’d interpret this by looking at variables that are very “close” (make acute angles to) the x- or y-axes (which are the first and second components, respectively), and that are very long. The magnitude of the vector indicates the coefficient for that variable in the linear combination making up each of the two principal components that serve as axes of the displayed space. Therefore, we’d say that the fruity flavors (e.g., <code>Jam</code>) are loading strongly and positively on the first component, and almost not at all to the second component, and that the strongest negative contributions come from <code>Burned</code>, which is also strongly negatively loaded on the second component. For the second component, <code>Medicinal</code> and <code>Band-aid</code>, with other associated flavors, are strongly positively loaded (and negatively loaded on the first dimension), whereas <code>Sour</code> loads positively almost entirely on the first component, but not as strongly. There are many other observations we could make from this plot. It is worth comparing it to the loading/coefficient plot for the CVA; you will see that while the values of the coefficients are not identical, the patterns are very similar.</p>
+<p>As a side note (because I had to puzzle this out myself), the <code>$var$coord</code> matrix is <em>not</em> the raw <span class="math inline">\(\mathbf{Q}\)</span> loadings matrix from singular value decomposition (SVD), which we’d use to find the scores for the original observations. Rather, if we write the SVD as <span class="math inline">\(\mathbf{X} = \mathbf{P \Delta Q}^T\)</span>, it is <span class="math inline">\(\mathbf{\Delta Q}^T\)</span>. In effect, the “coordinates” given in <code>$var$coord</code> are expanded by the size of the singular value for the associated principal component. We can find the raw loadings (coefficient), <span class="math inline">\(\mathbf Q\)</span> in the <code>$svd$V</code> matrix in the results from the <code>PCA()</code> function.</p>
+<p>We find scores for our product means by using the linear combinations described by the loadings. So, we could by hand calculate:</p>
+<div class="sourceCode" id="cb200"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb200-1"><a href="principal-components-analysis-pca.html#cb200-1" tabindex="-1"></a>means_pca<span class="sc">$</span>svd<span class="sc">$</span>V</span></code></pre></div>
+<pre><code>##               [,1]        [,2]         [,3]          [,4]         [,5]
+##  [1,]  0.241091170  0.01087957 -0.166331750  0.1449419026  0.280322177
+##  [2,]  0.319287490  0.07399166  0.273489481 -0.3273295222 -0.173424927
+##  [3,]  0.545304646  0.03967772  0.101187224  0.3021813905  0.142192051
+##  [4,]  0.030817486  0.08958466 -0.026990210 -0.2922227956 -0.242008358
+##  [5,]  0.351248932  0.05147188  0.327396655 -0.0068223514  0.300074997
+##  [6,] -0.002132821 -0.26874488  0.233540243  0.1648190709  0.140020974
+##  [7,]  0.193007864 -0.27161766  0.024987051  0.2784141773 -0.070199632
+##  [8,] -0.118660923 -0.19821131 -0.097817601 -0.0152532458 -0.316792574
+##  [9,] -0.359836842 -0.54615870  0.463289578 -0.0007882138  0.241589787
+## [10,] -0.234978108  0.24961842  0.142190582  0.1633429815 -0.040174364
+## [11,] -0.158104412  0.08821409  0.108918596  0.0254733899  0.071744163
+## [12,] -0.030185567 -0.02552609  0.042842635 -0.0891665178  0.088991638
+## [13,] -0.094344296  0.06463658 -0.183342562 -0.3614862644  0.220753620
+## [14,]  0.099731024  0.09193675 -0.003447371 -0.1784148375  0.194082562
+## [15,] -0.224059772  0.43712587  0.042562636  0.4254085222 -0.006376094
+## [16,] -0.265168660  0.29662196  0.177811338  0.1365829175  0.312452529
+## [17,]  0.024738115  0.30745913  0.255388262  0.0114787092 -0.115278869
+## [18,]  0.077618350  0.16527185  0.390723762 -0.2560530483 -0.052585316
+## [19,]  0.050893606 -0.04354006  0.303413126  0.2440182460 -0.569468640
+## [20,] -0.087831418  0.11136696  0.298481076 -0.2598616336  0.012549988</code></pre>
+<p>This tells us that, to get a mean vector <span class="math inline">\(i\)</span>’s score on principal component 1 (Dimension 1), we would calculate <span class="math inline">\(PC_i = 0.24 * Red\_berry_i + ... -0.09 * Astringent_i\)</span>, and so on (note that because this is a raw matrix, it has no row names or descriptive columns; I am getting the loadings for specific descriptors by looking back at what the 1st and 20th descriptors are in our data set and matching them up manually).</p>
+<p>Before we leave this topic, I want to point out one more thing: if we plot the raw loadings, we’ll come to the same conclusions:</p>
+<div class="sourceCode" id="cb202"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb202-1"><a href="principal-components-analysis-pca.html#cb202-1" tabindex="-1"></a>means_pca<span class="sc">$</span>svd<span class="sc">$</span>V <span class="sc">%&gt;%</span></span>
+<span id="cb202-2"><a href="principal-components-analysis-pca.html#cb202-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb202-3"><a href="principal-components-analysis-pca.html#cb202-3" tabindex="-1"></a>  <span class="fu">bind_cols</span>(<span class="at">descriptor =</span> <span class="fu">row.names</span>(means_pca<span class="sc">$</span>var<span class="sc">$</span>coord)) <span class="sc">%&gt;%</span></span>
+<span id="cb202-4"><a href="principal-components-analysis-pca.html#cb202-4" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Dim.1 =</span> V1, <span class="at">Dim.2 =</span> V2) <span class="sc">%&gt;%</span></span>
+<span id="cb202-5"><a href="principal-components-analysis-pca.html#cb202-5" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>)) <span class="sc">+</span> </span>
+<span id="cb202-6"><a href="principal-components-analysis-pca.html#cb202-6" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>, <span class="at">size =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb202-7"><a href="principal-components-analysis-pca.html#cb202-7" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>, <span class="at">size =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb202-8"><a href="principal-components-analysis-pca.html#cb202-8" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> <span class="dv">0</span>, <span class="at">yend =</span> <span class="dv">0</span>), </span>
+<span id="cb202-9"><a href="principal-components-analysis-pca.html#cb202-9" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.1</span>, <span class="st">&quot;in&quot;</span>), <span class="at">ends =</span> <span class="st">&quot;first&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb202-10"><a href="principal-components-analysis-pca.html#cb202-10" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> descriptor)) <span class="sc">+</span> </span>
+<span id="cb202-11"><a href="principal-components-analysis-pca.html#cb202-11" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb202-12"><a href="principal-components-analysis-pca.html#cb202-12" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span> </span>
+<span id="cb202-13"><a href="principal-components-analysis-pca.html#cb202-13" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Raw (unscaled) loadings plot for PCA of product means&quot;</span>,</span>
+<span id="cb202-14"><a href="principal-components-analysis-pca.html#cb202-14" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 1 (&quot;</span>, <span class="fu">round</span>(means_pca<span class="sc">$</span>eig[<span class="dv">1</span>, <span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
+<span id="cb202-15"><a href="principal-components-analysis-pca.html#cb202-15" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 2 (&quot;</span>, <span class="fu">round</span>(means_pca<span class="sc">$</span>eig[<span class="dv">2</span>, <span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>)) </span></code></pre></div>
+<pre><code>## Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if
+## `.name_repair` is omitted as of tibble 2.0.0.
+## ℹ Using compatibility `.name_repair`.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.</code></pre>
+<p><img src="06-PCA_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>OK, with all that said, if we multiply our means-vector ratings (mean-centered for each column) by the loadings we just spent a while getting, we get the <em>scores</em> for our mean vectors in the PCA space. These are stored in the <code>$ind$coord</code> matrix.</p>
+<div class="sourceCode" id="cb204"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb204-1"><a href="principal-components-analysis-pca.html#cb204-1" tabindex="-1"></a>p_scores <span class="ot">&lt;-</span> </span>
+<span id="cb204-2"><a href="principal-components-analysis-pca.html#cb204-2" tabindex="-1"></a>  means_pca<span class="sc">$</span>ind<span class="sc">$</span>coord <span class="sc">%&gt;%</span></span>
+<span id="cb204-3"><a href="principal-components-analysis-pca.html#cb204-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;product&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb204-4"><a href="principal-components-analysis-pca.html#cb204-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>)) <span class="sc">+</span> </span>
+<span id="cb204-5"><a href="principal-components-analysis-pca.html#cb204-5" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>, <span class="at">size =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb204-6"><a href="principal-components-analysis-pca.html#cb204-6" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>, <span class="at">size =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb204-7"><a href="principal-components-analysis-pca.html#cb204-7" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb204-8"><a href="principal-components-analysis-pca.html#cb204-8" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> product)) <span class="sc">+</span> </span>
+<span id="cb204-9"><a href="principal-components-analysis-pca.html#cb204-9" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb204-10"><a href="principal-components-analysis-pca.html#cb204-10" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span> </span>
+<span id="cb204-11"><a href="principal-components-analysis-pca.html#cb204-11" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Scores plot for PCA of product means&quot;</span>,</span>
+<span id="cb204-12"><a href="principal-components-analysis-pca.html#cb204-12" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 1 (&quot;</span>, <span class="fu">round</span>(means_pca<span class="sc">$</span>eig[<span class="dv">1</span>, <span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
+<span id="cb204-13"><a href="principal-components-analysis-pca.html#cb204-13" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 2 (&quot;</span>, <span class="fu">round</span>(means_pca<span class="sc">$</span>eig[<span class="dv">2</span>, <span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>)) </span>
+<span id="cb204-14"><a href="principal-components-analysis-pca.html#cb204-14" tabindex="-1"></a></span>
+<span id="cb204-15"><a href="principal-components-analysis-pca.html#cb204-15" tabindex="-1"></a>p_scores</span></code></pre></div>
+<p><img src="06-PCA_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>We interpret this plot by noting the spatial separation of sample mean-vectors, as well as noting the proximity to the axes, which we interpret by their loadings from variables. In order to facilitate this second task, it is often helpful to have the loadings and scores plots side by side. We can accomplish this using the nifty <code>patchwork</code> package, which lets us arrange saved plots however we want.</p>
+<div class="sourceCode" id="cb205"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb205-1"><a href="principal-components-analysis-pca.html#cb205-1" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb205-2"><a href="principal-components-analysis-pca.html#cb205-2" tabindex="-1"></a></span>
+<span id="cb205-3"><a href="principal-components-analysis-pca.html#cb205-3" tabindex="-1"></a>p_scores <span class="sc">+</span> p_loadings <span class="sc">+</span> <span class="fu">plot_layout</span>(<span class="at">widths =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>))</span></code></pre></div>
+<p><img src="06-PCA_files/figure-html/unnamed-chunk-10-1.png" width="864" /></p>
+<p>By looking at these plots together, we can see that the first dimension, which we previously noted separated fruity flavors from medicinal and burnt flavors, is driven by a separation of the Italian Primitivo and Syrah samples from the other samples. The second dimension, which is separating the medicinal and burnt flavors, is interestingly also separating the Californian and Italian wines made from two sets of the same grape, Refosco and Merlot.</p>
+</div>
+<div id="in-depth-interpretation" class="section level2 hasAnchor" number="6.3">
+<h2><span class="header-section-number">6.3</span> In-depth interpretation<a href="principal-components-analysis-pca.html#in-depth-interpretation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>There are several ways that we can get more information about the structure of the PCA solution. First, we will follow HGH and investigate the <em>correlations</em> between the variables and each of the first two components. HGH used the <code>FactoMineR::dimdesc()</code> function, but I find this prints out too much to look good here. We can access the correlations directly using <code>$var$cor</code> in the output of the <code>PCA()</code> function. I’ll turn it into a tibble to make display easier.</p>
+<div class="sourceCode" id="cb206"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb206-1"><a href="principal-components-analysis-pca.html#cb206-1" tabindex="-1"></a><span class="co"># The most highly correlated variables with Dimension 1</span></span>
+<span id="cb206-2"><a href="principal-components-analysis-pca.html#cb206-2" tabindex="-1"></a>means_pca<span class="sc">$</span>var<span class="sc">$</span>cor <span class="sc">%&gt;%</span></span>
+<span id="cb206-3"><a href="principal-components-analysis-pca.html#cb206-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;descriptor&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb206-4"><a href="principal-components-analysis-pca.html#cb206-4" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb206-5"><a href="principal-components-analysis-pca.html#cb206-5" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>Dim<span class="fl">.1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb206-6"><a href="principal-components-analysis-pca.html#cb206-6" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="dv">18</span><span class="sc">:</span><span class="dv">20</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 6 × 3
+##   descriptor       Dim.1  Dim.2
+##   &lt;chr&gt;            &lt;dbl&gt;  &lt;dbl&gt;
+## 1 Jam              0.972 0.0485
+## 2 Artificial_frui  0.882 0.0886
+## 3 Dark_berry       0.849 0.135 
+## 4 Band-aid        -0.726 0.557 
+## 5 Leather         -0.750 0.547 
+## 6 Earthy          -0.864 0.330</code></pre>
+<div class="sourceCode" id="cb208"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb208-1"><a href="principal-components-analysis-pca.html#cb208-1" tabindex="-1"></a><span class="co"># The most highly correlated variables with Dimension 2</span></span>
+<span id="cb208-2"><a href="principal-components-analysis-pca.html#cb208-2" tabindex="-1"></a>means_pca<span class="sc">$</span>var<span class="sc">$</span>cor <span class="sc">%&gt;%</span></span>
+<span id="cb208-3"><a href="principal-components-analysis-pca.html#cb208-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;descriptor&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb208-4"><a href="principal-components-analysis-pca.html#cb208-4" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb208-5"><a href="principal-components-analysis-pca.html#cb208-5" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>Dim<span class="fl">.2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb208-6"><a href="principal-components-analysis-pca.html#cb208-6" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="dv">18</span><span class="sc">:</span><span class="dv">20</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 6 × 3
+##   descriptor    Dim.1  Dim.2
+##   &lt;chr&gt;         &lt;dbl&gt;  &lt;dbl&gt;
+## 1 Sour        0.0997   0.850
+## 2 Medicinal  -0.554    0.741
+## 3 Band-aid   -0.726    0.557
+## 4 Vanilla     0.660   -0.637
+## 5 Burned     -0.636   -0.662
+## 6 Chocolate  -0.00940 -0.812</code></pre>
+<p>These are <em>also</em> called loadings <strong>REF Abdi 2010</strong>. The semantics of PCA are a nightmare. We can see that these reflect our interpretation from the loadings plot pretty accurately.</p>
+<p>HGH then calculated the “communalities” for variables on the first and second dimensions of the PCA solution. I had to do some digging to figure out what she meant by this, but she described them as:</p>
+<blockquote>
+<p>Communality is the sum of the squared loadings for the number of dimensions that you would like to keep.</p>
+</blockquote>
+<p>We know from <em><strong>REF Abdi 2010</strong> that the sum of squared loadings (in the sense of </em>correlations*) for each dimension should sum to 1, so this allows us to speak of “proportion of explained variance” for each variable and each dimension. But we have to remember the semantic overloadings here, so if we want to see this property we will need to look at the <code>$svd$V</code> matrix again. The <code>$var$cor</code> matrix, remember, stores this scaled by the original variables (maybe this is instead storing covariances). We can see this pretty easily:</p>
+<div class="sourceCode" id="cb210"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb210-1"><a href="principal-components-analysis-pca.html#cb210-1" tabindex="-1"></a><span class="co"># The &quot;cor&quot; matrix doesn&#39;t seem to really be storing what we think of as </span></span>
+<span id="cb210-2"><a href="principal-components-analysis-pca.html#cb210-2" tabindex="-1"></a><span class="co"># correlations.</span></span>
+<span id="cb210-3"><a href="principal-components-analysis-pca.html#cb210-3" tabindex="-1"></a>means_pca<span class="sc">$</span>var<span class="sc">$</span>cor <span class="sc">%&gt;%</span></span>
+<span id="cb210-4"><a href="principal-components-analysis-pca.html#cb210-4" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;descriptor&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb210-5"><a href="principal-components-analysis-pca.html#cb210-5" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>descriptor) <span class="sc">%&gt;%</span></span>
+<span id="cb210-6"><a href="principal-components-analysis-pca.html#cb210-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">squared_loading =</span> value <span class="sc">^</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb210-7"><a href="principal-components-analysis-pca.html#cb210-7" tabindex="-1"></a>  <span class="fu">group_by</span>(name) <span class="sc">%&gt;%</span></span>
+<span id="cb210-8"><a href="principal-components-analysis-pca.html#cb210-8" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">total =</span> <span class="fu">sum</span>(squared_loading))</span></code></pre></div>
+<pre><code>## # A tibble: 5 × 2
+##   name  total
+##   &lt;chr&gt; &lt;dbl&gt;
+## 1 Dim.1  7.46
+## 2 Dim.2  4.58
+## 3 Dim.3  2.45
+## 4 Dim.4  2.06
+## 5 Dim.5  1.88</code></pre>
+<div class="sourceCode" id="cb212"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb212-1"><a href="principal-components-analysis-pca.html#cb212-1" tabindex="-1"></a><span class="co"># Whereas the SVD list behaves as expected.</span></span>
+<span id="cb212-2"><a href="principal-components-analysis-pca.html#cb212-2" tabindex="-1"></a>means_pca<span class="sc">$</span>svd<span class="sc">$</span>V <span class="sc">%&gt;%</span></span>
+<span id="cb212-3"><a href="principal-components-analysis-pca.html#cb212-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb212-4"><a href="principal-components-analysis-pca.html#cb212-4" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb212-5"><a href="principal-components-analysis-pca.html#cb212-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">value =</span> value <span class="sc">^</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb212-6"><a href="principal-components-analysis-pca.html#cb212-6" tabindex="-1"></a>  <span class="fu">group_by</span>(name) <span class="sc">%&gt;%</span></span>
+<span id="cb212-7"><a href="principal-components-analysis-pca.html#cb212-7" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">total =</span> <span class="fu">sum</span>(value))</span></code></pre></div>
+<pre><code>## # A tibble: 5 × 2
+##   name  total
+##   &lt;chr&gt; &lt;dbl&gt;
+## 1 V1     1.00
+## 2 V2     1   
+## 3 V3     1.00
+## 4 V4     1.00
+## 5 V5     1</code></pre>
+<div id="correlations-or-squared-loadings-or-contributions" class="section level3 hasAnchor" number="6.3.1">
+<h3><span class="header-section-number">6.3.1</span> Correlations or (squared) loadings or contributions<a href="principal-components-analysis-pca.html#correlations-or-squared-loadings-or-contributions" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The correlations between the variables and the components are also unfortunately called “<em>loadings</em>” (cf. Abdi &amp; Williams 2010 <strong>REF</strong> for more info), but these are distinct (although related, argh) from the “loadings” we discussed as the elements of the <span class="math inline">\(\mathbf Q\)</span> matrix from SVD.</p>
+<p>We could directly calculate these, but we can make use of the <code>dimdesc()</code> convenience function</p>
+<div class="sourceCode" id="cb214"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb214-1"><a href="principal-components-analysis-pca.html#cb214-1" tabindex="-1"></a><span class="fu">dimdesc</span>(means_pca, <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span></code></pre></div>
+<pre><code>## $Dim.1
+## 
+## Link between the variable and the continuous variables (R-square)
+## =================================================================================
+##                 correlation      p.value
+## Jam               0.9723336 5.184944e-05
+## Artificial_frui   0.8819989 3.752736e-03
+## Dark_berry        0.8492159 7.630518e-03
+## Red_berry         0.8418534 8.752510e-03
+## Band-aid         -0.7259831 4.144504e-02
+## Leather          -0.7504104 3.195742e-02
+## Earthy           -0.8635921 5.713937e-03
+## 
+## $Dim.2
+## 
+## Link between the variable and the continuous variables (R-square)
+## =================================================================================
+##           correlation     p.value
+## Sour        0.8501775 0.007491159
+## Medicinal   0.7412352 0.035345156
+## Chocolate  -0.8121299 0.014329245</code></pre>
+<p>HGH calls these squared correlations the “communalities” of the variables, which should(?) sum to 1. This is not the case here because we have a typical <span class="math inline">\(n&lt;p\)</span> problem: there are more variables than observations (when we run a PCA on the means of the products across panelists and reps).</p>
+<p>There are a number of other ways to interpret the over-loaded “<em>loadings</em>”–the role of the variables in determining the new principal-components space in PCA results. To return to the progression of the <strong>R Opus</strong>, let’s follow HGH in examining the <strong>Contributions</strong> and the <strong>Communalities</strong> in the PCA results.</p>
+<p>According to <strong><em>REF Abdi &amp; Williams 2010, p.8-9</em></strong>,</p>
+<blockquote>
+<p>…the importance of an observation for a component can be obtained by the ratio of the squared factor score of this observation by the eigenvalue associated with that component.</p>
+</blockquote>
+<p>and</p>
+<blockquote>
+<p>The value of a contribution is between 0 and 1 and, for a given component, the sum of the contributions of all observations is equal to 1. The larger the value of the contribution, the more the observation contributes to the component. A useful heuristic is to base the interpretation of a component on the observations whose contribution is larger than the average contribution (i.e., observations whose contribution is larger than <span class="math inline">\(1/I\)</span>).</p>
+</blockquote>
+<p>While Abdi and Williams are talking about the <em>contribution</em> of an observation, since PCA is (largely) agnostic about the role of observation (product) and variable (descriptor), <code>FactoMineR::PCA()</code> will return contributions for both products and descriptors, found as usual in the <code>ind</code> and <code>var</code> sub-lists of the results. We don’t care so much about the products’ contributions, in this case, but we do care about the variables’. We can find and print them:</p>
+<div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb216-1"><a href="principal-components-analysis-pca.html#cb216-1" tabindex="-1"></a>means_pca<span class="sc">$</span>var<span class="sc">$</span>contrib <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code></pre></div>
+<pre><code>##                  Dim.1  Dim.2  Dim.3  Dim.4  Dim.5
+## Red_berry        5.812  0.012  2.767  2.101  7.858
+## Dark_berry      10.194  0.547  7.480 10.714  3.008
+## Jam             29.736  0.157  1.024  9.131  2.022
+## Dried_fruit      0.095  0.803  0.073  8.539  5.857
+## Artificial_frui 12.338  0.265 10.719  0.005  9.005
+## Chocolate        0.000  7.222  5.454  2.717  1.961
+## Vanilla          3.725  7.378  0.062  7.751  0.493
+## Oak              1.408  3.929  0.957  0.023 10.036
+## Burned          12.948 29.829 21.464  0.000  5.837
+## Leather          5.521  6.231  2.022  2.668  0.161
+## Earthy           2.500  0.778  1.186  0.065  0.515
+## Spicy            0.091  0.065  0.184  0.795  0.792
+## Pepper           0.890  0.418  3.361 13.067  4.873
+## Grassy           0.995  0.845  0.001  3.183  3.767
+## Medicinal        5.020 19.108  0.181 18.097  0.004
+## Band-aid         7.031  8.798  3.162  1.865  9.763
+## Sour             0.061  9.453  6.522  0.013  1.329
+## Bitter           0.602  2.731 15.267  6.556  0.277
+## Alcohol          0.259  0.190  9.206  5.954 32.429
+## Astringent       0.771  1.240  8.909  6.753  0.016</code></pre>
+<p>Note that <code>FactoMineR</code> seems to scale the contributions to a percentage (e.g., multiply by 100), rather than returning contributions in the range <span class="math inline">\([0,1]\)</span>. Following Abdi &amp; Williams’ suggestion above, we can do a little wrangling to see important contributions visually:</p>
+<div class="sourceCode" id="cb218"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb218-1"><a href="principal-components-analysis-pca.html#cb218-1" tabindex="-1"></a><span class="co"># First we make a tibble</span></span>
+<span id="cb218-2"><a href="principal-components-analysis-pca.html#cb218-2" tabindex="-1"></a>means_pca<span class="sc">$</span>var<span class="sc">$</span>contrib <span class="sc">%&gt;%</span></span>
+<span id="cb218-3"><a href="principal-components-analysis-pca.html#cb218-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;descriptor&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb218-4"><a href="principal-components-analysis-pca.html#cb218-4" tabindex="-1"></a>  <span class="co"># Then we select the first 2 dimensions (for ease)</span></span>
+<span id="cb218-5"><a href="principal-components-analysis-pca.html#cb218-5" tabindex="-1"></a>  <span class="fu">select</span>(descriptor, Dim<span class="fl">.1</span>, Dim<span class="fl">.2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb218-6"><a href="principal-components-analysis-pca.html#cb218-6" tabindex="-1"></a>  <span class="co"># For both plotting and filtering, long-type data will be easier to work with</span></span>
+<span id="cb218-7"><a href="principal-components-analysis-pca.html#cb218-7" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>descriptor) <span class="sc">%&gt;%</span></span>
+<span id="cb218-8"><a href="principal-components-analysis-pca.html#cb218-8" tabindex="-1"></a>  <span class="co"># We can now choose only contributions &gt; 100 / # of descriptors (that is, 20)</span></span>
+<span id="cb218-9"><a href="principal-components-analysis-pca.html#cb218-9" tabindex="-1"></a>  <span class="fu">filter</span>(value <span class="sc">&gt;</span> <span class="dv">100</span> <span class="sc">/</span> <span class="dv">20</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb218-10"><a href="principal-components-analysis-pca.html#cb218-10" tabindex="-1"></a>  <span class="co"># We use some convenience functions from `tidytext` to make our facets nicer</span></span>
+<span id="cb218-11"><a href="principal-components-analysis-pca.html#cb218-11" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">descriptor =</span> <span class="fu">factor</span>(descriptor) <span class="sc">%&gt;%</span></span>
+<span id="cb218-12"><a href="principal-components-analysis-pca.html#cb218-12" tabindex="-1"></a>           tidytext<span class="sc">::</span><span class="fu">reorder_within</span>(<span class="at">by =</span> value, <span class="at">within =</span> name)) <span class="sc">%&gt;%</span></span>
+<span id="cb218-13"><a href="principal-components-analysis-pca.html#cb218-13" tabindex="-1"></a>  <span class="co"># And now we plot!</span></span>
+<span id="cb218-14"><a href="principal-components-analysis-pca.html#cb218-14" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> descriptor, <span class="at">y =</span> value)) <span class="sc">+</span> </span>
+<span id="cb218-15"><a href="principal-components-analysis-pca.html#cb218-15" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">fill =</span> name), <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb218-16"><a href="principal-components-analysis-pca.html#cb218-16" tabindex="-1"></a>  tidytext<span class="sc">::</span><span class="fu">scale_x_reordered</span>(<span class="cn">NULL</span>) <span class="sc">+</span> </span>
+<span id="cb218-17"><a href="principal-components-analysis-pca.html#cb218-17" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span> </span>
+<span id="cb218-18"><a href="principal-components-analysis-pca.html#cb218-18" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb218-19"><a href="principal-components-analysis-pca.html#cb218-19" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>name, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>)</span></code></pre></div>
+<p><img src="06-PCA_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>We can see that for PC1, contributions seem to be coming from a lot of fruity flavors, as well as some influence from complex flavors that I would attribute to possible Brettanomyces influence in some of the wines. In PC2, there appears to be instead more influence of oak (“Chocolate” and “Vanilla”) as well as the same Brettanomyces flavors. Note that contributions, as squared measurements, are always positive - these are <em>absolute</em> measures of influence on the dimensions.</p>
+<p>HGH says in the original <strong>R Opus</strong> that</p>
+<blockquote>
+<p>Communality is the sum of the squared loadings for the number of dimensions that you would like to keep.</p>
+</blockquote>
+<p>I am not sure I quite follow what she did, as she then goes on to examine the contributions, which as we’ve described are the squared loadings divided by the eigenvalues so that they sum to 1. In <strong>REF Abdi &amp; Williams</strong> they don’t discuss <em>communality</em>, and if I remember properly the concept is more frequently applied to Factor Analysis <strong>REF Rencher 2012</strong>, so we’ll leave it for now. I think that this is a great example of how closely overlapping concepts can get confusing in the world of components-based methods, since to my understanding Factor Analysis, in some of its simpler forms, can be derived directly from PCA but with different assumptions mapped onto the steps.</p>
+</div>
+</div>
+<div id="pca-with-resampling-for-confidence-intervals" class="section level2 hasAnchor" number="6.4">
+<h2><span class="header-section-number">6.4</span> PCA with resampling for confidence intervals<a href="principal-components-analysis-pca.html#pca-with-resampling-for-confidence-intervals" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In the original <strong>R Opus</strong>, HGH uses the <code>SensoMineR::panellipse()</code> function to generate confidence ellipses for the product mean vectors in PCA.</p>
+<div class="sourceCode" id="cb219"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb219-1"><a href="principal-components-analysis-pca.html#cb219-1" tabindex="-1"></a>panellipse_res <span class="ot">&lt;-</span> </span>
+<span id="cb219-2"><a href="principal-components-analysis-pca.html#cb219-2" tabindex="-1"></a>  <span class="co"># We have to reimport the data because panellipse() doesn&#39;t behave well with</span></span>
+<span id="cb219-3"><a href="principal-components-analysis-pca.html#cb219-3" tabindex="-1"></a>  <span class="co"># tibble() formats.</span></span>
+<span id="cb219-4"><a href="principal-components-analysis-pca.html#cb219-4" tabindex="-1"></a>  SensoMineR<span class="sc">::</span><span class="fu">panellipse</span>(<span class="at">donnee =</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriDAFinal.csv&quot;</span>)), </span>
+<span id="cb219-5"><a href="principal-components-analysis-pca.html#cb219-5" tabindex="-1"></a>                         <span class="at">col.p =</span> <span class="dv">2</span>, <span class="at">col.j =</span> <span class="dv">1</span>, <span class="at">firstvar =</span> <span class="dv">4</span>, <span class="at">scale.unit =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<p><img src="06-PCA_files/figure-html/unnamed-chunk-16-1.png" width="672" /><img src="06-PCA_files/figure-html/unnamed-chunk-16-2.png" width="672" /><img src="06-PCA_files/figure-html/unnamed-chunk-16-3.png" width="672" /><img src="06-PCA_files/figure-html/unnamed-chunk-16-4.png" width="672" /></p>
+<p>I’m not a huge fan of <code>panellipse()</code> because it’s pretty opaque. I can’t find the documentation on what it’s doing, and there doesn’t seem to be an associated journal article. It doesn’t really document how it is resampling or give easily understood descriptions of what the results (both numerical and graphical) it is producing <em>mean</em>. Here is the plot that HGH uses for the original <strong>R Opus</strong>:</p>
+<div class="sourceCode" id="cb220"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb220-1"><a href="principal-components-analysis-pca.html#cb220-1" tabindex="-1"></a>panellipse_res<span class="sc">$</span>graph<span class="sc">$</span>plotIndEll</span></code></pre></div>
+<p><img src="06-PCA_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p>The confidence ellipses are definitely being drawn around 95% of the resampled results from the bootstrapping procedure, but I’m not sure if this is a bootstrap based on, for example, the “partial bootstrap” or the “truncated bootstrap”. We will us a naive approach to producing a partial bootstrap in order to do some resampling and compare it.</p>
+<p>It is also worth noting that the plot produced here is different than that produced in the original <strong>R Opus</strong>, so eithere there is simulation variability (probably) or the underlying program has changed between 2015 and now (also possible). The overall conclusions are not greatly different but the overlapping areas can vary quite dramatically.</p>
+<p>The basic approach (which we saw back in the CVA section of the <strong>R Opus</strong>) is to draw a new set of bootstrapped observations for each product: we need 42 observations per product to calculate a new mean. We then can use the projection function from our original PCA solution to project these results into our space; in a nod to the truncated bootstrap approach <strong>REF Peltier et al</strong> we will use only the first 2 dimensions of the projection function to get the results so as not to overfit. Finally, we’ll draw ellipses around our results to represent variability.</p>
+<div class="sourceCode" id="cb221"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb221-1"><a href="principal-components-analysis-pca.html#cb221-1" tabindex="-1"></a>get_bootstrapped_pca_means <span class="ot">&lt;-</span> <span class="cf">function</span>(){</span>
+<span id="cb221-2"><a href="principal-components-analysis-pca.html#cb221-2" tabindex="-1"></a>  </span>
+<span id="cb221-3"><a href="principal-components-analysis-pca.html#cb221-3" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb221-4"><a href="principal-components-analysis-pca.html#cb221-4" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span>NJ, <span class="sc">-</span>NR) <span class="sc">%&gt;%</span></span>
+<span id="cb221-5"><a href="principal-components-analysis-pca.html#cb221-5" tabindex="-1"></a>    <span class="fu">group_by</span>(ProductName) <span class="sc">%&gt;%</span></span>
+<span id="cb221-6"><a href="principal-components-analysis-pca.html#cb221-6" tabindex="-1"></a>    <span class="co"># Here we resample each wine - we draw 42 new observations for each wine</span></span>
+<span id="cb221-7"><a href="principal-components-analysis-pca.html#cb221-7" tabindex="-1"></a>    <span class="co"># with replacement</span></span>
+<span id="cb221-8"><a href="principal-components-analysis-pca.html#cb221-8" tabindex="-1"></a>    <span class="fu">slice_sample</span>(<span class="at">prop =</span> <span class="dv">1</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb221-9"><a href="principal-components-analysis-pca.html#cb221-9" tabindex="-1"></a>    <span class="co"># We calculate the mean for the newly drawn samples</span></span>
+<span id="cb221-10"><a href="principal-components-analysis-pca.html#cb221-10" tabindex="-1"></a>    <span class="fu">summarize_if</span>(is.numeric, <span class="sc">~</span><span class="fu">mean</span>(.)) <span class="sc">%&gt;%</span></span>
+<span id="cb221-11"><a href="principal-components-analysis-pca.html#cb221-11" tabindex="-1"></a>    <span class="co"># And then we center the means (by subtracting the column means)</span></span>
+<span id="cb221-12"><a href="principal-components-analysis-pca.html#cb221-12" tabindex="-1"></a>    <span class="fu">mutate_if</span>(is.numeric, <span class="sc">~</span>. <span class="sc">-</span> <span class="fu">mean</span>(.)) <span class="sc">%&gt;%</span></span>
+<span id="cb221-13"><a href="principal-components-analysis-pca.html#cb221-13" tabindex="-1"></a>    <span class="fu">nest</span>(<span class="at">data =</span> <span class="sc">-</span>ProductName) <span class="sc">%&gt;%</span></span>
+<span id="cb221-14"><a href="principal-components-analysis-pca.html#cb221-14" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">means =</span> <span class="fu">map</span>(data, <span class="sc">~</span><span class="fu">as.matrix</span>(.x)),</span>
+<span id="cb221-15"><a href="principal-components-analysis-pca.html#cb221-15" tabindex="-1"></a>           <span class="at">pc1 =</span> <span class="fu">map_dbl</span>(means, <span class="sc">~</span> .x <span class="sc">%*%</span> means_pca<span class="sc">$</span>svd<span class="sc">$</span>V[, <span class="dv">1</span>]),</span>
+<span id="cb221-16"><a href="principal-components-analysis-pca.html#cb221-16" tabindex="-1"></a>           <span class="at">pc2 =</span> <span class="fu">map_dbl</span>(means, <span class="sc">~</span> .x <span class="sc">%*%</span> means_pca<span class="sc">$</span>svd<span class="sc">$</span>V[, <span class="dv">2</span>])) <span class="sc">%&gt;%</span></span>
+<span id="cb221-17"><a href="principal-components-analysis-pca.html#cb221-17" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span>data, <span class="sc">-</span>means)</span>
+<span id="cb221-18"><a href="principal-components-analysis-pca.html#cb221-18" tabindex="-1"></a>  </span>
+<span id="cb221-19"><a href="principal-components-analysis-pca.html#cb221-19" tabindex="-1"></a>}</span>
+<span id="cb221-20"><a href="principal-components-analysis-pca.html#cb221-20" tabindex="-1"></a></span>
+<span id="cb221-21"><a href="principal-components-analysis-pca.html#cb221-21" tabindex="-1"></a><span class="co"># Make it reproducible</span></span>
+<span id="cb221-22"><a href="principal-components-analysis-pca.html#cb221-22" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">6</span>)</span>
+<span id="cb221-23"><a href="principal-components-analysis-pca.html#cb221-23" tabindex="-1"></a></span>
+<span id="cb221-24"><a href="principal-components-analysis-pca.html#cb221-24" tabindex="-1"></a>pca_boots <span class="ot">&lt;-</span> </span>
+<span id="cb221-25"><a href="principal-components-analysis-pca.html#cb221-25" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">boot_id =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb221-26"><a href="principal-components-analysis-pca.html#cb221-26" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">bootstrapped_data =</span> <span class="fu">map</span>(boot_id, <span class="sc">~</span><span class="fu">get_bootstrapped_pca_means</span>())) <span class="sc">%&gt;%</span></span>
+<span id="cb221-27"><a href="principal-components-analysis-pca.html#cb221-27" tabindex="-1"></a>  <span class="fu">unnest</span>(bootstrapped_data)</span>
+<span id="cb221-28"><a href="principal-components-analysis-pca.html#cb221-28" tabindex="-1"></a></span>
+<span id="cb221-29"><a href="principal-components-analysis-pca.html#cb221-29" tabindex="-1"></a>p_scores <span class="sc">+</span></span>
+<span id="cb221-30"><a href="principal-components-analysis-pca.html#cb221-30" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> pca_boots, </span>
+<span id="cb221-31"><a href="principal-components-analysis-pca.html#cb221-31" tabindex="-1"></a>             <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb221-32"><a href="principal-components-analysis-pca.html#cb221-32" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> pc1, <span class="at">y =</span> pc2, <span class="at">color =</span> ProductName), <span class="at">shape =</span> <span class="st">&quot;.&quot;</span>) <span class="sc">+</span></span>
+<span id="cb221-33"><a href="principal-components-analysis-pca.html#cb221-33" tabindex="-1"></a>  <span class="fu">stat_ellipse</span>(<span class="at">data =</span> pca_boots, <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb221-34"><a href="principal-components-analysis-pca.html#cb221-34" tabindex="-1"></a>               <span class="fu">aes</span>(<span class="at">x =</span> pc1, <span class="at">y =</span> pc2, <span class="at">color =</span> ProductName))</span></code></pre></div>
+<p><img src="06-PCA_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p>Our results are pretty close, but not exactly the same. It seems like our method of generating bootstrapped scores (via resampling followed by projection via the <span class="math inline">\(\mathbf Q\)</span> matrix from SVD) is potentially more liberal in product separation than that from the <code>panellipse()</code> function. Perhaps <code>panellipse()</code> is using the “truncated bootstrap” approach <strong>REF Peltier</strong>, which solves a full PCA with the resampled data, then aligns it with the original observed space via Generalized Procrustes Analysis, then repeats that process a large number (e.g., 1000) times..</p>
+</div>
+<div id="comparison-of-products-with-pca" class="section level2 hasAnchor" number="6.5">
+<h2><span class="header-section-number">6.5</span> Comparison of products with PCA<a href="principal-components-analysis-pca.html#comparison-of-products-with-pca" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>HGH then used the <code>panellipse()</code> results to get Hotelling’s <span class="math inline">\(T^2\)</span> stats for each set of products. I believe that Hotelling’s <span class="math inline">\(T^2\)</span> is a generalization of the <span class="math inline">\(t\)</span>-distribution to multivariate data. These were accessed from the outputs of <code>panellipse()</code>, which we stored in <code>panellipse_res</code>.</p>
+<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb222-1"><a href="principal-components-analysis-pca.html#cb222-1" tabindex="-1"></a><span class="fu">names</span>(panellipse_res)</span></code></pre></div>
+<pre><code>## [1] &quot;eig&quot;         &quot;coordinates&quot; &quot;hotelling&quot;   &quot;graph&quot;       &quot;correl&quot;</code></pre>
+<p>The <code>SensoMineR::coltable()</code> function HGH used is a visualization function for this kind of output, let’s take a look.</p>
+<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb224-1"><a href="principal-components-analysis-pca.html#cb224-1" tabindex="-1"></a>SensoMineR<span class="sc">::</span><span class="fu">coltable</span>(panellipse_res<span class="sc">$</span>hotelling, <span class="at">main.title =</span> <span class="st">&quot;Hotelling&#39;s T2 for all products&quot;</span>)</span></code></pre></div>
+<p><img src="06-PCA_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p>Let’s practice how to make a similar table from this kind of data. The actual <code>panellipse_res$hotelling</code> object is just a square matrix. We can use this as input for something like the <code>geom_tile()</code> function with the right kind of wrangling.</p>
+<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb225-1"><a href="principal-components-analysis-pca.html#cb225-1" tabindex="-1"></a><span class="co"># First wrangle</span></span>
+<span id="cb225-2"><a href="principal-components-analysis-pca.html#cb225-2" tabindex="-1"></a></span>
+<span id="cb225-3"><a href="principal-components-analysis-pca.html#cb225-3" tabindex="-1"></a>panellipse_res<span class="sc">$</span>hotelling <span class="sc">%&gt;%</span></span>
+<span id="cb225-4"><a href="principal-components-analysis-pca.html#cb225-4" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;x&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb225-5"><a href="principal-components-analysis-pca.html#cb225-5" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>x, <span class="at">names_to =</span> <span class="st">&quot;y&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb225-6"><a href="principal-components-analysis-pca.html#cb225-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">color =</span> <span class="fu">if_else</span>(value <span class="sc">&lt;</span> <span class="fl">0.05</span>, <span class="st">&quot;pink&quot;</span>, <span class="st">&quot;white&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb225-7"><a href="principal-components-analysis-pca.html#cb225-7" tabindex="-1"></a>  </span>
+<span id="cb225-8"><a href="principal-components-analysis-pca.html#cb225-8" tabindex="-1"></a>  <span class="co"># Now plot</span></span>
+<span id="cb225-9"><a href="principal-components-analysis-pca.html#cb225-9" tabindex="-1"></a>  </span>
+<span id="cb225-10"><a href="principal-components-analysis-pca.html#cb225-10" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)) <span class="sc">+</span></span>
+<span id="cb225-11"><a href="principal-components-analysis-pca.html#cb225-11" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">fill =</span> color),</span>
+<span id="cb225-12"><a href="principal-components-analysis-pca.html#cb225-12" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span></span>
+<span id="cb225-13"><a href="principal-components-analysis-pca.html#cb225-13" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(value, <span class="dv">2</span>))) <span class="sc">+</span></span>
+<span id="cb225-14"><a href="principal-components-analysis-pca.html#cb225-14" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;pink&quot;</span>, <span class="st">&quot;white&quot;</span>)) <span class="sc">+</span> </span>
+<span id="cb225-15"><a href="principal-components-analysis-pca.html#cb225-15" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span> </span>
+<span id="cb225-16"><a href="principal-components-analysis-pca.html#cb225-16" tabindex="-1"></a>  </span>
+<span id="cb225-17"><a href="principal-components-analysis-pca.html#cb225-17" tabindex="-1"></a>  <span class="co"># Everything after this is just making the plot look nice</span></span>
+<span id="cb225-18"><a href="principal-components-analysis-pca.html#cb225-18" tabindex="-1"></a>  </span>
+<span id="cb225-19"><a href="principal-components-analysis-pca.html#cb225-19" tabindex="-1"></a>  <span class="fu">scale_x_discrete</span>(<span class="at">position =</span> <span class="st">&quot;top&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb225-20"><a href="principal-components-analysis-pca.html#cb225-20" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>(<span class="at">limits =</span> rev) <span class="sc">+</span> </span>
+<span id="cb225-21"><a href="principal-components-analysis-pca.html#cb225-21" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, </span>
+<span id="cb225-22"><a href="principal-components-analysis-pca.html#cb225-22" tabindex="-1"></a>       <span class="at">y =</span> <span class="cn">NULL</span>,</span>
+<span id="cb225-23"><a href="principal-components-analysis-pca.html#cb225-23" tabindex="-1"></a>       <span class="at">title =</span> <span class="fu">bquote</span>(<span class="st">&quot;Pairwise Hotelling&#39;s&quot;</span><span class="sc">~</span><span class="fu">italic</span>(T)<span class="sc">^</span><span class="dv">2</span>),</span>
+<span id="cb225-24"><a href="principal-components-analysis-pca.html#cb225-24" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="fu">bquote</span>(<span class="fu">italic</span>(p)<span class="sc">*</span><span class="st">&quot;-values&quot;</span><span class="sc">&lt;</span><span class="fl">0.05</span><span class="sc">~</span><span class="st">&quot;are highlighted in pink&quot;</span>)) <span class="sc">+</span> </span>
+<span id="cb225-25"><a href="principal-components-analysis-pca.html#cb225-25" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
+<span id="cb225-26"><a href="principal-components-analysis-pca.html#cb225-26" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">270</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
+<span id="cb225-27"><a href="principal-components-analysis-pca.html#cb225-27" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>,</span>
+<span id="cb225-28"><a href="principal-components-analysis-pca.html#cb225-28" tabindex="-1"></a>        <span class="at">axis.ticks =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb225-29"><a href="principal-components-analysis-pca.html#cb225-29" tabindex="-1"></a>        <span class="at">panel.grid =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
+<p><img src="06-PCA_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p>Notice the <code>ggplot2</code> syntax above is kind of complicated, but that’s because I did it all at once, and I wanted to do a lot of minor things like remove axis ticks, so as to replicate the plot from the <code>panellipse()</code> function closely. Notice that I don’t think the degrees of freedom for the Hotelling’s <span class="math inline">\(T^2\)</span> plot.</p>
+<p>As a bonus, we will quickly look into how to conduct Hotelling’s <span class="math inline">\(T^2\)</span> tests ourselves, and then leave the world of PCA (for now) to turn to methods for cluster analysis.</p>
+<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="principal-components-analysis-pca.html#cb226-1" tabindex="-1"></a><span class="co"># We need pairs of products - if we wanted to make all pairwise comparisons it</span></span>
+<span id="cb226-2"><a href="principal-components-analysis-pca.html#cb226-2" tabindex="-1"></a><span class="co"># would be possible to do so using, for example, nested `for()` loops or some</span></span>
+<span id="cb226-3"><a href="principal-components-analysis-pca.html#cb226-3" tabindex="-1"></a><span class="co"># kind of list-table structure</span></span>
+<span id="cb226-4"><a href="principal-components-analysis-pca.html#cb226-4" tabindex="-1"></a>hotelling_demo_data <span class="ot">&lt;-</span> </span>
+<span id="cb226-5"><a href="principal-components-analysis-pca.html#cb226-5" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb226-6"><a href="principal-components-analysis-pca.html#cb226-6" tabindex="-1"></a>  <span class="fu">filter</span>(ProductName <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;C_MERLOT&quot;</span>, <span class="st">&quot;C_REFOSCO&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb226-7"><a href="principal-components-analysis-pca.html#cb226-7" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>NJ, <span class="sc">-</span>NR)</span>
+<span id="cb226-8"><a href="principal-components-analysis-pca.html#cb226-8" tabindex="-1"></a></span>
+<span id="cb226-9"><a href="principal-components-analysis-pca.html#cb226-9" tabindex="-1"></a>DescTools<span class="sc">::</span><span class="fu">HotellingsT2Test</span>(<span class="at">formula =</span> <span class="fu">as.matrix</span>(hotelling_demo_data[, <span class="sc">-</span><span class="dv">1</span>]) <span class="sc">~</span> ProductName,</span>
+<span id="cb226-10"><a href="principal-components-analysis-pca.html#cb226-10" tabindex="-1"></a>                            <span class="at">data =</span> hotelling_demo_data)</span></code></pre></div>
+<pre><code>## 
+##  Hotelling&#39;s two sample T2-test
+## 
+## data:  as.matrix(hotelling_demo_data[, -1]) by ProductName
+## T.2 = 2.4053, df1 = 20, df2 = 63, p-value = 0.004345
+## alternative hypothesis: true location difference is not equal to c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)</code></pre>
+<p>These results are not the same as those given in the <code>panellipse()</code> output; I suspect after reading <code>?panellipse</code> that this is because internally that function is running a Hotelling’s <span class="math inline">\(T^2\)</span> test on the PCA results, rather than on the raw data, but I am not sure and I am not willing to try to interpret the under-the-hood code. If you know, please reach out and let me know!</p>
+</div>
+<div id="packages-used-in-this-chapter-5" class="section level2 hasAnchor" number="6.6">
+<h2><span class="header-section-number">6.6</span> Packages used in this chapter<a href="principal-components-analysis-pca.html#packages-used-in-this-chapter-5" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="principal-components-analysis-pca.html#cb228-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.3.1 (2023-06-16)
+## Platform: aarch64-apple-darwin20 (64-bit)
+## Running under: macOS Ventura 13.6.1
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## time zone: America/New_York
+## tzcode source: internal
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] patchwork_1.1.2 here_1.0.1      FactoMineR_2.8  lubridate_1.9.2
+##  [5] forcats_1.0.0   stringr_1.5.0   dplyr_1.1.2     purrr_1.0.1    
+##  [9] readr_2.1.4     tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.3  
+## [13] tidyverse_2.0.0
+## 
+## loaded via a namespace (and not attached):
+##  [1] Exact_3.2            tidyselect_1.2.0     rootSolve_1.8.2.4   
+##  [4] farver_2.1.1         fastmap_1.1.1        janeaustenr_1.0.0   
+##  [7] digest_0.6.33        timechange_0.2.0     estimability_1.4.1  
+## [10] lifecycle_1.0.3      cluster_2.1.4        multcompView_0.1-9  
+## [13] tokenizers_0.3.0     lmom_3.0             magrittr_2.0.3      
+## [16] compiler_4.3.1       rlang_1.1.1          sass_0.4.7          
+## [19] tools_4.3.1          utf8_1.2.3           yaml_2.3.7          
+## [22] tidytext_0.4.1       data.table_1.14.8    knitr_1.43          
+## [25] labeling_0.4.3       htmlwidgets_1.6.2    bit_4.0.5           
+## [28] scatterplot3d_0.3-44 plyr_1.8.8           KernSmooth_2.23-21  
+## [31] expm_0.999-7         withr_2.5.0          grid_4.3.1          
+## [34] fansi_1.0.4          SensoMineR_1.26      AlgDesign_1.2.1     
+## [37] e1071_1.7-13         xtable_1.8-4         colorspace_2.1-0    
+## [40] emmeans_1.8.7        scales_1.2.1         gtools_3.9.4        
+## [43] MASS_7.3-60          flashClust_1.01-2    cli_3.6.1           
+## [46] mvtnorm_1.2-2        rmarkdown_2.23       crayon_1.5.2        
+## [49] generics_0.1.3       rstudioapi_0.15.0    httr_1.4.6          
+## [52] reshape2_1.4.4       tzdb_0.4.0           readxl_1.4.3        
+## [55] gld_2.6.6            proxy_0.4-27         cachem_1.0.8        
+## [58] parallel_4.3.1       cellranger_1.1.0     vctrs_0.6.3         
+## [61] boot_1.3-28.1        Matrix_1.6-0         jsonlite_1.8.7      
+## [64] bookdown_0.37        hms_1.1.3            bit64_4.0.5         
+## [67] ggrepel_0.9.3        jquerylib_0.1.4      glue_1.6.2          
+## [70] DT_0.28              stringi_1.7.12       gtable_0.3.4        
+## [73] munsell_0.5.0        pillar_1.9.0         htmltools_0.5.6     
+## [76] R6_2.5.1             rprojroot_2.0.3      vroom_1.6.3         
+## [79] evaluate_0.21        lattice_0.21-8       highr_0.10          
+## [82] SnowballC_0.7.1      leaps_3.1            bslib_0.5.1         
+## [85] class_7.3-22         DescTools_0.99.50    Rcpp_1.0.11         
+## [88] coda_0.19-4          xfun_0.39            pkgconfig_2.0.3</code></pre>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="canonical-variate-analysis.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="cluster-analysis.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/06-PCA.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": true
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

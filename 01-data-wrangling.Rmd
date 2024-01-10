@@ -1,0 +1,184 @@
+---
+output: html_document
+---
+
+# Data import and set up
+
+In the original **R Opus**, HGH presented datasets from actual research conducted in her lab, that she worked with throughout.  I think this is a great approach, and with her permission we're going to replicate her work, almost step for step, on the same datasets.  Here, we'll review how to get them loaded and familiarize ourselves with them.
+
+## Exploring our data
+
+Most of the **R Opus** concerns 4 datasets.  Let's import them and inspect them.  We're going to use the `tidyverse` set of packages for basic data import and wrangling.
+
+```{r, message = FALSE}
+library(tidyverse)
+library(here) # easy file navigation
+
+descriptive_data <- read_csv(here("data/torriDAFinal.csv"))
+consumer_data <- read_csv(here("data/torriconsFinal.csv"))
+sorting_data <- read_csv(here("data/sorting_r1.csv"))
+missing_data_example <-read_csv(here("data/torrimiss.csv"))
+
+```
+
+We've now created four data tables (called "tibbles" in the `tidyverse` parlance) with our data, which you can see in your `Environment`.  Let's look at each of these.
+
+### The descriptive data
+
+
+```{r}
+glimpse(descriptive_data)
+```
+
+The `descriptive_data` file, read from `torriDAFinal.csv`, contains results from a descriptive analysis (DA) of wines, I believe from California and Italy (more on that in a minute).  Each row contains the observation of multiple variables (columns) from a single judge (`NJ`) on a single wine (`ProductName`) in a single replicate (`NR`).  That means we have 20 measured, quantitative sensory variables (`Red_berry:Astringent`), and the other three variables (judge, wine, rep) are ID or classifying variables.  [These data are *not* tidy](https://r4ds.hadley.nz/data-tidy.html); each row has multiple variables.
+
+We can learn a little more about these data before we move on: let's figure out how many samples, how many judges, and how many reps we have:
+
+```{r}
+# There are 14 judges, each of whom completed the same number of observations
+descriptive_data %>%
+  count(NJ, sort = TRUE)
+
+# There are 3 reps (labeled as 7, 8, and 9), balanced
+descriptive_data %>%
+  count(NR)
+
+# There are 8 products, 4 from Italy and 4 from California
+descriptive_data %>%
+  count(ProductName)
+```
+
+The `%>%` operator is called **the pipe**, and it takes whatever is on its left side and passes it on to the right side.  You can learn more about the pipe, but you can also just experiment.  When you see it in code, you can read it as "...and then...", so above we'd say something like "take `descriptive_data` **and then** count the number of times each `NJ` value occurs".  The other thing to know about piping, that you will see in some code in the **R Opus**, is the use of the period, `.`, as a "pronoun" for whatever is getting passed from the previous line.  This lets you tell the pipe where in the line you want the output from the previous/left side to end up:
+
+```{r}
+ # Take the descriptive data
+descriptive_data %>%
+# AND THEN run 1-way ANOVA, with descriptive_data passed to the `data =` argument of aov()
+  aov(Jam ~ ProductName, data = .) %>%
+# AND THEN print the readable summary of the results of aov()
+  summary()
+```
+
+Turns out that `Jam` attribute might vary by product.  We'll see.
+
+### Consumer data
+
+Let's look at the data in `consumer_data`:
+
+```{r}
+glimpse(consumer_data)
+```
+
+Here we have consumer acceptance testing data on the same 8 wines from the DA.  The rows look like they represent consumers, identified by the `Judge` column.  Let's check to see if they're all unique:
+
+```{r}
+consumer_data %>%
+# The sort = TRUE argument would put anyone with multiple rows at the top
+  count(Judge, sort = TRUE)
+```
+
+Then we have some consumption data (`Wine Frequency` and `IT Frequency`) and some demographic data (`Gender` and `Age`), and then 8 columns representing each judge's rating for each wine.  Doesn't look like we have any replication or any incomplete data.  Again, this is not tidy data--each row contains multiple observations beyond the classifying/identifying data.  We'll come back to that.
+
+### The other data frames
+
+The other two data frames we're going to pay less attention to for now.  The first, `missing_data_example`, is the same data frame as `descriptive_data` but with missing data introduced on purpose for didactic purposes.  We can use the `naniar` package to quickly learn a litle bit about the missingness:
+
+```{r, warning = FALSE}
+library(naniar)
+
+naniar::gg_miss_var(x = missing_data_example)
+```
+
+We could also use the useful `skimr` package to give us an informative data summary that would tell us about missingness:
+
+```{r}
+library(skimr)
+
+skim(missing_data_example) %>% 
+  # This is purely to allow the skimr::skim() to be rendered in PDF, ignore otherwise
+  knitr::kable()
+```
+
+Because the only difference between this data table and the `descriptive_data` table is the introduced missingness we're not going to pay much attention to it until we get to dealing with missing data.
+
+The `sorting_data` data frame contains results from a sorting task in which 15 subjects (1 per column) sorted the same wines into disjoint groups according to their own criteria.  If in a column two wines have the same label (say, `G1`), that subject put them in the same group.  We'll get to how to deal with this kind of data later on, so we're not going to go into more depth here.
+
+```{r}
+sorting_data
+```
+
+## Wrangling/tidying data
+
+Whenever we do data analysis, about 90% of the effort is getting the data into the right shape for the analysis at hand.  We're going to be employing many approaches to this task throughout the **R Opus**, but here we'll do a quick preparatory analysis with our two untidy data frames.
+
+The `pivot_longer()` function in `dplyr` is built to take data in the many-observations-per-row format (often called "wide" data) and bring it into a longer, "tidier" representation that is often easier to work with.  For the `descriptive_data`, a natural format that would be easier to work with is one in which all the descriptors are pivoted into two columns: one labeling the descriptor by name, and the other giving the rated value.  We'd do that as follows:
+
+```{r}
+descriptive_data_tidy <- 
+  descriptive_data %>%
+  pivot_longer(cols = -c(NJ, NR, ProductName),
+               names_to = "descriptor",
+               values_to = "rating")
+
+descriptive_data_tidy
+```
+
+Now we have kept our 3 ID or classifying variables and created a 4th, `descriptor`, which together uniquely describe each numeric observation, now called `rating`.  In our newly tidied dataset, the first line give the `rating`--the observation--for the judge with code `1331`, in rep `7`, for the wine `C_MERLOT`, for the `Red_berry` descriptor.  It's `5.1`.  
+
+To motivate this kind of work, let's quickly talk about the "[split-apply-combine](https://www.jstatsoft.org/article/view/v040i01)" workflow this enables.  Now that we've separated out our classifying variables, we can do work with them much more easily.  For example, let's say we want to generate a means table comparing the wines on the `Jam` variable, which we know from our example above seems to vary per wine.  We can now do this very easily:
+
+```{r}
+descriptive_data_tidy %>%
+
+# First we will use filter() to get only Jam observations
+  
+  filter(descriptor == "Jam") %>%
+  
+# Then we will use group_by() to identify our wines as the relevant classifying variable
+  
+  group_by(ProductName) %>%
+  
+# Finally, we'll use the summarize() function to generate a quick per-wine summary
+  
+  summarize(mean_jam_score = mean(rating),
+            se_jam_score = sd(rating) / sqrt(n()),
+            lower_95 = mean_jam_score - 1.96 * se_jam_score,
+            upper_95 = mean_jam_score + 1.96 * se_jam_score)
+```
+
+Our use of all of the intermediate steps--filtering, grouping, summarizing--depends on us having gotten the data into a tidy format.  This will sometimes *not* work well--especially when we're looking at pairwise relationships like covariance or correlation--but it will often be a step in wrangling results.
+
+We can do the same thing with our `consumer_data`.  In this case, we have 5 ID variables, and 8 observations, one for each wine.  Let's do the same thing with pivot_longer:
+
+```{r}
+consumer_data_tidy <- 
+  consumer_data %>%
+  
+# We can use ":" to select a continuous range of columns
+  
+  pivot_longer(cols = C_MERLOT:I_REFOSCO,
+               names_to = "wine",
+               values_to = "rating")
+
+consumer_data_tidy
+```
+
+Again, we've created a new ID/classifying column called `wine` and a new observation column called `rating`.  Now the 6 ID columns uniquely specify an observation.  Let's do something fun with this: is there a relationship between `Gender` and `rating`?
+
+```{r}
+consumer_data_tidy %>%
+  lm(rating ~ Gender, data = .) %>%
+  summary()
+```
+
+Looks like there isn't, which is probably evidence of good sampling--I can't think why there would be such a relationship.  
+
+## Wrap up and summary
+
+At this point, we've already done quite a bit of work.  We've practiced importing and inspecting data, and gotten a bit of practice with tidying data and applying the split-apply-combine data analysis steps.  We're going to be moving on to applying Analysis of Variance (ANOVA) to these data next.
+
+## Packages used in this chapter
+
+```{r}
+sessionInfo()
+```

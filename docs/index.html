@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>The R Opus v2</title>
+  <meta name="description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="The R Opus v2" />
+  <meta property="og:type" content="book" />
+  <meta property="og:image" content="/img/r-opus-cover.jpg" />
+  <meta property="og:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="github-repo" content="jlahne/r-opus-v2" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="The R Opus v2" />
+  
+  <meta name="twitter:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="twitter:image" content="/img/r-opus-cover.jpg" />
+
+<meta name="author" content="Jacob Lahne" />
+
+
+<meta name="date" content="2024-01-10" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+
+<link rel="next" href="data-import-and-set-up.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">The R Opus v2</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#usage"><i class="fa fa-check"></i>Usage</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#r-setup"><i class="fa fa-check"></i><code>R</code> Setup</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#what-this-is-not"><i class="fa fa-check"></i>What this is not</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#about-me"><i class="fa fa-check"></i>About me</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#session-info"><i class="fa fa-check"></i>Session Info</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html"><i class="fa fa-check"></i><b>1</b> Data import and set up</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#exploring-our-data"><i class="fa fa-check"></i><b>1.1</b> Exploring our data</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#the-descriptive-data"><i class="fa fa-check"></i><b>1.1.1</b> The descriptive data</a></li>
+<li class="chapter" data-level="1.1.2" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#consumer-data"><i class="fa fa-check"></i><b>1.1.2</b> Consumer data</a></li>
+<li class="chapter" data-level="1.1.3" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#the-other-data-frames"><i class="fa fa-check"></i><b>1.1.3</b> The other data frames</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#wranglingtidying-data"><i class="fa fa-check"></i><b>1.2</b> Wrangling/tidying data</a></li>
+<li class="chapter" data-level="1.3" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#wrap-up-and-summary"><i class="fa fa-check"></i><b>1.3</b> Wrap up and summary</a></li>
+<li class="chapter" data-level="1.4" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#packages-used-in-this-chapter"><i class="fa fa-check"></i><b>1.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html"><i class="fa fa-check"></i><b>2</b> Analysis of Variance</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#univariate-analysis-with-the-linear-model"><i class="fa fa-check"></i><b>2.1</b> Univariate analysis with the linear model</a></li>
+<li class="chapter" data-level="2.2" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#pseudo-mixed-anova"><i class="fa fa-check"></i><b>2.2</b> Pseudo-mixed ANOVA</a></li>
+<li class="chapter" data-level="2.3" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#mean-comparison-post-hoc-testing"><i class="fa fa-check"></i><b>2.3</b> Mean comparison (post-hoc testing)</a></li>
+<li class="chapter" data-level="2.4" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#bonus-bayesian-approaches-to-anova"><i class="fa fa-check"></i><b>2.4</b> BONUS: Bayesian approaches to ANOVA</a></li>
+<li class="chapter" data-level="2.5" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#packages-used-in-this-chapter-1"><i class="fa fa-check"></i><b>2.5</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html"><i class="fa fa-check"></i><b>3</b> Dealing with missing data</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#exploring-missing-data"><i class="fa fa-check"></i><b>3.1</b> Exploring missing data</a></li>
+<li class="chapter" data-level="3.2" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#imputing-missing-data"><i class="fa fa-check"></i><b>3.2</b> Imputing missing data</a></li>
+<li class="chapter" data-level="3.3" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#alternative-approaches-to-imputation"><i class="fa fa-check"></i><b>3.3</b> Alternative approaches to imputation</a></li>
+<li class="chapter" data-level="3.4" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#packages-used-in-this-chapter-2"><i class="fa fa-check"></i><b>3.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html"><i class="fa fa-check"></i><b>4</b> MANOVA (Multivariate Analysis of Variance)</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#running-manova"><i class="fa fa-check"></i><b>4.1</b> Running MANOVA</a></li>
+<li class="chapter" data-level="4.2" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#what-does-manova-test"><i class="fa fa-check"></i><b>4.2</b> What does MANOVA test?</a></li>
+<li class="chapter" data-level="4.3" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#bonus-hierarchical-bayes-instead-of-manova"><i class="fa fa-check"></i><b>4.3</b> BONUS: Hierarchical Bayes instead of MANOVA</a></li>
+<li class="chapter" data-level="4.4" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#packages-used-in-this-chapter-3"><i class="fa fa-check"></i><b>4.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html"><i class="fa fa-check"></i><b>5</b> Canonical Variate Analysis</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#what-is-cva"><i class="fa fa-check"></i><b>5.1</b> What is CVA?</a></li>
+<li class="chapter" data-level="5.2" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#application-of-cva"><i class="fa fa-check"></i><b>5.2</b> Application of CVA</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#basic-visualization-of-cva"><i class="fa fa-check"></i><b>5.2.1</b> Basic visualization of CVA</a></li>
+<li class="chapter" data-level="5.2.2" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#an-aside-on-exporting-r-plots"><i class="fa fa-check"></i><b>5.2.2</b> An aside on exporting R plots</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#plotting-uncertainty-in-cva"><i class="fa fa-check"></i><b>5.3</b> Plotting uncertainty in CVA</a></li>
+<li class="chapter" data-level="5.4" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#packages-used-in-this-chapter-4"><i class="fa fa-check"></i><b>5.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html"><i class="fa fa-check"></i><b>6</b> Principal Components Analysis (PCA)</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#what-does-pca-do"><i class="fa fa-check"></i><b>6.1</b> What does PCA do?</a></li>
+<li class="chapter" data-level="6.2" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#lets-do-pca"><i class="fa fa-check"></i><b>6.2</b> Let’s do PCA!</a></li>
+<li class="chapter" data-level="6.3" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#in-depth-interpretation"><i class="fa fa-check"></i><b>6.3</b> In-depth interpretation</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#correlations-or-squared-loadings-or-contributions"><i class="fa fa-check"></i><b>6.3.1</b> Correlations or (squared) loadings or contributions</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#pca-with-resampling-for-confidence-intervals"><i class="fa fa-check"></i><b>6.4</b> PCA with resampling for confidence intervals</a></li>
+<li class="chapter" data-level="6.5" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#comparison-of-products-with-pca"><i class="fa fa-check"></i><b>6.5</b> Comparison of products with PCA</a></li>
+<li class="chapter" data-level="6.6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#packages-used-in-this-chapter-5"><i class="fa fa-check"></i><b>6.6</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="cluster-analysis.html"><a href="cluster-analysis.html"><i class="fa fa-check"></i><b>7</b> Cluster analysis</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="cluster-analysis.html"><a href="cluster-analysis.html#hierarchical-clustering-on-distances"><i class="fa fa-check"></i><b>7.1</b> Hierarchical clustering on distances</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="cluster-analysis.html"><a href="cluster-analysis.html#wards-method"><i class="fa fa-check"></i><b>7.1.1</b> Ward’s Method</a></li>
+<li class="chapter" data-level="7.1.2" data-path="cluster-analysis.html"><a href="cluster-analysis.html#single-linkage"><i class="fa fa-check"></i><b>7.1.2</b> Single linkage</a></li>
+<li class="chapter" data-level="7.1.3" data-path="cluster-analysis.html"><a href="cluster-analysis.html#complete-linkage"><i class="fa fa-check"></i><b>7.1.3</b> Complete Linkage</a></li>
+<li class="chapter" data-level="7.1.4" data-path="cluster-analysis.html"><a href="cluster-analysis.html#average-linkage"><i class="fa fa-check"></i><b>7.1.4</b> Average Linkage</a></li>
+<li class="chapter" data-level="7.1.5" data-path="cluster-analysis.html"><a href="cluster-analysis.html#comparing-methods"><i class="fa fa-check"></i><b>7.1.5</b> Comparing methods</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="cluster-analysis.html"><a href="cluster-analysis.html#using-cluster-ids"><i class="fa fa-check"></i><b>7.2</b> Using cluster IDs</a></li>
+<li class="chapter" data-level="7.3" data-path="cluster-analysis.html"><a href="cluster-analysis.html#k-means-clustering"><i class="fa fa-check"></i><b>7.3</b> K-means clustering</a></li>
+<li class="chapter" data-level="7.4" data-path="cluster-analysis.html"><a href="cluster-analysis.html#packages-used-in-this-chapter-6"><i class="fa fa-check"></i><b>7.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html"><i class="fa fa-check"></i><b>8</b> Multidimensional Scaling (MDS)</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#metric-vs-non-metric"><i class="fa fa-check"></i><b>8.1</b> Metric vs non-metric</a></li>
+<li class="chapter" data-level="8.2" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#metric-mds"><i class="fa fa-check"></i><b>8.2</b> Metric MDS</a></li>
+<li class="chapter" data-level="8.3" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#non-metric-mds"><i class="fa fa-check"></i><b>8.3</b> Non-metric MDS</a></li>
+<li class="chapter" data-level="8.4" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#wrap-up"><i class="fa fa-check"></i><b>8.4</b> Wrap up</a></li>
+<li class="chapter" data-level="8.5" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#packages-used-in-this-chapter-7"><i class="fa fa-check"></i><b>8.5</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="distatis.html"><a href="distatis.html"><i class="fa fa-check"></i><b>9</b> DISTATIS</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="distatis.html"><a href="distatis.html#the-dataset-sorting-wines-by-color"><i class="fa fa-check"></i><b>9.1</b> The dataset: sorting wines by color</a></li>
+<li class="chapter" data-level="9.2" data-path="distatis.html"><a href="distatis.html#distatis-demonstrated"><i class="fa fa-check"></i><b>9.2</b> DISTATIS demonstrated</a></li>
+<li class="chapter" data-level="9.3" data-path="distatis.html"><a href="distatis.html#comparison-to-mds"><i class="fa fa-check"></i><b>9.3</b> Comparison to MDS</a></li>
+<li class="chapter" data-level="9.4" data-path="distatis.html"><a href="distatis.html#packages-used-in-this-chapter-8"><i class="fa fa-check"></i><b>9.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="correspondence-analysis-ca.html"><a href="correspondence-analysis-ca.html"><i class="fa fa-check"></i><b>10</b> Correspondence Analysis (CA)</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="correspondence-analysis-ca.html"><a href="correspondence-analysis-ca.html#packages-used-in-this-chapter-9"><i class="fa fa-check"></i><b>10.1</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="preference-mapping.html"><a href="preference-mapping.html"><i class="fa fa-check"></i><b>11</b> Preference Mapping</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="preference-mapping.html"><a href="preference-mapping.html#data"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
+<li class="chapter" data-level="11.2" data-path="preference-mapping.html"><a href="preference-mapping.html#internal-preference-mapping"><i class="fa fa-check"></i><b>11.2</b> Internal preference mapping</a></li>
+<li class="chapter" data-level="11.3" data-path="preference-mapping.html"><a href="preference-mapping.html#external-preference-mapping"><i class="fa fa-check"></i><b>11.3</b> External preference mapping</a>
+<ul>
+<li class="chapter" data-level="11.3.1" data-path="preference-mapping.html"><a href="preference-mapping.html#partial-least-squares-regression"><i class="fa fa-check"></i><b>11.3.1</b> Partial Least Squares Regression</a></li>
+</ul></li>
+<li class="chapter" data-level="11.4" data-path="preference-mapping.html"><a href="preference-mapping.html#other-approaches"><i class="fa fa-check"></i><b>11.4</b> Other approaches</a></li>
+<li class="chapter" data-level="11.5" data-path="preference-mapping.html"><a href="preference-mapping.html#principal-components-regression"><i class="fa fa-check"></i><b>11.5</b> Principal Components Regression</a></li>
+<li class="chapter" data-level="11.6" data-path="preference-mapping.html"><a href="preference-mapping.html#packages-used-in-this-chapter-10"><i class="fa fa-check"></i><b>11.6</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html"><i class="fa fa-check"></i><b>12</b> Multiple Factor(ial) Analysis (MFA)</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#mfa-vs-pca"><i class="fa fa-check"></i><b>12.1</b> MFA vs PCA</a></li>
+<li class="chapter" data-level="12.2" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#mfa-with-different-measurements"><i class="fa fa-check"></i><b>12.2</b> MFA with different measurements</a></li>
+<li class="chapter" data-level="12.3" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#wrapping-up"><i class="fa fa-check"></i><b>12.3</b> Wrapping up</a></li>
+<li class="chapter" data-level="12.4" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#packages-used-in-this-chapter-11"><i class="fa fa-check"></i><b>12.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html"><i class="fa fa-check"></i><b>13</b> Generalized Procrustes Analysis</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html#packages-used-in-this-chapter-12"><i class="fa fa-check"></i><b>13.1</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="wrapping-up-1.html"><a href="wrapping-up-1.html"><i class="fa fa-check"></i><b>14</b> Wrapping up</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The R Opus v2</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">The R Opus v2</h1>
+<p class="author"><em>Jacob Lahne</em></p>
+<p class="date"><em>2024-01-10</em></p>
+</div>
+<div id="about" class="section level1 unnumbered hasAnchor">
+<h1>About<a href="index.html#about" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>To paraphrase one of my <a href="https://bookdown.org/content/3890/">inspirations for this project</a> <span class="citation">(<a href="#ref-kurzDoingBayesianDataAnalysis2023">Kurz 2023</a>)</span>: This is a labor of love. In 2015, <a href="https://wineserver.ucdavis.edu/people/hildegarde-heymann#/">Hildegarde Heymann</a> (from here on: HGH), Distinguished Professor of Viticulture &amp; Enology at UC-Davis, was kind enough to host me as a visiting scholar at her laboratory. Among many other formative experiences I had as a sensory scientist at UC-Davis, HGH shared with me the <a href="files/The%20R%20Opus%20-%20May%202015.pdf"><strong>R Opus</strong></a>, a handbook she had written and compiled of common analytical approaches to multivariate (food-sensory) data in <code>R</code>. Like many of her other mentees, students, and postdocs, I benefited immensely from HGH’s practical insight into how to apply abstruse multivariate analyses to real problems in research, and the <strong>R Opus</strong> manifested that knowledge into a hands-on guide for how to implement those tools.</p>
+<p>In the time since, I have passed on the <strong>R Opus</strong> to my own mentees, students, and postdocs. As <code>R</code> has continued to mature and become more accessible as a scripting language for data analysis–in particular, as <a href="https://r4ds.hadley.nz/">“tidy” programming principles</a> have become more dominant–I have found myself also passing on my own set of tips and tricks for how to transform the tools found in the original <strong>R Opus</strong> into the current vernacular. I began teaching data analytics and coding for researchers using <code>R</code>, and after learning how to (clumsily) transform my course notes into accessible <strong><a href="https://bookdown.org/yihui/bookdown/">bookdowns</a></strong>, I thought: why not the <strong>R Opus</strong>?</p>
+<p>This is that thought put into some sort of action. I hope it is useful for you.</p>
+<div id="usage" class="section level2 unnumbered hasAnchor">
+<h2>Usage<a href="index.html#usage" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>This <strong>bookdown</strong> is constructed around typical workflows and data analysis needs for <a href="https://en.wikipedia.org/wiki/Sensory_analysis">sensory scientists</a>. You know who you are.</p>
+<p>For all others, this bookdown is a structured introduction to the analysis of multivariate data from a practical and applied perspective. Specifically, we investigate how to apply a series of common multivariate statistical analyses to a set of data derived from the tasting and rating of wines by both trained and untrained human subjects. I place almost all of the emphasis on “how to”, and much less on the statistical theory behind these approaches. As I have spent longer and longer using the statistical tools sensory scientists commonly apply (and occasionally developing and adapting new ones), I have come to believe that it is much more important to think of statistical analyses as tools that we apply, rather than worrying about our complete abstract understanding. The latter, of course, is also extremely important, but cannot be built without any possibility of first understanding why we might choose a particular analysis, and what it will look like applied to a particular dataset.</p>
+<p>Even if you do not work in the field of sensory science, I hope that these examples will prove useful and easily understandable. Plus: thinking about how wine tastes is interesting, especially when we combine it with complicated statistics!</p>
+</div>
+<div id="r-setup" class="section level2 unnumbered hasAnchor">
+<h2><code>R</code> Setup<a href="index.html#r-setup" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>You can read this bookdown entirely online using the navigation panels. However, if you want to learn to use <code>R</code> to conduct analyses like these, I strongly suggest you follow along. You’ll need to install <code>R</code> to do so. To install <code>R</code>, go to <a href="https://cran.r-project.org/" class="uri">https://cran.r-project.org/</a> and follow the appropriate instructions for your operating system.</p>
+<p>While it is not strictly necessary, you will almost certainly find it more pleasant to use the RStudio IDE (Interactive Development Environment) for <code>R</code>, which can be downloaded and installed from <a href="https://posit.co/products/open-source/rstudio/" class="uri">https://posit.co/products/open-source/rstudio/</a>.</p>
+<p>Here’s the list of packages I used in this bookdown:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">package</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">tidyverse</td>
+</tr>
+<tr class="even">
+<td align="left">FactoMineR</td>
+</tr>
+<tr class="odd">
+<td align="left">patchwork</td>
+</tr>
+<tr class="even">
+<td align="left">ggrepel</td>
+</tr>
+<tr class="odd">
+<td align="left">ggedit</td>
+</tr>
+<tr class="even">
+<td align="left">ggforce</td>
+</tr>
+<tr class="odd">
+<td align="left">DistatisR</td>
+</tr>
+<tr class="even">
+<td align="left">SensoMineR</td>
+</tr>
+<tr class="odd">
+<td align="left">paletteer</td>
+</tr>
+<tr class="even">
+<td align="left">here</td>
+</tr>
+<tr class="odd">
+<td align="left">broom</td>
+</tr>
+<tr class="even">
+<td align="left">skimr</td>
+</tr>
+<tr class="odd">
+<td align="left">factoextra</td>
+</tr>
+<tr class="even">
+<td align="left">naniar</td>
+</tr>
+<tr class="odd">
+<td align="left">agricolae</td>
+</tr>
+<tr class="even">
+<td align="left">tidytext</td>
+</tr>
+<tr class="odd">
+<td align="left">brms</td>
+</tr>
+<tr class="even">
+<td align="left">tidybayes</td>
+</tr>
+<tr class="odd">
+<td align="left">simputation</td>
+</tr>
+<tr class="even">
+<td align="left">missMDA</td>
+</tr>
+<tr class="odd">
+<td align="left">corrr</td>
+</tr>
+<tr class="even">
+<td align="left">widyr</td>
+</tr>
+<tr class="odd">
+<td align="left">rgl</td>
+</tr>
+<tr class="even">
+<td align="left">candisc</td>
+</tr>
+<tr class="odd">
+<td align="left">MASS</td>
+</tr>
+<tr class="even">
+<td align="left">ca</td>
+</tr>
+<tr class="odd">
+<td align="left">pls</td>
+</tr>
+</tbody>
+</table>
+<p>Once you have set up <code>R</code> (and RStudio), you can run the following lines of code to install the packages I use in this bookdown. This might take a minute–and you might have to restart <code>R</code> to do it. Go get a snack!</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" tabindex="-1"></a>packages <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;tidyverse&quot;</span>, <span class="st">&quot;FactoMineR&quot;</span>, <span class="st">&quot;patchwork&quot;</span>, <span class="st">&quot;ggrepel&quot;</span>, <span class="st">&quot;ggedit&quot;</span>, <span class="st">&quot;ggforce&quot;</span>, <span class="st">&quot;DistatisR&quot;</span>, <span class="st">&quot;SensoMineR&quot;</span>, <span class="st">&quot;paletteer&quot;</span>, <span class="st">&quot;here&quot;</span>, <span class="st">&quot;broom&quot;</span>, <span class="st">&quot;skimr&quot;</span>, <span class="st">&quot;factoextra&quot;</span>, <span class="st">&quot;naniar&quot;</span>, <span class="st">&quot;agricolae&quot;</span>, <span class="st">&quot;tidytext&quot;</span>, <span class="st">&quot;brms&quot;</span>, <span class="st">&quot;tidybayes&quot;</span>, <span class="st">&quot;simputation&quot;</span>, <span class="st">&quot;missMDA&quot;</span>, <span class="st">&quot;corrr&quot;</span>, <span class="st">&quot;widyr&quot;</span>, <span class="st">&quot;rgl&quot;</span>, <span class="st">&quot;candisc&quot;</span>, <span class="st">&quot;MASS&quot;</span>, <span class="st">&quot;ca&quot;</span>, <span class="st">&quot;pls&quot;</span>)</span>
+<span id="cb1-2"><a href="index.html#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="index.html#cb1-3" tabindex="-1"></a><span class="fu">install.packages</span>(packages, <span class="at">dependencies =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>Some of these tools install some additional (extra-<code>R</code>) tools. The Stan-based tools are most likely to cause trouble. If you cannot install them, consider the <a href="https://mc-stan.org/users/interfaces/">walkthroughs on the main Stan website</a>. Not installing them means you just won’t be able to replicate my extended experiments with Bayesian modeling (probably not the greatest loss in the world for you).</p>
+</div>
+<div id="what-this-is-not" class="section level2 unnumbered hasAnchor">
+<h2>What this is not<a href="index.html#what-this-is-not" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>I will not be going over the basics of <code>R</code> coding and programming. You can pick up a a fair amount by following along, or if you are truly new to <code>R</code> I recommend checking out <a href="https://r4ds.hadley.nz/">Wickham et al’s now-classic introduction</a>, the <a href="https://stat545.com/">Stat545 website</a>, or any of the <a href="https://datacarpentry.org/r-socialsci/">Carpentries workshops</a>.</p>
+</div>
+<div id="about-me" class="section level2 unnumbered hasAnchor">
+<h2>About me<a href="index.html#about-me" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>I’m an <a href="https://www.fst.vt.edu/aboutus/faculty/jlahne.html">associate professor of Food Science &amp; Technology at Virginia Tech</a>. I teach about sensory evaluation and about applied data analysis for food and ag scientists. I am not a statistician, but I interact with and consume a lot of statistics.</p>
+<p>As you work, you may start a local server to live preview this HTML book. This preview will update as you edit the book when you save individual .Rmd files. You can start the server in a work session by using the RStudio add-in “Preview book”, or from the R console:</p>
+</div>
+<div id="session-info" class="section level2 unnumbered hasAnchor">
+<h2>Session Info<a href="index.html#session-info" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>At the end of chapter, I will be including a <code>sessionInfo()</code> chunk to try to make it easier to reproduce the work, as well as to diagnose any problems.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="index.html#cb2-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb2-2"><a href="index.html#cb2-2" tabindex="-1"></a><span class="co">#&gt; R version 4.3.1 (2023-06-16)</span></span>
+<span id="cb2-3"><a href="index.html#cb2-3" tabindex="-1"></a><span class="co">#&gt; Platform: aarch64-apple-darwin20 (64-bit)</span></span>
+<span id="cb2-4"><a href="index.html#cb2-4" tabindex="-1"></a><span class="co">#&gt; Running under: macOS Ventura 13.6.1</span></span>
+<span id="cb2-5"><a href="index.html#cb2-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-6"><a href="index.html#cb2-6" tabindex="-1"></a><span class="co">#&gt; Matrix products: default</span></span>
+<span id="cb2-7"><a href="index.html#cb2-7" tabindex="-1"></a><span class="co">#&gt; BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib </span></span>
+<span id="cb2-8"><a href="index.html#cb2-8" tabindex="-1"></a><span class="co">#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0</span></span>
+<span id="cb2-9"><a href="index.html#cb2-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-10"><a href="index.html#cb2-10" tabindex="-1"></a><span class="co">#&gt; locale:</span></span>
+<span id="cb2-11"><a href="index.html#cb2-11" tabindex="-1"></a><span class="co">#&gt; [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8</span></span>
+<span id="cb2-12"><a href="index.html#cb2-12" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-13"><a href="index.html#cb2-13" tabindex="-1"></a><span class="co">#&gt; time zone: America/New_York</span></span>
+<span id="cb2-14"><a href="index.html#cb2-14" tabindex="-1"></a><span class="co">#&gt; tzcode source: internal</span></span>
+<span id="cb2-15"><a href="index.html#cb2-15" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-16"><a href="index.html#cb2-16" tabindex="-1"></a><span class="co">#&gt; attached base packages:</span></span>
+<span id="cb2-17"><a href="index.html#cb2-17" tabindex="-1"></a><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets </span></span>
+<span id="cb2-18"><a href="index.html#cb2-18" tabindex="-1"></a><span class="co">#&gt; [6] methods   base     </span></span>
+<span id="cb2-19"><a href="index.html#cb2-19" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-20"><a href="index.html#cb2-20" tabindex="-1"></a><span class="co">#&gt; other attached packages:</span></span>
+<span id="cb2-21"><a href="index.html#cb2-21" tabindex="-1"></a><span class="co">#&gt;  [1] lubridate_1.9.2 forcats_1.0.0   stringr_1.5.0  </span></span>
+<span id="cb2-22"><a href="index.html#cb2-22" tabindex="-1"></a><span class="co">#&gt;  [4] dplyr_1.1.2     purrr_1.0.1     readr_2.1.4    </span></span>
+<span id="cb2-23"><a href="index.html#cb2-23" tabindex="-1"></a><span class="co">#&gt;  [7] tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.3  </span></span>
+<span id="cb2-24"><a href="index.html#cb2-24" tabindex="-1"></a><span class="co">#&gt; [10] tidyverse_2.0.0</span></span>
+<span id="cb2-25"><a href="index.html#cb2-25" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-26"><a href="index.html#cb2-26" tabindex="-1"></a><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
+<span id="cb2-27"><a href="index.html#cb2-27" tabindex="-1"></a><span class="co">#&gt;  [1] gtable_0.3.4      jsonlite_1.8.7    compiler_4.3.1   </span></span>
+<span id="cb2-28"><a href="index.html#cb2-28" tabindex="-1"></a><span class="co">#&gt;  [4] tidyselect_1.2.0  jquerylib_0.1.4   scales_1.2.1     </span></span>
+<span id="cb2-29"><a href="index.html#cb2-29" tabindex="-1"></a><span class="co">#&gt;  [7] yaml_2.3.7        fastmap_1.1.1     R6_2.5.1         </span></span>
+<span id="cb2-30"><a href="index.html#cb2-30" tabindex="-1"></a><span class="co">#&gt; [10] generics_0.1.3    knitr_1.43        bookdown_0.37    </span></span>
+<span id="cb2-31"><a href="index.html#cb2-31" tabindex="-1"></a><span class="co">#&gt; [13] munsell_0.5.0     bslib_0.5.1       pillar_1.9.0     </span></span>
+<span id="cb2-32"><a href="index.html#cb2-32" tabindex="-1"></a><span class="co">#&gt; [16] tzdb_0.4.0        rlang_1.1.1       utf8_1.2.3       </span></span>
+<span id="cb2-33"><a href="index.html#cb2-33" tabindex="-1"></a><span class="co">#&gt; [19] stringi_1.7.12    cachem_1.0.8      xfun_0.39        </span></span>
+<span id="cb2-34"><a href="index.html#cb2-34" tabindex="-1"></a><span class="co">#&gt; [22] sass_0.4.7        timechange_0.2.0  cli_3.6.1        </span></span>
+<span id="cb2-35"><a href="index.html#cb2-35" tabindex="-1"></a><span class="co">#&gt; [25] withr_2.5.0       magrittr_2.0.3    digest_0.6.33    </span></span>
+<span id="cb2-36"><a href="index.html#cb2-36" tabindex="-1"></a><span class="co">#&gt; [28] grid_4.3.1        rstudioapi_0.15.0 hms_1.1.3        </span></span>
+<span id="cb2-37"><a href="index.html#cb2-37" tabindex="-1"></a><span class="co">#&gt; [31] lifecycle_1.0.3   vctrs_0.6.3       evaluate_0.21    </span></span>
+<span id="cb2-38"><a href="index.html#cb2-38" tabindex="-1"></a><span class="co">#&gt; [34] glue_1.6.2        fansi_1.0.4       colorspace_2.1-0 </span></span>
+<span id="cb2-39"><a href="index.html#cb2-39" tabindex="-1"></a><span class="co">#&gt; [37] rmarkdown_2.23    tools_4.3.1       pkgconfig_2.0.3  </span></span>
+<span id="cb2-40"><a href="index.html#cb2-40" tabindex="-1"></a><span class="co">#&gt; [40] htmltools_0.5.6</span></span></code></pre></div>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-kurzDoingBayesianDataAnalysis2023" class="csl-entry">
+Kurz, A. Solomon. 2023. <em>Doing <span>Bayesian</span> Data Analysis in Brms and the Tidyverse</em>. Version 1.1.0. <a href="https://bookdown.org/content/3686/">https://bookdown.org/content/3686/</a>.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+<a href="data-import-and-set-up.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/index.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": true
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

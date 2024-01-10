@@ -1,0 +1,348 @@
+---
+output: html_document
+---
+
+# Cluster analysis
+
+The goal of any cluster analysis is to find groups ("clusters") of observations that are "close to" each other in some sense, so as to reveal underlying structure in the data: typically, we would want to know that groups of more than one observation are very "close" so that we can speak about the group instead of the original observations.  In most sensory evaluation, "close" is usually taken to mean "similar", as the definitions of "close" we will operationalize are based on the sensory descriptors, so that observations that are "close" to each other will, in some sense, have similar sensory profiles. 
+
+We could also use cluster analysis to explore possible hypotheses, if we have some hypotheses about the underlying group structure that exists--for example, if we think that wines made from the same grape would be more similar to each other, we'd expect those wines to show up in the same group.  We'll explore this more as we look at our results.
+
+We start by loading our results, as before.  We will also define a tibble of product means, which will be our main data input to start with.
+
+```{r message=FALSE}
+library(tidyverse)
+library(here)
+library(factoextra) # this is new
+
+# I've decided to use the `across()` syntax instead of the scoped mutate_*()
+# functions, for documentation check out ?across()
+descriptive_data <- read_csv(here("data/torriDAFinal.csv")) %>%
+  mutate(across(1:3, ~as.factor(.)))
+
+descriptive_means <- 
+  descriptive_data %>%
+  group_by(ProductName) %>%
+  summarize(across(where(is.numeric), ~mean(.)))
+```
+
+We're going to mostly use the built in `stats::hclust()` function for most of this workflow, but do know that this is the simplest (and perhaps not best) clustering tool available in `R`.  It will do for our purposes.
+
+In the **R Opus**, HGH *scales* the mean data to have zero-means and unit-variance.  This choice (it is not necessary for calculation) means that all descriptors will have equal impact on our estimates of proximity for the purpose of clustering.  We'll follow along.
+
+```{r}
+descriptive_means_scaled <- 
+  descriptive_means %>%
+  # This line is desnse - notice the "lambda" ("~") function that uses multiple
+  # references to the same column: we are subtracting the column mean and
+  # dividing by the column sd for each column.
+  mutate(across(where(is.numeric), ~ (. - mean(.)) / sd(.)))
+```
+
+Now we're ready to think about "close".  As the word implies, we're going to examine the distances among all of our products.  The built in function in `R` to calculate distance is `stats::dist()`.  This will serve our purposes well.  
+
+```{r}
+descriptive_distance <- 
+  descriptive_means_scaled %>%
+  # We need to remember to move our variable column to the "rownames" attribute
+  # so that the older function keeps it (and doesn't try to find distances
+  # between character vectors)
+  column_to_rownames("ProductName") %>%
+  dist(method = "euclidean")
+
+descriptive_distance
+```
+
+The `dist()` function produces a lower-triangular matrix of the distances between each pair of mean vectors.  Because we selected `method = "euclidean"` the distance is calculated as the typical (L2) norm: the square-root of the the sum of the squared differences between each attribute mean for the two products.  Other common options are available, see `?dist`.
+
+Technically, all (mathematical) distances must fulfill 4 properties:
+
+1. For any object, $dist(a,a) = 0$ (the distance of an object to itself is always 0)
+1. For all pairs of objects, $dist(a,b) ≥ 0$ (all distances are positive or 0)
+1. For any pair of objects, $dist(a,b) = dist(b,a)$ (distane is symmetric)
+2. For any three objects, $dist(a,b) + dist(b,c) ≥ dist(a,c)$ (the triangle inequality - I like the [Wikipedia description](https://en.wikipedia.org/wiki/Distance#Mathematical_formalization) as "intermediate objects can't speed you up")
+
+Enough about distance!  Let's get on with it.  We can see that our distance matrix is all positive entries that give us some idea of "how close" each pair of objects is. Smaller numbers indicate proximity.  
+
+## Hierarchical clustering on distances
+
+One of the major families of clustering is called "hierarchical" clustering (HCA: Hierarchical Clustering Analysis).  In plain language, hierarchical methods are iterative methods that start with the assumption that each object (sample) starts in its own group and then, for each step in the process, the two "closest" objects are merged into a group.  Different strategies for calculating distance (between the merged groups, as we will typically stick with Euclidean distance as our base metric for singlets) and different methods for making the merge define the different hierarchical clustering approaches.
+
+In the original **R Opus**, HGH demonstrates 4 different HCA methods.  We'll look at each briefly.
+
+### Ward's Method
+
+Ward's Method is probably the most commonly used (and intellectually satisfying approach).  For Ward's method, to quote @rencherMethods2002[p.466]:
+
+> Ward's method, also called the incremental sum of squares method, uses the within cluster (squared) distances and the between-cluster (squared) distances... Ward's method joins the two clusters A and B that minimize the increase in [the difference between the new AB cluster's within-distance and the old A and B within-distances].
+
+Ward's method, qualitatively, tends to find balanced clusters that result from the merge of smaller clusters.
+
+```{r}
+cluster_ward <-
+  descriptive_distance %>%
+  hclust(method = "ward.D2")
+```
+
+Note that the original **R Opus** used `method = "ward"`--according to the documentation in `?hclust`:
+
+> Two different algorithms are found in the literature for Ward clustering. The one used by option "ward.D" (equivalent to the only Ward option "ward" in R versions ≤ 3.0.3) does not implement Ward's (1963) clustering criterion, whereas option "ward.D2" implements that criterion (Murtagh and Legendre 2014). With the latter, the dissimilarities are squared before cluster updating. Note that agnes(*, method="ward") corresponds to hclust(*, "ward.D2").
+
+```{r warning=FALSE}
+p_ward <- 
+  cluster_ward %>%
+  fviz_dend(k = 3, cex = 2/3)
+```
+
+We're going to use the `factoextra::fviz_dend()` function for drawing our clusters.  Long-story-short, the native `ggplot2` functions for plotting tree- and graph-like structures like "dendrograms" (the tree plots that are common for HCA results) don't really exist, and `fviz_dend()` is going to do a lot of heavy lifting for us in the background by giving us a basic dendrogram `ggplot2` object that we can alter as we see fit using more familiar syntax.
+
+```{r message = FALSE}
+p_ward <- 
+  p_ward + 
+  # Stretch out the y-axis so that we can see the labels
+  expand_limits(y = -6) + 
+  # Clean up the messiness
+  labs(title = "Clustering with Ward's method", y = NULL) +
+  scale_color_viridis_d()
+
+p_ward
+```
+
+Notice that we had to *tell* the program (in this case `fviz_dend()`) how many groups we wanted to label separately (`k = 3`).  We're following HGH here.  In general, while there are methods for attempting to determine the "right" number of groups from HCA, this involves "researcher degrees of freedom" (i.e., "good judgment").
+
+### Single linkage
+
+Single linkage is also called "nearest neighbor" clustering.  In single-linkage, the key element is that the distance between any two *clusters* $A$ and $B$ is defined as the *minimum* distance between a point $a$ in $A$ and a point $b$ in $B$.  Single linkage is, therefore, "greedy", because big clusters will tend to get bigger: there is a greater chance that a large cluster will have a small distance between *some* point within it and another point outside it.
+
+```{r}
+cluster_single <- 
+  descriptive_distance %>%
+  hclust(method = "single")
+```
+
+We can use the same number of groups (`k = 3`) so we can have a consistent comparison among the methods.
+
+```{r message=FALSE}
+p_single <- 
+  cluster_single %>%
+  fviz_dend(k = 3, cex = 2/3) + 
+  expand_limits(y = -6) + 
+  scale_color_viridis_d() +
+  labs(y = NULL, title = "Clustering with Single Linkage")
+
+p_single
+```
+
+Notice the "greediness": large single group keeps adding a single new observation at each step of the algorithm, resulting in this characteristic "step" pattern.  For most situations, single linkage is a not a recommended approach for clustering.
+
+### Complete Linkage
+
+The complete linkage approach is just the opposite of the single linkage method: the distance between two clusters is the *maximum* distance between all two points $a$ and $b$ in clusters $A$ and $B$, respectively.  With this definition, the same iterative approach is carried out and the two closest clusters are merged at each step.
+
+```{r message=FALSE}
+cluster_complete <- 
+  descriptive_distance %>%
+  hclust(method = "complete")
+
+p_complete <-
+  cluster_complete %>%
+  fviz_dend(k = 3, cex = 2/3) + 
+  expand_limits(y = -6) + 
+  labs(y = NULL, title = "Clustering with Complete Linkage") +
+  scale_color_viridis_d()
+
+p_complete
+```
+
+Intuitively, complete linkage avoids the "greediness" problem of single linkage.  It is the default method used in `hclust()`: see `?hclust`.
+
+### Average Linkage
+
+As the name implies, in the average linkage method, the distance between two clusters is defined as the average distance between all objects $a_i$ in $A$ and all objects $b_j$ in $B$. 
+
+```{r message=FALSE}
+cluster_average <-
+  descriptive_distance %>%
+  hclust(method = "average")
+
+p_average <- 
+  cluster_average %>%
+  fviz_dend(k = 3, cex = 2/3) +
+  expand_limits(y = -6) + 
+  labs(title = "Clustering with Average Linkage", y = NULL) + 
+  scale_color_viridis_d()
+
+p_average
+```
+
+### Comparing methods
+
+Let's look at the results of our cluster analyses side by side.
+
+```{r fig.width=9}
+library(patchwork)
+
+(p_ward + p_single) / (p_complete + p_average)
+
+```
+
+Only single linkage gives us very different results; the others are a matter of scaling.  This could be quite different if we had a larger number of more dissimilar objects - recall our distance matrix:
+
+```{r}
+descriptive_distance
+```
+
+Not actually that much variation!
+
+We can do the same thing with our individual observations.
+
+```{r message = FALSE}
+individual_distances <- 
+  descriptive_data %>%
+  unite(NJ, ProductName, NR, col = "ID") %>%
+  mutate(across(where(is.numeric), ~ (. - mean(.)) / sd(.))) %>%
+  column_to_rownames("ID") %>%
+  dist()
+
+clusters_individual <- 
+  individual_distances %>%
+  hclust(method = "ward.D2")
+
+# Here we drop the original unique IDs for just the ProductName
+clusters_individual$labels <- str_extract(clusters_individual$labels, "[A-Z]_[A-Z]+")
+
+p <- clusters_individual %>%
+  fviz_dend(cex = 1/4,
+            k = 8,
+            label_cols = clusters_individual$labels %>% as.factor() %>% as.numeric()) + 
+  labs(title = "Clustering raw data with Ward's method") +
+  scale_color_viridis_d()
+
+p
+```
+
+We tried looking for 8 clusters (since there are 8 wines) and giving each label (the individual row observation representing a single judge rating a single wine sample) the color of the rated wine.  It is obvious that the wines don't cluster together based on their sample ID.
+
+## Using cluster IDs  
+
+Above we played a little bit to see if, for the raw data, clustering provided a structure that mirrored product ID.  But that was more for demonstration purposes than because it was a good data-analysis practice.  More standard in sensory evaluation workflow would be to conduct a clustering analysis and then determine whether that cluster "explained" sensory variation in the base data.  
+
+From our original clustering results, we can pull out a tibble that tells us which sample belongs to which cluster:
+
+```{r message = FALSE}
+# We use `cutree()` with `k = 3` to get 3 groups from the "tree" (clustering)
+groups_from_ward <- 
+  cluster_ward %>%
+  cutree(k = 3) %>%
+  as_tibble(rownames = "ProductName") %>%
+  rename(ward_group = value) %>%
+  # It will be helpful to treat group membership as a nominal variable
+  mutate(ward_group = factor(ward_group))
+
+# The `dplyr::left_join()` function matches up the two tibbles based on the
+# value of a shared column(s): in this case, `ProductName`
+descriptive_data <- 
+  descriptive_data %>%
+  left_join(groups_from_ward)
+
+glimpse(descriptive_data)
+```
+
+Now we have a `factor` identifying which cluster (from an HCA with Ward's Method and 3 groups) each wine belongs to.  We can use this structure as a new possible input for M/ANOVA, like we did in [MANOVA (Multivariate Analysis of Variance)].
+
+```{r}
+cluster_manova <- 
+  manova(formula = as.matrix(descriptive_data[, 4:23]) ~ ward_group, 
+         data = descriptive_data)
+
+# We get a "significant" 1-way MANOVA result for the effect of cluster
+# membership on overall sensory profile.
+summary(cluster_manova, test = "W")
+
+# Let's review how to use nest() and map() functions to tidily apply 1-way ANOVA
+# to each variable.
+
+descriptive_data %>%
+  # We are going to ignore (marginalize) reps and judges and even products
+  select(-NR, -NJ, -ProductName) %>%
+  pivot_longer(-ward_group,
+               names_to = "descriptor",
+               values_to = "rating") %>%
+  nest(data = -descriptor) %>%
+  # run 1-way ANOVAs
+  mutate(anova_results = map(.x = data,
+                             .f = ~aov(rating ~ ward_group, data = .))) %>%
+  # use broom::tidy() to get tibble-ized summaries out of the `aov` objects
+  transmute(descriptor,
+            tidy_summary = map(anova_results, broom::tidy)) %>%
+  unnest(everything()) %>%
+  filter(term  != "Residuals",
+         p.value < 0.05) %>%
+  mutate(across(where(is.numeric), ~round(., 3))) %>%
+  print(n = 13)
+  
+```
+
+We find that 13 descriptors have significantly different means for the 3 different clusters.  This seems to contradict HGH's results--she found 7 in the original **R Opus**.  I am not quite sure what the difference could be here; when I reran the code from the actual original **R Opus** my results match the tidy workflow shown above (not shown).  I wonder if some data got lost somewhere in the original?
+
+## K-means clustering
+
+In hierarchical clustering, we use an iterative process to merge our items into groups--if we let the process run long enough we end up with a single group.  We decide on the "right" number of groups by examining results like the *dendrogram* produced from the set of merges throughout the process (e.g., we apply `cutree(k = 3)`).  
+
+If we had some idea *a priori* of how many groups we were expecting, we could use some alternative processes.  The most popular--and possibly intuitive--of these is *k-means clustering*.  The $k$ in "k-means" stands in for the same thing it does in the `k = ` argument in `cutree()`: how many groups are we looking for.  However, in k-means clustering, we don't proceed hierarchically.  Instead, we start with some initial $k$ "seeds" - the initial 1-item groups.  These can be chosen at random or purposively, although if the former it is important to note that the choice of seed can be influential on the solution, and so multiple runs of k-means clustering may produce different results.
+
+Once the $k$ seeds are chosen, every other item that is to be clustered is assigned to the group for which it is closest to the seed (again, "closest" can be defined by any distance metric).  Once a group has more than 1 item, its centroid (the "mean" in the name "k-means") replaces the initial seed for distance measurements.  After an initial run, it is possible that items are in the "wrong" group--that a new, different group centroid is closer to them than is their current group centroid.  These items are re-assigned, centroids are re-calculated, and the procedure iterates until no items are re-assigned.  This reassignment is not possible with hierarchical methods, and so k-means can sometimes find better results.  As might be imagined, different choices of methods for calculating centroid and for distance can affect the results of k-means clustering.  
+
+A common workflow is to use HCA to get an idea of the appropriate $k$ for k-means clustering, and then to use k-means clustering to get a final, optimized clustering solution.  We will take this approach, using `k = 3`.
+
+```{r}
+clusters_kmeans <-
+  descriptive_means_scaled %>%
+  column_to_rownames("ProductName") %>%
+  kmeans(centers = 3)
+
+clusters_kmeans$cluster
+clusters_kmeans$centers %>%
+  as_tibble(rownames = "cluster")
+```
+
+HGH shows how to replicate the same workflow as we did above with the HCA results: using the group assignments to run a 1-way M/ANOVA to determine which attributes vary significantly.  I am going to leave this as an exercise to the reader, but we'll instead look at how we might visualize these results, since we can't draw a dendrogram in the same way as an HCA.
+
+We'll first run a simple means PCA to get the product score plot, and then we'll draw some hulls around the groups.
+
+```{r message = FALSE}
+means_pca <- 
+  descriptive_means %>%
+  column_to_rownames("ProductName") %>%
+  FactoMineR::PCA(scale.unit = FALSE, graph = FALSE)
+
+# Join the PCA scores to the k-means cluster IDs
+p1 <-
+  means_pca$ind$coord %>%
+  as_tibble(rownames = "ProductName") %>%
+  left_join(
+    clusters_kmeans$cluster %>%
+      as_tibble(rownames = "ProductName")
+  ) %>%
+  mutate(value = factor(value)) %>%
+  # And plot!
+  ggplot(aes(x = Dim.1, y = Dim.2)) + 
+  geom_hline(yintercept = 0, linetype = 2) + 
+  geom_vline(xintercept = 0, linetype = 2) + 
+  geom_point(aes(color = value)) + 
+  ggrepel::geom_text_repel(aes(color = value, label = ProductName)) + 
+  ggforce::geom_mark_ellipse(aes(color = value)) + 
+  theme_bw() +
+  coord_equal() + 
+  theme(legend.position = "none")
+p1
+
+```
+
+Looks like those California wines end up grouped together even though there is a fair bit of spread.  I looked into the PC3 to see if that explained it, but they are even more spread there (not shown--see if you can make the small code tweak to do so).  I think this is a case where arguably 3 clusters is not a good solution.  We might consider examining some measures of cluster fit, perhaps through something like the `NbClust` package, to determine if we should consider other solutions.
+
+## Packages used in this chapter
+
+```{r}
+sessionInfo()
+```

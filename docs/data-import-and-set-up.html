@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 1 Data import and set up | The R Opus v2</title>
+  <meta name="description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 1 Data import and set up | The R Opus v2" />
+  <meta property="og:type" content="book" />
+  <meta property="og:image" content="/img/r-opus-cover.jpg" />
+  <meta property="og:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="github-repo" content="jlahne/r-opus-v2" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 1 Data import and set up | The R Opus v2" />
+  
+  <meta name="twitter:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="twitter:image" content="/img/r-opus-cover.jpg" />
+
+<meta name="author" content="Jacob Lahne" />
+
+
+<meta name="date" content="2024-01-10" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+<link rel="next" href="analysis-of-variance.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">The R Opus v2</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#usage"><i class="fa fa-check"></i>Usage</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#r-setup"><i class="fa fa-check"></i><code>R</code> Setup</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#what-this-is-not"><i class="fa fa-check"></i>What this is not</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#about-me"><i class="fa fa-check"></i>About me</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#session-info"><i class="fa fa-check"></i>Session Info</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html"><i class="fa fa-check"></i><b>1</b> Data import and set up</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#exploring-our-data"><i class="fa fa-check"></i><b>1.1</b> Exploring our data</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#the-descriptive-data"><i class="fa fa-check"></i><b>1.1.1</b> The descriptive data</a></li>
+<li class="chapter" data-level="1.1.2" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#consumer-data"><i class="fa fa-check"></i><b>1.1.2</b> Consumer data</a></li>
+<li class="chapter" data-level="1.1.3" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#the-other-data-frames"><i class="fa fa-check"></i><b>1.1.3</b> The other data frames</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#wranglingtidying-data"><i class="fa fa-check"></i><b>1.2</b> Wrangling/tidying data</a></li>
+<li class="chapter" data-level="1.3" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#wrap-up-and-summary"><i class="fa fa-check"></i><b>1.3</b> Wrap up and summary</a></li>
+<li class="chapter" data-level="1.4" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#packages-used-in-this-chapter"><i class="fa fa-check"></i><b>1.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html"><i class="fa fa-check"></i><b>2</b> Analysis of Variance</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#univariate-analysis-with-the-linear-model"><i class="fa fa-check"></i><b>2.1</b> Univariate analysis with the linear model</a></li>
+<li class="chapter" data-level="2.2" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#pseudo-mixed-anova"><i class="fa fa-check"></i><b>2.2</b> Pseudo-mixed ANOVA</a></li>
+<li class="chapter" data-level="2.3" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#mean-comparison-post-hoc-testing"><i class="fa fa-check"></i><b>2.3</b> Mean comparison (post-hoc testing)</a></li>
+<li class="chapter" data-level="2.4" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#bonus-bayesian-approaches-to-anova"><i class="fa fa-check"></i><b>2.4</b> BONUS: Bayesian approaches to ANOVA</a></li>
+<li class="chapter" data-level="2.5" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#packages-used-in-this-chapter-1"><i class="fa fa-check"></i><b>2.5</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html"><i class="fa fa-check"></i><b>3</b> Dealing with missing data</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#exploring-missing-data"><i class="fa fa-check"></i><b>3.1</b> Exploring missing data</a></li>
+<li class="chapter" data-level="3.2" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#imputing-missing-data"><i class="fa fa-check"></i><b>3.2</b> Imputing missing data</a></li>
+<li class="chapter" data-level="3.3" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#alternative-approaches-to-imputation"><i class="fa fa-check"></i><b>3.3</b> Alternative approaches to imputation</a></li>
+<li class="chapter" data-level="3.4" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#packages-used-in-this-chapter-2"><i class="fa fa-check"></i><b>3.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html"><i class="fa fa-check"></i><b>4</b> MANOVA (Multivariate Analysis of Variance)</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#running-manova"><i class="fa fa-check"></i><b>4.1</b> Running MANOVA</a></li>
+<li class="chapter" data-level="4.2" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#what-does-manova-test"><i class="fa fa-check"></i><b>4.2</b> What does MANOVA test?</a></li>
+<li class="chapter" data-level="4.3" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#bonus-hierarchical-bayes-instead-of-manova"><i class="fa fa-check"></i><b>4.3</b> BONUS: Hierarchical Bayes instead of MANOVA</a></li>
+<li class="chapter" data-level="4.4" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#packages-used-in-this-chapter-3"><i class="fa fa-check"></i><b>4.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html"><i class="fa fa-check"></i><b>5</b> Canonical Variate Analysis</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#what-is-cva"><i class="fa fa-check"></i><b>5.1</b> What is CVA?</a></li>
+<li class="chapter" data-level="5.2" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#application-of-cva"><i class="fa fa-check"></i><b>5.2</b> Application of CVA</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#basic-visualization-of-cva"><i class="fa fa-check"></i><b>5.2.1</b> Basic visualization of CVA</a></li>
+<li class="chapter" data-level="5.2.2" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#an-aside-on-exporting-r-plots"><i class="fa fa-check"></i><b>5.2.2</b> An aside on exporting R plots</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#plotting-uncertainty-in-cva"><i class="fa fa-check"></i><b>5.3</b> Plotting uncertainty in CVA</a></li>
+<li class="chapter" data-level="5.4" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#packages-used-in-this-chapter-4"><i class="fa fa-check"></i><b>5.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html"><i class="fa fa-check"></i><b>6</b> Principal Components Analysis (PCA)</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#what-does-pca-do"><i class="fa fa-check"></i><b>6.1</b> What does PCA do?</a></li>
+<li class="chapter" data-level="6.2" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#lets-do-pca"><i class="fa fa-check"></i><b>6.2</b> Let’s do PCA!</a></li>
+<li class="chapter" data-level="6.3" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#in-depth-interpretation"><i class="fa fa-check"></i><b>6.3</b> In-depth interpretation</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#correlations-or-squared-loadings-or-contributions"><i class="fa fa-check"></i><b>6.3.1</b> Correlations or (squared) loadings or contributions</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#pca-with-resampling-for-confidence-intervals"><i class="fa fa-check"></i><b>6.4</b> PCA with resampling for confidence intervals</a></li>
+<li class="chapter" data-level="6.5" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#comparison-of-products-with-pca"><i class="fa fa-check"></i><b>6.5</b> Comparison of products with PCA</a></li>
+<li class="chapter" data-level="6.6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#packages-used-in-this-chapter-5"><i class="fa fa-check"></i><b>6.6</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="cluster-analysis.html"><a href="cluster-analysis.html"><i class="fa fa-check"></i><b>7</b> Cluster analysis</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="cluster-analysis.html"><a href="cluster-analysis.html#hierarchical-clustering-on-distances"><i class="fa fa-check"></i><b>7.1</b> Hierarchical clustering on distances</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="cluster-analysis.html"><a href="cluster-analysis.html#wards-method"><i class="fa fa-check"></i><b>7.1.1</b> Ward’s Method</a></li>
+<li class="chapter" data-level="7.1.2" data-path="cluster-analysis.html"><a href="cluster-analysis.html#single-linkage"><i class="fa fa-check"></i><b>7.1.2</b> Single linkage</a></li>
+<li class="chapter" data-level="7.1.3" data-path="cluster-analysis.html"><a href="cluster-analysis.html#complete-linkage"><i class="fa fa-check"></i><b>7.1.3</b> Complete Linkage</a></li>
+<li class="chapter" data-level="7.1.4" data-path="cluster-analysis.html"><a href="cluster-analysis.html#average-linkage"><i class="fa fa-check"></i><b>7.1.4</b> Average Linkage</a></li>
+<li class="chapter" data-level="7.1.5" data-path="cluster-analysis.html"><a href="cluster-analysis.html#comparing-methods"><i class="fa fa-check"></i><b>7.1.5</b> Comparing methods</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="cluster-analysis.html"><a href="cluster-analysis.html#using-cluster-ids"><i class="fa fa-check"></i><b>7.2</b> Using cluster IDs</a></li>
+<li class="chapter" data-level="7.3" data-path="cluster-analysis.html"><a href="cluster-analysis.html#k-means-clustering"><i class="fa fa-check"></i><b>7.3</b> K-means clustering</a></li>
+<li class="chapter" data-level="7.4" data-path="cluster-analysis.html"><a href="cluster-analysis.html#packages-used-in-this-chapter-6"><i class="fa fa-check"></i><b>7.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html"><i class="fa fa-check"></i><b>8</b> Multidimensional Scaling (MDS)</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#metric-vs-non-metric"><i class="fa fa-check"></i><b>8.1</b> Metric vs non-metric</a></li>
+<li class="chapter" data-level="8.2" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#metric-mds"><i class="fa fa-check"></i><b>8.2</b> Metric MDS</a></li>
+<li class="chapter" data-level="8.3" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#non-metric-mds"><i class="fa fa-check"></i><b>8.3</b> Non-metric MDS</a></li>
+<li class="chapter" data-level="8.4" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#wrap-up"><i class="fa fa-check"></i><b>8.4</b> Wrap up</a></li>
+<li class="chapter" data-level="8.5" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#packages-used-in-this-chapter-7"><i class="fa fa-check"></i><b>8.5</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="distatis.html"><a href="distatis.html"><i class="fa fa-check"></i><b>9</b> DISTATIS</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="distatis.html"><a href="distatis.html#the-dataset-sorting-wines-by-color"><i class="fa fa-check"></i><b>9.1</b> The dataset: sorting wines by color</a></li>
+<li class="chapter" data-level="9.2" data-path="distatis.html"><a href="distatis.html#distatis-demonstrated"><i class="fa fa-check"></i><b>9.2</b> DISTATIS demonstrated</a></li>
+<li class="chapter" data-level="9.3" data-path="distatis.html"><a href="distatis.html#comparison-to-mds"><i class="fa fa-check"></i><b>9.3</b> Comparison to MDS</a></li>
+<li class="chapter" data-level="9.4" data-path="distatis.html"><a href="distatis.html#packages-used-in-this-chapter-8"><i class="fa fa-check"></i><b>9.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="correspondence-analysis-ca.html"><a href="correspondence-analysis-ca.html"><i class="fa fa-check"></i><b>10</b> Correspondence Analysis (CA)</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="correspondence-analysis-ca.html"><a href="correspondence-analysis-ca.html#packages-used-in-this-chapter-9"><i class="fa fa-check"></i><b>10.1</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="preference-mapping.html"><a href="preference-mapping.html"><i class="fa fa-check"></i><b>11</b> Preference Mapping</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="preference-mapping.html"><a href="preference-mapping.html#data"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
+<li class="chapter" data-level="11.2" data-path="preference-mapping.html"><a href="preference-mapping.html#internal-preference-mapping"><i class="fa fa-check"></i><b>11.2</b> Internal preference mapping</a></li>
+<li class="chapter" data-level="11.3" data-path="preference-mapping.html"><a href="preference-mapping.html#external-preference-mapping"><i class="fa fa-check"></i><b>11.3</b> External preference mapping</a>
+<ul>
+<li class="chapter" data-level="11.3.1" data-path="preference-mapping.html"><a href="preference-mapping.html#partial-least-squares-regression"><i class="fa fa-check"></i><b>11.3.1</b> Partial Least Squares Regression</a></li>
+</ul></li>
+<li class="chapter" data-level="11.4" data-path="preference-mapping.html"><a href="preference-mapping.html#other-approaches"><i class="fa fa-check"></i><b>11.4</b> Other approaches</a></li>
+<li class="chapter" data-level="11.5" data-path="preference-mapping.html"><a href="preference-mapping.html#principal-components-regression"><i class="fa fa-check"></i><b>11.5</b> Principal Components Regression</a></li>
+<li class="chapter" data-level="11.6" data-path="preference-mapping.html"><a href="preference-mapping.html#packages-used-in-this-chapter-10"><i class="fa fa-check"></i><b>11.6</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html"><i class="fa fa-check"></i><b>12</b> Multiple Factor(ial) Analysis (MFA)</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#mfa-vs-pca"><i class="fa fa-check"></i><b>12.1</b> MFA vs PCA</a></li>
+<li class="chapter" data-level="12.2" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#mfa-with-different-measurements"><i class="fa fa-check"></i><b>12.2</b> MFA with different measurements</a></li>
+<li class="chapter" data-level="12.3" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#wrapping-up"><i class="fa fa-check"></i><b>12.3</b> Wrapping up</a></li>
+<li class="chapter" data-level="12.4" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#packages-used-in-this-chapter-11"><i class="fa fa-check"></i><b>12.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html"><i class="fa fa-check"></i><b>13</b> Generalized Procrustes Analysis</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html#packages-used-in-this-chapter-12"><i class="fa fa-check"></i><b>13.1</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="wrapping-up-1.html"><a href="wrapping-up-1.html"><i class="fa fa-check"></i><b>14</b> Wrapping up</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The R Opus v2</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="data-import-and-set-up" class="section level1 hasAnchor" number="1">
+<h1><span class="header-section-number">Chapter 1</span> Data import and set up<a href="data-import-and-set-up.html#data-import-and-set-up" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>In the original <strong>R Opus</strong>, HGH presented datasets from actual research conducted in her lab, that she worked with throughout. I think this is a great approach, and with her permission we’re going to replicate her work, almost step for step, on the same datasets. Here, we’ll review how to get them loaded and familiarize ourselves with them.</p>
+<div id="exploring-our-data" class="section level2 hasAnchor" number="1.1">
+<h2><span class="header-section-number">1.1</span> Exploring our data<a href="data-import-and-set-up.html#exploring-our-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Most of the <strong>R Opus</strong> concerns 4 datasets. Let’s import them and inspect them. We’re going to use the <code>tidyverse</code> set of packages for basic data import and wrangling.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="data-import-and-set-up.html#cb3-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb3-2"><a href="data-import-and-set-up.html#cb3-2" tabindex="-1"></a><span class="fu">library</span>(here) <span class="co"># easy file navigation</span></span>
+<span id="cb3-3"><a href="data-import-and-set-up.html#cb3-3" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="data-import-and-set-up.html#cb3-4" tabindex="-1"></a>descriptive_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriDAFinal.csv&quot;</span>))</span>
+<span id="cb3-5"><a href="data-import-and-set-up.html#cb3-5" tabindex="-1"></a>consumer_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriconsFinal.csv&quot;</span>))</span>
+<span id="cb3-6"><a href="data-import-and-set-up.html#cb3-6" tabindex="-1"></a>sorting_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/sorting_r1.csv&quot;</span>))</span>
+<span id="cb3-7"><a href="data-import-and-set-up.html#cb3-7" tabindex="-1"></a>missing_data_example <span class="ot">&lt;-</span><span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torrimiss.csv&quot;</span>))</span></code></pre></div>
+<p>We’ve now created four data tables (called “tibbles” in the <code>tidyverse</code> parlance) with our data, which you can see in your <code>Environment</code>. Let’s look at each of these.</p>
+<div id="the-descriptive-data" class="section level3 hasAnchor" number="1.1.1">
+<h3><span class="header-section-number">1.1.1</span> The descriptive data<a href="data-import-and-set-up.html#the-descriptive-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="data-import-and-set-up.html#cb4-1" tabindex="-1"></a><span class="fu">glimpse</span>(descriptive_data)</span></code></pre></div>
+<pre><code>## Rows: 336
+## Columns: 23
+## $ NJ              &lt;dbl&gt; 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1400, …
+## $ ProductName     &lt;chr&gt; &quot;C_MERLOT&quot;, &quot;C_SYRAH&quot;, &quot;C_ZINFANDEL&quot;, &quot;C_REFOSCO&quot;, &quot;I_…
+## $ NR              &lt;dbl&gt; 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, …
+## $ Red_berry       &lt;dbl&gt; 5.1, 5.6, 4.9, 5.0, 3.3, 5.7, 2.9, 3.2, 0.1, 1.6, 4.5,…
+## $ Dark_berry      &lt;dbl&gt; 5.8, 1.9, 2.6, 1.9, 7.2, 3.6, 5.1, 6.0, 0.1, 0.7, 2.9,…
+## $ Jam             &lt;dbl&gt; 2.1, 3.9, 1.4, 7.8, 0.5, 8.7, 8.7, 4.0, 0.2, 0.0, 0.3,…
+## $ Dried_fruit     &lt;dbl&gt; 4.7, 1.2, 5.9, 0.6, 5.8, 1.9, 0.4, 0.7, 2.9, 6.4, 2.4,…
+## $ Artificial_frui &lt;dbl&gt; 1.0, 7.9, 0.8, 6.6, 0.7, 7.4, 6.2, 4.1, 0.1, 0.1, 0.1,…
+## $ Chocolate       &lt;dbl&gt; 2.9, 1.0, 2.0, 6.4, 2.1, 3.3, 3.4, 3.6, 0.2, 1.0, 0.2,…
+## $ Vanilla         &lt;dbl&gt; 5.0, 8.3, 2.7, 5.5, 1.3, 6.9, 8.1, 4.8, 2.0, 0.8, 1.9,…
+## $ Oak             &lt;dbl&gt; 5.0, 2.3, 5.6, 3.6, 2.1, 1.5, 1.8, 2.6, 3.0, 5.4, 6.1,…
+## $ Burned          &lt;dbl&gt; 1.4, 1.8, 1.9, 3.2, 5.6, 0.2, 0.4, 4.7, 7.5, 5.1, 0.3,…
+## $ Leather         &lt;dbl&gt; 2.3, 3.5, 4.3, 0.3, 6.5, 1.5, 4.1, 6.5, 0.7, 0.8, 0.2,…
+## $ Earthy          &lt;dbl&gt; 0.6, 1.0, 0.6, 0.2, 4.7, 0.3, 0.5, 1.9, 0.7, 3.0, 1.3,…
+## $ Spicy           &lt;dbl&gt; 3.2, 0.7, 1.4, 2.9, 0.7, 3.1, 0.7, 1.4, 0.3, 3.2, 3.1,…
+## $ Pepper          &lt;dbl&gt; 5.4, 3.0, 4.1, 0.9, 2.8, 1.6, 3.6, 4.5, 0.1, 2.0, 0.9,…
+## $ Grassy          &lt;dbl&gt; 2.1, 0.6, 3.6, 1.8, 3.8, 0.9, 2.3, 0.8, 0.1, 1.3, 0.4,…
+## $ Medicinal       &lt;dbl&gt; 0.4, 2.2, 1.7, 0.2, 2.6, 0.5, 0.2, 3.8, 0.1, 2.1, 0.1,…
+## $ `Band-aid`      &lt;dbl&gt; 0.4, 0.4, 0.1, 0.2, 5.1, 1.2, 0.2, 6.2, 0.1, 1.1, 0.1,…
+## $ Sour            &lt;dbl&gt; 5.0, 9.7, 7.8, 8.3, 7.6, 7.2, 5.9, 6.3, 5.7, 6.4, 5.4,…
+## $ Bitter          &lt;dbl&gt; 5.9, 5.2, 3.5, 3.0, 1.9, 9.8, 2.9, 0.2, 0.6, 2.9, 0.1,…
+## $ Alcohol         &lt;dbl&gt; 9.0, 7.2, 4.7, 8.9, 2.8, 8.7, 1.6, 7.0, 1.6, 5.4, 4.9,…
+## $ Astringent      &lt;dbl&gt; 8.7, 8.3, 5.0, 7.8, 5.9, 8.0, 2.6, 4.2, 5.5, 5.1, 5.9,…</code></pre>
+<p>The <code>descriptive_data</code> file, read from <code>torriDAFinal.csv</code>, contains results from a descriptive analysis (DA) of wines, I believe from California and Italy (more on that in a minute). Each row contains the observation of multiple variables (columns) from a single judge (<code>NJ</code>) on a single wine (<code>ProductName</code>) in a single replicate (<code>NR</code>). That means we have 20 measured, quantitative sensory variables (<code>Red_berry:Astringent</code>), and the other three variables (judge, wine, rep) are ID or classifying variables. <a href="https://r4ds.hadley.nz/data-tidy.html">These data are <em>not</em> tidy</a>; each row has multiple variables.</p>
+<p>We can learn a little more about these data before we move on: let’s figure out how many samples, how many judges, and how many reps we have:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="data-import-and-set-up.html#cb6-1" tabindex="-1"></a><span class="co"># There are 14 judges, each of whom completed the same number of observations</span></span>
+<span id="cb6-2"><a href="data-import-and-set-up.html#cb6-2" tabindex="-1"></a>descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="data-import-and-set-up.html#cb6-3" tabindex="-1"></a>  <span class="fu">count</span>(NJ, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 14 × 2
+##       NJ     n
+##    &lt;dbl&gt; &lt;int&gt;
+##  1  1331    24
+##  2  1400    24
+##  3  1401    24
+##  4  1402    24
+##  5  1404    24
+##  6  1405    24
+##  7  1408    24
+##  8  1409    24
+##  9  1412    24
+## 10  1413    24
+## 11  1414    24
+## 12  1415    24
+## 13  1416    24
+## 14  1417    24</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="data-import-and-set-up.html#cb8-1" tabindex="-1"></a><span class="co"># There are 3 reps (labeled as 7, 8, and 9), balanced</span></span>
+<span id="cb8-2"><a href="data-import-and-set-up.html#cb8-2" tabindex="-1"></a>descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="data-import-and-set-up.html#cb8-3" tabindex="-1"></a>  <span class="fu">count</span>(NR)</span></code></pre></div>
+<pre><code>## # A tibble: 3 × 2
+##      NR     n
+##   &lt;dbl&gt; &lt;int&gt;
+## 1     7   112
+## 2     8   112
+## 3     9   112</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="data-import-and-set-up.html#cb10-1" tabindex="-1"></a><span class="co"># There are 8 products, 4 from Italy and 4 from California</span></span>
+<span id="cb10-2"><a href="data-import-and-set-up.html#cb10-2" tabindex="-1"></a>descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="data-import-and-set-up.html#cb10-3" tabindex="-1"></a>  <span class="fu">count</span>(ProductName)</span></code></pre></div>
+<pre><code>## # A tibble: 8 × 2
+##   ProductName     n
+##   &lt;chr&gt;       &lt;int&gt;
+## 1 C_MERLOT       42
+## 2 C_REFOSCO      42
+## 3 C_SYRAH        42
+## 4 C_ZINFANDEL    42
+## 5 I_MERLOT       42
+## 6 I_PRIMITIVO    42
+## 7 I_REFOSCO      42
+## 8 I_SYRAH        42</code></pre>
+<p>The <code>%&gt;%</code> operator is called <strong>the pipe</strong>, and it takes whatever is on its left side and passes it on to the right side. You can learn more about the pipe, but you can also just experiment. When you see it in code, you can read it as “…and then…”, so above we’d say something like “take <code>descriptive_data</code> <strong>and then</strong> count the number of times each <code>NJ</code> value occurs”. The other thing to know about piping, that you will see in some code in the <strong>R Opus</strong>, is the use of the period, <code>.</code>, as a “pronoun” for whatever is getting passed from the previous line. This lets you tell the pipe where in the line you want the output from the previous/left side to end up:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="data-import-and-set-up.html#cb12-1" tabindex="-1"></a> <span class="co"># Take the descriptive data</span></span>
+<span id="cb12-2"><a href="data-import-and-set-up.html#cb12-2" tabindex="-1"></a>descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="data-import-and-set-up.html#cb12-3" tabindex="-1"></a><span class="co"># AND THEN run 1-way ANOVA, with descriptive_data passed to the `data =` argument of aov()</span></span>
+<span id="cb12-4"><a href="data-import-and-set-up.html#cb12-4" tabindex="-1"></a>  <span class="fu">aov</span>(Jam <span class="sc">~</span> ProductName, <span class="at">data =</span> .) <span class="sc">%&gt;%</span></span>
+<span id="cb12-5"><a href="data-import-and-set-up.html#cb12-5" tabindex="-1"></a><span class="co"># AND THEN print the readable summary of the results of aov()</span></span>
+<span id="cb12-6"><a href="data-import-and-set-up.html#cb12-6" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
+<pre><code>##              Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## ProductName   7  280.6   40.08   7.882 7.74e-09 ***
+## Residuals   328 1667.9    5.08                     
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Turns out that <code>Jam</code> attribute might vary by product. We’ll see.</p>
+</div>
+<div id="consumer-data" class="section level3 hasAnchor" number="1.1.2">
+<h3><span class="header-section-number">1.1.2</span> Consumer data<a href="data-import-and-set-up.html#consumer-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Let’s look at the data in <code>consumer_data</code>:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="data-import-and-set-up.html#cb14-1" tabindex="-1"></a><span class="fu">glimpse</span>(consumer_data)</span></code></pre></div>
+<pre><code>## Rows: 106
+## Columns: 13
+## $ Judge            &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16…
+## $ `Wine Frequency` &lt;dbl&gt; 2, 3, 3, 3, 2, 3, 2, 2, 1, 2, 2, 2, 1, 1, 1, 4, 1, 1,…
+## $ `IT frequency`   &lt;dbl&gt; 3, 4, 1, 2, 3, 3, 4, 3, 3, 4, 3, 3, 3, 3, 3, 1, 3, 4,…
+## $ Gender           &lt;dbl&gt; 2, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 2, 1, 2, 2, 2,…
+## $ Age              &lt;dbl&gt; 22, 21, 25, 24, 31, 60, 24, 25, 26, 40, 40, 22, 23, 2…
+## $ C_MERLOT         &lt;dbl&gt; 5, 8, 8, 4, 4, 4, 8, 5, 7, 7, 7, 8, 6, 4, 4, 2, 3, 7,…
+## $ C_SYRAH          &lt;dbl&gt; 4, 5, 6, 6, 6, 4, 6, 4, 5, 1, 8, 8, 4, 2, 4, 1, 8, 6,…
+## $ C_ZINFANDEL      &lt;dbl&gt; 3, 8, 6, 3, 6, 4, 7, 6, 6, 4, 6, 7, 6, 8, 6, 7, 9, 7,…
+## $ C_REFOSCO        &lt;dbl&gt; 8, 5, 8, 4, 7, 4, 6, 6, 3, 6, 3, 7, 8, 4, 6, 1, 8, 8,…
+## $ I_MERLOT         &lt;dbl&gt; 7, 4, 7, 8, 2, 3, 8, 7, 6, 5, 3, 3, 3, 3, 4, 1, 6, 7,…
+## $ I_SYRAH          &lt;dbl&gt; 2, 8, 5, 4, 6, 3, 6, 4, 6, 8, 2, 4, 8, 7, 3, 4, 4, 8,…
+## $ I_PRIMITIVO      &lt;dbl&gt; 4, 4, 7, 9, 5, 4, 4, 4, 6, 1, 1, 2, 7, 3, 4, 2, 7, 6,…
+## $ I_REFOSCO        &lt;dbl&gt; 6, 6, 7, 2, 7, 1, 7, 3, 3, 2, 4, 3, 7, 5, 4, 4, 6, 7,…</code></pre>
+<p>Here we have consumer acceptance testing data on the same 8 wines from the DA. The rows look like they represent consumers, identified by the <code>Judge</code> column. Let’s check to see if they’re all unique:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="data-import-and-set-up.html#cb16-1" tabindex="-1"></a>consumer_data <span class="sc">%&gt;%</span></span>
+<span id="cb16-2"><a href="data-import-and-set-up.html#cb16-2" tabindex="-1"></a><span class="co"># The sort = TRUE argument would put anyone with multiple rows at the top</span></span>
+<span id="cb16-3"><a href="data-import-and-set-up.html#cb16-3" tabindex="-1"></a>  <span class="fu">count</span>(Judge, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 106 × 2
+##    Judge     n
+##    &lt;dbl&gt; &lt;int&gt;
+##  1     1     1
+##  2     2     1
+##  3     3     1
+##  4     4     1
+##  5     5     1
+##  6     6     1
+##  7     7     1
+##  8     8     1
+##  9     9     1
+## 10    10     1
+## # ℹ 96 more rows</code></pre>
+<p>Then we have some consumption data (<code>Wine Frequency</code> and <code>IT Frequency</code>) and some demographic data (<code>Gender</code> and <code>Age</code>), and then 8 columns representing each judge’s rating for each wine. Doesn’t look like we have any replication or any incomplete data. Again, this is not tidy data–each row contains multiple observations beyond the classifying/identifying data. We’ll come back to that.</p>
+</div>
+<div id="the-other-data-frames" class="section level3 hasAnchor" number="1.1.3">
+<h3><span class="header-section-number">1.1.3</span> The other data frames<a href="data-import-and-set-up.html#the-other-data-frames" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The other two data frames we’re going to pay less attention to for now. The first, <code>missing_data_example</code>, is the same data frame as <code>descriptive_data</code> but with missing data introduced on purpose for didactic purposes. We can use the <code>naniar</code> package to quickly learn a litle bit about the missingness:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="data-import-and-set-up.html#cb18-1" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
+<span id="cb18-2"><a href="data-import-and-set-up.html#cb18-2" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="data-import-and-set-up.html#cb18-3" tabindex="-1"></a>naniar<span class="sc">::</span><span class="fu">gg_miss_var</span>(<span class="at">x =</span> missing_data_example)</span></code></pre></div>
+<p><img src="01-data-wrangling_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>We could also use the useful <code>skimr</code> package to give us an informative data summary that would tell us about missingness:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="data-import-and-set-up.html#cb19-1" tabindex="-1"></a><span class="fu">library</span>(skimr)</span></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;skimr&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:naniar&#39;:
+## 
+##     n_complete</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="data-import-and-set-up.html#cb22-1" tabindex="-1"></a><span class="fu">skim</span>(missing_data_example) <span class="sc">%&gt;%</span> </span>
+<span id="cb22-2"><a href="data-import-and-set-up.html#cb22-2" tabindex="-1"></a>  <span class="co"># This is purely to allow the skimr::skim() to be rendered in PDF, ignore otherwise</span></span>
+<span id="cb22-3"><a href="data-import-and-set-up.html#cb22-3" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
+<table>
+<colgroup>
+<col width="4%" />
+<col width="6%" />
+<col width="4%" />
+<col width="6%" />
+<col width="6%" />
+<col width="6%" />
+<col width="6%" />
+<col width="8%" />
+<col width="9%" />
+<col width="5%" />
+<col width="4%" />
+<col width="4%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_type</th>
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">character.min</th>
+<th align="right">character.max</th>
+<th align="right">character.empty</th>
+<th align="right">character.n_unique</th>
+<th align="right">character.whitespace</th>
+<th align="right">numeric.mean</th>
+<th align="right">numeric.sd</th>
+<th align="right">numeric.p0</th>
+<th align="right">numeric.p25</th>
+<th align="right">numeric.p50</th>
+<th align="right">numeric.p75</th>
+<th align="right">numeric.p100</th>
+<th align="left">numeric.hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">character</td>
+<td align="left">ProductName</td>
+<td align="right">0</td>
+<td align="right">1.0000000</td>
+<td align="right">7</td>
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">numeric</td>
+<td align="left">NJ</td>
+<td align="right">0</td>
+<td align="right">1.0000000</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1403.3571429</td>
+<td align="right">20.8589537</td>
+<td align="right">1331</td>
+<td align="right">1402.000</td>
+<td align="right">1408.50</td>
+<td align="right">1414.000</td>
+<td align="right">1417.0</td>
+<td align="left">▁▁▁▁▇</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">NR</td>
+<td align="right">0</td>
+<td align="right">1.0000000</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">8.0000000</td>
+<td align="right">0.8177143</td>
+<td align="right">7</td>
+<td align="right">7.000</td>
+<td align="right">8.00</td>
+<td align="right">9.000</td>
+<td align="right">9.0</td>
+<td align="left">▇▁▇▁▇</td>
+</tr>
+<tr class="even">
+<td align="left">numeric</td>
+<td align="left">Red_berry</td>
+<td align="right">11</td>
+<td align="right">0.9672619</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">2.8473846</td>
+<td align="right">2.5294746</td>
+<td align="right">0</td>
+<td align="right">0.500</td>
+<td align="right">2.30</td>
+<td align="right">4.800</td>
+<td align="right">9.2</td>
+<td align="left">▇▅▂▂▁</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">Dark_berry</td>
+<td align="right">10</td>
+<td align="right">0.9702381</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">3.0953988</td>
+<td align="right">2.7778038</td>
+<td align="right">0</td>
+<td align="right">0.500</td>
+<td align="right">2.30</td>
+<td align="right">5.075</td>
+<td align="right">9.9</td>
+<td align="left">▇▃▃▂▂</td>
+</tr>
+<tr class="even">
+<td align="left">numeric</td>
+<td align="left">Jam</td>
+<td align="right">10</td>
+<td align="right">0.9702381</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1.8773006</td>
+<td align="right">2.4022502</td>
+<td align="right">0</td>
+<td align="right">0.200</td>
+<td align="right">0.70</td>
+<td align="right">2.700</td>
+<td align="right">10.0</td>
+<td align="left">▇▂▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">Dried_fruit</td>
+<td align="right">10</td>
+<td align="right">0.9702381</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1.8104294</td>
+<td align="right">2.1395934</td>
+<td align="right">0</td>
+<td align="right">0.200</td>
+<td align="right">0.70</td>
+<td align="right">3.275</td>
+<td align="right">10.0</td>
+<td align="left">▇▂▂▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">numeric</td>
+<td align="left">Artificial_frui</td>
+<td align="right">10</td>
+<td align="right">0.9702381</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1.1996933</td>
+<td align="right">1.9710598</td>
+<td align="right">0</td>
+<td align="right">0.100</td>
+<td align="right">0.30</td>
+<td align="right">1.200</td>
+<td align="right">9.7</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">Chocolate</td>
+<td align="right">10</td>
+<td align="right">0.9702381</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1.2131902</td>
+<td align="right">1.7648302</td>
+<td align="right">0</td>
+<td align="right">0.100</td>
+<td align="right">0.40</td>
+<td align="right">1.675</td>
+<td align="right">10.0</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">numeric</td>
+<td align="left">Vanilla</td>
+<td align="right">11</td>
+<td align="right">0.9672619</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1.6673846</td>
+<td align="right">1.9758529</td>
+<td align="right">0</td>
+<td align="right">0.200</td>
+<td align="right">0.90</td>
+<td align="right">2.600</td>
+<td align="right">9.3</td>
+<td align="left">▇▂▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">Oak</td>
+<td align="right">10</td>
+<td align="right">0.9702381</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">2.3024540</td>
+<td align="right">1.9957632</td>
+<td align="right">0</td>
+<td align="right">0.500</td>
+<td align="right">1.70</td>
+<td align="right">3.900</td>
+<td align="right">9.0</td>
+<td align="left">▇▃▃▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">numeric</td>
+<td align="left">Burned</td>
+<td align="right">10</td>
+<td align="right">0.9702381</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1.5070552</td>
+<td align="right">2.0622868</td>
+<td align="right">0</td>
+<td align="right">0.100</td>
+<td align="right">0.40</td>
+<td align="right">2.375</td>
+<td align="right">9.7</td>
+<td align="left">▇▂▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">Leather</td>
+<td align="right">10</td>
+<td align="right">0.9702381</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1.4659509</td>
+<td align="right">2.0566530</td>
+<td align="right">0</td>
+<td align="right">0.100</td>
+<td align="right">0.40</td>
+<td align="right">2.400</td>
+<td align="right">9.9</td>
+<td align="left">▇▂▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">numeric</td>
+<td align="left">Earthy</td>
+<td align="right">10</td>
+<td align="right">0.9702381</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1.0929448</td>
+<td align="right">1.5826888</td>
+<td align="right">0</td>
+<td align="right">0.100</td>
+<td align="right">0.40</td>
+<td align="right">1.375</td>
+<td align="right">8.0</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">Spicy</td>
+<td align="right">10</td>
+<td align="right">0.9702381</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1.2015337</td>
+<td align="right">1.6742477</td>
+<td align="right">0</td>
+<td align="right">0.100</td>
+<td align="right">0.40</td>
+<td align="right">1.800</td>
+<td align="right">8.9</td>
+<td align="left">▇▂▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">numeric</td>
+<td align="left">Pepper</td>
+<td align="right">10</td>
+<td align="right">0.9702381</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1.5165644</td>
+<td align="right">2.0514989</td>
+<td align="right">0</td>
+<td align="right">0.200</td>
+<td align="right">0.50</td>
+<td align="right">2.300</td>
+<td align="right">10.0</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">Grassy</td>
+<td align="right">10</td>
+<td align="right">0.9702381</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0.9361963</td>
+<td align="right">1.4584638</td>
+<td align="right">0</td>
+<td align="right">0.100</td>
+<td align="right">0.30</td>
+<td align="right">1.100</td>
+<td align="right">9.8</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">numeric</td>
+<td align="left">Medicinal</td>
+<td align="right">10</td>
+<td align="right">0.9702381</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1.4276074</td>
+<td align="right">2.0269504</td>
+<td align="right">0</td>
+<td align="right">0.100</td>
+<td align="right">0.40</td>
+<td align="right">2.000</td>
+<td align="right">9.6</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">Band-aid</td>
+<td align="right">10</td>
+<td align="right">0.9702381</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1.2061350</td>
+<td align="right">2.0478189</td>
+<td align="right">0</td>
+<td align="right">0.100</td>
+<td align="right">0.30</td>
+<td align="right">1.075</td>
+<td align="right">9.8</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">numeric</td>
+<td align="left">Sour</td>
+<td align="right">10</td>
+<td align="right">0.9702381</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">4.6199387</td>
+<td align="right">2.9908889</td>
+<td align="right">0</td>
+<td align="right">1.625</td>
+<td align="right">4.85</td>
+<td align="right">7.100</td>
+<td align="right">10.0</td>
+<td align="left">▇▅▇▆▅</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">Bitter</td>
+<td align="right">10</td>
+<td align="right">0.9702381</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">3.4236196</td>
+<td align="right">2.7514405</td>
+<td align="right">0</td>
+<td align="right">1.000</td>
+<td align="right">3.00</td>
+<td align="right">5.200</td>
+<td align="right">10.0</td>
+<td align="left">▇▅▃▂▂</td>
+</tr>
+<tr class="even">
+<td align="left">numeric</td>
+<td align="left">Alcohol</td>
+<td align="right">10</td>
+<td align="right">0.9702381</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">3.6058282</td>
+<td align="right">2.4028950</td>
+<td align="right">0</td>
+<td align="right">1.200</td>
+<td align="right">4.05</td>
+<td align="right">5.200</td>
+<td align="right">9.5</td>
+<td align="left">▇▃▇▃▁</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">Astringent</td>
+<td align="right">10</td>
+<td align="right">0.9702381</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">4.6358896</td>
+<td align="right">2.6451989</td>
+<td align="right">0</td>
+<td align="right">2.500</td>
+<td align="right">4.70</td>
+<td align="right">6.400</td>
+<td align="right">10.0</td>
+<td align="left">▆▆▇▅▃</td>
+</tr>
+</tbody>
+</table>
+<p>Because the only difference between this data table and the <code>descriptive_data</code> table is the introduced missingness we’re not going to pay much attention to it until we get to dealing with missing data.</p>
+<p>The <code>sorting_data</code> data frame contains results from a sorting task in which 15 subjects (1 per column) sorted the same wines into disjoint groups according to their own criteria. If in a column two wines have the same label (say, <code>G1</code>), that subject put them in the same group. We’ll get to how to deal with this kind of data later on, so we’re not going to go into more depth here.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="data-import-and-set-up.html#cb23-1" tabindex="-1"></a>sorting_data</span></code></pre></div>
+<pre><code>## # A tibble: 8 × 16
+##   wine      `263` `1331` `1400` `1401` `1402` `1404` `1405` `1408` `1409` `1412`
+##   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; 
+## 1 I_REFOSCO G6    G3     G5     G4     G5     G4     G2     G2     G1     G1    
+## 2 I_MERLOT  G1    G3     G4     G3     G2     G3     G4     G3     G1     G2    
+## 3 I_SYRAH   G5    G4     G2     G1     G1     G2     G1     G4     G1     G2    
+## 4 I_PRIMIT… G2    G1     G3     G1     G4     G5     G3     G4     G3     G2    
+## 5 C_SYRAH   G3    G2     G4     G4     G5     G6     G1     G3     G2     G4    
+## 6 C_REFOSCO G4    G3     G1     G2     G5     G5     G2     G1     G2     G3    
+## 7 C_MERLOT  G1    G2     G3     G3     G3     G1     G4     G3     G2     G2    
+## 8 C_ZINFAN… G1    G5     G3     G3     G2     G1     G1     G3     G1     G2    
+## # ℹ 5 more variables: `1413` &lt;chr&gt;, `1414` &lt;chr&gt;, `1415` &lt;chr&gt;, `1416` &lt;chr&gt;,
+## #   `1417` &lt;chr&gt;</code></pre>
+</div>
+</div>
+<div id="wranglingtidying-data" class="section level2 hasAnchor" number="1.2">
+<h2><span class="header-section-number">1.2</span> Wrangling/tidying data<a href="data-import-and-set-up.html#wranglingtidying-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Whenever we do data analysis, about 90% of the effort is getting the data into the right shape for the analysis at hand. We’re going to be employing many approaches to this task throughout the <strong>R Opus</strong>, but here we’ll do a quick preparatory analysis with our two untidy data frames.</p>
+<p>The <code>pivot_longer()</code> function in <code>dplyr</code> is built to take data in the many-observations-per-row format (often called “wide” data) and bring it into a longer, “tidier” representation that is often easier to work with. For the <code>descriptive_data</code>, a natural format that would be easier to work with is one in which all the descriptors are pivoted into two columns: one labeling the descriptor by name, and the other giving the rated value. We’d do that as follows:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="data-import-and-set-up.html#cb25-1" tabindex="-1"></a>descriptive_data_tidy <span class="ot">&lt;-</span> </span>
+<span id="cb25-2"><a href="data-import-and-set-up.html#cb25-2" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb25-3"><a href="data-import-and-set-up.html#cb25-3" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(NJ, NR, ProductName),</span>
+<span id="cb25-4"><a href="data-import-and-set-up.html#cb25-4" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;descriptor&quot;</span>,</span>
+<span id="cb25-5"><a href="data-import-and-set-up.html#cb25-5" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;rating&quot;</span>)</span>
+<span id="cb25-6"><a href="data-import-and-set-up.html#cb25-6" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="data-import-and-set-up.html#cb25-7" tabindex="-1"></a>descriptive_data_tidy</span></code></pre></div>
+<pre><code>## # A tibble: 6,720 × 5
+##       NJ ProductName    NR descriptor      rating
+##    &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;            &lt;dbl&gt;
+##  1  1331 C_MERLOT        7 Red_berry          5.1
+##  2  1331 C_MERLOT        7 Dark_berry         5.8
+##  3  1331 C_MERLOT        7 Jam                2.1
+##  4  1331 C_MERLOT        7 Dried_fruit        4.7
+##  5  1331 C_MERLOT        7 Artificial_frui    1  
+##  6  1331 C_MERLOT        7 Chocolate          2.9
+##  7  1331 C_MERLOT        7 Vanilla            5  
+##  8  1331 C_MERLOT        7 Oak                5  
+##  9  1331 C_MERLOT        7 Burned             1.4
+## 10  1331 C_MERLOT        7 Leather            2.3
+## # ℹ 6,710 more rows</code></pre>
+<p>Now we have kept our 3 ID or classifying variables and created a 4th, <code>descriptor</code>, which together uniquely describe each numeric observation, now called <code>rating</code>. In our newly tidied dataset, the first line give the <code>rating</code>–the observation–for the judge with code <code>1331</code>, in rep <code>7</code>, for the wine <code>C_MERLOT</code>, for the <code>Red_berry</code> descriptor. It’s <code>5.1</code>.</p>
+<p>To motivate this kind of work, let’s quickly talk about the “<a href="https://www.jstatsoft.org/article/view/v040i01">split-apply-combine</a>” workflow this enables. Now that we’ve separated out our classifying variables, we can do work with them much more easily. For example, let’s say we want to generate a means table comparing the wines on the <code>Jam</code> variable, which we know from our example above seems to vary per wine. We can now do this very easily:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="data-import-and-set-up.html#cb27-1" tabindex="-1"></a>descriptive_data_tidy <span class="sc">%&gt;%</span></span>
+<span id="cb27-2"><a href="data-import-and-set-up.html#cb27-2" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="data-import-and-set-up.html#cb27-3" tabindex="-1"></a><span class="co"># First we will use filter() to get only Jam observations</span></span>
+<span id="cb27-4"><a href="data-import-and-set-up.html#cb27-4" tabindex="-1"></a>  </span>
+<span id="cb27-5"><a href="data-import-and-set-up.html#cb27-5" tabindex="-1"></a>  <span class="fu">filter</span>(descriptor <span class="sc">==</span> <span class="st">&quot;Jam&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb27-6"><a href="data-import-and-set-up.html#cb27-6" tabindex="-1"></a>  </span>
+<span id="cb27-7"><a href="data-import-and-set-up.html#cb27-7" tabindex="-1"></a><span class="co"># Then we will use group_by() to identify our wines as the relevant classifying variable</span></span>
+<span id="cb27-8"><a href="data-import-and-set-up.html#cb27-8" tabindex="-1"></a>  </span>
+<span id="cb27-9"><a href="data-import-and-set-up.html#cb27-9" tabindex="-1"></a>  <span class="fu">group_by</span>(ProductName) <span class="sc">%&gt;%</span></span>
+<span id="cb27-10"><a href="data-import-and-set-up.html#cb27-10" tabindex="-1"></a>  </span>
+<span id="cb27-11"><a href="data-import-and-set-up.html#cb27-11" tabindex="-1"></a><span class="co"># Finally, we&#39;ll use the summarize() function to generate a quick per-wine summary</span></span>
+<span id="cb27-12"><a href="data-import-and-set-up.html#cb27-12" tabindex="-1"></a>  </span>
+<span id="cb27-13"><a href="data-import-and-set-up.html#cb27-13" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_jam_score =</span> <span class="fu">mean</span>(rating),</span>
+<span id="cb27-14"><a href="data-import-and-set-up.html#cb27-14" tabindex="-1"></a>            <span class="at">se_jam_score =</span> <span class="fu">sd</span>(rating) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">n</span>()),</span>
+<span id="cb27-15"><a href="data-import-and-set-up.html#cb27-15" tabindex="-1"></a>            <span class="at">lower_95 =</span> mean_jam_score <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> se_jam_score,</span>
+<span id="cb27-16"><a href="data-import-and-set-up.html#cb27-16" tabindex="-1"></a>            <span class="at">upper_95 =</span> mean_jam_score <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> se_jam_score)</span></code></pre></div>
+<pre><code>## # A tibble: 8 × 5
+##   ProductName mean_jam_score se_jam_score lower_95 upper_95
+##   &lt;chr&gt;                &lt;dbl&gt;        &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+## 1 C_MERLOT             1.37         0.262    0.857     1.89
+## 2 C_REFOSCO            1.03         0.238    0.565     1.50
+## 3 C_SYRAH              1.75         0.378    1.00      2.49
+## 4 C_ZINFANDEL          1.98         0.394    1.21      2.75
+## 5 I_MERLOT             0.843        0.185    0.480     1.21
+## 6 I_PRIMITIVO          3.61         0.475    2.68      4.54
+## 7 I_REFOSCO            1.54         0.282    0.982     2.09
+## 8 I_SYRAH              3.10         0.453    2.21      3.98</code></pre>
+<p>Our use of all of the intermediate steps–filtering, grouping, summarizing–depends on us having gotten the data into a tidy format. This will sometimes <em>not</em> work well–especially when we’re looking at pairwise relationships like covariance or correlation–but it will often be a step in wrangling results.</p>
+<p>We can do the same thing with our <code>consumer_data</code>. In this case, we have 5 ID variables, and 8 observations, one for each wine. Let’s do the same thing with pivot_longer:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="data-import-and-set-up.html#cb29-1" tabindex="-1"></a>consumer_data_tidy <span class="ot">&lt;-</span> </span>
+<span id="cb29-2"><a href="data-import-and-set-up.html#cb29-2" tabindex="-1"></a>  consumer_data <span class="sc">%&gt;%</span></span>
+<span id="cb29-3"><a href="data-import-and-set-up.html#cb29-3" tabindex="-1"></a>  </span>
+<span id="cb29-4"><a href="data-import-and-set-up.html#cb29-4" tabindex="-1"></a><span class="co"># We can use &quot;:&quot; to select a continuous range of columns</span></span>
+<span id="cb29-5"><a href="data-import-and-set-up.html#cb29-5" tabindex="-1"></a>  </span>
+<span id="cb29-6"><a href="data-import-and-set-up.html#cb29-6" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> C_MERLOT<span class="sc">:</span>I_REFOSCO,</span>
+<span id="cb29-7"><a href="data-import-and-set-up.html#cb29-7" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;wine&quot;</span>,</span>
+<span id="cb29-8"><a href="data-import-and-set-up.html#cb29-8" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;rating&quot;</span>)</span>
+<span id="cb29-9"><a href="data-import-and-set-up.html#cb29-9" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="data-import-and-set-up.html#cb29-10" tabindex="-1"></a>consumer_data_tidy</span></code></pre></div>
+<pre><code>## # A tibble: 848 × 7
+##    Judge `Wine Frequency` `IT frequency` Gender   Age wine        rating
+##    &lt;dbl&gt;            &lt;dbl&gt;          &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt;
+##  1     1                2              3      2    22 C_MERLOT         5
+##  2     1                2              3      2    22 C_SYRAH          4
+##  3     1                2              3      2    22 C_ZINFANDEL      3
+##  4     1                2              3      2    22 C_REFOSCO        8
+##  5     1                2              3      2    22 I_MERLOT         7
+##  6     1                2              3      2    22 I_SYRAH          2
+##  7     1                2              3      2    22 I_PRIMITIVO      4
+##  8     1                2              3      2    22 I_REFOSCO        6
+##  9     2                3              4      2    21 C_MERLOT         8
+## 10     2                3              4      2    21 C_SYRAH          5
+## # ℹ 838 more rows</code></pre>
+<p>Again, we’ve created a new ID/classifying column called <code>wine</code> and a new observation column called <code>rating</code>. Now the 6 ID columns uniquely specify an observation. Let’s do something fun with this: is there a relationship between <code>Gender</code> and <code>rating</code>?</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="data-import-and-set-up.html#cb31-1" tabindex="-1"></a>consumer_data_tidy <span class="sc">%&gt;%</span></span>
+<span id="cb31-2"><a href="data-import-and-set-up.html#cb31-2" tabindex="-1"></a>  <span class="fu">lm</span>(rating <span class="sc">~</span> Gender, <span class="at">data =</span> .) <span class="sc">%&gt;%</span></span>
+<span id="cb31-3"><a href="data-import-and-set-up.html#cb31-3" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = rating ~ Gender, data = .)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.3137 -1.3137  0.6863  1.6863  3.7091 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  5.26809    0.21653  24.330   &lt;2e-16 ***
+## Gender       0.02282    0.13852   0.165    0.869    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.015 on 846 degrees of freedom
+## Multiple R-squared:  3.207e-05,  Adjusted R-squared:  -0.00115 
+## F-statistic: 0.02713 on 1 and 846 DF,  p-value: 0.8692</code></pre>
+<p>Looks like there isn’t, which is probably evidence of good sampling–I can’t think why there would be such a relationship.</p>
+</div>
+<div id="wrap-up-and-summary" class="section level2 hasAnchor" number="1.3">
+<h2><span class="header-section-number">1.3</span> Wrap up and summary<a href="data-import-and-set-up.html#wrap-up-and-summary" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>At this point, we’ve already done quite a bit of work. We’ve practiced importing and inspecting data, and gotten a bit of practice with tidying data and applying the split-apply-combine data analysis steps. We’re going to be moving on to applying Analysis of Variance (ANOVA) to these data next.</p>
+</div>
+<div id="packages-used-in-this-chapter" class="section level2 hasAnchor" number="1.4">
+<h2><span class="header-section-number">1.4</span> Packages used in this chapter<a href="data-import-and-set-up.html#packages-used-in-this-chapter" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="data-import-and-set-up.html#cb33-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.3.1 (2023-06-16)
+## Platform: aarch64-apple-darwin20 (64-bit)
+## Running under: macOS Ventura 13.6.1
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## time zone: America/New_York
+## tzcode source: internal
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] skimr_2.1.5     naniar_1.0.0    here_1.0.1      lubridate_1.9.2
+##  [5] forcats_1.0.0   stringr_1.5.0   dplyr_1.1.2     purrr_1.0.1    
+##  [9] readr_2.1.4     tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.3  
+## [13] tidyverse_2.0.0
+## 
+## loaded via a namespace (and not attached):
+##  [1] sass_0.4.7        utf8_1.2.3        generics_0.1.3    stringi_1.7.12   
+##  [5] hms_1.1.3         digest_0.6.33     magrittr_2.0.3    evaluate_0.21    
+##  [9] grid_4.3.1        timechange_0.2.0  bookdown_0.37     fastmap_1.1.1    
+## [13] rprojroot_2.0.3   jsonlite_1.8.7    fansi_1.0.4       scales_1.2.1     
+## [17] jquerylib_0.1.4   cli_3.6.1         rlang_1.1.1       crayon_1.5.2     
+## [21] bit64_4.0.5       munsell_0.5.0     base64enc_0.1-3   repr_1.1.6       
+## [25] withr_2.5.0       cachem_1.0.8      yaml_2.3.7        tools_4.3.1      
+## [29] parallel_4.3.1    tzdb_0.4.0        colorspace_2.1-0  vctrs_0.6.3      
+## [33] R6_2.5.1          lifecycle_1.0.3   bit_4.0.5         vroom_1.6.3      
+## [37] pkgconfig_2.0.3   pillar_1.9.0      bslib_0.5.1       gtable_0.3.4     
+## [41] visdat_0.6.0      glue_1.6.2        highr_0.10        xfun_0.39        
+## [45] tidyselect_1.2.0  rstudioapi_0.15.0 knitr_1.43        farver_2.1.1     
+## [49] htmltools_0.5.6   labeling_0.4.3    rmarkdown_2.23    compiler_4.3.1</code></pre>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="analysis-of-variance.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/01-data-wrangling.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": true
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

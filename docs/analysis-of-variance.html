@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 2 Analysis of Variance | The R Opus v2</title>
+  <meta name="description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 2 Analysis of Variance | The R Opus v2" />
+  <meta property="og:type" content="book" />
+  <meta property="og:image" content="/img/r-opus-cover.jpg" />
+  <meta property="og:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="github-repo" content="jlahne/r-opus-v2" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 2 Analysis of Variance | The R Opus v2" />
+  
+  <meta name="twitter:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="twitter:image" content="/img/r-opus-cover.jpg" />
+
+<meta name="author" content="Jacob Lahne" />
+
+
+<meta name="date" content="2024-01-10" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="data-import-and-set-up.html"/>
+<link rel="next" href="dealing-with-missing-data.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">The R Opus v2</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#usage"><i class="fa fa-check"></i>Usage</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#r-setup"><i class="fa fa-check"></i><code>R</code> Setup</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#what-this-is-not"><i class="fa fa-check"></i>What this is not</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#about-me"><i class="fa fa-check"></i>About me</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#session-info"><i class="fa fa-check"></i>Session Info</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html"><i class="fa fa-check"></i><b>1</b> Data import and set up</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#exploring-our-data"><i class="fa fa-check"></i><b>1.1</b> Exploring our data</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#the-descriptive-data"><i class="fa fa-check"></i><b>1.1.1</b> The descriptive data</a></li>
+<li class="chapter" data-level="1.1.2" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#consumer-data"><i class="fa fa-check"></i><b>1.1.2</b> Consumer data</a></li>
+<li class="chapter" data-level="1.1.3" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#the-other-data-frames"><i class="fa fa-check"></i><b>1.1.3</b> The other data frames</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#wranglingtidying-data"><i class="fa fa-check"></i><b>1.2</b> Wrangling/tidying data</a></li>
+<li class="chapter" data-level="1.3" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#wrap-up-and-summary"><i class="fa fa-check"></i><b>1.3</b> Wrap up and summary</a></li>
+<li class="chapter" data-level="1.4" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#packages-used-in-this-chapter"><i class="fa fa-check"></i><b>1.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html"><i class="fa fa-check"></i><b>2</b> Analysis of Variance</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#univariate-analysis-with-the-linear-model"><i class="fa fa-check"></i><b>2.1</b> Univariate analysis with the linear model</a></li>
+<li class="chapter" data-level="2.2" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#pseudo-mixed-anova"><i class="fa fa-check"></i><b>2.2</b> Pseudo-mixed ANOVA</a></li>
+<li class="chapter" data-level="2.3" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#mean-comparison-post-hoc-testing"><i class="fa fa-check"></i><b>2.3</b> Mean comparison (post-hoc testing)</a></li>
+<li class="chapter" data-level="2.4" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#bonus-bayesian-approaches-to-anova"><i class="fa fa-check"></i><b>2.4</b> BONUS: Bayesian approaches to ANOVA</a></li>
+<li class="chapter" data-level="2.5" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#packages-used-in-this-chapter-1"><i class="fa fa-check"></i><b>2.5</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html"><i class="fa fa-check"></i><b>3</b> Dealing with missing data</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#exploring-missing-data"><i class="fa fa-check"></i><b>3.1</b> Exploring missing data</a></li>
+<li class="chapter" data-level="3.2" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#imputing-missing-data"><i class="fa fa-check"></i><b>3.2</b> Imputing missing data</a></li>
+<li class="chapter" data-level="3.3" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#alternative-approaches-to-imputation"><i class="fa fa-check"></i><b>3.3</b> Alternative approaches to imputation</a></li>
+<li class="chapter" data-level="3.4" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#packages-used-in-this-chapter-2"><i class="fa fa-check"></i><b>3.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html"><i class="fa fa-check"></i><b>4</b> MANOVA (Multivariate Analysis of Variance)</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#running-manova"><i class="fa fa-check"></i><b>4.1</b> Running MANOVA</a></li>
+<li class="chapter" data-level="4.2" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#what-does-manova-test"><i class="fa fa-check"></i><b>4.2</b> What does MANOVA test?</a></li>
+<li class="chapter" data-level="4.3" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#bonus-hierarchical-bayes-instead-of-manova"><i class="fa fa-check"></i><b>4.3</b> BONUS: Hierarchical Bayes instead of MANOVA</a></li>
+<li class="chapter" data-level="4.4" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#packages-used-in-this-chapter-3"><i class="fa fa-check"></i><b>4.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html"><i class="fa fa-check"></i><b>5</b> Canonical Variate Analysis</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#what-is-cva"><i class="fa fa-check"></i><b>5.1</b> What is CVA?</a></li>
+<li class="chapter" data-level="5.2" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#application-of-cva"><i class="fa fa-check"></i><b>5.2</b> Application of CVA</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#basic-visualization-of-cva"><i class="fa fa-check"></i><b>5.2.1</b> Basic visualization of CVA</a></li>
+<li class="chapter" data-level="5.2.2" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#an-aside-on-exporting-r-plots"><i class="fa fa-check"></i><b>5.2.2</b> An aside on exporting R plots</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#plotting-uncertainty-in-cva"><i class="fa fa-check"></i><b>5.3</b> Plotting uncertainty in CVA</a></li>
+<li class="chapter" data-level="5.4" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#packages-used-in-this-chapter-4"><i class="fa fa-check"></i><b>5.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html"><i class="fa fa-check"></i><b>6</b> Principal Components Analysis (PCA)</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#what-does-pca-do"><i class="fa fa-check"></i><b>6.1</b> What does PCA do?</a></li>
+<li class="chapter" data-level="6.2" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#lets-do-pca"><i class="fa fa-check"></i><b>6.2</b> Let’s do PCA!</a></li>
+<li class="chapter" data-level="6.3" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#in-depth-interpretation"><i class="fa fa-check"></i><b>6.3</b> In-depth interpretation</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#correlations-or-squared-loadings-or-contributions"><i class="fa fa-check"></i><b>6.3.1</b> Correlations or (squared) loadings or contributions</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#pca-with-resampling-for-confidence-intervals"><i class="fa fa-check"></i><b>6.4</b> PCA with resampling for confidence intervals</a></li>
+<li class="chapter" data-level="6.5" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#comparison-of-products-with-pca"><i class="fa fa-check"></i><b>6.5</b> Comparison of products with PCA</a></li>
+<li class="chapter" data-level="6.6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#packages-used-in-this-chapter-5"><i class="fa fa-check"></i><b>6.6</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="cluster-analysis.html"><a href="cluster-analysis.html"><i class="fa fa-check"></i><b>7</b> Cluster analysis</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="cluster-analysis.html"><a href="cluster-analysis.html#hierarchical-clustering-on-distances"><i class="fa fa-check"></i><b>7.1</b> Hierarchical clustering on distances</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="cluster-analysis.html"><a href="cluster-analysis.html#wards-method"><i class="fa fa-check"></i><b>7.1.1</b> Ward’s Method</a></li>
+<li class="chapter" data-level="7.1.2" data-path="cluster-analysis.html"><a href="cluster-analysis.html#single-linkage"><i class="fa fa-check"></i><b>7.1.2</b> Single linkage</a></li>
+<li class="chapter" data-level="7.1.3" data-path="cluster-analysis.html"><a href="cluster-analysis.html#complete-linkage"><i class="fa fa-check"></i><b>7.1.3</b> Complete Linkage</a></li>
+<li class="chapter" data-level="7.1.4" data-path="cluster-analysis.html"><a href="cluster-analysis.html#average-linkage"><i class="fa fa-check"></i><b>7.1.4</b> Average Linkage</a></li>
+<li class="chapter" data-level="7.1.5" data-path="cluster-analysis.html"><a href="cluster-analysis.html#comparing-methods"><i class="fa fa-check"></i><b>7.1.5</b> Comparing methods</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="cluster-analysis.html"><a href="cluster-analysis.html#using-cluster-ids"><i class="fa fa-check"></i><b>7.2</b> Using cluster IDs</a></li>
+<li class="chapter" data-level="7.3" data-path="cluster-analysis.html"><a href="cluster-analysis.html#k-means-clustering"><i class="fa fa-check"></i><b>7.3</b> K-means clustering</a></li>
+<li class="chapter" data-level="7.4" data-path="cluster-analysis.html"><a href="cluster-analysis.html#packages-used-in-this-chapter-6"><i class="fa fa-check"></i><b>7.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html"><i class="fa fa-check"></i><b>8</b> Multidimensional Scaling (MDS)</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#metric-vs-non-metric"><i class="fa fa-check"></i><b>8.1</b> Metric vs non-metric</a></li>
+<li class="chapter" data-level="8.2" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#metric-mds"><i class="fa fa-check"></i><b>8.2</b> Metric MDS</a></li>
+<li class="chapter" data-level="8.3" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#non-metric-mds"><i class="fa fa-check"></i><b>8.3</b> Non-metric MDS</a></li>
+<li class="chapter" data-level="8.4" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#wrap-up"><i class="fa fa-check"></i><b>8.4</b> Wrap up</a></li>
+<li class="chapter" data-level="8.5" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#packages-used-in-this-chapter-7"><i class="fa fa-check"></i><b>8.5</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="distatis.html"><a href="distatis.html"><i class="fa fa-check"></i><b>9</b> DISTATIS</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="distatis.html"><a href="distatis.html#the-dataset-sorting-wines-by-color"><i class="fa fa-check"></i><b>9.1</b> The dataset: sorting wines by color</a></li>
+<li class="chapter" data-level="9.2" data-path="distatis.html"><a href="distatis.html#distatis-demonstrated"><i class="fa fa-check"></i><b>9.2</b> DISTATIS demonstrated</a></li>
+<li class="chapter" data-level="9.3" data-path="distatis.html"><a href="distatis.html#comparison-to-mds"><i class="fa fa-check"></i><b>9.3</b> Comparison to MDS</a></li>
+<li class="chapter" data-level="9.4" data-path="distatis.html"><a href="distatis.html#packages-used-in-this-chapter-8"><i class="fa fa-check"></i><b>9.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="correspondence-analysis-ca.html"><a href="correspondence-analysis-ca.html"><i class="fa fa-check"></i><b>10</b> Correspondence Analysis (CA)</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="correspondence-analysis-ca.html"><a href="correspondence-analysis-ca.html#packages-used-in-this-chapter-9"><i class="fa fa-check"></i><b>10.1</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="preference-mapping.html"><a href="preference-mapping.html"><i class="fa fa-check"></i><b>11</b> Preference Mapping</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="preference-mapping.html"><a href="preference-mapping.html#data"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
+<li class="chapter" data-level="11.2" data-path="preference-mapping.html"><a href="preference-mapping.html#internal-preference-mapping"><i class="fa fa-check"></i><b>11.2</b> Internal preference mapping</a></li>
+<li class="chapter" data-level="11.3" data-path="preference-mapping.html"><a href="preference-mapping.html#external-preference-mapping"><i class="fa fa-check"></i><b>11.3</b> External preference mapping</a>
+<ul>
+<li class="chapter" data-level="11.3.1" data-path="preference-mapping.html"><a href="preference-mapping.html#partial-least-squares-regression"><i class="fa fa-check"></i><b>11.3.1</b> Partial Least Squares Regression</a></li>
+</ul></li>
+<li class="chapter" data-level="11.4" data-path="preference-mapping.html"><a href="preference-mapping.html#other-approaches"><i class="fa fa-check"></i><b>11.4</b> Other approaches</a></li>
+<li class="chapter" data-level="11.5" data-path="preference-mapping.html"><a href="preference-mapping.html#principal-components-regression"><i class="fa fa-check"></i><b>11.5</b> Principal Components Regression</a></li>
+<li class="chapter" data-level="11.6" data-path="preference-mapping.html"><a href="preference-mapping.html#packages-used-in-this-chapter-10"><i class="fa fa-check"></i><b>11.6</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html"><i class="fa fa-check"></i><b>12</b> Multiple Factor(ial) Analysis (MFA)</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#mfa-vs-pca"><i class="fa fa-check"></i><b>12.1</b> MFA vs PCA</a></li>
+<li class="chapter" data-level="12.2" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#mfa-with-different-measurements"><i class="fa fa-check"></i><b>12.2</b> MFA with different measurements</a></li>
+<li class="chapter" data-level="12.3" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#wrapping-up"><i class="fa fa-check"></i><b>12.3</b> Wrapping up</a></li>
+<li class="chapter" data-level="12.4" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#packages-used-in-this-chapter-11"><i class="fa fa-check"></i><b>12.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html"><i class="fa fa-check"></i><b>13</b> Generalized Procrustes Analysis</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html#packages-used-in-this-chapter-12"><i class="fa fa-check"></i><b>13.1</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="wrapping-up-1.html"><a href="wrapping-up-1.html"><i class="fa fa-check"></i><b>14</b> Wrapping up</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The R Opus v2</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="analysis-of-variance" class="section level1 hasAnchor" number="2">
+<h1><span class="header-section-number">Chapter 2</span> Analysis of Variance<a href="analysis-of-variance.html#analysis-of-variance" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>So far we’ve imported and inspected our data. In case that got left behind, let’s do it again (as well as setting up the basic packages we’re going to use).</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="analysis-of-variance.html#cb35-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb35-2"><a href="analysis-of-variance.html#cb35-2" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb35-3"><a href="analysis-of-variance.html#cb35-3" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="analysis-of-variance.html#cb35-4" tabindex="-1"></a>descriptive_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriDAFinal.csv&quot;</span>))</span>
+<span id="cb35-5"><a href="analysis-of-variance.html#cb35-5" tabindex="-1"></a>consumer_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriconsFinal.csv&quot;</span>))</span></code></pre></div>
+<div id="univariate-analysis-with-the-linear-model" class="section level2 hasAnchor" number="2.1">
+<h2><span class="header-section-number">2.1</span> Univariate analysis with the linear model<a href="analysis-of-variance.html#univariate-analysis-with-the-linear-model" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In the original <strong>R Opus</strong>, HGH made sure that the classifying variables in the <code>descriptive_data</code> were set to the <code>factor</code> data type. <a href="https://notstatschat.tumblr.com/post/124987394001/stringsasfactors-sigh">There is a <em>looong</em> history of factors in <code>R</code></a>, and you can get a better crash course than I am going to give in some introductory course like <a href="https://stat545.com/factors-boss.html">Stat545</a>. Suffice it to say here that the <code>factor</code> data type is a labeled integer, and that it <del>is</del> used to be the default way that <code>R</code> imports strings. It has some desirable characteristics, but it can often be non-intuitive for those learning <code>R</code>. Much of base <code>R</code> has now evolved to silently handle <code>character</code> data as <code>factor</code> when necessary, so unless you’re a hardcore <code>R</code> user you probably don’t need to worry about this too much.</p>
+<p><em>That being said</em>, let’s take the opportunity to follow along with HGH’s intentions in order to learn some more data wrangling. In this case, HGH says that the <code>NJ</code>, <code>NR</code>, and <code>ProductName</code> variables in <code>descriptive_data</code> should be <code>factor</code> data type, so let’s make it so (this is definitely a good idea for <code>NJ</code> and <code>NR</code>, which are stored as numerals, as otherwise <code>R</code> will treat them as continuous numeric variables).</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="analysis-of-variance.html#cb36-1" tabindex="-1"></a>descriptive_data <span class="ot">&lt;-</span> </span>
+<span id="cb36-2"><a href="analysis-of-variance.html#cb36-2" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb36-3"><a href="analysis-of-variance.html#cb36-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">NJ =</span> <span class="fu">as.factor</span>(NJ),</span>
+<span id="cb36-4"><a href="analysis-of-variance.html#cb36-4" tabindex="-1"></a>         <span class="at">NR =</span> <span class="fu">as.factor</span>(NR),</span>
+<span id="cb36-5"><a href="analysis-of-variance.html#cb36-5" tabindex="-1"></a>         <span class="at">ProductName =</span> <span class="fu">as.factor</span>(ProductName))</span>
+<span id="cb36-6"><a href="analysis-of-variance.html#cb36-6" tabindex="-1"></a></span>
+<span id="cb36-7"><a href="analysis-of-variance.html#cb36-7" tabindex="-1"></a><span class="fu">glimpse</span>(descriptive_data)</span></code></pre></div>
+<pre><code>## Rows: 336
+## Columns: 23
+## $ NJ              &lt;fct&gt; 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1400, …
+## $ ProductName     &lt;fct&gt; C_MERLOT, C_SYRAH, C_ZINFANDEL, C_REFOSCO, I_MERLOT, I…
+## $ NR              &lt;fct&gt; 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, …
+## $ Red_berry       &lt;dbl&gt; 5.1, 5.6, 4.9, 5.0, 3.3, 5.7, 2.9, 3.2, 0.1, 1.6, 4.5,…
+## $ Dark_berry      &lt;dbl&gt; 5.8, 1.9, 2.6, 1.9, 7.2, 3.6, 5.1, 6.0, 0.1, 0.7, 2.9,…
+## $ Jam             &lt;dbl&gt; 2.1, 3.9, 1.4, 7.8, 0.5, 8.7, 8.7, 4.0, 0.2, 0.0, 0.3,…
+## $ Dried_fruit     &lt;dbl&gt; 4.7, 1.2, 5.9, 0.6, 5.8, 1.9, 0.4, 0.7, 2.9, 6.4, 2.4,…
+## $ Artificial_frui &lt;dbl&gt; 1.0, 7.9, 0.8, 6.6, 0.7, 7.4, 6.2, 4.1, 0.1, 0.1, 0.1,…
+## $ Chocolate       &lt;dbl&gt; 2.9, 1.0, 2.0, 6.4, 2.1, 3.3, 3.4, 3.6, 0.2, 1.0, 0.2,…
+## $ Vanilla         &lt;dbl&gt; 5.0, 8.3, 2.7, 5.5, 1.3, 6.9, 8.1, 4.8, 2.0, 0.8, 1.9,…
+## $ Oak             &lt;dbl&gt; 5.0, 2.3, 5.6, 3.6, 2.1, 1.5, 1.8, 2.6, 3.0, 5.4, 6.1,…
+## $ Burned          &lt;dbl&gt; 1.4, 1.8, 1.9, 3.2, 5.6, 0.2, 0.4, 4.7, 7.5, 5.1, 0.3,…
+## $ Leather         &lt;dbl&gt; 2.3, 3.5, 4.3, 0.3, 6.5, 1.5, 4.1, 6.5, 0.7, 0.8, 0.2,…
+## $ Earthy          &lt;dbl&gt; 0.6, 1.0, 0.6, 0.2, 4.7, 0.3, 0.5, 1.9, 0.7, 3.0, 1.3,…
+## $ Spicy           &lt;dbl&gt; 3.2, 0.7, 1.4, 2.9, 0.7, 3.1, 0.7, 1.4, 0.3, 3.2, 3.1,…
+## $ Pepper          &lt;dbl&gt; 5.4, 3.0, 4.1, 0.9, 2.8, 1.6, 3.6, 4.5, 0.1, 2.0, 0.9,…
+## $ Grassy          &lt;dbl&gt; 2.1, 0.6, 3.6, 1.8, 3.8, 0.9, 2.3, 0.8, 0.1, 1.3, 0.4,…
+## $ Medicinal       &lt;dbl&gt; 0.4, 2.2, 1.7, 0.2, 2.6, 0.5, 0.2, 3.8, 0.1, 2.1, 0.1,…
+## $ `Band-aid`      &lt;dbl&gt; 0.4, 0.4, 0.1, 0.2, 5.1, 1.2, 0.2, 6.2, 0.1, 1.1, 0.1,…
+## $ Sour            &lt;dbl&gt; 5.0, 9.7, 7.8, 8.3, 7.6, 7.2, 5.9, 6.3, 5.7, 6.4, 5.4,…
+## $ Bitter          &lt;dbl&gt; 5.9, 5.2, 3.5, 3.0, 1.9, 9.8, 2.9, 0.2, 0.6, 2.9, 0.1,…
+## $ Alcohol         &lt;dbl&gt; 9.0, 7.2, 4.7, 8.9, 2.8, 8.7, 1.6, 7.0, 1.6, 5.4, 4.9,…
+## $ Astringent      &lt;dbl&gt; 8.7, 8.3, 5.0, 7.8, 5.9, 8.0, 2.6, 4.2, 5.5, 5.1, 5.9,…</code></pre>
+<p>Great. We got it. Now, when we do something like regression (with <code>lm()</code>) or ANOVA (with <code>aov()</code>) using those variables as predictors, <code>R</code> will treat them as discrete, unordered levels rather than the numbers that they are encoded as.</p>
+<p>The other trick that HGH does in her original <strong>R Opus</strong> is to run linear models on a matrix of outcomes. We’re going to take a slightly different approach using the “split-apply-combine” approach that the <code>nest()</code> function gives us access to in <code>dplyr</code>.</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="analysis-of-variance.html#cb38-1" tabindex="-1"></a><span class="co"># First, we will retidy our data</span></span>
+<span id="cb38-2"><a href="analysis-of-variance.html#cb38-2" tabindex="-1"></a>descriptive_data_tidy <span class="ot">&lt;-</span> </span>
+<span id="cb38-3"><a href="analysis-of-variance.html#cb38-3" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb38-4"><a href="analysis-of-variance.html#cb38-4" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(NJ, NR, ProductName),</span>
+<span id="cb38-5"><a href="analysis-of-variance.html#cb38-5" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;descriptor&quot;</span>,</span>
+<span id="cb38-6"><a href="analysis-of-variance.html#cb38-6" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;rating&quot;</span>)</span>
+<span id="cb38-7"><a href="analysis-of-variance.html#cb38-7" tabindex="-1"></a></span>
+<span id="cb38-8"><a href="analysis-of-variance.html#cb38-8" tabindex="-1"></a>nested_AOV_res <span class="ot">&lt;-</span> </span>
+<span id="cb38-9"><a href="analysis-of-variance.html#cb38-9" tabindex="-1"></a>  descriptive_data_tidy <span class="sc">%&gt;%</span></span>
+<span id="cb38-10"><a href="analysis-of-variance.html#cb38-10" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">data =</span> <span class="sc">-</span>descriptor) <span class="sc">%&gt;%</span></span>
+<span id="cb38-11"><a href="analysis-of-variance.html#cb38-11" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">anova_res =</span> <span class="fu">map</span>(<span class="at">.x =</span> data,</span>
+<span id="cb38-12"><a href="analysis-of-variance.html#cb38-12" tabindex="-1"></a>                         <span class="at">.f =</span> <span class="sc">~</span><span class="fu">aov</span>(rating <span class="sc">~</span> (NJ <span class="sc">+</span> ProductName <span class="sc">+</span> NR)<span class="sc">^</span><span class="dv">2</span>, <span class="at">data =</span> .x)))</span></code></pre></div>
+<p>This functional programming is rather advanced, so let me walk through what we did:</p>
+<ol style="list-style-type: decimal">
+<li>We used <code>nest()</code> to make a bunch of sub-tables, each of which contained the data only for a single descriptor rating. We have a table for <code>Red_berry</code>, a table for <code>Jam</code>, and so on.</li>
+<li>We used <code>mutate()</code> to make a new column to store our ANOVA results in, which we created through the use of <code>map()</code>, as discussed below:</li>
+<li>We used <code>map()</code> to take each of the nested subtables, now called <code>data</code>, and pass it to the <code>aov()</code> function. This works because each ANOVA model has the exact same formula: <code>rating ~ (NJ + ProductName + NR)^2</code>. In <code>R</code> formula syntax, this means we are modeling the variability in <code>rating</code> as a the outcome of judge (<code>NJ</code>), wine (<code>ProductName</code>), and rep (<code>NR</code>) <em>for each individual descriptor</em>. The “one-sided <code>~</code>” syntax we use in the <code>.f =</code> line defines this function, which is then applied to each of the nested subtables we built in the previous step. By tidying the data, we are able to do this in this succinct but somewhat intimidating syntax. “Split, apply, combine.”</li>
+</ol>
+<p>This whole workflow is based on Hadley Wickham’s work, and you can find more details here. The outcome is a “tibble of tibbles”, taking advantage of the fact that <code>R</code> lets us store arbitrary data into the cells of a <code>tibble</code> object.</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="analysis-of-variance.html#cb39-1" tabindex="-1"></a>nested_AOV_res</span></code></pre></div>
+<pre><code>## # A tibble: 20 × 3
+##    descriptor      data               anova_res
+##    &lt;chr&gt;           &lt;list&gt;             &lt;list&gt;   
+##  1 Red_berry       &lt;tibble [336 × 4]&gt; &lt;aov&gt;    
+##  2 Dark_berry      &lt;tibble [336 × 4]&gt; &lt;aov&gt;    
+##  3 Jam             &lt;tibble [336 × 4]&gt; &lt;aov&gt;    
+##  4 Dried_fruit     &lt;tibble [336 × 4]&gt; &lt;aov&gt;    
+##  5 Artificial_frui &lt;tibble [336 × 4]&gt; &lt;aov&gt;    
+##  6 Chocolate       &lt;tibble [336 × 4]&gt; &lt;aov&gt;    
+##  7 Vanilla         &lt;tibble [336 × 4]&gt; &lt;aov&gt;    
+##  8 Oak             &lt;tibble [336 × 4]&gt; &lt;aov&gt;    
+##  9 Burned          &lt;tibble [336 × 4]&gt; &lt;aov&gt;    
+## 10 Leather         &lt;tibble [336 × 4]&gt; &lt;aov&gt;    
+## 11 Earthy          &lt;tibble [336 × 4]&gt; &lt;aov&gt;    
+## 12 Spicy           &lt;tibble [336 × 4]&gt; &lt;aov&gt;    
+## 13 Pepper          &lt;tibble [336 × 4]&gt; &lt;aov&gt;    
+## 14 Grassy          &lt;tibble [336 × 4]&gt; &lt;aov&gt;    
+## 15 Medicinal       &lt;tibble [336 × 4]&gt; &lt;aov&gt;    
+## 16 Band-aid        &lt;tibble [336 × 4]&gt; &lt;aov&gt;    
+## 17 Sour            &lt;tibble [336 × 4]&gt; &lt;aov&gt;    
+## 18 Bitter          &lt;tibble [336 × 4]&gt; &lt;aov&gt;    
+## 19 Alcohol         &lt;tibble [336 × 4]&gt; &lt;aov&gt;    
+## 20 Astringent      &lt;tibble [336 × 4]&gt; &lt;aov&gt;</code></pre>
+<p>If we dig into this structure, we can see that we’re creating, in parallel, a bunch of model fits:</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="analysis-of-variance.html#cb41-1" tabindex="-1"></a><span class="co"># The first fitted model</span></span>
+<span id="cb41-2"><a href="analysis-of-variance.html#cb41-2" tabindex="-1"></a>nested_AOV_res<span class="sc">$</span>anova_res[[<span class="dv">1</span>]]</span></code></pre></div>
+<pre><code>## Call:
+##    aov(formula = rating ~ (NJ + ProductName + NR)^2, data = .x)
+## 
+## Terms:
+##                       NJ ProductName       NR NJ:ProductName    NJ:NR
+## Sum of Squares  597.8637     73.1578   2.8577       659.0318  97.1707
+## Deg. of Freedom       13           7        2             91       26
+##                 ProductName:NR Residuals
+## Sum of Squares         52.2499  652.8217
+## Deg. of Freedom             14       182
+## 
+## Residual standard error: 1.89392
+## Estimated effects may be unbalanced</code></pre>
+<p>We can continue to use <code>map()</code> to get summaries from these models. We use the broom::tidy() function in order to get the same results as the typical <code>summary()</code> function, but in a manipulable <code>tibble</code>/<code>data.frame</code> object instead of in a <code>summary</code> object.</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="analysis-of-variance.html#cb43-1" tabindex="-1"></a>da_aov_res <span class="ot">&lt;-</span></span>
+<span id="cb43-2"><a href="analysis-of-variance.html#cb43-2" tabindex="-1"></a>  nested_AOV_res <span class="sc">%&gt;%</span></span>
+<span id="cb43-3"><a href="analysis-of-variance.html#cb43-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">aov_summaries =</span> <span class="fu">map</span>(<span class="at">.x =</span> anova_res, </span>
+<span id="cb43-4"><a href="analysis-of-variance.html#cb43-4" tabindex="-1"></a>                             <span class="at">.f =</span> <span class="sc">~</span>broom<span class="sc">::</span><span class="fu">tidy</span>(.x))) <span class="sc">%&gt;%</span></span>
+<span id="cb43-5"><a href="analysis-of-variance.html#cb43-5" tabindex="-1"></a>  </span>
+<span id="cb43-6"><a href="analysis-of-variance.html#cb43-6" tabindex="-1"></a>  <span class="co"># unnest() does the reverse of nest(): it takes a nested subtable and expands it</span></span>
+<span id="cb43-7"><a href="analysis-of-variance.html#cb43-7" tabindex="-1"></a>  <span class="co"># back into the data frame, duplicating all of the classifying variables</span></span>
+<span id="cb43-8"><a href="analysis-of-variance.html#cb43-8" tabindex="-1"></a>  <span class="co"># necessary to uniquely identify it.</span></span>
+<span id="cb43-9"><a href="analysis-of-variance.html#cb43-9" tabindex="-1"></a>  </span>
+<span id="cb43-10"><a href="analysis-of-variance.html#cb43-10" tabindex="-1"></a>  <span class="fu">unnest</span>(aov_summaries) <span class="sc">%&gt;%</span></span>
+<span id="cb43-11"><a href="analysis-of-variance.html#cb43-11" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>data, <span class="sc">-</span>anova_res)</span>
+<span id="cb43-12"><a href="analysis-of-variance.html#cb43-12" tabindex="-1"></a></span>
+<span id="cb43-13"><a href="analysis-of-variance.html#cb43-13" tabindex="-1"></a>da_aov_res</span></code></pre></div>
+<pre><code>## # A tibble: 140 × 7
+##    descriptor term              df  sumsq meansq statistic   p.value
+##    &lt;chr&gt;      &lt;chr&gt;          &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+##  1 Red_berry  NJ                13 598.    46.0     12.8    9.35e-20
+##  2 Red_berry  ProductName        7  73.2   10.5      2.91   6.52e- 3
+##  3 Red_berry  NR                 2   2.86   1.43     0.398  6.72e- 1
+##  4 Red_berry  NJ:ProductName    91 659.     7.24     2.02   3.18e- 5
+##  5 Red_berry  NJ:NR             26  97.2    3.74     1.04   4.16e- 1
+##  6 Red_berry  ProductName:NR    14  52.2    3.73     1.04   4.15e- 1
+##  7 Red_berry  Residuals        182 653.     3.59    NA     NA       
+##  8 Dark_berry NJ                13 813.    62.5     15.5    2.50e-23
+##  9 Dark_berry ProductName        7 126.    18.0      4.47   1.28e- 4
+## 10 Dark_berry NR                 2  18.9    9.47     2.35   9.81e- 2
+## # ℹ 130 more rows</code></pre>
+<p>We now have a table of all of the model results for running a 3-way ANOVA with two-way interactions on each of the individual sensory descriptors. We can use this format to easily look for results that are significant. For example, let’s filter down to only rows where the model <code>term</code> represents variation from the wine (e.g., <code>ProductName</code>), and there is what is typically described as a signficant <em>p</em>-value (i.e., <span class="math inline">\(p&lt;0.05\)</span>).</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="analysis-of-variance.html#cb45-1" tabindex="-1"></a>naive_significance <span class="ot">&lt;-</span> </span>
+<span id="cb45-2"><a href="analysis-of-variance.html#cb45-2" tabindex="-1"></a>  da_aov_res <span class="sc">%&gt;%</span></span>
+<span id="cb45-3"><a href="analysis-of-variance.html#cb45-3" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;ProductName&quot;</span>,</span>
+<span id="cb45-4"><a href="analysis-of-variance.html#cb45-4" tabindex="-1"></a>         p.value <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb45-5"><a href="analysis-of-variance.html#cb45-5" tabindex="-1"></a>  <span class="fu">select</span>(descriptor, p.value)</span>
+<span id="cb45-6"><a href="analysis-of-variance.html#cb45-6" tabindex="-1"></a></span>
+<span id="cb45-7"><a href="analysis-of-variance.html#cb45-7" tabindex="-1"></a>naive_significance</span></code></pre></div>
+<pre><code>## # A tibble: 17 × 2
+##    descriptor       p.value
+##    &lt;chr&gt;              &lt;dbl&gt;
+##  1 Red_berry       6.52e- 3
+##  2 Dark_berry      1.28e- 4
+##  3 Jam             7.02e-16
+##  4 Artificial_frui 3.23e-11
+##  5 Chocolate       4.88e- 6
+##  6 Vanilla         1.58e- 6
+##  7 Oak             1.58e- 4
+##  8 Burned          2.65e-26
+##  9 Leather         6.56e- 9
+## 10 Earthy          3.77e- 4
+## 11 Pepper          7.55e- 3
+## 12 Grassy          5.14e- 3
+## 13 Medicinal       2.67e-11
+## 14 Band-aid        2.77e-11
+## 15 Sour            6.02e- 3
+## 16 Bitter          8.07e- 3
+## 17 Alcohol         1.91e- 4</code></pre>
+<p>We see that there are 17 descriptors that fit this criteria! For these descriptors, ratings vary significantly for different wines.</p>
+</div>
+<div id="pseudo-mixed-anova" class="section level2 hasAnchor" number="2.2">
+<h2><span class="header-section-number">2.2</span> Pseudo-mixed ANOVA<a href="analysis-of-variance.html#pseudo-mixed-anova" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In the original <strong>R Opus</strong>, HGH promotes the use of “pseudo-mixed” ANOVA in order to account for added variability from lack of judge consistency. Specifically, we will see that several of our models show <em>significant interaction terms</em> between wines and judges or wines and replicates. Let’s find these products:</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="analysis-of-variance.html#cb47-1" tabindex="-1"></a>da_aov_res <span class="sc">%&gt;%</span></span>
+<span id="cb47-2"><a href="analysis-of-variance.html#cb47-2" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;NJ:ProductName&quot;</span>, <span class="st">&quot;ProductName:NR&quot;</span>),</span>
+<span id="cb47-3"><a href="analysis-of-variance.html#cb47-3" tabindex="-1"></a>         p.value <span class="sc">&lt;</span> <span class="fl">0.05</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 20 × 7
+##    descriptor      term              df sumsq meansq statistic  p.value
+##    &lt;chr&gt;           &lt;chr&gt;          &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1 Red_berry       NJ:ProductName    91 659.    7.24      2.02 3.18e- 5
+##  2 Dark_berry      NJ:ProductName    91 704.    7.73      1.92 1.04e- 4
+##  3 Jam             NJ:ProductName    91 480.    5.27      2.04 2.38e- 5
+##  4 Jam             ProductName:NR    14  64.0   4.57      1.77 4.60e- 2
+##  5 Dried_fruit     NJ:ProductName    91 346.    3.80      1.54 7.17e- 3
+##  6 Artificial_frui NJ:ProductName    91 369.    4.05      2.14 7.71e- 6
+##  7 Chocolate       NJ:ProductName    91 207.    2.28      2.00 4.12e- 5
+##  8 Vanilla         NJ:ProductName    91 334.    3.67      2.09 1.33e- 5
+##  9 Oak             NJ:ProductName    91 273.    3.00      1.67 1.74e- 3
+## 10 Burned          NJ:ProductName    91 543.    5.97      4.18 1.21e-16
+## 11 Burned          ProductName:NR    14  39.8   2.84      1.99 2.07e- 2
+## 12 Leather         NJ:ProductName    91 338.    3.71      2.50 8.27e- 8
+## 13 Earthy          NJ:ProductName    91 169.    1.86      1.76 6.46e- 4
+## 14 Spicy           NJ:ProductName    91 232.    2.55      2.18 4.33e- 6
+## 15 Pepper          NJ:ProductName    91 267.    2.94      1.64 2.46e- 3
+## 16 Grassy          NJ:ProductName    91 198.    2.18      2.11 1.00e- 5
+## 17 Medicinal       NJ:ProductName    91 366.    4.03      2.07 1.63e- 5
+## 18 Medicinal       ProductName:NR    14  50.3   3.60      1.85 3.42e- 2
+## 19 Band-aid        NJ:ProductName    91 395.    4.34      2.74 4.04e- 9
+## 20 Sour            NJ:ProductName    91 390.    4.29      1.61 3.43e- 3</code></pre>
+<p>For these descriptors, the amount of variance explained by the interaction between the judge and the wine (<code>NJ:ProductName</code>) or the wine and the rep (<code>ProductName:Rep</code>) is significantly larger than the residual variation. But these interactions themselves are an undesirable source of variation: different judges are using these descriptors differently on the same wines, or descriptors are being used differently on the same wines in different reps!</p>
+<p>The <strong>pseudo-mixed model</strong> is a conservative approach to accounting for this extra, undesirable error. Without getting too into the weeds on the linear model, the basic intution is that, since these interactions, which represents undesirable variability, are significantly larger than the error term for each of these 5 descriptors, we will substitute the interaction in our normal linear model for the error term when calculating and evaluating our <em>F</em>-statistic, which as you may recall is the ratio of variance from a known source (in this case our wines, <code>ProductName</code>) and the error variance.</p>
+<p>How are we going to do this? With some good, old-fashioned functional programming:</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="analysis-of-variance.html#cb49-1" tabindex="-1"></a>get_pseudomixed_results <span class="ot">&lt;-</span> <span class="cf">function</span>(aov_res){</span>
+<span id="cb49-2"><a href="analysis-of-variance.html#cb49-2" tabindex="-1"></a>  </span>
+<span id="cb49-3"><a href="analysis-of-variance.html#cb49-3" tabindex="-1"></a>  <span class="co"># The relevant ANOVA results for NJ:ProductName are in the 4th row</span></span>
+<span id="cb49-4"><a href="analysis-of-variance.html#cb49-4" tabindex="-1"></a>  product_by_judge <span class="ot">&lt;-</span> aov_res[<span class="dv">4</span>, ]</span>
+<span id="cb49-5"><a href="analysis-of-variance.html#cb49-5" tabindex="-1"></a>  <span class="co"># The relevant ANOVA results for ProductName:NR are in the 6th row</span></span>
+<span id="cb49-6"><a href="analysis-of-variance.html#cb49-6" tabindex="-1"></a>  product_by_rep <span class="ot">&lt;-</span> aov_res[<span class="dv">6</span>, ]</span>
+<span id="cb49-7"><a href="analysis-of-variance.html#cb49-7" tabindex="-1"></a>  <span class="co"># The relevant main effect for ProductName</span></span>
+<span id="cb49-8"><a href="analysis-of-variance.html#cb49-8" tabindex="-1"></a>  product_effect <span class="ot">&lt;-</span> aov_res[<span class="dv">2</span>, ]</span>
+<span id="cb49-9"><a href="analysis-of-variance.html#cb49-9" tabindex="-1"></a>  </span>
+<span id="cb49-10"><a href="analysis-of-variance.html#cb49-10" tabindex="-1"></a>  <span class="co"># If neither of the interactions is significant, </span></span>
+<span id="cb49-11"><a href="analysis-of-variance.html#cb49-11" tabindex="-1"></a>  <span class="cf">if</span>(product_by_judge<span class="sc">$</span>p.value <span class="sc">&gt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> product_by_rep<span class="sc">$</span>p.value <span class="sc">&gt;</span> <span class="fl">0.05</span>){</span>
+<span id="cb49-12"><a href="analysis-of-variance.html#cb49-12" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">tibble</span>(<span class="at">sig_effect =</span> product_effect<span class="sc">$</span>term,</span>
+<span id="cb49-13"><a href="analysis-of-variance.html#cb49-13" tabindex="-1"></a>                  <span class="at">f_stat =</span> product_effect<span class="sc">$</span>statistic,</span>
+<span id="cb49-14"><a href="analysis-of-variance.html#cb49-14" tabindex="-1"></a>                  <span class="at">df_error =</span> aov_res<span class="sc">$</span>df[<span class="dv">7</span>],</span>
+<span id="cb49-15"><a href="analysis-of-variance.html#cb49-15" tabindex="-1"></a>                  <span class="at">p_val =</span> product_effect<span class="sc">$</span>p.value))</span>
+<span id="cb49-16"><a href="analysis-of-variance.html#cb49-16" tabindex="-1"></a>  }</span>
+<span id="cb49-17"><a href="analysis-of-variance.html#cb49-17" tabindex="-1"></a>  <span class="cf">if</span>(product_by_judge<span class="sc">$</span>p.value <span class="sc">&lt;</span> product_by_rep<span class="sc">$</span>p.value){</span>
+<span id="cb49-18"><a href="analysis-of-variance.html#cb49-18" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">tibble</span>(<span class="at">sig_effect =</span> product_by_judge<span class="sc">$</span>term,</span>
+<span id="cb49-19"><a href="analysis-of-variance.html#cb49-19" tabindex="-1"></a>                  <span class="at">f_stat =</span> product_effect<span class="sc">$</span>meansq <span class="sc">/</span> product_by_judge<span class="sc">$</span>meansq,</span>
+<span id="cb49-20"><a href="analysis-of-variance.html#cb49-20" tabindex="-1"></a>                  <span class="at">df_error =</span> product_by_judge<span class="sc">$</span>df,</span>
+<span id="cb49-21"><a href="analysis-of-variance.html#cb49-21" tabindex="-1"></a>                  <span class="at">p_val =</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">pf</span>(<span class="at">q =</span> f_stat, <span class="at">df1 =</span> product_effect<span class="sc">$</span>df, <span class="at">df2 =</span> df_error)))</span>
+<span id="cb49-22"><a href="analysis-of-variance.html#cb49-22" tabindex="-1"></a>  }<span class="cf">else</span>{</span>
+<span id="cb49-23"><a href="analysis-of-variance.html#cb49-23" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">tibble</span>(<span class="at">sig_effect =</span> product_by_rep<span class="sc">$</span>term,</span>
+<span id="cb49-24"><a href="analysis-of-variance.html#cb49-24" tabindex="-1"></a>                  <span class="at">f_stat =</span> product_effect<span class="sc">$</span>meansq <span class="sc">/</span> product_by_rep<span class="sc">$</span>meansq,</span>
+<span id="cb49-25"><a href="analysis-of-variance.html#cb49-25" tabindex="-1"></a>                  <span class="at">df_error =</span> product_by_rep<span class="sc">$</span>df,</span>
+<span id="cb49-26"><a href="analysis-of-variance.html#cb49-26" tabindex="-1"></a>                  <span class="at">p_val =</span> <span class="dv">1</span><span class="sc">-</span> <span class="fu">pf</span>(<span class="at">q =</span> f_stat, <span class="at">df1 =</span> product_effect<span class="sc">$</span>df, <span class="at">df2 =</span> df_error)))</span>
+<span id="cb49-27"><a href="analysis-of-variance.html#cb49-27" tabindex="-1"></a>  }</span>
+<span id="cb49-28"><a href="analysis-of-variance.html#cb49-28" tabindex="-1"></a>}</span>
+<span id="cb49-29"><a href="analysis-of-variance.html#cb49-29" tabindex="-1"></a></span>
+<span id="cb49-30"><a href="analysis-of-variance.html#cb49-30" tabindex="-1"></a>da_aov_res <span class="sc">%&gt;%</span></span>
+<span id="cb49-31"><a href="analysis-of-variance.html#cb49-31" tabindex="-1"></a>  <span class="fu">filter</span>(descriptor <span class="sc">==</span> <span class="st">&quot;Red_berry&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb49-32"><a href="analysis-of-variance.html#cb49-32" tabindex="-1"></a>  <span class="fu">get_pseudomixed_results</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 1 × 4
+##   sig_effect     f_stat df_error p_val
+##   &lt;chr&gt;           &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+## 1 NJ:ProductName   1.44       91 0.198</code></pre>
+<p>This function will take a <code>tibble</code> of 3-way ANOVA results from our analysis, look at the relevant interactions, and, if they are large enough, run a pseudomixed analysis. If both of the interactions are significant it will test the largest (most significant) interaction as the one to examine. It will then return the results of that modified, pseudomixed ANOVA in a nice table that tells us the relevant details: what effect was tested, the <em>F</em>-statistic and degrees of freedom for the denominator (the numerator degrees of freedom will remain the same), and the new <em>p</em>-value.</p>
+<p>In the case of <code>Red_berry</code> above, the <code>NJ:ProductName</code> interaction is the most significant, and results in a non-significant pseudomixed test.</p>
+<p><strong>NB:</strong> Because I used numeric indexing (e.g., <code>aov_res[6, ]</code>) to write this function “quick and dirty”, it would need to be modified if I had a different linear model defined for my ANOVA (the model specified as <code>rating ~ (NJ + ProductName + NR)^2</code> in my <code>aov()</code> call above), or even if I reordered the terms in <em>that</em> model.</p>
+<p>We use the same split-apply-combine workflow with <code>nest()</code> and <code>map()</code> to first make subtables for each of our descriptors’ original ANOVA results, and then run our new function on them.</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="analysis-of-variance.html#cb51-1" tabindex="-1"></a>da_aov_res <span class="sc">%&gt;%</span></span>
+<span id="cb51-2"><a href="analysis-of-variance.html#cb51-2" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">data =</span> <span class="sc">-</span>descriptor) <span class="sc">%&gt;%</span></span>
+<span id="cb51-3"><a href="analysis-of-variance.html#cb51-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pseudomixed_res =</span> <span class="fu">map</span>(data, <span class="sc">~</span><span class="fu">get_pseudomixed_results</span>(.x))) <span class="sc">%&gt;%</span></span>
+<span id="cb51-4"><a href="analysis-of-variance.html#cb51-4" tabindex="-1"></a>  <span class="fu">unnest</span>(pseudomixed_res) <span class="sc">%&gt;%</span></span>
+<span id="cb51-5"><a href="analysis-of-variance.html#cb51-5" tabindex="-1"></a>  <span class="fu">filter</span>(p_val <span class="sc">&lt;</span> <span class="fl">0.05</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 13 × 6
+##    descriptor      data             sig_effect     f_stat df_error       p_val
+##    &lt;chr&gt;           &lt;list&gt;           &lt;chr&gt;           &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;
+##  1 Dark_berry      &lt;tibble [7 × 6]&gt; NJ:ProductName   2.33       91 0.0311     
+##  2 Jam             &lt;tibble [7 × 6]&gt; NJ:ProductName   7.60       91 0.000000336
+##  3 Artificial_frui &lt;tibble [7 × 6]&gt; NJ:ProductName   4.99       91 0.0000819  
+##  4 Chocolate       &lt;tibble [7 × 6]&gt; NJ:ProductName   2.88       91 0.00912    
+##  5 Vanilla         &lt;tibble [7 × 6]&gt; NJ:ProductName   2.97       91 0.00753    
+##  6 Oak             &lt;tibble [7 × 6]&gt; NJ:ProductName   2.62       91 0.0163     
+##  7 Burned          &lt;tibble [7 × 6]&gt; NJ:ProductName   6.83       91 0.00000162 
+##  8 Leather         &lt;tibble [7 × 6]&gt; NJ:ProductName   3.37       91 0.00306    
+##  9 Earthy          &lt;tibble [7 × 6]&gt; NJ:ProductName   2.30       91 0.0335     
+## 10 Medicinal       &lt;tibble [7 × 6]&gt; NJ:ProductName   5.18       91 0.0000544  
+## 11 Band-aid        &lt;tibble [7 × 6]&gt; NJ:ProductName   3.91       91 0.000899   
+## 12 Bitter          &lt;tibble [7 × 6]&gt; ProductName      2.83      182 0.00807    
+## 13 Alcohol         &lt;tibble [7 × 6]&gt; ProductName      4.32      182 0.000191</code></pre>
+<p>From these results, we see that almost all of our products have significant interactions, and that we’ve lost a few significant descriptors: we’re down to 13/20 being significant, from 17/20 from our naive evaluation. Furthermore, when we had significant interactions, they were all wine-by-judge interactions: believe it or not, this is good news. As noted by <span class="citation">Brockhoff, Schlich, and Skovgaard (<a href="#ref-brockhoffTaking2015">2015</a>)</span>, even trained judges are almost never aligned in scale use, so the pseudomixed model is good insurance against this variability. A larger wine-by-rep interaction would be more concerning: it would indicate that the product may have changed in a particular presentation (perhaps it was exposed to oxygen?), and this would warrant a reconsideration of the results.</p>
+</div>
+<div id="mean-comparison-post-hoc-testing" class="section level2 hasAnchor" number="2.3">
+<h2><span class="header-section-number">2.3</span> Mean comparison (post-hoc testing)<a href="analysis-of-variance.html#mean-comparison-post-hoc-testing" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In the original <strong>R Opus</strong>, HGH demonstrates how to calculate Fisher’s Least Significant Difference (Fisher’s LSD), but I discourage the use of this test, even though it is arguable that the significant ANOVA result means that there is some protection against familywise error <span class="citation">Rencher (<a href="#ref-rencherMethods2002">2002</a>)</span> The Tukey’s Honestly Significant Difference (HSD) is probably preferable, and as a reviewer I push authors to use this test.</p>
+<p>We’re going to go back to our <code>nested_AOV_res</code> object because we don’t need the sum-of-squares/ANOVA table output, we need the actual model fit results. HGH uses the <code>agricolae</code> package’s <code>HSD.test()</code> function, and we’re going to wrap that up in a convenience function to let us easily capture the results and drop them into a <code>tibble</code> for easy access and plotting.</p>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="analysis-of-variance.html#cb53-1" tabindex="-1"></a><span class="fu">library</span>(agricolae)</span>
+<span id="cb53-2"><a href="analysis-of-variance.html#cb53-2" tabindex="-1"></a></span>
+<span id="cb53-3"><a href="analysis-of-variance.html#cb53-3" tabindex="-1"></a>tidy_hsd <span class="ot">&lt;-</span> <span class="cf">function</span>(anova_res, <span class="at">treatment =</span> <span class="st">&quot;ProductName&quot;</span>){</span>
+<span id="cb53-4"><a href="analysis-of-variance.html#cb53-4" tabindex="-1"></a>  </span>
+<span id="cb53-5"><a href="analysis-of-variance.html#cb53-5" tabindex="-1"></a>  hsd_res <span class="ot">&lt;-</span> <span class="fu">HSD.test</span>(anova_res, <span class="at">trt =</span> treatment)</span>
+<span id="cb53-6"><a href="analysis-of-variance.html#cb53-6" tabindex="-1"></a>  </span>
+<span id="cb53-7"><a href="analysis-of-variance.html#cb53-7" tabindex="-1"></a>  <span class="fu">return</span>(</span>
+<span id="cb53-8"><a href="analysis-of-variance.html#cb53-8" tabindex="-1"></a>    hsd_res<span class="sc">$</span>means <span class="sc">%&gt;%</span></span>
+<span id="cb53-9"><a href="analysis-of-variance.html#cb53-9" tabindex="-1"></a>      <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb53-10"><a href="analysis-of-variance.html#cb53-10" tabindex="-1"></a>      <span class="fu">left_join</span>(hsd_res<span class="sc">$</span>groups <span class="sc">%&gt;%</span> </span>
+<span id="cb53-11"><a href="analysis-of-variance.html#cb53-11" tabindex="-1"></a>                  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;wine&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb53-12"><a href="analysis-of-variance.html#cb53-12" tabindex="-1"></a>      <span class="fu">arrange</span>(groups)</span>
+<span id="cb53-13"><a href="analysis-of-variance.html#cb53-13" tabindex="-1"></a>  )</span>
+<span id="cb53-14"><a href="analysis-of-variance.html#cb53-14" tabindex="-1"></a>  </span>
+<span id="cb53-15"><a href="analysis-of-variance.html#cb53-15" tabindex="-1"></a>}</span>
+<span id="cb53-16"><a href="analysis-of-variance.html#cb53-16" tabindex="-1"></a></span>
+<span id="cb53-17"><a href="analysis-of-variance.html#cb53-17" tabindex="-1"></a><span class="co"># We can test this on the Red_berry descriptor</span></span>
+<span id="cb53-18"><a href="analysis-of-variance.html#cb53-18" tabindex="-1"></a>nested_AOV_res<span class="sc">$</span>anova_res[[<span class="dv">1</span>]] <span class="sc">%&gt;%</span> </span>
+<span id="cb53-19"><a href="analysis-of-variance.html#cb53-19" tabindex="-1"></a>  <span class="fu">tidy_hsd</span>()</span></code></pre></div>
+<pre><code>## Joining with `by = join_by(wine, rating)`</code></pre>
+<pre><code>## # A tibble: 8 × 11
+##   wine        rating   std     r    se   Min   Max   Q25   Q50   Q75 groups
+##   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; 
+## 1 I_PRIMITIVO   3.85  2.96    42 0.292     0   9.2 1.42   3.1   6.2  a     
+## 2 C_ZINFANDEL   3.08  2.37    42 0.292     0   8.2 0.725  2.85  4.9  ab    
+## 3 I_MERLOT      2.79  2.55    42 0.292     0   8   0.5    2.6   4.92 ab    
+## 4 I_SYRAH       3.17  2.59    42 0.292     0   8.6 1.25   2.45  5.5  ab    
+## 5 C_MERLOT      2.46  2.39    42 0.292     0   8   0.5    1.6   4.3  b     
+## 6 C_REFOSCO     2.47  2.30    42 0.292     0   7   0.325  1.8   4.35 b     
+## 7 C_SYRAH       2.46  2.48    42 0.292     0   8.6 0.5    1.6   3.35 b     
+## 8 I_REFOSCO     2.48  2.36    42 0.292     0   7.7 0.425  2.1   3.58 b</code></pre>
+<p><strong>NB, again:</strong> Once again I have written this function to be quick and dirty–I have hardcoded some of the information about the structure of our analysis into the function, so if we change how our <code>aov()</code> is fit or our column names are defined, this will no longer work.</p>
+<p>This function returns a nice table of our wines arranged by their group membership in an HSD test. We can use this to get mean separations for all of our significant attributes with a bit of data wrangling.</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="analysis-of-variance.html#cb56-1" tabindex="-1"></a><span class="co"># First, we&#39;ll get a list of significant descriptors from pseudomixed ANOVA</span></span>
+<span id="cb56-2"><a href="analysis-of-variance.html#cb56-2" tabindex="-1"></a>significant_descriptors <span class="ot">&lt;-</span> </span>
+<span id="cb56-3"><a href="analysis-of-variance.html#cb56-3" tabindex="-1"></a>  da_aov_res <span class="sc">%&gt;%</span></span>
+<span id="cb56-4"><a href="analysis-of-variance.html#cb56-4" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">data =</span> <span class="sc">-</span>descriptor) <span class="sc">%&gt;%</span></span>
+<span id="cb56-5"><a href="analysis-of-variance.html#cb56-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pseudomixed_res =</span> <span class="fu">map</span>(data, <span class="sc">~</span><span class="fu">get_pseudomixed_results</span>(.x))) <span class="sc">%&gt;%</span></span>
+<span id="cb56-6"><a href="analysis-of-variance.html#cb56-6" tabindex="-1"></a>  <span class="fu">unnest</span>(pseudomixed_res) <span class="sc">%&gt;%</span></span>
+<span id="cb56-7"><a href="analysis-of-variance.html#cb56-7" tabindex="-1"></a>  <span class="fu">filter</span>(p_val <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb56-8"><a href="analysis-of-variance.html#cb56-8" tabindex="-1"></a>  <span class="fu">pull</span>(descriptor)</span>
+<span id="cb56-9"><a href="analysis-of-variance.html#cb56-9" tabindex="-1"></a></span>
+<span id="cb56-10"><a href="analysis-of-variance.html#cb56-10" tabindex="-1"></a><span class="co"># Then we&#39;ll take our original models and only run HSD on the significant ones</span></span>
+<span id="cb56-11"><a href="analysis-of-variance.html#cb56-11" tabindex="-1"></a></span>
+<span id="cb56-12"><a href="analysis-of-variance.html#cb56-12" tabindex="-1"></a>hsd_tbl <span class="ot">&lt;-</span> </span>
+<span id="cb56-13"><a href="analysis-of-variance.html#cb56-13" tabindex="-1"></a>  nested_AOV_res <span class="sc">%&gt;%</span></span>
+<span id="cb56-14"><a href="analysis-of-variance.html#cb56-14" tabindex="-1"></a>  <span class="fu">filter</span>(descriptor <span class="sc">%in%</span> significant_descriptors) <span class="sc">%&gt;%</span></span>
+<span id="cb56-15"><a href="analysis-of-variance.html#cb56-15" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hsd_res =</span> <span class="fu">map</span>(anova_res, <span class="sc">~</span><span class="fu">tidy_hsd</span>(.x))) <span class="sc">%&gt;%</span></span>
+<span id="cb56-16"><a href="analysis-of-variance.html#cb56-16" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>data, <span class="sc">-</span>anova_res) <span class="sc">%&gt;%</span></span>
+<span id="cb56-17"><a href="analysis-of-variance.html#cb56-17" tabindex="-1"></a>  <span class="fu">unnest</span>(hsd_res)</span>
+<span id="cb56-18"><a href="analysis-of-variance.html#cb56-18" tabindex="-1"></a></span>
+<span id="cb56-19"><a href="analysis-of-variance.html#cb56-19" tabindex="-1"></a>hsd_tbl</span></code></pre></div>
+<pre><code>## # A tibble: 104 × 12
+##    descriptor wine        rating   std     r    se   Min   Max   Q25   Q50   Q75
+##    &lt;chr&gt;      &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Dark_berry I_SYRAH       4.48  3.24    42 0.310     0   9.9 1.58   4.1   7.82
+##  2 Dark_berry I_PRIMITIVO   3.38  3.03    42 0.310     0   9.6 0.55   2.8   5.38
+##  3 Dark_berry C_MERLOT      3.05  2.60    42 0.310     0   8.3 0.65   2.3   5.08
+##  4 Dark_berry C_REFOSCO     2.46  2.48    42 0.310     0   8.6 0.4    1.7   4.22
+##  5 Dark_berry C_SYRAH       2.93  2.91    42 0.310     0   8.9 0.7    2.05  4.15
+##  6 Dark_berry C_ZINFANDEL   3.06  2.68    42 0.310     0   9.2 0.75   2.6   4.7 
+##  7 Dark_berry I_MERLOT      2.35  2.21    42 0.310     0   7.2 0.325  1.65  4.12
+##  8 Dark_berry I_REFOSCO     3.01  2.36    42 0.310     0   8.5 1.1    2.4   5.02
+##  9 Jam        I_PRIMITIVO   3.61  3.08    42 0.248     0   9.8 0.95   2.5   6.35
+## 10 Jam        I_SYRAH       3.10  2.93    42 0.248     0   9.5 0.475  1.9   5.15
+## # ℹ 94 more rows
+## # ℹ 1 more variable: groups &lt;chr&gt;</code></pre>
+<p>Again, using the same split-apply-combine workflow (but we started with an already nested table), we get a set of results suitable for reporting in a paper or plotting. Let’s take a look at how to make a basic visualization of these results using <code>ggplot2</code>.</p>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="analysis-of-variance.html#cb58-1" tabindex="-1"></a><span class="fu">library</span>(tidytext)</span>
+<span id="cb58-2"><a href="analysis-of-variance.html#cb58-2" tabindex="-1"></a></span>
+<span id="cb58-3"><a href="analysis-of-variance.html#cb58-3" tabindex="-1"></a>hsd_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb58-4"><a href="analysis-of-variance.html#cb58-4" tabindex="-1"></a>  <span class="co"># Here we define a standard normal confidence interval</span></span>
+<span id="cb58-5"><a href="analysis-of-variance.html#cb58-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">interval =</span> <span class="fl">1.96</span> <span class="sc">*</span> (std <span class="sc">/</span> <span class="fu">sqrt</span>(r))) <span class="sc">%&gt;%</span></span>
+<span id="cb58-6"><a href="analysis-of-variance.html#cb58-6" tabindex="-1"></a>  <span class="co"># Here we use the tidytext::reorder_within() function to order samples</span></span>
+<span id="cb58-7"><a href="analysis-of-variance.html#cb58-7" tabindex="-1"></a>  <span class="co"># separately across facets, getting nice visualizations</span></span>
+<span id="cb58-8"><a href="analysis-of-variance.html#cb58-8" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">wine =</span> <span class="fu">reorder_within</span>(wine, <span class="at">by =</span> rating, <span class="at">within =</span> descriptor)) <span class="sc">%&gt;%</span></span>
+<span id="cb58-9"><a href="analysis-of-variance.html#cb58-9" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> rating, <span class="at">y =</span> wine, <span class="at">color =</span> groups)) <span class="sc">+</span> </span>
+<span id="cb58-10"><a href="analysis-of-variance.html#cb58-10" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb58-11"><a href="analysis-of-variance.html#cb58-11" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> rating <span class="sc">-</span> interval, </span>
+<span id="cb58-12"><a href="analysis-of-variance.html#cb58-12" tabindex="-1"></a>                   <span class="at">xend =</span> rating <span class="sc">+</span> interval, </span>
+<span id="cb58-13"><a href="analysis-of-variance.html#cb58-13" tabindex="-1"></a>                   <span class="at">y =</span> wine, <span class="at">yend =</span> wine, </span>
+<span id="cb58-14"><a href="analysis-of-variance.html#cb58-14" tabindex="-1"></a>                   <span class="at">color =</span> groups), </span>
+<span id="cb58-15"><a href="analysis-of-variance.html#cb58-15" tabindex="-1"></a>               <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb58-16"><a href="analysis-of-variance.html#cb58-16" tabindex="-1"></a>  <span class="fu">scale_y_reordered</span>() <span class="sc">+</span></span>
+<span id="cb58-17"><a href="analysis-of-variance.html#cb58-17" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>descriptor, <span class="at">ncol =</span> <span class="dv">3</span>, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb58-18"><a href="analysis-of-variance.html#cb58-18" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb58-19"><a href="analysis-of-variance.html#cb58-19" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;top&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb58-20"><a href="analysis-of-variance.html#cb58-20" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>) <span class="sc">+</span> </span>
+<span id="cb58-21"><a href="analysis-of-variance.html#cb58-21" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">color =</span> <span class="fu">guide_legend</span>(<span class="at">title =</span> <span class="st">&quot;HSD group&quot;</span>, <span class="at">nrow =</span> <span class="dv">1</span>))</span></code></pre></div>
+<p><img src="02-ANOVA_files/figure-html/unnamed-chunk-13-1.png" width="960" /></p>
+</div>
+<div id="bonus-bayesian-approaches-to-anova" class="section level2 hasAnchor" number="2.4">
+<h2><span class="header-section-number">2.4</span> BONUS: Bayesian approaches to ANOVA<a href="analysis-of-variance.html#bonus-bayesian-approaches-to-anova" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>As I have worked longer in our field and with applied statistics, I’ve gotten less satisfied with <a href="https://link.springer.com/article/10.3758/s13423-016-1221-4">“Null Hypothesis Statistics Testing” (NHST)</a>, and more interested in a general Bayesian framework. I’m not nearly expert enough to give a rigorous definition of Bayesian statistics, but the gist is that Bayesian statistics combines our prior knowledge (from theory, previous experience, observation) with data from an experiment to give us estimates about our certainty around parameters of interest. Essentially, instead of rejecting a (usually implausible) <span class="math inline">\(H_0\)</span> as a consequence of finding data incompatible with that hypothesis, Bayesian statistics evaluates what range of <em>parameters</em> are compatible with observed data. This, to me, seems more of a satisfying use of statistical analysis.</p>
+<p>Put less generally, for our observed data from subjects rating wines’ sensory attributes, we would be able to use a Bayesian approach to not just determine whether the observed means are “significantly different” (at some given level of <span class="math inline">\(\alpha\)</span>, usually <span class="math inline">\(\alpha=0.05\)</span>), but to give <em>plausible estimates of the underlying descriptor means for each wine</em>. This seems worthwhile to me.</p>
+<p>So if Bayesian statistics are so great, why isn’t everyone using them? There are two reasons (in my understanding):</p>
+<ol style="list-style-type: decimal">
+<li>Many statisticians, particularly those influenced by Fisher, Neyman, and Pearson (generally called “Frequentists”) reject the requirement in Bayesian modeling for providing an estimate of <em>prior</em> knowledge, since it is based on opinion. I think this is silly, because it pretends that our experimental approach (science, writ broadly) doesn’t integrate prior, subjective knowledge with rigorous data collection. For more on this (silly) objection, consider the excellently titled <a href="https://yalebooks.yale.edu/book/9780300188226/the-theory-that-would-not-die/"><em>The Theory That Would Not Die</em></a>.</li>
+<li>Application of Bayes theorem requires numerical integration of complicated integrands which, without modern computational methods, was essentially impossible. Thus, even enthusiastic Bayesians couldn’t actually apply the approach to many practical problems. This barrier has been progressively broken down, as computational power has increased and better, more user-friendly tools have been developed.</li>
+</ol>
+<p>Following point 2, I will be using a combination of <a href="https://mc-stan.org/"><em>Stan</em></a> (a standalone tool for Bayesian estimation) and the <code>R</code> packages associated with Stan, particularly <code>brms</code> (“brooms”) and <code>tidybayes</code>, to work through this section. Their installation requires extra steps that <a href="https://mc-stan.org/users/interfaces/">can be found at the Stan website</a>.</p>
+<p>There are <a href="https://xcelab.net/rm/statistical-rethinking/">many</a>, <a href="https://avehtari.github.io/ROS-Examples/">many</a>, <a href="https://sites.google.com/site/doingbayesiandataanalysis/">many</a> excellent introductions to Bayesian statistics available, so I am not going to embarrass myself by trying to stumble through an explanation. For my own benefit, instead, I am going to try to work through an application of simple Bayesian methods to the multi-way ANOVAs we ran above. This is based on material from A. Solomon Kurz’s <span class="citation">(<a href="#ref-kurzDoingBayesianDataAnalysis2023">2023</a>)</span> truly excellent walkthrough to modern <code>R</code>-based approaches to Bayesian modeling. Let’s see how it goes!</p>
+<p>First, we load the extra required packages.</p>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="analysis-of-variance.html#cb59-1" tabindex="-1"></a><span class="fu">library</span>(brms)</span>
+<span id="cb59-2"><a href="analysis-of-variance.html#cb59-2" tabindex="-1"></a><span class="fu">library</span>(tidybayes)</span></code></pre></div>
+<p>Then we’re going to use the approach to setting up ANOVA-like models in Stan that <a href="https://bookdown.org/content/3686/metric-predicted-variable-with-multiple-nominal-predictors.html">A. Solomon Kurz details in his excellent online companion</a> to Kruschke’s <em>Doing Bayesian Data Analysis</em> <span class="citation">Kruschke (<a href="#ref-kruschkeDoing2014">2014</a>)</span>.</p>
+<p>We are first going to apply this approach to a single outcome: <code>Bitter</code>. We know that above we found a significant difference between Bitter ratings for the various wines. Let’s let a Bayesian approach explore that result for us.</p>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="analysis-of-variance.html#cb60-1" tabindex="-1"></a><span class="co"># Let&#39;s make a less unwieldy tibble to work with</span></span>
+<span id="cb60-2"><a href="analysis-of-variance.html#cb60-2" tabindex="-1"></a></span>
+<span id="cb60-3"><a href="analysis-of-variance.html#cb60-3" tabindex="-1"></a>bayes_data <span class="ot">&lt;-</span> </span>
+<span id="cb60-4"><a href="analysis-of-variance.html#cb60-4" tabindex="-1"></a>  descriptive_data_tidy <span class="sc">%&gt;%</span></span>
+<span id="cb60-5"><a href="analysis-of-variance.html#cb60-5" tabindex="-1"></a>  <span class="fu">filter</span>(descriptor <span class="sc">==</span> <span class="st">&quot;Bitter&quot;</span>)</span>
+<span id="cb60-6"><a href="analysis-of-variance.html#cb60-6" tabindex="-1"></a>bayes_data</span></code></pre></div>
+<pre><code>## # A tibble: 336 × 5
+##    NJ    ProductName NR    descriptor rating
+##    &lt;fct&gt; &lt;fct&gt;       &lt;fct&gt; &lt;chr&gt;       &lt;dbl&gt;
+##  1 1331  C_MERLOT    7     Bitter        5.9
+##  2 1331  C_SYRAH     7     Bitter        5.2
+##  3 1331  C_ZINFANDEL 7     Bitter        3.5
+##  4 1331  C_REFOSCO   7     Bitter        3  
+##  5 1331  I_MERLOT    7     Bitter        1.9
+##  6 1331  I_SYRAH     7     Bitter        9.8
+##  7 1331  I_PRIMITIVO 7     Bitter        2.9
+##  8 1331  I_REFOSCO   7     Bitter        0.2
+##  9 1400  C_MERLOT    7     Bitter        0.6
+## 10 1400  C_SYRAH     7     Bitter        2.9
+## # ℹ 326 more rows</code></pre>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="analysis-of-variance.html#cb62-1" tabindex="-1"></a><span class="co"># and we&#39;ll store some information about our data so that we can use it in our</span></span>
+<span id="cb62-2"><a href="analysis-of-variance.html#cb62-2" tabindex="-1"></a><span class="co"># brm() call later:</span></span>
+<span id="cb62-3"><a href="analysis-of-variance.html#cb62-3" tabindex="-1"></a></span>
+<span id="cb62-4"><a href="analysis-of-variance.html#cb62-4" tabindex="-1"></a>mean_y <span class="ot">&lt;-</span> <span class="fu">mean</span>(bayes_data<span class="sc">$</span>rating)</span>
+<span id="cb62-5"><a href="analysis-of-variance.html#cb62-5" tabindex="-1"></a>sd_y <span class="ot">&lt;-</span> <span class="fu">sd</span>(bayes_data<span class="sc">$</span>rating)</span></code></pre></div>
+<p>Finally, we’re going to take a function from Kurz that gives parameters for a gamma distribution with a specific mode and standard deviation; to learn about why we’re doing this consult Kurz or Kruschke.</p>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="analysis-of-variance.html#cb63-1" tabindex="-1"></a>gamma_a_b_from_omega_sigma <span class="ot">&lt;-</span> <span class="cf">function</span>(mode, sd) {</span>
+<span id="cb63-2"><a href="analysis-of-variance.html#cb63-2" tabindex="-1"></a>  <span class="cf">if</span> (mode <span class="sc">&lt;=</span> <span class="dv">0</span>) <span class="fu">stop</span>(<span class="st">&quot;mode must be &gt; 0&quot;</span>)</span>
+<span id="cb63-3"><a href="analysis-of-variance.html#cb63-3" tabindex="-1"></a>  <span class="cf">if</span> (sd   <span class="sc">&lt;=</span> <span class="dv">0</span>) <span class="fu">stop</span>(<span class="st">&quot;sd must be &gt; 0&quot;</span>)</span>
+<span id="cb63-4"><a href="analysis-of-variance.html#cb63-4" tabindex="-1"></a>  rate <span class="ot">&lt;-</span> (mode <span class="sc">+</span> <span class="fu">sqrt</span>(mode<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> <span class="dv">4</span> <span class="sc">*</span> sd<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">/</span> (<span class="dv">2</span> <span class="sc">*</span> sd<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb63-5"><a href="analysis-of-variance.html#cb63-5" tabindex="-1"></a>  shape <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">+</span> mode <span class="sc">*</span> rate</span>
+<span id="cb63-6"><a href="analysis-of-variance.html#cb63-6" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">shape =</span> shape, <span class="at">rate =</span> rate))</span>
+<span id="cb63-7"><a href="analysis-of-variance.html#cb63-7" tabindex="-1"></a>}</span>
+<span id="cb63-8"><a href="analysis-of-variance.html#cb63-8" tabindex="-1"></a></span>
+<span id="cb63-9"><a href="analysis-of-variance.html#cb63-9" tabindex="-1"></a>shape_rate <span class="ot">&lt;-</span> <span class="fu">gamma_a_b_from_omega_sigma</span>(<span class="at">mode =</span> sd_y <span class="sc">/</span> <span class="dv">2</span>, <span class="at">sd =</span> sd_y <span class="sc">*</span> <span class="dv">2</span>)</span></code></pre></div>
+<p>We store all of this information into a <code>stanvar</code> object, which lets us send this information to Stan through <code>brms</code>.</p>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="analysis-of-variance.html#cb64-1" tabindex="-1"></a>stanvars <span class="ot">&lt;-</span> </span>
+<span id="cb64-2"><a href="analysis-of-variance.html#cb64-2" tabindex="-1"></a>  <span class="fu">stanvar</span>(mean_y, <span class="at">name =</span> <span class="st">&quot;mean_y&quot;</span>) <span class="sc">+</span></span>
+<span id="cb64-3"><a href="analysis-of-variance.html#cb64-3" tabindex="-1"></a>  <span class="fu">stanvar</span>(sd_y, <span class="at">name =</span> <span class="st">&quot;sd_y&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb64-4"><a href="analysis-of-variance.html#cb64-4" tabindex="-1"></a>  <span class="fu">stanvar</span>(shape_rate<span class="sc">$</span>shape, <span class="at">name =</span> <span class="st">&quot;alpha&quot;</span>) <span class="sc">+</span></span>
+<span id="cb64-5"><a href="analysis-of-variance.html#cb64-5" tabindex="-1"></a>  <span class="fu">stanvar</span>(shape_rate<span class="sc">$</span>rate, <span class="at">name =</span> <span class="st">&quot;beta&quot;</span>)</span>
+<span id="cb64-6"><a href="analysis-of-variance.html#cb64-6" tabindex="-1"></a></span>
+<span id="cb64-7"><a href="analysis-of-variance.html#cb64-7" tabindex="-1"></a><span class="co"># If you&#39;re curious, stanvar() creates lists of named variables that can be</span></span>
+<span id="cb64-8"><a href="analysis-of-variance.html#cb64-8" tabindex="-1"></a><span class="co"># passed off to Stan for processing; we could calculate these directly in our</span></span>
+<span id="cb64-9"><a href="analysis-of-variance.html#cb64-9" tabindex="-1"></a><span class="co"># call to brm() but it would be messier looking and potentially more fragile</span></span>
+<span id="cb64-10"><a href="analysis-of-variance.html#cb64-10" tabindex="-1"></a><span class="co"># (e.g., if we change our model and forget to change the calculation, that would</span></span>
+<span id="cb64-11"><a href="analysis-of-variance.html#cb64-11" tabindex="-1"></a><span class="co"># be bad).</span></span>
+<span id="cb64-12"><a href="analysis-of-variance.html#cb64-12" tabindex="-1"></a></span>
+<span id="cb64-13"><a href="analysis-of-variance.html#cb64-13" tabindex="-1"></a><span class="fu">str</span>(stanvars)</span></code></pre></div>
+<pre><code>## List of 4
+##  $ mean_y:List of 6
+##   ..$ name    : chr &quot;mean_y&quot;
+##   ..$ sdata   : num 3.49
+##   ..$ scode   : chr &quot;real mean_y;&quot;
+##   ..$ block   : chr &quot;data&quot;
+##   ..$ position: chr &quot;start&quot;
+##   ..$ pll_args: chr &quot;data real mean_y&quot;
+##  $ sd_y  :List of 6
+##   ..$ name    : chr &quot;sd_y&quot;
+##   ..$ sdata   : num 2.76
+##   ..$ scode   : chr &quot;real sd_y;&quot;
+##   ..$ block   : chr &quot;data&quot;
+##   ..$ position: chr &quot;start&quot;
+##   ..$ pll_args: chr &quot;data real sd_y&quot;
+##  $ alpha :List of 6
+##   ..$ name    : chr &quot;alpha&quot;
+##   ..$ sdata   : num 1.28
+##   ..$ scode   : chr &quot;real alpha;&quot;
+##   ..$ block   : chr &quot;data&quot;
+##   ..$ position: chr &quot;start&quot;
+##   ..$ pll_args: chr &quot;data real alpha&quot;
+##  $ beta  :List of 6
+##   ..$ name    : chr &quot;beta&quot;
+##   ..$ sdata   : num 0.205
+##   ..$ scode   : chr &quot;real beta;&quot;
+##   ..$ block   : chr &quot;data&quot;
+##   ..$ position: chr &quot;start&quot;
+##   ..$ pll_args: chr &quot;data real beta&quot;
+##  - attr(*, &quot;class&quot;)= chr &quot;stanvars&quot;</code></pre>
+<p>OK! As per usual, my attempt to explain (to myself, mostly) what I am doing is much longer than I intended! Let’s get to modeling.</p>
+<p>We are going to develop a model that is equivalent to the 3-way ANOVA we proposed for each variable: we want to allow 2-way interactions between all main effects, as well. It will be slightly uglier because we’re going to be using syntax that is common for non-linear or repeated-effects modeling in <code>R</code>. To save typing, I am going to omit the interactions between <code>NR</code> and the other factors, as (happily) they were never large, and are not of theoretical interest.</p>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="analysis-of-variance.html#cb66-1" tabindex="-1"></a>b_bitter <span class="ot">&lt;-</span> </span>
+<span id="cb66-2"><a href="analysis-of-variance.html#cb66-2" tabindex="-1"></a>  <span class="fu">brm</span>(<span class="at">data =</span> bayes_data,</span>
+<span id="cb66-3"><a href="analysis-of-variance.html#cb66-3" tabindex="-1"></a>      <span class="at">family =</span> gaussian,</span>
+<span id="cb66-4"><a href="analysis-of-variance.html#cb66-4" tabindex="-1"></a>      <span class="at">formula =</span> rating <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> NJ) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> NR) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ProductName) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> NJ<span class="sc">:</span>ProductName),</span>
+<span id="cb66-5"><a href="analysis-of-variance.html#cb66-5" tabindex="-1"></a>      <span class="at">prior =</span> <span class="fu">c</span>(<span class="fu">prior</span>(<span class="fu">normal</span>(mean_y, sd_y <span class="sc">*</span> <span class="dv">5</span>), <span class="at">class =</span> Intercept),</span>
+<span id="cb66-6"><a href="analysis-of-variance.html#cb66-6" tabindex="-1"></a>                <span class="fu">prior</span>(<span class="fu">gamma</span>(alpha, beta), <span class="at">class =</span> sd),</span>
+<span id="cb66-7"><a href="analysis-of-variance.html#cb66-7" tabindex="-1"></a>                <span class="fu">prior</span>(<span class="fu">cauchy</span>(<span class="dv">0</span>, sd_y), <span class="at">class =</span> sigma)),</span>
+<span id="cb66-8"><a href="analysis-of-variance.html#cb66-8" tabindex="-1"></a>      <span class="at">stanvars =</span> stanvars, <span class="at">seed =</span> <span class="dv">2</span>, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">4000</span>,</span>
+<span id="cb66-9"><a href="analysis-of-variance.html#cb66-9" tabindex="-1"></a>      <span class="at">warmup =</span> <span class="dv">2000</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">adapt_delta =</span> <span class="fl">0.999</span>, <span class="at">max_treedepth =</span> <span class="dv">13</span>),</span>
+<span id="cb66-10"><a href="analysis-of-variance.html#cb66-10" tabindex="-1"></a>      <span class="at">file =</span> <span class="fu">here</span>(<span class="st">&quot;fits/fit_02_bitter&quot;</span>))</span></code></pre></div>
+<p>This resulted in at least one diagnostic warning that, after inspection, seems trivial enough to ignore for now (only a few divergent transitions with good <span class="math inline">\(\hat{R}\)</span> and <span class="math inline">\(ESS\)</span> values), as can be seen in the summary and diagnostic plots below:</p>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="analysis-of-variance.html#cb67-1" tabindex="-1"></a>b_bitter</span></code></pre></div>
+<pre><code>## Warning: There were 3 divergent transitions after warmup. Increasing
+## adapt_delta above 0.999 may help. See
+## http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</code></pre>
+<pre><code>##  Family: gaussian 
+##   Links: mu = identity; sigma = identity 
+## Formula: rating ~ 1 + (1 | NJ) + (1 | NR) + (1 | ProductName) + (1 | NJ:ProductName) 
+##    Data: bayes_data (Number of observations: 336) 
+##   Draws: 4 chains, each with iter = 4000; warmup = 2000; thin = 1;
+##          total post-warmup draws = 8000
+## 
+## Group-Level Effects: 
+## ~NJ (Number of levels: 14) 
+##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sd(Intercept)     2.21      0.50     1.49     3.42 1.00     1576     2794
+## 
+## ~NJ:ProductName (Number of levels: 112) 
+##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sd(Intercept)     0.22      0.14     0.02     0.55 1.00     3609     3932
+## 
+## ~NR (Number of levels: 3) 
+##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sd(Intercept)     0.74      1.15     0.03     4.04 1.00     2065     3155
+## 
+## ~ProductName (Number of levels: 8) 
+##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sd(Intercept)     0.42      0.23     0.07     0.97 1.00     2221     2446
+## 
+## Population-Level Effects: 
+##           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## Intercept     3.50      0.95     1.79     5.45 1.00     1495     2367
+## 
+## Family Specific Parameters: 
+##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sigma     1.92      0.08     1.78     2.09 1.00     8538     5282
+## 
+## Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+## and Tail_ESS are effective sample size measures, and Rhat is the potential
+## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="analysis-of-variance.html#cb70-1" tabindex="-1"></a><span class="fu">plot</span>(b_bitter, <span class="at">N =</span> <span class="dv">6</span>, <span class="at">widths =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>))</span></code></pre></div>
+<p><img src="02-ANOVA_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p>We can examine the actual “draws” from the joint posterior using the <code>as_draws_df()</code> function and doing some wrangling.</p>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="analysis-of-variance.html#cb71-1" tabindex="-1"></a>draws <span class="ot">&lt;-</span> </span>
+<span id="cb71-2"><a href="analysis-of-variance.html#cb71-2" tabindex="-1"></a>  b_bitter <span class="sc">%&gt;%</span></span>
+<span id="cb71-3"><a href="analysis-of-variance.html#cb71-3" tabindex="-1"></a>  <span class="fu">as_draws_df</span>()</span>
+<span id="cb71-4"><a href="analysis-of-variance.html#cb71-4" tabindex="-1"></a></span>
+<span id="cb71-5"><a href="analysis-of-variance.html#cb71-5" tabindex="-1"></a>draws</span></code></pre></div>
+<pre><code>## # A draws_df: 2000 iterations, 4 chains, and 145 variables
+##    b_Intercept sd_NJ__Intercept sd_NJ:ProductName__Intercept sd_NR__Intercept
+## 1          3.6              2.5                        0.526           0.0733
+## 2          2.3              2.7                        0.173           0.0247
+## 3          3.7              1.5                        0.041           0.0055
+## 4          3.3              1.6                        0.107           0.1484
+## 5          3.6              2.0                        0.169           0.0308
+## 6          3.3              2.1                        0.336           0.2021
+## 7          3.0              1.8                        0.079           0.0586
+## 8          3.2              2.0                        0.312           0.4505
+## 9          3.4              2.1                        0.375           0.2390
+## 10         4.4              1.5                        0.150           1.2597
+##    sd_ProductName__Intercept sigma r_NJ[1331,Intercept] r_NJ[1400,Intercept]
+## 1                       0.30   1.9                -0.27                -1.85
+## 2                       0.59   2.0                 0.46                -0.81
+## 3                       0.42   1.9                -0.55                -1.53
+## 4                       0.61   1.9                -0.84                -1.96
+## 5                       0.33   1.9                -0.72                -2.19
+## 6                       0.38   2.0                -0.22                -2.09
+## 7                       0.41   1.8                 0.20                -2.08
+## 8                       0.27   2.1                -0.45                -1.58
+## 9                       0.42   1.8                -0.85                -2.63
+## 10                      0.82   2.0                -0.37                -2.58
+## # ... with 7990 more draws, and 137 more variables
+## # ... hidden reserved variables {&#39;.chain&#39;, &#39;.iteration&#39;, &#39;.draw&#39;}</code></pre>
+<p>You’ll note that there are a <em>lot</em> of variables. We are estimating (as I understand it) deflections from the grand mean for all of the levels of all of our main effects. We can summarize these using the <code>posterior_summary()</code> function:</p>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="analysis-of-variance.html#cb73-1" tabindex="-1"></a><span class="fu">posterior_summary</span>(b_bitter) <span class="sc">%&gt;%</span></span>
+<span id="cb73-2"><a href="analysis-of-variance.html#cb73-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;parameter&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb73-3"><a href="analysis-of-variance.html#cb73-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span><span class="fu">round</span>(., <span class="dv">2</span>)))</span></code></pre></div>
+<pre><code>## # A tibble: 145 × 5
+##    parameter                    Estimate Est.Error  Q2.5 Q97.5
+##    &lt;chr&gt;                           &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 b_Intercept                      3.5       0.95  1.79  5.45
+##  2 sd_NJ__Intercept                 2.21      0.5   1.49  3.42
+##  3 sd_NJ:ProductName__Intercept     0.22      0.14  0.02  0.55
+##  4 sd_NR__Intercept                 0.74      1.15  0.03  4.04
+##  5 sd_ProductName__Intercept        0.42      0.23  0.07  0.97
+##  6 sigma                            1.92      0.08  1.78  2.09
+##  7 r_NJ[1331,Intercept]            -0.44      0.72 -1.85  1.03
+##  8 r_NJ[1400,Intercept]            -1.78      0.73 -3.22 -0.32
+##  9 r_NJ[1401,Intercept]             2.34      0.72  0.96  3.8 
+## 10 r_NJ[1402,Intercept]             2.31      0.72  0.92  3.74
+## # ℹ 135 more rows</code></pre>
+<p>For a sanity check, notice that the estimate for our grand mean (<code>b_Intercept</code>) is the observed value.</p>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="analysis-of-variance.html#cb75-1" tabindex="-1"></a>mean_y</span></code></pre></div>
+<pre><code>## [1] 3.494643</code></pre>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="analysis-of-variance.html#cb77-1" tabindex="-1"></a>nd <span class="ot">&lt;-</span> </span>
+<span id="cb77-2"><a href="analysis-of-variance.html#cb77-2" tabindex="-1"></a>  bayes_data <span class="sc">%&gt;%</span></span>
+<span id="cb77-3"><a href="analysis-of-variance.html#cb77-3" tabindex="-1"></a>  <span class="fu">distinct</span>(ProductName)</span>
+<span id="cb77-4"><a href="analysis-of-variance.html#cb77-4" tabindex="-1"></a></span>
+<span id="cb77-5"><a href="analysis-of-variance.html#cb77-5" tabindex="-1"></a><span class="co"># we use `re_formula` to marginalize across the other factors</span></span>
+<span id="cb77-6"><a href="analysis-of-variance.html#cb77-6" tabindex="-1"></a></span>
+<span id="cb77-7"><a href="analysis-of-variance.html#cb77-7" tabindex="-1"></a>f <span class="ot">&lt;-</span></span>
+<span id="cb77-8"><a href="analysis-of-variance.html#cb77-8" tabindex="-1"></a>  <span class="fu">fitted</span>(b_bitter,</span>
+<span id="cb77-9"><a href="analysis-of-variance.html#cb77-9" tabindex="-1"></a>         <span class="at">newdata =</span> nd,</span>
+<span id="cb77-10"><a href="analysis-of-variance.html#cb77-10" tabindex="-1"></a>         <span class="at">re_formula =</span> <span class="sc">~</span> (<span class="dv">1</span> <span class="sc">|</span> ProductName),</span>
+<span id="cb77-11"><a href="analysis-of-variance.html#cb77-11" tabindex="-1"></a>         <span class="at">summary =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb77-12"><a href="analysis-of-variance.html#cb77-12" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb77-13"><a href="analysis-of-variance.html#cb77-13" tabindex="-1"></a>  <span class="fu">set_names</span>(nd<span class="sc">$</span>ProductName)</span>
+<span id="cb77-14"><a href="analysis-of-variance.html#cb77-14" tabindex="-1"></a></span>
+<span id="cb77-15"><a href="analysis-of-variance.html#cb77-15" tabindex="-1"></a><span class="co"># We can look at the plausible 95% HDI for each wine&#39;s rated bitterness.</span></span>
+<span id="cb77-16"><a href="analysis-of-variance.html#cb77-16" tabindex="-1"></a></span>
+<span id="cb77-17"><a href="analysis-of-variance.html#cb77-17" tabindex="-1"></a>f <span class="sc">%&gt;%</span></span>
+<span id="cb77-18"><a href="analysis-of-variance.html#cb77-18" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb77-19"><a href="analysis-of-variance.html#cb77-19" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">name =</span> <span class="fu">fct</span>(name) <span class="sc">%&gt;%</span> <span class="fu">fct_reorder</span>(<span class="at">.x =</span> value, <span class="at">.fun =</span> mean)) <span class="sc">%&gt;%</span></span>
+<span id="cb77-20"><a href="analysis-of-variance.html#cb77-20" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">y =</span> name)) <span class="sc">+</span> </span>
+<span id="cb77-21"><a href="analysis-of-variance.html#cb77-21" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">fixef</span>(b_bitter)[, <span class="dv">1</span>], <span class="at">size =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb77-22"><a href="analysis-of-variance.html#cb77-22" tabindex="-1"></a>  <span class="fu">stat_dotsinterval</span>(<span class="at">point_interval =</span> mode_hdi, <span class="at">.width =</span> <span class="fl">0.95</span>, <span class="at">quantiles =</span> <span class="dv">100</span>) <span class="sc">+</span> </span>
+<span id="cb77-23"><a href="analysis-of-variance.html#cb77-23" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
+<span id="cb77-24"><a href="analysis-of-variance.html#cb77-24" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">caption =</span> <span class="st">&quot;Red line is the model-implied grand mean.&quot;</span>)</span></code></pre></div>
+<p><img src="02-ANOVA_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<p>It sure looks like these wines are not easy to discriminate. One advantage of Bayesian approaches is that the paradigm of investigation allows us to investigate the posterior draws to explore things like pairwise comparisons with no need to worry about ideas like “family-wise error” (because we are not in a hypothesis-testing framework).</p>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="analysis-of-variance.html#cb78-1" tabindex="-1"></a><span class="co"># Let&#39;s see if the Italian Syrah is plausibly more bitter than the Californian Merlot:</span></span>
+<span id="cb78-2"><a href="analysis-of-variance.html#cb78-2" tabindex="-1"></a></span>
+<span id="cb78-3"><a href="analysis-of-variance.html#cb78-3" tabindex="-1"></a>f <span class="sc">%&gt;%</span></span>
+<span id="cb78-4"><a href="analysis-of-variance.html#cb78-4" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">diff =</span> I_SYRAH <span class="sc">-</span> C_MERLOT) <span class="sc">%&gt;%</span></span>
+<span id="cb78-5"><a href="analysis-of-variance.html#cb78-5" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> diff)) <span class="sc">+</span> </span>
+<span id="cb78-6"><a href="analysis-of-variance.html#cb78-6" tabindex="-1"></a>  <span class="fu">geom_rect</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> <span class="sc">-</span><span class="fl">0.05</span>, <span class="at">xmax =</span> <span class="fl">0.05</span>,</span>
+<span id="cb78-7"><a href="analysis-of-variance.html#cb78-7" tabindex="-1"></a>                <span class="at">ymin =</span> <span class="sc">-</span><span class="cn">Inf</span>, <span class="at">ymax =</span> <span class="cn">Inf</span>), </span>
+<span id="cb78-8"><a href="analysis-of-variance.html#cb78-8" tabindex="-1"></a>            <span class="at">size =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">&quot;pink&quot;</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb78-9"><a href="analysis-of-variance.html#cb78-9" tabindex="-1"></a>  <span class="fu">stat_dotsinterval</span>(<span class="at">point_interval =</span> mode_hdi, <span class="at">.width =</span> <span class="fl">0.95</span>, <span class="at">quantiles =</span> <span class="dv">100</span>) <span class="sc">+</span> </span>
+<span id="cb78-10"><a href="analysis-of-variance.html#cb78-10" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb78-11"><a href="analysis-of-variance.html#cb78-11" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Italian Syrah vs. Californian Merlot in rated bitterness&quot;</span>,</span>
+<span id="cb78-12"><a href="analysis-of-variance.html#cb78-12" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">&quot;Pink area is a [-0.05, 0.05] ROPE around 0 difference.&quot;</span>)</span></code></pre></div>
+<p><img src="02-ANOVA_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<p>It looks like the posterior differences between the most-bitter and least-bitter wines don’t exclude a small “region of plausible equivalence” around 0 from the 95% area of highest posterior density, so even though there is a modal difference of around 0.75 points in bitterness between these wines, we can’t entirely dismiss the possibility that there is no difference in bitterness. That being said, there is at least as much posterior probability density around 1.5 points of bitterness difference, so it seems unreasonable to me to claim that these wines are exactly the same in their level of bitterness–it just probably isn’t that large a difference!</p>
+<p>We also have the freedom to explore any contrasts that might be of interest. For example, we might be interested (for either exploratory data analysis based on the HDIs above or because of <em>a priori</em> theory) in knowing whether Italian wines are on average more bitter than California wines. We can do so simply:</p>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="analysis-of-variance.html#cb79-1" tabindex="-1"></a>f <span class="sc">%&gt;%</span></span>
+<span id="cb79-2"><a href="analysis-of-variance.html#cb79-2" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">diff =</span> (I_SYRAH <span class="sc">+</span> I_MERLOT <span class="sc">+</span> I_PRIMITIVO <span class="sc">+</span> I_REFOSCO) <span class="sc">/</span> <span class="dv">4</span> <span class="sc">-</span> </span>
+<span id="cb79-3"><a href="analysis-of-variance.html#cb79-3" tabindex="-1"></a>              (C_MERLOT <span class="sc">+</span> C_SYRAH <span class="sc">+</span> C_ZINFANDEL <span class="sc">+</span> C_REFOSCO) <span class="sc">/</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb79-4"><a href="analysis-of-variance.html#cb79-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> diff)) <span class="sc">+</span> </span>
+<span id="cb79-5"><a href="analysis-of-variance.html#cb79-5" tabindex="-1"></a>  <span class="fu">geom_rect</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> <span class="sc">-</span><span class="fl">0.05</span>, <span class="at">xmax =</span> <span class="fl">0.05</span>,</span>
+<span id="cb79-6"><a href="analysis-of-variance.html#cb79-6" tabindex="-1"></a>                <span class="at">ymin =</span> <span class="sc">-</span><span class="cn">Inf</span>, <span class="at">ymax =</span> <span class="cn">Inf</span>), </span>
+<span id="cb79-7"><a href="analysis-of-variance.html#cb79-7" tabindex="-1"></a>            <span class="at">size =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">&quot;pink&quot;</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb79-8"><a href="analysis-of-variance.html#cb79-8" tabindex="-1"></a>  <span class="fu">stat_dotsinterval</span>(<span class="at">point_interval =</span> mode_hdi, <span class="at">.width =</span> <span class="fl">0.95</span>, <span class="at">quantiles =</span> <span class="dv">100</span>) <span class="sc">+</span> </span>
+<span id="cb79-9"><a href="analysis-of-variance.html#cb79-9" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb79-10"><a href="analysis-of-variance.html#cb79-10" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Italian vs. Californian wines for rated bitterness&quot;</span>,</span>
+<span id="cb79-11"><a href="analysis-of-variance.html#cb79-11" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">&quot;Pink area is a [-0.05, 0.05] ROPE around 0 difference.&quot;</span>)</span></code></pre></div>
+<p><img src="02-ANOVA_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<p>Unsurprisingly, given the figures above, we see that there is some possibility of a very small amount of overall bitterness, but we’d be pretty hesitant to make broad statements when a ROPE around 0 is so clearly within the HDI for this contrast.</p>
+<p>Finally, for my own interest, I am curious how <code>brms</code> would do using defaults in fitting the same ANOVA-like model.</p>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="analysis-of-variance.html#cb80-1" tabindex="-1"></a>b_bitter_default <span class="ot">&lt;-</span></span>
+<span id="cb80-2"><a href="analysis-of-variance.html#cb80-2" tabindex="-1"></a>  <span class="fu">brm</span>(<span class="at">data =</span> bayes_data,</span>
+<span id="cb80-3"><a href="analysis-of-variance.html#cb80-3" tabindex="-1"></a>      <span class="at">family =</span> gaussian,</span>
+<span id="cb80-4"><a href="analysis-of-variance.html#cb80-4" tabindex="-1"></a>      <span class="at">formula =</span> rating <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> NJ) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> NR) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ProductName) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> NJ<span class="sc">:</span>ProductName),</span>
+<span id="cb80-5"><a href="analysis-of-variance.html#cb80-5" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">2</span>, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">adapt_delta =</span> <span class="fl">0.999</span>, <span class="at">max_treedepth =</span> <span class="dv">13</span>),</span>
+<span id="cb80-6"><a href="analysis-of-variance.html#cb80-6" tabindex="-1"></a>      <span class="at">file =</span> <span class="fu">here</span>(<span class="st">&quot;fits/fit_02_bitter_default&quot;</span>))</span></code></pre></div>
+<p>Interestingly, this model seemed to take much less time to fit and didn’t have the issues with transitions. Let’s look at the chains and the parameter estimates.</p>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="analysis-of-variance.html#cb81-1" tabindex="-1"></a>b_bitter_default</span></code></pre></div>
+<pre><code>##  Family: gaussian 
+##   Links: mu = identity; sigma = identity 
+## Formula: rating ~ 1 + (1 | NJ) + (1 | NR) + (1 | ProductName) + (1 | NJ:ProductName) 
+##    Data: bayes_data (Number of observations: 336) 
+##   Draws: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+##          total post-warmup draws = 4000
+## 
+## Group-Level Effects: 
+## ~NJ (Number of levels: 14) 
+##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sd(Intercept)     2.16      0.48     1.45     3.31 1.01      880     1568
+## 
+## ~NJ:ProductName (Number of levels: 112) 
+##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sd(Intercept)     0.19      0.14     0.01     0.52 1.00     1335     1765
+## 
+## ~NR (Number of levels: 3) 
+##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sd(Intercept)     0.47      0.68     0.01     2.31 1.00     1116     1994
+## 
+## ~ProductName (Number of levels: 8) 
+##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sd(Intercept)     0.39      0.22     0.05     0.92 1.00     1321     1441
+## 
+## Population-Level Effects: 
+##           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## Intercept     3.45      0.68     2.07     4.74 1.01      914     1456
+## 
+## Family Specific Parameters: 
+##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sigma     1.93      0.08     1.78     2.08 1.00     5824     3043
+## 
+## Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+## and Tail_ESS are effective sample size measures, and Rhat is the potential
+## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="analysis-of-variance.html#cb83-1" tabindex="-1"></a><span class="fu">plot</span>(b_bitter_default, <span class="at">N =</span> <span class="dv">6</span>, <span class="at">width =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>))</span></code></pre></div>
+<p><img src="02-ANOVA_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<p>It all looks ok, but it seems like the estimates for some parameters are a bit less precise, probably because we allowed the model to use uninformed priors. We can see how that was done using the <code>get_prior()</code> function on the formula and data, as so:</p>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="analysis-of-variance.html#cb84-1" tabindex="-1"></a><span class="fu">get_prior</span>(<span class="at">formula =</span> rating <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> NJ) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> NR) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ProductName) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> NJ<span class="sc">:</span>ProductName),</span>
+<span id="cb84-2"><a href="analysis-of-variance.html#cb84-2" tabindex="-1"></a>          <span class="at">data =</span> bayes_data)</span></code></pre></div>
+<pre><code>##                 prior     class      coef          group resp dpar nlpar lb ub
+##  student_t(3, 3, 3.3) Intercept                                               
+##  student_t(3, 0, 3.3)        sd                                           0   
+##  student_t(3, 0, 3.3)        sd                       NJ                  0   
+##  student_t(3, 0, 3.3)        sd Intercept             NJ                  0   
+##  student_t(3, 0, 3.3)        sd           NJ:ProductName                  0   
+##  student_t(3, 0, 3.3)        sd Intercept NJ:ProductName                  0   
+##  student_t(3, 0, 3.3)        sd                       NR                  0   
+##  student_t(3, 0, 3.3)        sd Intercept             NR                  0   
+##  student_t(3, 0, 3.3)        sd              ProductName                  0   
+##  student_t(3, 0, 3.3)        sd Intercept    ProductName                  0   
+##  student_t(3, 0, 3.3)     sigma                                           0   
+##        source
+##       default
+##       default
+##  (vectorized)
+##  (vectorized)
+##  (vectorized)
+##  (vectorized)
+##  (vectorized)
+##  (vectorized)
+##  (vectorized)
+##  (vectorized)
+##       default</code></pre>
+<p>It looks like, by default, <code>brm()</code> uses very broad Student’s <span class="math inline">\(t\)</span> priors for all the parameters; I’m no expert but I think this is what are called “uninformed priors” and so will be almost entirely influenced by the data. For example, if we compare our original fit following Kurz’s example where we use a normal distribution with <code>mean</code> and <code>sd</code> influenced by our data, we see a distinct difference in parameter estimates for the intercept:</p>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="analysis-of-variance.html#cb86-1" tabindex="-1"></a><span class="co"># The original model with specified priors</span></span>
+<span id="cb86-2"><a href="analysis-of-variance.html#cb86-2" tabindex="-1"></a><span class="fu">plot</span>(b_bitter, <span class="at">variable =</span> <span class="st">&quot;b_Intercept&quot;</span>)</span></code></pre></div>
+<p><img src="02-ANOVA_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="analysis-of-variance.html#cb87-1" tabindex="-1"></a><span class="co"># The model with default priors</span></span>
+<span id="cb87-2"><a href="analysis-of-variance.html#cb87-2" tabindex="-1"></a><span class="fu">plot</span>(b_bitter_default, <span class="at">variable =</span> <span class="st">&quot;b_Intercept&quot;</span>)</span></code></pre></div>
+<p><img src="02-ANOVA_files/figure-html/unnamed-chunk-31-2.png" width="672" /></p>
+<p>So we lose some precision in exchange for speed. Let’s look at how the default model predicts mean separation:</p>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="analysis-of-variance.html#cb88-1" tabindex="-1"></a>nd <span class="ot">&lt;-</span> </span>
+<span id="cb88-2"><a href="analysis-of-variance.html#cb88-2" tabindex="-1"></a>  bayes_data <span class="sc">%&gt;%</span></span>
+<span id="cb88-3"><a href="analysis-of-variance.html#cb88-3" tabindex="-1"></a>  <span class="fu">distinct</span>(ProductName)</span>
+<span id="cb88-4"><a href="analysis-of-variance.html#cb88-4" tabindex="-1"></a></span>
+<span id="cb88-5"><a href="analysis-of-variance.html#cb88-5" tabindex="-1"></a><span class="co"># we use `re_formula` to marginalize across the other factors</span></span>
+<span id="cb88-6"><a href="analysis-of-variance.html#cb88-6" tabindex="-1"></a></span>
+<span id="cb88-7"><a href="analysis-of-variance.html#cb88-7" tabindex="-1"></a>f <span class="ot">&lt;-</span></span>
+<span id="cb88-8"><a href="analysis-of-variance.html#cb88-8" tabindex="-1"></a>  <span class="fu">fitted</span>(b_bitter_default,</span>
+<span id="cb88-9"><a href="analysis-of-variance.html#cb88-9" tabindex="-1"></a>         <span class="at">newdata =</span> nd,</span>
+<span id="cb88-10"><a href="analysis-of-variance.html#cb88-10" tabindex="-1"></a>         <span class="at">re_formula =</span> <span class="sc">~</span> (<span class="dv">1</span> <span class="sc">|</span> ProductName),</span>
+<span id="cb88-11"><a href="analysis-of-variance.html#cb88-11" tabindex="-1"></a>         <span class="at">summary =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb88-12"><a href="analysis-of-variance.html#cb88-12" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb88-13"><a href="analysis-of-variance.html#cb88-13" tabindex="-1"></a>  <span class="fu">set_names</span>(nd<span class="sc">$</span>ProductName)</span>
+<span id="cb88-14"><a href="analysis-of-variance.html#cb88-14" tabindex="-1"></a></span>
+<span id="cb88-15"><a href="analysis-of-variance.html#cb88-15" tabindex="-1"></a><span class="co"># We can look at the plausible 95% HDI for each wine&#39;s rated bitterness.</span></span>
+<span id="cb88-16"><a href="analysis-of-variance.html#cb88-16" tabindex="-1"></a></span>
+<span id="cb88-17"><a href="analysis-of-variance.html#cb88-17" tabindex="-1"></a>f <span class="sc">%&gt;%</span></span>
+<span id="cb88-18"><a href="analysis-of-variance.html#cb88-18" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb88-19"><a href="analysis-of-variance.html#cb88-19" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">name =</span> <span class="fu">fct</span>(name) <span class="sc">%&gt;%</span> <span class="fu">fct_reorder</span>(<span class="at">.x =</span> value, <span class="at">.fun =</span> mean)) <span class="sc">%&gt;%</span></span>
+<span id="cb88-20"><a href="analysis-of-variance.html#cb88-20" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">y =</span> name)) <span class="sc">+</span> </span>
+<span id="cb88-21"><a href="analysis-of-variance.html#cb88-21" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">fixef</span>(b_bitter_default)[, <span class="dv">1</span>], <span class="at">size =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb88-22"><a href="analysis-of-variance.html#cb88-22" tabindex="-1"></a>  <span class="fu">stat_dotsinterval</span>(<span class="at">point_interval =</span> mode_hdi, <span class="at">.width =</span> <span class="fl">0.95</span>, <span class="at">quantiles =</span> <span class="dv">100</span>) <span class="sc">+</span> </span>
+<span id="cb88-23"><a href="analysis-of-variance.html#cb88-23" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
+<span id="cb88-24"><a href="analysis-of-variance.html#cb88-24" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">caption =</span> <span class="st">&quot;Red line is the model-implied grand mean.&quot;</span>,</span>
+<span id="cb88-25"><a href="analysis-of-variance.html#cb88-25" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;The HDIs are broader with the `brms` default priors&quot;</span>)</span></code></pre></div>
+<p><img src="02-ANOVA_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
+<p>And we can do the same kind of check with the individual differences:</p>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="analysis-of-variance.html#cb89-1" tabindex="-1"></a><span class="co"># Let&#39;s see if the Italian Syrah is plausibly more bitter than the Californian Merlot:</span></span>
+<span id="cb89-2"><a href="analysis-of-variance.html#cb89-2" tabindex="-1"></a></span>
+<span id="cb89-3"><a href="analysis-of-variance.html#cb89-3" tabindex="-1"></a>f <span class="sc">%&gt;%</span></span>
+<span id="cb89-4"><a href="analysis-of-variance.html#cb89-4" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">diff =</span> I_SYRAH <span class="sc">-</span> C_MERLOT) <span class="sc">%&gt;%</span></span>
+<span id="cb89-5"><a href="analysis-of-variance.html#cb89-5" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> diff)) <span class="sc">+</span> </span>
+<span id="cb89-6"><a href="analysis-of-variance.html#cb89-6" tabindex="-1"></a>  <span class="fu">geom_rect</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> <span class="sc">-</span><span class="fl">0.05</span>, <span class="at">xmax =</span> <span class="fl">0.05</span>,</span>
+<span id="cb89-7"><a href="analysis-of-variance.html#cb89-7" tabindex="-1"></a>                <span class="at">ymin =</span> <span class="sc">-</span><span class="cn">Inf</span>, <span class="at">ymax =</span> <span class="cn">Inf</span>), </span>
+<span id="cb89-8"><a href="analysis-of-variance.html#cb89-8" tabindex="-1"></a>            <span class="at">size =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">&quot;pink&quot;</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb89-9"><a href="analysis-of-variance.html#cb89-9" tabindex="-1"></a>  <span class="fu">stat_dotsinterval</span>(<span class="at">point_interval =</span> mode_hdi, <span class="at">.width =</span> <span class="fl">0.95</span>, <span class="at">quantiles =</span> <span class="dv">100</span>) <span class="sc">+</span> </span>
+<span id="cb89-10"><a href="analysis-of-variance.html#cb89-10" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb89-11"><a href="analysis-of-variance.html#cb89-11" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Italian Syrah vs. Californian Merlot in rated bitterness&quot;</span>,</span>
+<span id="cb89-12"><a href="analysis-of-variance.html#cb89-12" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">&quot;Pink area is a [-0.05, 0.05] ROPE around 0 difference.&quot;</span>,</span>
+<span id="cb89-13"><a href="analysis-of-variance.html#cb89-13" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;Our overall conclusions, however, would not change much using the defaults.&quot;</span>)</span></code></pre></div>
+<p><img src="02-ANOVA_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
+<p>So in this case, it seems like the speed of using <code>brms</code> defaults, at least for exploratory data analysis, may be worthwhile.</p>
+<p>I might try to incorporate some more Bayesian tools as we go along, as I find them very interesting. If you want to learn more about these, I recommend the sources listed above and cited in the text here.</p>
+</div>
+<div id="packages-used-in-this-chapter-1" class="section level2 hasAnchor" number="2.5">
+<h2><span class="header-section-number">2.5</span> Packages used in this chapter<a href="analysis-of-variance.html#packages-used-in-this-chapter-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="analysis-of-variance.html#cb90-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.3.1 (2023-06-16)
+## Platform: aarch64-apple-darwin20 (64-bit)
+## Running under: macOS Ventura 13.6.1
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## time zone: America/New_York
+## tzcode source: internal
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] tidybayes_3.0.6 brms_2.20.1     Rcpp_1.0.11     tidytext_0.4.1 
+##  [5] agricolae_1.3-6 here_1.0.1      lubridate_1.9.2 forcats_1.0.0  
+##  [9] stringr_1.5.0   dplyr_1.1.2     purrr_1.0.1     readr_2.1.4    
+## [13] tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.3   tidyverse_2.0.0
+## 
+## loaded via a namespace (and not attached):
+##   [1] tensorA_0.36.2       rstudioapi_0.15.0    jsonlite_1.8.7      
+##   [4] magrittr_2.0.3       estimability_1.4.1   farver_2.1.1        
+##   [7] rmarkdown_2.23       vctrs_0.6.3          base64enc_0.1-3     
+##  [10] htmltools_0.5.6      distributional_0.3.2 haven_2.5.3         
+##  [13] broom_1.0.5          janeaustenr_1.0.0    sass_0.4.7          
+##  [16] StanHeaders_2.26.27  bslib_0.5.1          htmlwidgets_1.6.2   
+##  [19] tokenizers_0.3.0     plyr_1.8.8           emmeans_1.8.7       
+##  [22] zoo_1.8-12           cachem_1.0.8         igraph_1.5.0.1      
+##  [25] mime_0.12            lifecycle_1.0.3      pkgconfig_2.0.3     
+##  [28] colourpicker_1.3.0   Matrix_1.6-0         R6_2.5.1            
+##  [31] fastmap_1.1.1        shiny_1.7.5          digest_0.6.33       
+##  [34] klaR_1.7-2           colorspace_2.1-0     ps_1.7.5            
+##  [37] rprojroot_2.0.3      crosstalk_1.2.0      SnowballC_0.7.1     
+##  [40] labeling_0.4.3       fansi_1.0.4          timechange_0.2.0    
+##  [43] abind_1.4-5          compiler_4.3.1       bit64_4.0.5         
+##  [46] withr_2.5.0          backports_1.4.1      inline_0.3.19       
+##  [49] shinystan_2.6.0      pkgbuild_1.4.2       highr_0.10          
+##  [52] MASS_7.3-60          gtools_3.9.4         loo_2.6.0           
+##  [55] tools_4.3.1          httpuv_1.6.11        threejs_0.3.3       
+##  [58] quadprog_1.5-8       glue_1.6.2           questionr_0.7.8     
+##  [61] callr_3.7.3          nlme_3.1-162         promises_1.2.1      
+##  [64] grid_4.3.1           checkmate_2.2.0      cluster_2.1.4       
+##  [67] reshape2_1.4.4       generics_0.1.3       gtable_0.3.4        
+##  [70] labelled_2.12.0      tzdb_0.4.0           hms_1.1.3           
+##  [73] utf8_1.2.3           ggdist_3.3.0         pillar_1.9.0        
+##  [76] markdown_1.8         vroom_1.6.3          posterior_1.4.1     
+##  [79] later_1.3.1          lattice_0.21-8       AlgDesign_1.2.1     
+##  [82] bit_4.0.5            tidyselect_1.2.0     miniUI_0.1.1.1      
+##  [85] knitr_1.43           arrayhelpers_1.1-0   gridExtra_2.3       
+##  [88] bookdown_0.37        stats4_4.3.1         xfun_0.39           
+##  [91] bridgesampling_1.1-2 matrixStats_1.0.0    DT_0.28             
+##  [94] rstan_2.21.8         stringi_1.7.12       yaml_2.3.7          
+##  [97] evaluate_0.21        codetools_0.2-19     cli_3.6.1           
+## [100] RcppParallel_5.1.7   shinythemes_1.2.0    xtable_1.8-4        
+## [103] munsell_0.5.0        processx_3.8.2       jquerylib_0.1.4     
+## [106] coda_0.19-4          svUnit_1.0.6         parallel_4.3.1      
+## [109] rstantools_2.3.1.1   ellipsis_0.3.2       prettyunits_1.1.1   
+## [112] dygraphs_1.1.1.6     bayesplot_1.10.0     Brobdingnag_1.2-9   
+## [115] mvtnorm_1.2-2        scales_1.2.1         xts_0.13.1          
+## [118] crayon_1.5.2         combinat_0.0-8       rlang_1.1.1         
+## [121] shinyjs_2.1.0</code></pre>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-brockhoffTaking2015" class="csl-entry">
+Brockhoff, Per Bruun, Pascal Schlich, and Ib Skovgaard. 2015. <span>“Taking Individual Scaling Differences into Account by Analyzing Profile Data with the <span>Mixed Assessor Model</span>.”</span> <em>Food Quality and Preference</em> 39 (January): 156–66. <a href="https://doi.org/10.1016/j.foodqual.2014.07.005">https://doi.org/10.1016/j.foodqual.2014.07.005</a>.
+</div>
+<div id="ref-kruschkeDoing2014" class="csl-entry">
+Kruschke, John. 2014. <span>“Doing <span>Bayesian</span> Data Analysis: <span>A</span> Tutorial with <span>R</span>, <span>JAGS</span>, and <span>Stan</span>.”</span>
+</div>
+<div id="ref-kurzDoingBayesianDataAnalysis2023" class="csl-entry">
+Kurz, A. Solomon. 2023. <em>Doing <span>Bayesian</span> Data Analysis in Brms and the Tidyverse</em>. Version 1.1.0. <a href="https://bookdown.org/content/3686/">https://bookdown.org/content/3686/</a>.
+</div>
+<div id="ref-rencherMethods2002" class="csl-entry">
+Rencher, Alvin C. 2002. <em>Methods of Multivariate Analysis</em>. 2nd ed. Wiley Series in Probability and Mathematical Statistics. <span>New York</span>: <span>J. Wiley</span>.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="data-import-and-set-up.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="dealing-with-missing-data.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/02-ANOVA.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": true
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

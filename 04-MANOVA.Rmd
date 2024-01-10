@@ -1,0 +1,330 @@
+---
+output: html_document
+---
+
+# MANOVA (Multivariate Analysis of Variance)
+
+In this extremely brief section we'll apply a multivariate ANOVA (MANOVA) to our data.  MANOVA analyzes changes in the mean vectors of outcome variables based on categorical factors.  We'll spend slightly more time than HGH did in the original **R Opus** on these concepts, although *only* slightly.
+
+First, let's reload our packages and data:
+
+```{r, message = FALSE}
+library(tidyverse)
+library(here)
+
+descriptive_data <- read_csv(here("data/torriDAFinal.csv")) %>%
+  
+  # Don't forget to change the independent variables here to factors...
+  
+  mutate_at(.vars = vars(1:3), ~as.factor(.))
+```
+
+## Running MANOVA
+
+The syntax for MANOVA in `R` is very similar to that for ANOVA.  However, as far as I know there isn't a *great* way to use a tidy approach with `map()` and `nest()` to get `manova()` to work; from what I can tell, this has to do with `R`'s formula syntax: we can't easily specify the outcome variable (on the left side of the `~` in the formula) using the named elements of a typical `R` formula as we did in the ANOVA section.  There, we could write a formula like `rating ~ ProductName` (I'm simplifying to save myself typing).  `R` is able to interpret a single name in the formula syntax, but it will not parse something like `Red_berry:Astringent ~ ProductName`, which would be necessary for MANOVA.  
+
+Instead, we have to supply the multivariate outcomes as a (named) matrix *in the same (case or wide) order* as the categorical predictors.  Since we don't really need this for anything else, we'll use nested function calls.  
+
+```{r}
+manova_res <- 
+  manova(as.matrix(descriptive_data[, 4:23]) ~ (ProductName + NJ + NR)^2, 
+         data = descriptive_data)
+```
+
+We can get a summary MANOVA table using the typical `summary()` function.  
+
+```{r}
+summary(manova_res, test = "W")
+```
+
+The `test = "W"` argument asks for Wilk's $\Lambda$, which is for whatever reason the preferred test in sensory evaluation (HGH also prefers it).  The default test provided by `R` is Pillai's $V$.  Only in rare edge cases will the two tests disagree, which you are unlikely to encounter.
+
+In this particular case, we see that there are significant differences in group mean vectors for wine (`ProductName`) and judge (`NJ`), as well as an interaction effect (`ProductName:NJ`).
+
+## What does MANOVA test?
+
+This isn't a statistics course.  But I do feel that HGH didn't give much detail in the original **R Opus**, so let's take a second to think about MANOVA (and practice some wrangling while we're at it).
+
+In typical ANOVA, we are interested in whether knowing the categorical predictor variables tells us something about expected value for an observation.  In our case, we might want to know if knowing the wine identity (`C_ZINFANDEL` for example) tells us something about the expected level of a sensory descriptor (for example, `Red_berry`).  With elaboration, this is always the question we are answering with ANOVA.
+
+What are we measuring in MANOVA?  Well, if we treat our data in the wide, case-based way, we are asking whether the categorical predictor variables tell us anything about *all of the expected values, simultaneously*.  This makes a lot of sense for our particular case: we might expect correlations among variables, and so rather than investigating variables one-by-one, as we did when we ran ANOVA, we want to take advantage of this *correlation structure*.
+
+```{r}
+descriptive_data[, 4:23] %>%
+  cor() %>% 
+  heatmap(revC = TRUE)
+```
+
+Without getting too outside our remit in the **R Opus**, MANOVA attemps to explain the variation of individual observations from their *group mean-vectors*.  A "mean-vector" is just the mean of all dependent variables for a particular set of classifying categorical predictors.  So, for our data, the dependent variables are all the sensory variables.  We (generally) are interested in the variation around the **wine** mean-vectors.  We can see these easily using the split-apply-combine approach:
+
+```{r}
+wine_mean_vectors <- 
+  descriptive_data %>%
+  group_by(ProductName) %>%
+  summarize_if(.predicate = ~is.numeric(.),
+               .funs = ~mean(.))
+
+wine_mean_vectors
+```
+
+We want to know whether an observation from a particular wine is significantly "closer" to that wine's mean-vector than it is to other wine's mean-vectors.  We test this using the [Mahalanobis Distance](https://en.wikipedia.org/wiki/Mahalanobis_distance), which is a generalization of the normalized distance (or *z*-score) from univariate statistics.  Intuitively, we ask about the (multi-dimensional) distance of an observation from a mean-vector, divided by the covariance of the observations (the multivariate equivalent of standard deviation).  Without getting into mathematics, we can ask about this distance using the `mahalanobis()` function.
+
+```{r}
+
+distance_from_grand_mean <- 
+  descriptive_data[, -(1:3)] %>%
+  as.matrix() %>%
+  mahalanobis(x = ., center = colMeans(.), cov = cov(.))
+
+descriptive_data %>%
+  select(-NJ, -NR) %>%
+  nest(data = -ProductName) %>%
+  mutate(data = map(data, ~as.matrix(.x)), 
+         distance_from_group_mean = map(data, ~mahalanobis(x = .x, center = colMeans(.x), cov = cov(.x)))) %>%
+  select(-data) %>%
+  unnest(distance_from_group_mean) %>%
+  mutate(distance_from_grand_mean = distance_from_grand_mean) %>%
+  pivot_longer(-ProductName) %>%
+  ggplot(aes(x = value, color = ProductName, linetype = name)) +
+  geom_density() +
+  geom_rug() +
+  theme_bw() +
+  labs(x = "Mahalanobis distance from wine (group) and grand (overall) mean") +
+  facet_wrap(~ProductName)
+```
+
+In this plot, we're able to see how far each individual row (observation) is, in a standardized, multivariate space, from the group mean (the dashed line) and the grand mean (the solid line).  We can see that our groups are not necessarily well-defined: often, the grand mean seems to do a better job of describing our samples than the group mean for the specific wine.  This might be a sign of our panelists needing further training, but recall that this (simple) visualization doesn't account for variance stemming from replicate and individual judge scaling behavior, nuisance factors that we actually included in the real MANOVA we ran above.  When we include these, we find that in fact group membership (the type of wine) is important for predicting the sample mean vector.
+
+```{r}
+descriptive_data %>%
+  select(-ProductName, -NJ) %>%
+  nest(data = -NR) %>%
+  mutate(data = map(data, ~as.matrix(.x)), 
+         distance_from_group_mean = map(data, ~mahalanobis(x = .x, center = colMeans(.x), cov = cov(.x)))) %>%
+  select(-data) %>%
+  unnest(distance_from_group_mean) %>%
+  mutate(distance_from_grand_mean = distance_from_grand_mean) %>%
+  pivot_longer(-NR) %>%
+  ggplot(aes(x = value, color = NR, linetype = name)) +
+  geom_density() +
+  geom_rug() +
+  theme_bw() +
+  labs(x = "Mahalanobis distance from rep (group) and grand (overall) mean") +
+  facet_wrap(~NR)
+```
+
+Here we can see that the distribution is almost identical, meaning that knowing what replication (`NR`) the observation comes from gives us almost no new information.  This is good news, because we don't *want* the replication to predict anything about the sensory quality of our wines!  
+
+We would display the same plot for our judges (`NJ`), but some of our judges are TOO repeatable: they have singular covariance matrices (we can tell because the determinant of their covariance matrices is 0), which indicates that the rank of their covariance matrix is less than the number of attributes.  This in turn leads to a situation in which their product descriptions are lower-dimensional than the data.
+
+```{r}
+descriptive_data %>%
+  select(-ProductName, -NR) %>%
+  nest(data = -NJ) %>%
+  mutate(data = map(data, ~as.matrix(.x)),
+         covariance_matrix = map(data, ~cov(.x)),
+         determinant = map_dbl(covariance_matrix, ~det(.x)))
+```
+
+Let's take a quick look at subject 1404's ratings:
+
+```{r}
+descriptive_data %>%
+  filter(NJ == "1404")
+```
+
+Because this subject never used "Chocolate" or "Band-aid" descriptors, they end up with a rank-deficient covariance matrix:
+
+```{r}
+descriptive_data %>%
+  filter(NJ == "1404") %>%
+  select(-(1:3)) %>%
+  cov() %>%
+  round(2)
+```
+
+The rows (columns) for "Chocolate" and "Band-aid" are exact scaled multiples of each other (they are in fact both entirely `0`), and so this matrix is of rank less than its dimensionality, leading to a singularity problem.
+
+## BONUS: Hierarchical Bayes instead of MANOVA
+
+In the section on [ANOVA][Analysis of Variance], we explored applying an ANOVA-like model to our rating data.  But we really have a set of correlated dependent variables:
+
+```{r, text=FALSE}
+# For correlation tibbles
+library(corrr)
+
+descriptive_data %>%
+  select(-c(1:3)) %>%
+  correlate(quiet = TRUE)
+```
+
+I wonder if we can use a Bayesian hierarchical approach to simultaneously model all of the descriptor ratings.  We can do this by treating `descriptor` as a factor in an ANOVA-like model:
+
+```{r eval=FALSE}
+rating ~ 1 + (1 | descriptor) + (1 | ProductName) + (1 | NJ) + (1 | NR) + 
+  (1 | ProductName:NJ) + (1 | ProductName:descriptor) + (1 | NJ:descriptor)
+```
+
+This is only kind of theoretically justified.  We are implying that all descriptors have some hierarchical source of variation.  In one way, this makes no sense, but in another it isn't entirely crazy.  Let's see if this model if fittable.
+
+```{r message=FALSE}
+# First, get the data into the right shape:
+
+descriptive_data_tidy <- 
+  descriptive_data %>%
+  pivot_longer(cols = -c(NJ, NR, ProductName),
+               names_to = "descriptor",
+               values_to = "rating")
+
+library(brms)
+library(tidybayes)
+
+# Note: this took about an hour to run on my early-2020 MacBook.  It's a silly
+# idea that I am exploring, and so probably not worth that time!
+b_all <- 
+  brm(data = descriptive_data_tidy,
+      family = gaussian,
+      formula = rating ~ 1 + (1 | descriptor) + (1 | ProductName) + (1 | NJ) + (1 | NR) + 
+        (1 | ProductName:NJ) + (1 | ProductName:descriptor) + (1 | NJ:descriptor),
+      iter = 4000, warmup = 1000, chains = 4, cores = 4, seed = 4,
+      control = list(adapt_delta = 0.999, max_treedepth = 13),
+      file = here("fits/fit_04_all_descriptors"))
+```
+
+```{r, include=FALSE}
+b_all <- readRDS(here("fits/fit_04_all_descriptors.rds"))
+```
+
+We can inspect the overall model fit, although plotting posterior draws for all parameters would take up so much space that we are not going to do so.  Let's look at the overall model summary:
+
+```{r}
+b_all
+```
+
+I am genuinely surprised that we were able to fit a model with only 2 divergent transitions.  Looking at $\hat{R}$ and $ESS$, it appears that we don't have huge problems with the estimation part of the task.  The question is whether this approach makes any sense.  Let's take a look at the overall estimated standard deviation, $\sigma_{rating}$, which is held constant across all groups:
+
+```{r}
+draws <- as_draws_df(b_all)
+
+draws %>% 
+  ggplot(aes(x = sigma)) + 
+  stat_dotsinterval(point_interval = mode_hdi, .width = 0.95,
+                    shape = 23, stroke = 1/4, point_size = 3, slab_size = 1/4,
+                    quantiles = 100) + 
+  theme_classic()
+```
+
+We can see that the standard deviation is pretty large, which makes sense with the approach we've chosen, because the individual standard deviation in different subgroups of observations (within descriptors, within subjects, and within reps) is quite large (for example, with the descriptors):
+
+```{r}
+descriptive_data_tidy %>%
+  group_by(descriptor) %>%
+  summarize(sd = sd(rating)) %>%
+  ggplot(aes(x = sd, y = descriptor)) + 
+  geom_point() + 
+  theme_bw()
+```
+
+Some of our descriptors have observed standard deviations less than 1.5, and some are almost 3!  That's a pretty big spread.  [There are ways to model variance heterogeneously](https://bookdown.org/content/3686/metric-predicted-variable-with-multiple-nominal-predictors.html#heterogeneous-variances-and-robustness-against-outliers-1), and this would be a better approach in this situation, but since this is mostly exploration on my part, and it already took ~1 hour to run this model, I am not going to run a more intensive model.  Check out that link if you want to learn more.
+
+We can see that a consequence of this hierarchical model is that the overall mean rating tendency influences the estimates for subgroups.  For example, our more extreme mean ratings get more shrunk back towards the grand mean for all ratings:
+
+```{r}
+# First, we'll reformulate our model to look at the main effect of descriptors
+
+# We need to tell the `fitted()` function that we are requesting posterior draws
+# for each distinct descriptor group mean (mu) parameter
+nd <- descriptive_data_tidy %>% distinct(descriptor)
+
+f <- 
+  fitted(b_all,
+         re_formula = ~ (1 | descriptor),
+         newdata = nd) %>%
+  as_tibble() %>%
+  bind_cols(nd) %>%
+  select(descriptor, Estimate) %>%
+  left_join(descriptive_data_tidy %>%
+              group_by(descriptor) %>%
+              summarize(Observed = mean(rating)))
+
+f %>%
+  ggplot(aes(y = descriptor)) +
+  geom_vline(xintercept = fixef(b_all)[, 1], 
+             color = "darkred", size = 2, alpha = 1/2) + 
+  geom_point(aes(x = Estimate), color = "forestgreen") +
+  geom_point(aes(x = Observed), color = "tan", 
+             position = position_jitter(height = 0, width = 0.01, seed = 4)) +
+  geom_segment(aes(yend = descriptor, x = Observed, xend = Estimate), 
+               arrow = arrow(length = unit(x = 0.05, units = "in"), ends = "last"),
+               alpha = 2/3) + 
+  theme_bw() + 
+  labs(x = NULL, y = NULL,
+       subtitle = "Estimated means (green) are shrunken towards the\ngrand mean (red line) by the hierarchical model")
+
+```
+
+Whether this is a reasonable consequence depends on our assumptions about the data.  I think there might be something to this approach for helping to combat heterogeneity in rating approaches among subjects, but I am not really enough of an expert in this area to determine if that really makes sense.
+
+What we can do with the current model is use it investigate useful contrasts.  We take the same approach as above to get the marginalized posterior across the descriptors and the wines.
+
+```{r}
+nd <-
+  descriptive_data_tidy %>%
+  distinct(descriptor, ProductName) %>%
+  mutate(col_names = str_c(ProductName, ":", descriptor)) 
+
+
+f <-
+  nd %>%
+  fitted(b_all, 
+         newdata = .,
+         # We need to marginalize across both `NJ` and `NR` for this
+         re_formula = ~ (1 | ProductName) + (1 | descriptor) + (1 | ProductName:descriptor),
+         summary = FALSE) %>%
+  as_tibble() %>%
+  set_names(nd %>% pull(col_names))
+
+head(f)
+```
+
+This gets us a rather large table of the estimates for each descriptor at each wine.  These are the estimated mean parameters for the "simple effects" that can let us examine contrasts.  This full data table is too large to be wieldy, so we can trim it down for individual inquiries.  For example, let's examine `Vanilla` and `Chocolate`, since they are often confusable, and see if there is a difference in the way `rating` changes for them in across two different wines... let's say `C_MERLOT` and `I_MERLOT`.
+
+```{r}
+interactions <- 
+  f %>%
+  transmute(`C_MERLOT - I_MERLOT @ Vanilla` = `C_MERLOT:Vanilla` - `I_MERLOT:Vanilla`,
+            `C_MERLOT - I_MERLOT @ Chocolate` = `C_MERLOT:Chocolate` - `I_MERLOT:Chocolate`) %>%
+  mutate(`C_MERLOT v. I_MERLOT\n(x)\nVanilla v. Chocolate` = `C_MERLOT - I_MERLOT @ Vanilla` - `C_MERLOT - I_MERLOT @ Chocolate`)
+
+# What does this look like?
+head(interactions)
+```
+
+Now we can plot this, with just a little bit more wrangling:
+
+```{r}
+levels <- colnames(interactions)
+
+interactions %>%
+  pivot_longer(everything()) %>%
+  mutate(name = factor(name, levels = levels)) %>%
+  ggplot(aes(x = value)) + 
+  # Throw in a ROPE of [-0.05, 0.05] around 0
+  geom_rect(aes(xmin = -0.05, xmax = 0.05,
+                ymin = -Inf, ymax = Inf),
+            color = "transparent", fill = "lightgrey") + 
+  stat_dotsinterval(point_interval = mode_hdi, .width = 0.95,
+                    shape = 23, stroke = 1/4, point_size = 3, slab_size = 1/4,
+                    quantiles = 100, fill = "darkgreen") +
+  facet_wrap(~name, scales = "free_x") +
+  theme_classic()
+  
+```
+
+In retrospect, this isn't a very interesting comparison: it turns out both the simple effects and (unsurprisingly, given the former statement) contrast effect both have HDIs that firmly include a ROPE around 0.  Again, this was more of an exercise in exploring this tool than something I was expecting to find necessarily immediately useful.
+
+## Packages used in this chapter
+
+```{r}
+sessionInfo()
+```

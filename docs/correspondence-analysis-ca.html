@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 10 Correspondence Analysis (CA) | The R Opus v2</title>
+  <meta name="description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 10 Correspondence Analysis (CA) | The R Opus v2" />
+  <meta property="og:type" content="book" />
+  <meta property="og:image" content="/img/r-opus-cover.jpg" />
+  <meta property="og:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="github-repo" content="jlahne/r-opus-v2" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 10 Correspondence Analysis (CA) | The R Opus v2" />
+  
+  <meta name="twitter:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="twitter:image" content="/img/r-opus-cover.jpg" />
+
+<meta name="author" content="Jacob Lahne" />
+
+
+<meta name="date" content="2024-01-10" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="distatis.html"/>
+<link rel="next" href="preference-mapping.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">The R Opus v2</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#usage"><i class="fa fa-check"></i>Usage</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#r-setup"><i class="fa fa-check"></i><code>R</code> Setup</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#what-this-is-not"><i class="fa fa-check"></i>What this is not</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#about-me"><i class="fa fa-check"></i>About me</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#session-info"><i class="fa fa-check"></i>Session Info</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html"><i class="fa fa-check"></i><b>1</b> Data import and set up</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#exploring-our-data"><i class="fa fa-check"></i><b>1.1</b> Exploring our data</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#the-descriptive-data"><i class="fa fa-check"></i><b>1.1.1</b> The descriptive data</a></li>
+<li class="chapter" data-level="1.1.2" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#consumer-data"><i class="fa fa-check"></i><b>1.1.2</b> Consumer data</a></li>
+<li class="chapter" data-level="1.1.3" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#the-other-data-frames"><i class="fa fa-check"></i><b>1.1.3</b> The other data frames</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#wranglingtidying-data"><i class="fa fa-check"></i><b>1.2</b> Wrangling/tidying data</a></li>
+<li class="chapter" data-level="1.3" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#wrap-up-and-summary"><i class="fa fa-check"></i><b>1.3</b> Wrap up and summary</a></li>
+<li class="chapter" data-level="1.4" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#packages-used-in-this-chapter"><i class="fa fa-check"></i><b>1.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html"><i class="fa fa-check"></i><b>2</b> Analysis of Variance</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#univariate-analysis-with-the-linear-model"><i class="fa fa-check"></i><b>2.1</b> Univariate analysis with the linear model</a></li>
+<li class="chapter" data-level="2.2" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#pseudo-mixed-anova"><i class="fa fa-check"></i><b>2.2</b> Pseudo-mixed ANOVA</a></li>
+<li class="chapter" data-level="2.3" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#mean-comparison-post-hoc-testing"><i class="fa fa-check"></i><b>2.3</b> Mean comparison (post-hoc testing)</a></li>
+<li class="chapter" data-level="2.4" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#bonus-bayesian-approaches-to-anova"><i class="fa fa-check"></i><b>2.4</b> BONUS: Bayesian approaches to ANOVA</a></li>
+<li class="chapter" data-level="2.5" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#packages-used-in-this-chapter-1"><i class="fa fa-check"></i><b>2.5</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html"><i class="fa fa-check"></i><b>3</b> Dealing with missing data</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#exploring-missing-data"><i class="fa fa-check"></i><b>3.1</b> Exploring missing data</a></li>
+<li class="chapter" data-level="3.2" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#imputing-missing-data"><i class="fa fa-check"></i><b>3.2</b> Imputing missing data</a></li>
+<li class="chapter" data-level="3.3" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#alternative-approaches-to-imputation"><i class="fa fa-check"></i><b>3.3</b> Alternative approaches to imputation</a></li>
+<li class="chapter" data-level="3.4" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#packages-used-in-this-chapter-2"><i class="fa fa-check"></i><b>3.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html"><i class="fa fa-check"></i><b>4</b> MANOVA (Multivariate Analysis of Variance)</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#running-manova"><i class="fa fa-check"></i><b>4.1</b> Running MANOVA</a></li>
+<li class="chapter" data-level="4.2" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#what-does-manova-test"><i class="fa fa-check"></i><b>4.2</b> What does MANOVA test?</a></li>
+<li class="chapter" data-level="4.3" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#bonus-hierarchical-bayes-instead-of-manova"><i class="fa fa-check"></i><b>4.3</b> BONUS: Hierarchical Bayes instead of MANOVA</a></li>
+<li class="chapter" data-level="4.4" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#packages-used-in-this-chapter-3"><i class="fa fa-check"></i><b>4.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html"><i class="fa fa-check"></i><b>5</b> Canonical Variate Analysis</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#what-is-cva"><i class="fa fa-check"></i><b>5.1</b> What is CVA?</a></li>
+<li class="chapter" data-level="5.2" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#application-of-cva"><i class="fa fa-check"></i><b>5.2</b> Application of CVA</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#basic-visualization-of-cva"><i class="fa fa-check"></i><b>5.2.1</b> Basic visualization of CVA</a></li>
+<li class="chapter" data-level="5.2.2" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#an-aside-on-exporting-r-plots"><i class="fa fa-check"></i><b>5.2.2</b> An aside on exporting R plots</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#plotting-uncertainty-in-cva"><i class="fa fa-check"></i><b>5.3</b> Plotting uncertainty in CVA</a></li>
+<li class="chapter" data-level="5.4" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#packages-used-in-this-chapter-4"><i class="fa fa-check"></i><b>5.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html"><i class="fa fa-check"></i><b>6</b> Principal Components Analysis (PCA)</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#what-does-pca-do"><i class="fa fa-check"></i><b>6.1</b> What does PCA do?</a></li>
+<li class="chapter" data-level="6.2" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#lets-do-pca"><i class="fa fa-check"></i><b>6.2</b> Let’s do PCA!</a></li>
+<li class="chapter" data-level="6.3" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#in-depth-interpretation"><i class="fa fa-check"></i><b>6.3</b> In-depth interpretation</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#correlations-or-squared-loadings-or-contributions"><i class="fa fa-check"></i><b>6.3.1</b> Correlations or (squared) loadings or contributions</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#pca-with-resampling-for-confidence-intervals"><i class="fa fa-check"></i><b>6.4</b> PCA with resampling for confidence intervals</a></li>
+<li class="chapter" data-level="6.5" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#comparison-of-products-with-pca"><i class="fa fa-check"></i><b>6.5</b> Comparison of products with PCA</a></li>
+<li class="chapter" data-level="6.6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#packages-used-in-this-chapter-5"><i class="fa fa-check"></i><b>6.6</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="cluster-analysis.html"><a href="cluster-analysis.html"><i class="fa fa-check"></i><b>7</b> Cluster analysis</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="cluster-analysis.html"><a href="cluster-analysis.html#hierarchical-clustering-on-distances"><i class="fa fa-check"></i><b>7.1</b> Hierarchical clustering on distances</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="cluster-analysis.html"><a href="cluster-analysis.html#wards-method"><i class="fa fa-check"></i><b>7.1.1</b> Ward’s Method</a></li>
+<li class="chapter" data-level="7.1.2" data-path="cluster-analysis.html"><a href="cluster-analysis.html#single-linkage"><i class="fa fa-check"></i><b>7.1.2</b> Single linkage</a></li>
+<li class="chapter" data-level="7.1.3" data-path="cluster-analysis.html"><a href="cluster-analysis.html#complete-linkage"><i class="fa fa-check"></i><b>7.1.3</b> Complete Linkage</a></li>
+<li class="chapter" data-level="7.1.4" data-path="cluster-analysis.html"><a href="cluster-analysis.html#average-linkage"><i class="fa fa-check"></i><b>7.1.4</b> Average Linkage</a></li>
+<li class="chapter" data-level="7.1.5" data-path="cluster-analysis.html"><a href="cluster-analysis.html#comparing-methods"><i class="fa fa-check"></i><b>7.1.5</b> Comparing methods</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="cluster-analysis.html"><a href="cluster-analysis.html#using-cluster-ids"><i class="fa fa-check"></i><b>7.2</b> Using cluster IDs</a></li>
+<li class="chapter" data-level="7.3" data-path="cluster-analysis.html"><a href="cluster-analysis.html#k-means-clustering"><i class="fa fa-check"></i><b>7.3</b> K-means clustering</a></li>
+<li class="chapter" data-level="7.4" data-path="cluster-analysis.html"><a href="cluster-analysis.html#packages-used-in-this-chapter-6"><i class="fa fa-check"></i><b>7.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html"><i class="fa fa-check"></i><b>8</b> Multidimensional Scaling (MDS)</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#metric-vs-non-metric"><i class="fa fa-check"></i><b>8.1</b> Metric vs non-metric</a></li>
+<li class="chapter" data-level="8.2" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#metric-mds"><i class="fa fa-check"></i><b>8.2</b> Metric MDS</a></li>
+<li class="chapter" data-level="8.3" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#non-metric-mds"><i class="fa fa-check"></i><b>8.3</b> Non-metric MDS</a></li>
+<li class="chapter" data-level="8.4" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#wrap-up"><i class="fa fa-check"></i><b>8.4</b> Wrap up</a></li>
+<li class="chapter" data-level="8.5" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#packages-used-in-this-chapter-7"><i class="fa fa-check"></i><b>8.5</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="distatis.html"><a href="distatis.html"><i class="fa fa-check"></i><b>9</b> DISTATIS</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="distatis.html"><a href="distatis.html#the-dataset-sorting-wines-by-color"><i class="fa fa-check"></i><b>9.1</b> The dataset: sorting wines by color</a></li>
+<li class="chapter" data-level="9.2" data-path="distatis.html"><a href="distatis.html#distatis-demonstrated"><i class="fa fa-check"></i><b>9.2</b> DISTATIS demonstrated</a></li>
+<li class="chapter" data-level="9.3" data-path="distatis.html"><a href="distatis.html#comparison-to-mds"><i class="fa fa-check"></i><b>9.3</b> Comparison to MDS</a></li>
+<li class="chapter" data-level="9.4" data-path="distatis.html"><a href="distatis.html#packages-used-in-this-chapter-8"><i class="fa fa-check"></i><b>9.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="correspondence-analysis-ca.html"><a href="correspondence-analysis-ca.html"><i class="fa fa-check"></i><b>10</b> Correspondence Analysis (CA)</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="correspondence-analysis-ca.html"><a href="correspondence-analysis-ca.html#packages-used-in-this-chapter-9"><i class="fa fa-check"></i><b>10.1</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="preference-mapping.html"><a href="preference-mapping.html"><i class="fa fa-check"></i><b>11</b> Preference Mapping</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="preference-mapping.html"><a href="preference-mapping.html#data"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
+<li class="chapter" data-level="11.2" data-path="preference-mapping.html"><a href="preference-mapping.html#internal-preference-mapping"><i class="fa fa-check"></i><b>11.2</b> Internal preference mapping</a></li>
+<li class="chapter" data-level="11.3" data-path="preference-mapping.html"><a href="preference-mapping.html#external-preference-mapping"><i class="fa fa-check"></i><b>11.3</b> External preference mapping</a>
+<ul>
+<li class="chapter" data-level="11.3.1" data-path="preference-mapping.html"><a href="preference-mapping.html#partial-least-squares-regression"><i class="fa fa-check"></i><b>11.3.1</b> Partial Least Squares Regression</a></li>
+</ul></li>
+<li class="chapter" data-level="11.4" data-path="preference-mapping.html"><a href="preference-mapping.html#other-approaches"><i class="fa fa-check"></i><b>11.4</b> Other approaches</a></li>
+<li class="chapter" data-level="11.5" data-path="preference-mapping.html"><a href="preference-mapping.html#principal-components-regression"><i class="fa fa-check"></i><b>11.5</b> Principal Components Regression</a></li>
+<li class="chapter" data-level="11.6" data-path="preference-mapping.html"><a href="preference-mapping.html#packages-used-in-this-chapter-10"><i class="fa fa-check"></i><b>11.6</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html"><i class="fa fa-check"></i><b>12</b> Multiple Factor(ial) Analysis (MFA)</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#mfa-vs-pca"><i class="fa fa-check"></i><b>12.1</b> MFA vs PCA</a></li>
+<li class="chapter" data-level="12.2" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#mfa-with-different-measurements"><i class="fa fa-check"></i><b>12.2</b> MFA with different measurements</a></li>
+<li class="chapter" data-level="12.3" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#wrapping-up"><i class="fa fa-check"></i><b>12.3</b> Wrapping up</a></li>
+<li class="chapter" data-level="12.4" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#packages-used-in-this-chapter-11"><i class="fa fa-check"></i><b>12.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html"><i class="fa fa-check"></i><b>13</b> Generalized Procrustes Analysis</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html#packages-used-in-this-chapter-12"><i class="fa fa-check"></i><b>13.1</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="wrapping-up-1.html"><a href="wrapping-up-1.html"><i class="fa fa-check"></i><b>14</b> Wrapping up</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The R Opus v2</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="correspondence-analysis-ca" class="section level1 hasAnchor" number="10">
+<h1><span class="header-section-number">Chapter 10</span> Correspondence Analysis (CA)<a href="correspondence-analysis-ca.html#correspondence-analysis-ca" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Correspondence Analysis (CA) is a close relative of PCA that can be applied to count data. While PCA is appropriate for application when all observations are interval or ratio data, CA is built for the case when cell counts are positive integers. CA in its modern was developed for application to survey data by French quantitative sociologists, and the most comprehensive introduction to it is probably Michael Greenacre’s <em>Correspondence Analysis in Practice</em> <span class="citation">(<a href="#ref-greenacre2017correspondence">Greenacre 2017</a>)</span>. In sensory evaluation, we often apply CA to check-all-that-apply (CATA) data or to data derived from free-comment/text analysis, because these data involve positive counts. Sometimes these data meet the theoretical requirements for CA, and sometimes they do not. We won’t dig into those details here, but I also recommend checking out <a href="https://personal.utdallas.edu/~herve/abdi-AB2014_CA.pdf">Abdi and Bera’s more succinct articles</a> on the topic <span class="citation">(<a href="#ref-abdiCorrespondence">H. Abdi and Béra 2015</a>)</span>.</p>
+<p>None of the data we’ve been using for is exactly suited for CA (although <em>Multiple</em> Correspondence Analysis can be effectively used to analyze sorting data), so HGH used the <code>author</code> dataset that is included in the <code>ca</code> package (i.e., <code>ca::author</code>) to demonstrate the approach. We’ll follow suit.</p>
+<div class="sourceCode" id="cb314"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb314-1"><a href="correspondence-analysis-ca.html#cb314-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb314-2"><a href="correspondence-analysis-ca.html#cb314-2" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb314-3"><a href="correspondence-analysis-ca.html#cb314-3" tabindex="-1"></a><span class="fu">library</span>(ca)</span>
+<span id="cb314-4"><a href="correspondence-analysis-ca.html#cb314-4" tabindex="-1"></a></span>
+<span id="cb314-5"><a href="correspondence-analysis-ca.html#cb314-5" tabindex="-1"></a><span class="co"># We have to load the `author` dataset ourselves</span></span>
+<span id="cb314-6"><a href="correspondence-analysis-ca.html#cb314-6" tabindex="-1"></a><span class="fu">data</span>(author)</span>
+<span id="cb314-7"><a href="correspondence-analysis-ca.html#cb314-7" tabindex="-1"></a></span>
+<span id="cb314-8"><a href="correspondence-analysis-ca.html#cb314-8" tabindex="-1"></a>author</span></code></pre></div>
+<pre><code>##                                a   b   c   d    e   f   g   h   i  j  k   l   m
+## three daughters (buck)       550 116 147 374 1015 131 131 493 442  2 52 302 159
+## drifters (michener)          515 109 172 311  827 167 136 376 432  8 61 280 146
+## lost world (clark)           590 112 181 265  940 137 119 419 514  6 46 335 176
+## east wind (buck)             557 129 128 343  996 158 129 571 555  4 76 291 247
+## farewell to arms (hemingway) 589  72 129 339  866 108 159 449 472  7 59 264 158
+## sound and fury 7 (faulkner)  541 109 136 228  763 126 129 401 520  5 72 280 209
+## sound and fury 6 (faulkner)  517  96 127 356  771 115 189 478 558  6 80 322 163
+## profiles of future (clark)   592 151 251 238  985 168 152 381 544  7 39 416 236
+## islands (hemingway)          576 120 136 404  873 122 156 593 406  3 90 281 142
+## pendorric 3 (holt)           557  97 145 354  909  97 121 479 431 10 94 240 154
+## asia (michener)              554 108 206 243  797 164 100 328 471  4 34 293 149
+## pendorric 2 (holt)           541  93 149 390  887 133 154 463 518  4 65 265 194
+##                                n   o   p q   r   s   t   u   v   w  x   y  z
+## three daughters (buck)       534 516 115 4 409 467 632 174  66 155  5 150  3
+## drifters (michener)          470 561 140 4 368 387 632 195  60 156 14 137  5
+## lost world (clark)           403 505 147 8 395 464 670 224 113 146 13 162 10
+## east wind (buck)             479 509  92 3 413 533 632 181  68 187 10 184  4
+## farewell to arms (hemingway) 504 542  95 0 416 314 691 197  64 225  1 155  2
+## sound and fury 7 (faulkner)  471 589  84 2 324 454 672 247  71 160 11 280  1
+## sound and fury 6 (faulkner)  483 617  82 8 294 358 685 225  37 216 12 171  5
+## profiles of future (clark)   526 524 107 9 418 508 655 226  89 106 15 142 20
+## islands (hemingway)          516 488  91 3 339 349 640 194  40 250  3 104  5
+## pendorric 3 (holt)           417 477 100 3 305 415 597 237  64 194  9 140  4
+## asia (michener)              482 532 145 8 361 402 630 196  66 149  2  80  6
+## pendorric 2 (holt)           484 545  70 4 299 423 644 193  66 218  2 127  2</code></pre>
+<p>The <code>author</code> dataset is a <code>matrix</code> of counts for each letter of the English alphabet in several published works by various authors. As such, it’s suitable for analysis by CA. We are, in effect, asking which authors (rows) are most associated with which letters (columns) and vice versa.</p>
+<p>The <code>ca::ca()</code> function has various options, but HGH used it with default settings, which we will do as well:</p>
+<div class="sourceCode" id="cb316"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb316-1"><a href="correspondence-analysis-ca.html#cb316-1" tabindex="-1"></a>author_ca <span class="ot">&lt;-</span> <span class="fu">ca</span>(author)</span>
+<span id="cb316-2"><a href="correspondence-analysis-ca.html#cb316-2" tabindex="-1"></a></span>
+<span id="cb316-3"><a href="correspondence-analysis-ca.html#cb316-3" tabindex="-1"></a>author_ca</span></code></pre></div>
+<pre><code>## 
+##  Principal inertias (eigenvalues):
+##            1        2        3        4        5        6        7       
+## Value      0.007664 0.003688 0.002411 0.001383 0.001002 0.000723 0.000659
+## Percentage 40.91%   19.69%   12.87%   7.38%    5.35%    3.86%    3.52%   
+##            8        9        10       11      
+## Value      0.000455 0.000374 0.000263 0.000113
+## Percentage 2.43%    2%       1.4%     0.6%    
+## 
+## 
+##  Rows:
+##         three daughters (buck) drifters (michener) lost world (clark)
+## Mass                  0.085407            0.079728           0.084881
+## ChiDist               0.097831            0.094815           0.128432
+## Inertia               0.000817            0.000717           0.001400
+## Dim. 1               -0.095388            0.405697           1.157803
+## Dim. 2               -0.794999           -0.405560          -0.023114
+##         east wind (buck) farewell to arms (hemingway)
+## Mass            0.089411                     0.082215
+## ChiDist         0.118655                     0.122889
+## Inertia         0.001259                     0.001242
+## Dim. 1         -0.173901                    -0.831886
+## Dim. 2          0.434443                    -0.136485
+##         sound and fury 7 (faulkner) sound and fury 6 (faulkner)
+## Mass                       0.082310                    0.083338
+## ChiDist                    0.172918                    0.141937
+## Inertia                    0.002461                    0.001679
+## Dim. 1                     0.302025                   -0.925572
+## Dim. 2                     2.707599                    0.966944
+##         profiles of future (clark) islands (hemingway) pendorric 3 (holt)
+## Mass                      0.089722            0.082776           0.079501
+## ChiDist                   0.187358            0.165529           0.113174
+## Inertia                   0.003150            0.002268           0.001018
+## Dim. 1                    1.924060           -1.566481          -0.724758
+## Dim. 2                   -0.249310           -1.185338          -0.106349
+##         asia (michener) pendorric 2 (holt)
+## Mass           0.077827           0.082884
+## ChiDist        0.155115           0.101369
+## Inertia        0.001873           0.000852
+## Dim. 1         1.179548          -0.764937
+## Dim. 2        -1.186934          -0.091188
+## 
+## 
+##  Columns:
+##                 a         b         c         d         e         f         g
+## Mass     0.079847  0.015685  0.022798  0.045967  0.127070  0.019439  0.020025
+## ChiDist  0.048441  0.148142  0.222783  0.189938  0.070788  0.165442  0.156640
+## Inertia  0.000187  0.000344  0.001132  0.001658  0.000637  0.000532  0.000491
+## Dim. 1   0.017623  0.984463  2.115029 -1.925632  0.086722  1.276526 -1.020713
+## Dim. 2  -0.320271 -0.398032 -1.373448 -1.135362 -0.684785 -0.732952  0.353017
+##                 h        i        j         k         l        m         n
+## Mass     0.064928 0.070092 0.000789  0.009181  0.042667 0.025500  0.068968
+## ChiDist  0.154745 0.086328 0.412075  0.296727  0.120397 0.159747  0.075706
+## Inertia  0.001555 0.000522 0.000134  0.000808  0.000618 0.000651  0.000395
+## Dim. 1  -1.501277 0.267473 0.453341 -2.755177  1.018257 0.712695 -0.200364
+## Dim. 2  -0.302413 0.889546 0.916032  1.231557 -0.165020 1.400966 -0.417258
+##                 o         p         q         r        s         t        u
+## Mass     0.076572  0.015159  0.000669  0.051897 0.060660  0.093010 0.029756
+## ChiDist  0.088101  0.250617  0.582298  0.111725 0.123217  0.050630 0.119215
+## Inertia  0.000594  0.000952  0.000227  0.000648 0.000921  0.000238 0.000423
+## Dim. 1  -0.108491  1.610807  4.079786  0.591372 0.860202 -0.100464 0.163295
+## Dim. 2   0.637987 -1.837948 -1.914791 -0.734216 0.405610  0.203141 1.017140
+##                v         w        x        y         z
+## Mass    0.009612  0.025847 0.001160 0.021902  0.000801
+## ChiDist 0.269770  0.232868 0.600831 0.301376  0.833700
+## Inertia 0.000700  0.001402 0.000419 0.001989  0.000557
+## Dim. 1  2.281333 -2.499232 3.340505 0.001519  6.808100
+## Dim. 2  0.177022 -0.284722 4.215355 4.706083 -3.509223</code></pre>
+<p>Printing the <code>author_ca</code> object gives us details about the analysis, which we are going to follow HGH in not interpreting over-much. We are going to treat CA largely as a visualization method, and not get too into the math: it’s not overly complicated, but it involves a lot of saying things like “for rows (correspondingly, columns)” and I just don’t see it being worthwhile.</p>
+<p>As always, we’re going to replace base-<code>R</code> plotting with <code>ggplot2</code>. We’ll do this in a couple of ways. First off, we can get the “standard coordinates” (per the <code>?ca</code> documentation) in <code>$colcoord</code> and <code>$rowcoord</code>. Let’s see what happens if we pull them out and plot them directly</p>
+<div class="sourceCode" id="cb318"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb318-1"><a href="correspondence-analysis-ca.html#cb318-1" tabindex="-1"></a>book_coords <span class="ot">&lt;-</span> </span>
+<span id="cb318-2"><a href="correspondence-analysis-ca.html#cb318-2" tabindex="-1"></a>  author_ca<span class="sc">$</span>rowcoord <span class="sc">%&gt;%</span></span>
+<span id="cb318-3"><a href="correspondence-analysis-ca.html#cb318-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;name&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb318-4"><a href="correspondence-analysis-ca.html#cb318-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">point_type =</span> <span class="st">&quot;book&quot;</span>)</span>
+<span id="cb318-5"><a href="correspondence-analysis-ca.html#cb318-5" tabindex="-1"></a></span>
+<span id="cb318-6"><a href="correspondence-analysis-ca.html#cb318-6" tabindex="-1"></a>letter_coords <span class="ot">&lt;-</span> </span>
+<span id="cb318-7"><a href="correspondence-analysis-ca.html#cb318-7" tabindex="-1"></a>  author_ca<span class="sc">$</span>colcoord <span class="sc">%&gt;%</span></span>
+<span id="cb318-8"><a href="correspondence-analysis-ca.html#cb318-8" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;name&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb318-9"><a href="correspondence-analysis-ca.html#cb318-9" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">point_type =</span> <span class="st">&quot;letter&quot;</span>)</span>
+<span id="cb318-10"><a href="correspondence-analysis-ca.html#cb318-10" tabindex="-1"></a></span>
+<span id="cb318-11"><a href="correspondence-analysis-ca.html#cb318-11" tabindex="-1"></a><span class="co"># Now we can bind these together and plot them easily</span></span>
+<span id="cb318-12"><a href="correspondence-analysis-ca.html#cb318-12" tabindex="-1"></a>p_symmetric <span class="ot">&lt;-</span> </span>
+<span id="cb318-13"><a href="correspondence-analysis-ca.html#cb318-13" tabindex="-1"></a>  <span class="fu">bind_rows</span>(book_coords, letter_coords) <span class="sc">%&gt;%</span></span>
+<span id="cb318-14"><a href="correspondence-analysis-ca.html#cb318-14" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim1, <span class="at">y =</span> Dim2)) <span class="sc">+</span> </span>
+<span id="cb318-15"><a href="correspondence-analysis-ca.html#cb318-15" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb318-16"><a href="correspondence-analysis-ca.html#cb318-16" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span></span>
+<span id="cb318-17"><a href="correspondence-analysis-ca.html#cb318-17" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> point_type)) <span class="sc">+</span> </span>
+<span id="cb318-18"><a href="correspondence-analysis-ca.html#cb318-18" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> name, <span class="at">color =</span> point_type),</span>
+<span id="cb318-19"><a href="correspondence-analysis-ca.html#cb318-19" tabindex="-1"></a>                           <span class="at">max.overlaps =</span> <span class="dv">12</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb318-20"><a href="correspondence-analysis-ca.html#cb318-20" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;darkgreen&quot;</span>, <span class="st">&quot;darkorange&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb318-21"><a href="correspondence-analysis-ca.html#cb318-21" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb318-22"><a href="correspondence-analysis-ca.html#cb318-22" tabindex="-1"></a>  <span class="co"># I am not sure if I mentioned it before, but `coord_equal()` constrains the</span></span>
+<span id="cb318-23"><a href="correspondence-analysis-ca.html#cb318-23" tabindex="-1"></a>  <span class="co"># axes to have equal unit spacing, which is important when we are interested</span></span>
+<span id="cb318-24"><a href="correspondence-analysis-ca.html#cb318-24" tabindex="-1"></a>  <span class="co"># in plotting something, like CA, that spatially imputes similarity.</span></span>
+<span id="cb318-25"><a href="correspondence-analysis-ca.html#cb318-25" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span></span>
+<span id="cb318-26"><a href="correspondence-analysis-ca.html#cb318-26" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="sc">+</span></span>
+<span id="cb318-27"><a href="correspondence-analysis-ca.html#cb318-27" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Dimension 1, 40.9% variance&quot;</span>,</span>
+<span id="cb318-28"><a href="correspondence-analysis-ca.html#cb318-28" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Dimension 2, 19.7% variance&quot;</span>,</span>
+<span id="cb318-29"><a href="correspondence-analysis-ca.html#cb318-29" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;CA plot for `author` table - Symmetric&quot;</span>)</span>
+<span id="cb318-30"><a href="correspondence-analysis-ca.html#cb318-30" tabindex="-1"></a></span>
+<span id="cb318-31"><a href="correspondence-analysis-ca.html#cb318-31" tabindex="-1"></a>p_symmetric</span></code></pre></div>
+<pre><code>## Warning: ggrepel: 3 unlabeled data points (too many overlaps). Consider
+## increasing max.overlaps</code></pre>
+<p><img src="10-CA_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>If we compare this to the base-<code>R</code> plotting version, you can see that ours is a (nicer) version:</p>
+<div class="sourceCode" id="cb320"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb320-1"><a href="correspondence-analysis-ca.html#cb320-1" tabindex="-1"></a><span class="fu">plot</span>(author_ca)</span></code></pre></div>
+<p><img src="10-CA_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>I am not sure why there is a difference in scaling for these two maps - but it appears to be a uniform expansion factor. This “symmetric” map is <strong>not</strong> a biplot: we cannot interpret the proximity of books (rows, in green) to the letter (columns, in orange).</p>
+<p>We can also generate various non-“symmetric” plots. In a nutshell, in CA the rows and columns of the contingency table explain the same amount of the variance <span class="citation">(because of the sum to marginality/sum to one constraint, <a href="#ref-abdiCorrespondence">H. Abdi and Béra 2015</a>)</span>, and so in order to actually produce a biplot in which the direct proximity of the row and column points is meaningful, we need to scale appropriately. I’m going to quote <span class="citation">H. Abdi and Béra (<a href="#ref-abdiCorrespondence">2015, 279</a>)</span> directly and extensively, so that I don’t get myself reversed:</p>
+<blockquote>
+<p>In a CA map when two row (respectively, column) points are close to each other, this means that these points have similar profiles, and when two points have the same profile, they will be located exactly at the same place (this is a consequence of the distributional equivalence principle). The proximity between row and column points is more delicate to interpret because of the barycentric principle (see section on “The Transition Formula”): The position of a row (respectively, column) point is determined from its barycenter on the column (respectively, row), and therefore, the proximity between a row point and one column point cannot be interpreted directly</p>
+</blockquote>
+<p>But</p>
+<blockquote>
+<p>… the plots can reflect [any] asymmetry by normalizing one set [of either rows or columns] such that the variance of its factor scores is equal to 1 for each factor… [i]n the asymmetric plot obtained… [t]he distances between the rows and columns can now be interpreted meaningfully: the distance between a row point and column point reflects their association…</p>
+</blockquote>
+<p>In other words, by construction the standard, symmetric plot tells us that when two row (respectively, column) points are close together, we can say that their profiles are similar, but there is no direct interpretation of the proximity of a row and column point. In the asymmetric plots, the proximity of row and column points becomes meaningful.</p>
+<p>The fastest way to do this is to use the <code>factoextra::fviz_ca()</code> function, which will show an improved version of the plots HGH noted “look terrible”:</p>
+<div class="sourceCode" id="cb321"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb321-1"><a href="correspondence-analysis-ca.html#cb321-1" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span>
+<span id="cb321-2"><a href="correspondence-analysis-ca.html#cb321-2" tabindex="-1"></a></span>
+<span id="cb321-3"><a href="correspondence-analysis-ca.html#cb321-3" tabindex="-1"></a>p_biplot <span class="ot">&lt;-</span> </span>
+<span id="cb321-4"><a href="correspondence-analysis-ca.html#cb321-4" tabindex="-1"></a>  <span class="fu">fviz_ca</span>(author_ca, </span>
+<span id="cb321-5"><a href="correspondence-analysis-ca.html#cb321-5" tabindex="-1"></a>          <span class="at">map =</span> <span class="st">&quot;colprincipal&quot;</span>,</span>
+<span id="cb321-6"><a href="correspondence-analysis-ca.html#cb321-6" tabindex="-1"></a>          <span class="at">repel =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb321-7"><a href="correspondence-analysis-ca.html#cb321-7" tabindex="-1"></a>  <span class="fu">coord_equal</span>()</span>
+<span id="cb321-8"><a href="correspondence-analysis-ca.html#cb321-8" tabindex="-1"></a></span>
+<span id="cb321-9"><a href="correspondence-analysis-ca.html#cb321-9" tabindex="-1"></a>p_biplot</span></code></pre></div>
+<p><img src="10-CA_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>In this plot, the columns are plotted in principal coordinates and the rows are plotted in standard coordinates. We can clean up the plot ourselves. Reading through various help files (<code>?ca</code> and <code>?plot.ca</code>), I determined that the difference in scaling we observed between our symmetric CA plot and the default is indeed due to differences in scaling: the <code>ca</code> package by default gives a symmetric plot in “principal” coordinates: “In this map both the row and column points are scaled to have inertias (weighted variances) equal to the principal inertia (eigenvalue or squared singular value) along the principal axes, that is both rows and columns are in principal coordinates.” [<code>?plot.ca</code>; <span class="citation">H. Abdi and Béra (<a href="#ref-abdiCorrespondence">2015</a>)</span>]. However, in the output of <code>ca::ca()</code>, the <code>$rowcoord</code>/<code>$colcoord</code> matrices are given in so-called “standard coordinates”, and so need to be converted to principal coordinates for plotting [<code>?ca</code>; <span class="citation">H. Abdi and Béra (<a href="#ref-abdiCorrespondence">2015</a>)</span>]. Let’s see if we can get there.</p>
+<div class="sourceCode" id="cb322"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb322-1"><a href="correspondence-analysis-ca.html#cb322-1" tabindex="-1"></a><span class="co"># First off, we see that `plot.ca()` invisibly returns coordinates, so we can</span></span>
+<span id="cb322-2"><a href="correspondence-analysis-ca.html#cb322-2" tabindex="-1"></a><span class="co"># grab those to check our work.</span></span>
+<span id="cb322-3"><a href="correspondence-analysis-ca.html#cb322-3" tabindex="-1"></a>author_ca_asymmetric_coords <span class="ot">&lt;-</span> </span>
+<span id="cb322-4"><a href="correspondence-analysis-ca.html#cb322-4" tabindex="-1"></a>  <span class="fu">plot.ca</span>(author_ca, <span class="at">map =</span> <span class="st">&quot;colprincipal&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb323"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb323-1"><a href="correspondence-analysis-ca.html#cb323-1" tabindex="-1"></a><span class="co"># Here is where I get puzzled: if we look at the total scaled output for this,</span></span>
+<span id="cb323-2"><a href="correspondence-analysis-ca.html#cb323-2" tabindex="-1"></a><span class="co"># neither the rows or the colums have inertia equal to the (squared) singular</span></span>
+<span id="cb323-3"><a href="correspondence-analysis-ca.html#cb323-3" tabindex="-1"></a><span class="co"># values:</span></span>
+<span id="cb323-4"><a href="correspondence-analysis-ca.html#cb323-4" tabindex="-1"></a></span>
+<span id="cb323-5"><a href="correspondence-analysis-ca.html#cb323-5" tabindex="-1"></a>author_ca_asymmetric_coords<span class="sc">$</span>rows <span class="sc">%&gt;%</span> <span class="fu">colSums</span>()</span></code></pre></div>
+<pre><code>##        Dim1        Dim2 
+## -0.11379020 -0.07029046</code></pre>
+<div class="sourceCode" id="cb325"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb325-1"><a href="correspondence-analysis-ca.html#cb325-1" tabindex="-1"></a>author_ca_asymmetric_coords<span class="sc">$</span>cols <span class="sc">%&gt;%</span> <span class="fu">colSums</span>()</span></code></pre></div>
+<pre><code>##      Dim1      Dim2 
+## 1.4495184 0.1422949</code></pre>
+<div class="sourceCode" id="cb327"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb327-1"><a href="correspondence-analysis-ca.html#cb327-1" tabindex="-1"></a>author_ca<span class="sc">$</span>sv[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span></code></pre></div>
+<pre><code>## [1] 0.08754348 0.06073157</code></pre>
+<div class="sourceCode" id="cb329"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb329-1"><a href="correspondence-analysis-ca.html#cb329-1" tabindex="-1"></a>author_ca<span class="sc">$</span>sv[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]<span class="sc">^</span><span class="dv">2</span></span></code></pre></div>
+<pre><code>## [1] 0.007663861 0.003688324</code></pre>
+<p>So you’ve got me, there! I am not sure what the <code>ca()</code> function is doing here. If you understand better than me, please let me know! However, just to demonstrate how we can go on to use these to build prettier versions of our asymmetric maps, we will take the saved results and pipe them into <code>ggplot2</code>.</p>
+<div class="sourceCode" id="cb331"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb331-1"><a href="correspondence-analysis-ca.html#cb331-1" tabindex="-1"></a>author_column_asymmetric <span class="ot">&lt;-</span> </span>
+<span id="cb331-2"><a href="correspondence-analysis-ca.html#cb331-2" tabindex="-1"></a>  author_ca_asymmetric_coords <span class="sc">%&gt;%</span></span>
+<span id="cb331-3"><a href="correspondence-analysis-ca.html#cb331-3" tabindex="-1"></a>  <span class="co"># `enframe()` takes a list and puts it into a tibble, so we can use `map()` on</span></span>
+<span id="cb331-4"><a href="correspondence-analysis-ca.html#cb331-4" tabindex="-1"></a>  <span class="co"># it!</span></span>
+<span id="cb331-5"><a href="correspondence-analysis-ca.html#cb331-5" tabindex="-1"></a>  <span class="fu">enframe</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb331-6"><a href="correspondence-analysis-ca.html#cb331-6" tabindex="-1"></a>  <span class="co"># We&#39;ll make sure to capture those matrix rownames properly... note the use of</span></span>
+<span id="cb331-7"><a href="correspondence-analysis-ca.html#cb331-7" tabindex="-1"></a>  <span class="co"># ordered arguments passed directly to `map()`, instead of the lambda function</span></span>
+<span id="cb331-8"><a href="correspondence-analysis-ca.html#cb331-8" tabindex="-1"></a>  <span class="co"># (&quot;~&quot;) form</span></span>
+<span id="cb331-9"><a href="correspondence-analysis-ca.html#cb331-9" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tbl =</span> <span class="fu">map</span>(value, as_tibble, <span class="at">rownames =</span> <span class="st">&quot;label&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb331-10"><a href="correspondence-analysis-ca.html#cb331-10" tabindex="-1"></a>  <span class="fu">unnest</span>(tbl)</span>
+<span id="cb331-11"><a href="correspondence-analysis-ca.html#cb331-11" tabindex="-1"></a></span>
+<span id="cb331-12"><a href="correspondence-analysis-ca.html#cb331-12" tabindex="-1"></a>p_asymmetric <span class="ot">&lt;-</span> </span>
+<span id="cb331-13"><a href="correspondence-analysis-ca.html#cb331-13" tabindex="-1"></a>  author_column_asymmetric <span class="sc">%&gt;%</span></span>
+<span id="cb331-14"><a href="correspondence-analysis-ca.html#cb331-14" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim1, <span class="at">y =</span> Dim2)) <span class="sc">+</span> </span>
+<span id="cb331-15"><a href="correspondence-analysis-ca.html#cb331-15" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb331-16"><a href="correspondence-analysis-ca.html#cb331-16" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span></span>
+<span id="cb331-17"><a href="correspondence-analysis-ca.html#cb331-17" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> name)) <span class="sc">+</span> </span>
+<span id="cb331-18"><a href="correspondence-analysis-ca.html#cb331-18" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> label, <span class="at">color =</span> name),</span>
+<span id="cb331-19"><a href="correspondence-analysis-ca.html#cb331-19" tabindex="-1"></a>                           <span class="at">max.overlaps =</span> <span class="dv">12</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb331-20"><a href="correspondence-analysis-ca.html#cb331-20" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;darkgreen&quot;</span>, <span class="st">&quot;darkorange&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb331-21"><a href="correspondence-analysis-ca.html#cb331-21" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb331-22"><a href="correspondence-analysis-ca.html#cb331-22" tabindex="-1"></a>  <span class="co"># I am not sure if I mentioned it before, but `coord_equal()` constrains the</span></span>
+<span id="cb331-23"><a href="correspondence-analysis-ca.html#cb331-23" tabindex="-1"></a>  <span class="co"># axes to have equal unit spacing, which is important when we are interested</span></span>
+<span id="cb331-24"><a href="correspondence-analysis-ca.html#cb331-24" tabindex="-1"></a>  <span class="co"># in plotting something, like CA, that spatially imputes similarity.</span></span>
+<span id="cb331-25"><a href="correspondence-analysis-ca.html#cb331-25" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span></span>
+<span id="cb331-26"><a href="correspondence-analysis-ca.html#cb331-26" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="sc">+</span></span>
+<span id="cb331-27"><a href="correspondence-analysis-ca.html#cb331-27" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Dimension 1, 40.9% variance&quot;</span>,</span>
+<span id="cb331-28"><a href="correspondence-analysis-ca.html#cb331-28" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Dimension 2, 19.7% variance&quot;</span>,</span>
+<span id="cb331-29"><a href="correspondence-analysis-ca.html#cb331-29" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;CA plot for `author` table:</span><span class="sc">\n</span><span class="st">asymmetric w/ column-principle&quot;</span>)</span>
+<span id="cb331-30"><a href="correspondence-analysis-ca.html#cb331-30" tabindex="-1"></a></span>
+<span id="cb331-31"><a href="correspondence-analysis-ca.html#cb331-31" tabindex="-1"></a>p_asymmetric</span></code></pre></div>
+<pre><code>## Warning: ggrepel: 21 unlabeled data points (too many overlaps). Consider
+## increasing max.overlaps</code></pre>
+<p><img src="10-CA_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>We can see the same kind of difficult-to-parse plot that HGH complained of, although the use of <code>ggrepel</code> and some other aesthetic adjustments make it easier to use. We can also use it to illustrate the principle that <span class="citation">H. Abdi and Béra (<a href="#ref-abdiCorrespondence">2015</a>)</span> note in their paper:</p>
+<blockquote>
+<p>… a row [read column here for our case] is positioned exactly at the barycenter of the columns [read: row]</p>
+</blockquote>
+<div class="sourceCode" id="cb333"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb333-1"><a href="correspondence-analysis-ca.html#cb333-1" tabindex="-1"></a>author_ca_x_data <span class="ot">&lt;-</span></span>
+<span id="cb333-2"><a href="correspondence-analysis-ca.html#cb333-2" tabindex="-1"></a>  author_ca_asymmetric_coords<span class="sc">$</span>rows <span class="sc">%&gt;%</span></span>
+<span id="cb333-3"><a href="correspondence-analysis-ca.html#cb333-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;label&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb333-4"><a href="correspondence-analysis-ca.html#cb333-4" tabindex="-1"></a>  <span class="co"># We will demonstrate with the letter &quot;x&quot;, since it appears to be one of the</span></span>
+<span id="cb333-5"><a href="correspondence-analysis-ca.html#cb333-5" tabindex="-1"></a>  <span class="co"># more discriminating column points.</span></span>
+<span id="cb333-6"><a href="correspondence-analysis-ca.html#cb333-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">xend =</span> author_ca_asymmetric_coords<span class="sc">$</span>cols[<span class="st">&quot;x&quot;</span>, <span class="dv">1</span>],</span>
+<span id="cb333-7"><a href="correspondence-analysis-ca.html#cb333-7" tabindex="-1"></a>         <span class="at">yend =</span> author_ca_asymmetric_coords<span class="sc">$</span>cols[<span class="st">&quot;x&quot;</span>, <span class="dv">2</span>])</span>
+<span id="cb333-8"><a href="correspondence-analysis-ca.html#cb333-8" tabindex="-1"></a></span>
+<span id="cb333-9"><a href="correspondence-analysis-ca.html#cb333-9" tabindex="-1"></a>p_asymmetric <span class="sc">+</span> </span>
+<span id="cb333-10"><a href="correspondence-analysis-ca.html#cb333-10" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="at">data =</span> author_ca_x_data,</span>
+<span id="cb333-11"><a href="correspondence-analysis-ca.html#cb333-11" tabindex="-1"></a>               <span class="fu">aes</span>(<span class="at">x =</span> Dim1, <span class="at">y =</span> Dim2, <span class="at">xend =</span> xend, <span class="at">yend =</span> yend),</span>
+<span id="cb333-12"><a href="correspondence-analysis-ca.html#cb333-12" tabindex="-1"></a>               <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="at">color =</span> <span class="st">&quot;orange&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb333-13"><a href="correspondence-analysis-ca.html#cb333-13" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;The point for the &#39;x&#39; column profile lies at the</span><span class="sc">\n</span><span class="st">barycenter of all the row points.&quot;</span>)</span></code></pre></div>
+<pre><code>## Warning: ggrepel: 21 unlabeled data points (too many overlaps). Consider
+## increasing max.overlaps</code></pre>
+<p><img src="10-CA_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Let’s look at the actual column profile for “x”:</p>
+<div class="sourceCode" id="cb335"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb335-1"><a href="correspondence-analysis-ca.html#cb335-1" tabindex="-1"></a>(author[, <span class="st">&quot;x&quot;</span>] <span class="sc">/</span> <span class="fu">sum</span>(author[, <span class="st">&quot;x&quot;</span>])) <span class="sc">%&gt;%</span></span>
+<span id="cb335-2"><a href="correspondence-analysis-ca.html#cb335-2" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb335-3"><a href="correspondence-analysis-ca.html#cb335-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;book&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb335-4"><a href="correspondence-analysis-ca.html#cb335-4" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>value)</span></code></pre></div>
+<pre><code>## # A tibble: 12 × 2
+##    book                         value
+##    &lt;chr&gt;                        &lt;dbl&gt;
+##  1 profiles of future (clark)   0.155
+##  2 drifters (michener)          0.144
+##  3 lost world (clark)           0.134
+##  4 sound and fury 6 (faulkner)  0.124
+##  5 sound and fury 7 (faulkner)  0.113
+##  6 east wind (buck)             0.103
+##  7 pendorric 3 (holt)           0.093
+##  8 three daughters (buck)       0.052
+##  9 islands (hemingway)          0.031
+## 10 asia (michener)              0.021
+## 11 pendorric 2 (holt)           0.021
+## 12 farewell to arms (hemingway) 0.01</code></pre>
+<p>This tells us what books have the highest count of “x”; looking at the plot, we can see that indeed “x” is closest to those novels… for the most part. Let’s keep digging a little bit. If we look at, for example, <code>profiles of future (clark)</code>, we can see that while it is important for “x”, “x” is not so important for it…</p>
+<div class="sourceCode" id="cb337"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb337-1"><a href="correspondence-analysis-ca.html#cb337-1" tabindex="-1"></a>(author[<span class="st">&quot;profiles of future (clark)&quot;</span>, ] <span class="sc">/</span> <span class="fu">sum</span>(author[<span class="st">&quot;profiles of future (clark)&quot;</span>, ])) <span class="sc">%&gt;%</span></span>
+<span id="cb337-2"><a href="correspondence-analysis-ca.html#cb337-2" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">5</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb337-3"><a href="correspondence-analysis-ca.html#cb337-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;letter&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb337-4"><a href="correspondence-analysis-ca.html#cb337-4" tabindex="-1"></a>  <span class="fu">arrange</span>(value)</span></code></pre></div>
+<pre><code>## # A tibble: 26 × 2
+##    letter   value
+##    &lt;chr&gt;    &lt;dbl&gt;
+##  1 j      0.00093
+##  2 q      0.0012 
+##  3 x      0.002  
+##  4 z      0.00266
+##  5 k      0.0052 
+##  6 v      0.0119 
+##  7 w      0.0141 
+##  8 p      0.0143 
+##  9 y      0.0189 
+## 10 b      0.0201 
+## # ℹ 16 more rows</code></pre>
+<p>But for <code>drifters (michener)</code>, maybe the story is different.</p>
+<div class="sourceCode" id="cb339"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb339-1"><a href="correspondence-analysis-ca.html#cb339-1" tabindex="-1"></a>(author[<span class="st">&quot;drifters (michener)&quot;</span>, ] <span class="sc">/</span> <span class="fu">sum</span>(author[<span class="st">&quot;drifters (michener)&quot;</span>, ])) <span class="sc">%&gt;%</span></span>
+<span id="cb339-2"><a href="correspondence-analysis-ca.html#cb339-2" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">5</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb339-3"><a href="correspondence-analysis-ca.html#cb339-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;letter&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb339-4"><a href="correspondence-analysis-ca.html#cb339-4" tabindex="-1"></a>  <span class="fu">arrange</span>(value)</span></code></pre></div>
+<pre><code>## # A tibble: 26 × 2
+##    letter   value
+##    &lt;chr&gt;    &lt;dbl&gt;
+##  1 q      0.0006 
+##  2 z      0.00075
+##  3 j      0.0012 
+##  4 x      0.0021 
+##  5 v      0.009  
+##  6 k      0.00915
+##  7 b      0.0163 
+##  8 g      0.0204 
+##  9 y      0.0205 
+## 10 p      0.0210 
+## # ℹ 16 more rows</code></pre>
+<p>…nope! Well, sort of. In fact, we have run into a common problem with Correspondence Analysis: the plots are over-influenced by uncommon observations. “x”, of course is an uncommon letter of the alphabet, and so minor variations (probably by chance in the <code>author</code> sample) have a large effect on the spatial arrangement of the biplot.</p>
+<p>One way to combat this problem is to look at some other measures of configuration quality. A common quality to examine is the <em>contribution</em> of a variable (row or column) to each dimension. We can calculate conrtibutions from the output as the squared factor score for the row, multiplied by the row mass, and divided by the eigenvalue for the corresponding dimension, e.g., for row <span class="math inline">\(i\)</span> and dimension/component/factor <span class="math inline">\(l\)</span>:</p>
+<p><span class="math display">\[ctr_i=\frac{f_{i,l}^2r_{i}}{\lambda_l}\]</span></p>
+<div class="sourceCode" id="cb341"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb341-1"><a href="correspondence-analysis-ca.html#cb341-1" tabindex="-1"></a>author_ctrs <span class="ot">&lt;-</span> </span>
+<span id="cb341-2"><a href="correspondence-analysis-ca.html#cb341-2" tabindex="-1"></a>  <span class="fu">tibble</span>(</span>
+<span id="cb341-3"><a href="correspondence-analysis-ca.html#cb341-3" tabindex="-1"></a>  <span class="at">letter =</span> author_ca<span class="sc">$</span>colnames,</span>
+<span id="cb341-4"><a href="correspondence-analysis-ca.html#cb341-4" tabindex="-1"></a>  <span class="at">ctr_1 =</span> (author_ca<span class="sc">$</span>colmass <span class="sc">*</span> (author_ca<span class="sc">$</span>colcoord[, <span class="dv">1</span>])<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> author_ca<span class="sc">$</span>sv[<span class="dv">1</span>]),</span>
+<span id="cb341-5"><a href="correspondence-analysis-ca.html#cb341-5" tabindex="-1"></a>  <span class="at">ctr_2 =</span> (author_ca<span class="sc">$</span>colmass <span class="sc">*</span> (author_ca<span class="sc">$</span>colcoord[, <span class="dv">2</span>])<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> author_ca<span class="sc">$</span>sv[<span class="dv">2</span>])</span>
+<span id="cb341-6"><a href="correspondence-analysis-ca.html#cb341-6" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb341-7"><a href="correspondence-analysis-ca.html#cb341-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span><span class="fu">round</span>(., <span class="dv">2</span>)))</span>
+<span id="cb341-8"><a href="correspondence-analysis-ca.html#cb341-8" tabindex="-1"></a></span>
+<span id="cb341-9"><a href="correspondence-analysis-ca.html#cb341-9" tabindex="-1"></a>author_ctrs <span class="sc">%&gt;%</span></span>
+<span id="cb341-10"><a href="correspondence-analysis-ca.html#cb341-10" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> ctr_1, <span class="at">y =</span> ctr_2)) <span class="sc">+</span> </span>
+<span id="cb341-11"><a href="correspondence-analysis-ca.html#cb341-11" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb341-12"><a href="correspondence-analysis-ca.html#cb341-12" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> letter)) <span class="sc">+</span></span>
+<span id="cb341-13"><a href="correspondence-analysis-ca.html#cb341-13" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb341-14"><a href="correspondence-analysis-ca.html#cb341-14" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Contribution to Dimension 1&quot;</span>,</span>
+<span id="cb341-15"><a href="correspondence-analysis-ca.html#cb341-15" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Contribution to Dimension 2&quot;</span>)</span></code></pre></div>
+<p><img src="10-CA_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>We can see that “y” contributes disproportionately to Dimension 2, and that “d”, “w”, and “h” are the largest contributors to Dimension 1. We can take this information to help build a potentially more useful visualization:</p>
+<div class="sourceCode" id="cb342"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb342-1"><a href="correspondence-analysis-ca.html#cb342-1" tabindex="-1"></a><span class="co"># Neat functionality: remove a layer from a compiled ggplot2 to avoid more work.  You can see what layers are in a `gg` object by using [object]$layers</span></span>
+<span id="cb342-2"><a href="correspondence-analysis-ca.html#cb342-2" tabindex="-1"></a>ggedit<span class="sc">::</span><span class="fu">remove_geom</span>(p_symmetric, <span class="at">geom =</span> <span class="st">&quot;point&quot;</span>) <span class="sc">+</span></span>
+<span id="cb342-3"><a href="correspondence-analysis-ca.html#cb342-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> . <span class="sc">%&gt;%</span> </span>
+<span id="cb342-4"><a href="correspondence-analysis-ca.html#cb342-4" tabindex="-1"></a>               <span class="fu">filter</span>(point_type <span class="sc">==</span> <span class="st">&quot;letter&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb342-5"><a href="correspondence-analysis-ca.html#cb342-5" tabindex="-1"></a>               <span class="fu">left_join</span>(author_ctrs, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;name&quot;</span> <span class="ot">=</span> <span class="st">&quot;letter&quot;</span>)),</span>
+<span id="cb342-6"><a href="correspondence-analysis-ca.html#cb342-6" tabindex="-1"></a>             <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">size =</span> <span class="fu">map2_dbl</span>(ctr_1, ctr_2, sum)),</span>
+<span id="cb342-7"><a href="correspondence-analysis-ca.html#cb342-7" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">&quot;orange&quot;</span>) <span class="sc">+</span></span>
+<span id="cb342-8"><a href="correspondence-analysis-ca.html#cb342-8" tabindex="-1"></a>  <span class="fu">scale_size_continuous</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">3</span>)) <span class="sc">+</span></span>
+<span id="cb342-9"><a href="correspondence-analysis-ca.html#cb342-9" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;CA symmetric plot with point size representing summed</span><span class="sc">\n</span><span class="st">contribution to Dimensions 1 and 2&quot;</span>)</span></code></pre></div>
+<pre><code>## Registered S3 method overwritten by &#39;ggedit&#39;:
+##   method from   
+##   +.gg   ggplot2</code></pre>
+<pre><code>## Warning: ggrepel: 4 unlabeled data points (too many overlaps). Consider
+## increasing max.overlaps</code></pre>
+<p><img src="10-CA_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>Now even though we cannot directly interpret proximity of books to letters, we can say that the fact that <code>sound and fury 7 (faulkner)</code> is strongly separated by Dimension 2 is probably due to an unusual proportion of “y” in the text: and we’d be right! It is the 11th most common letter in that row, as compared to many of the other examples we looked at above (scroll up and check to see if I’m right!).</p>
+<div class="sourceCode" id="cb345"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb345-1"><a href="correspondence-analysis-ca.html#cb345-1" tabindex="-1"></a>(author[<span class="st">&quot;sound and fury 7 (faulkner)&quot;</span>, ] <span class="sc">/</span> <span class="fu">sum</span>(author[<span class="st">&quot;sound and fury 7 (faulkner)&quot;</span>, ])) <span class="sc">%&gt;%</span></span>
+<span id="cb345-2"><a href="correspondence-analysis-ca.html#cb345-2" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">5</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb345-3"><a href="correspondence-analysis-ca.html#cb345-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;letter&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb345-4"><a href="correspondence-analysis-ca.html#cb345-4" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>value) <span class="sc">%&gt;%</span></span>
+<span id="cb345-5"><a href="correspondence-analysis-ca.html#cb345-5" tabindex="-1"></a>  <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">12</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 26 × 2
+##    letter  value
+##    &lt;chr&gt;   &lt;dbl&gt;
+##  1 e      0.111 
+##  2 t      0.0976
+##  3 o      0.0856
+##  4 a      0.0786
+##  5 i      0.0755
+##  6 n      0.0684
+##  7 s      0.0659
+##  8 h      0.0582
+##  9 r      0.0471
+## 10 l      0.0407
+## 11 y      0.0407
+## 12 u      0.0359
+## # ℹ 14 more rows</code></pre>
+<p>Thus, we can use some careful exploration of data combined with some additional quantities to help us use CA to really explore a data set.</p>
+<div id="packages-used-in-this-chapter-9" class="section level2 hasAnchor" number="10.1">
+<h2><span class="header-section-number">10.1</span> Packages used in this chapter<a href="correspondence-analysis-ca.html#packages-used-in-this-chapter-9" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb347"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb347-1"><a href="correspondence-analysis-ca.html#cb347-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.3.1 (2023-06-16)
+## Platform: aarch64-apple-darwin20 (64-bit)
+## Running under: macOS Ventura 13.6.1
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## time zone: America/New_York
+## tzcode source: internal
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] factoextra_1.0.7 ca_0.71.1        here_1.0.1       lubridate_1.9.2 
+##  [5] forcats_1.0.0    stringr_1.5.0    dplyr_1.1.2      purrr_1.0.1     
+##  [9] readr_2.1.4      tidyr_1.3.0      tibble_3.2.1     ggplot2_3.4.3   
+## [13] tidyverse_2.0.0 
+## 
+## loaded via a namespace (and not attached):
+##  [1] gtable_0.3.4      xfun_0.39         bslib_0.5.1       ggrepel_0.9.3    
+##  [5] rstatix_0.7.2     tzdb_0.4.0        vctrs_0.6.3       tools_4.3.1      
+##  [9] generics_0.1.3    fansi_1.0.4       highr_0.10        pkgconfig_2.0.3  
+## [13] lifecycle_1.0.3   compiler_4.3.1    farver_2.1.1      munsell_0.5.0    
+## [17] carData_3.0-5     httpuv_1.6.11     htmltools_0.5.6   sass_0.4.7       
+## [21] yaml_2.3.7        pillar_1.9.0      later_1.3.1       car_3.1-2        
+## [25] ggpubr_0.6.0      jquerylib_0.1.4   ellipsis_0.3.2    cachem_1.0.8     
+## [29] abind_1.4-5       mime_0.12         tidyselect_1.2.0  digest_0.6.33    
+## [33] stringi_1.7.12    bookdown_0.37     labeling_0.4.3    rprojroot_2.0.3  
+## [37] fastmap_1.1.1     grid_4.3.1        colorspace_2.1-0  cli_3.6.1        
+## [41] magrittr_2.0.3    utf8_1.2.3        broom_1.0.5       withr_2.5.0      
+## [45] shinyBS_0.61.1    scales_1.2.1      promises_1.2.1    backports_1.4.1  
+## [49] timechange_0.2.0  rmarkdown_2.23    ggsignif_0.6.4    hms_1.1.3        
+## [53] ggedit_0.3.1      shiny_1.7.5       evaluate_0.21     knitr_1.43       
+## [57] miniUI_0.1.1.1    rlang_1.1.1       Rcpp_1.0.11       shinyAce_0.4.2   
+## [61] xtable_1.8-4      glue_1.6.2        rstudioapi_0.15.0 jsonlite_1.8.7   
+## [65] plyr_1.8.8        R6_2.5.1</code></pre>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-abdiCorrespondence" class="csl-entry">
+Abdi, H, and M Béra. 2015. <span>“Correspondence Analysis.”</span> In <em>Encyclopedia of <span>Social Networks</span> and <span>Mining</span></em>, edited by R. Alhajj and J. Rokne, 275–84. <span>New York</span>: <span>Springer Verlag</span>.
+</div>
+<div id="ref-greenacre2017correspondence" class="csl-entry">
+Greenacre, Michael. 2017. <em>Correspondence Analysis in Practice</em>. CRC press.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="distatis.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="preference-mapping.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/10-CA.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": true
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

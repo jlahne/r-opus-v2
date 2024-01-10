@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 8 Multidimensional Scaling (MDS) | The R Opus v2</title>
+  <meta name="description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 8 Multidimensional Scaling (MDS) | The R Opus v2" />
+  <meta property="og:type" content="book" />
+  <meta property="og:image" content="/img/r-opus-cover.jpg" />
+  <meta property="og:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="github-repo" content="jlahne/r-opus-v2" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 8 Multidimensional Scaling (MDS) | The R Opus v2" />
+  
+  <meta name="twitter:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
+documentation, originally compiled in 2015. It gives helpful details and
+walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
+  <meta name="twitter:image" content="/img/r-opus-cover.jpg" />
+
+<meta name="author" content="Jacob Lahne" />
+
+
+<meta name="date" content="2024-01-10" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="cluster-analysis.html"/>
+<link rel="next" href="distatis.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">The R Opus v2</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#usage"><i class="fa fa-check"></i>Usage</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#r-setup"><i class="fa fa-check"></i><code>R</code> Setup</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#what-this-is-not"><i class="fa fa-check"></i>What this is not</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#about-me"><i class="fa fa-check"></i>About me</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#session-info"><i class="fa fa-check"></i>Session Info</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html"><i class="fa fa-check"></i><b>1</b> Data import and set up</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#exploring-our-data"><i class="fa fa-check"></i><b>1.1</b> Exploring our data</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#the-descriptive-data"><i class="fa fa-check"></i><b>1.1.1</b> The descriptive data</a></li>
+<li class="chapter" data-level="1.1.2" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#consumer-data"><i class="fa fa-check"></i><b>1.1.2</b> Consumer data</a></li>
+<li class="chapter" data-level="1.1.3" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#the-other-data-frames"><i class="fa fa-check"></i><b>1.1.3</b> The other data frames</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#wranglingtidying-data"><i class="fa fa-check"></i><b>1.2</b> Wrangling/tidying data</a></li>
+<li class="chapter" data-level="1.3" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#wrap-up-and-summary"><i class="fa fa-check"></i><b>1.3</b> Wrap up and summary</a></li>
+<li class="chapter" data-level="1.4" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html#packages-used-in-this-chapter"><i class="fa fa-check"></i><b>1.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html"><i class="fa fa-check"></i><b>2</b> Analysis of Variance</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#univariate-analysis-with-the-linear-model"><i class="fa fa-check"></i><b>2.1</b> Univariate analysis with the linear model</a></li>
+<li class="chapter" data-level="2.2" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#pseudo-mixed-anova"><i class="fa fa-check"></i><b>2.2</b> Pseudo-mixed ANOVA</a></li>
+<li class="chapter" data-level="2.3" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#mean-comparison-post-hoc-testing"><i class="fa fa-check"></i><b>2.3</b> Mean comparison (post-hoc testing)</a></li>
+<li class="chapter" data-level="2.4" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#bonus-bayesian-approaches-to-anova"><i class="fa fa-check"></i><b>2.4</b> BONUS: Bayesian approaches to ANOVA</a></li>
+<li class="chapter" data-level="2.5" data-path="analysis-of-variance.html"><a href="analysis-of-variance.html#packages-used-in-this-chapter-1"><i class="fa fa-check"></i><b>2.5</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html"><i class="fa fa-check"></i><b>3</b> Dealing with missing data</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#exploring-missing-data"><i class="fa fa-check"></i><b>3.1</b> Exploring missing data</a></li>
+<li class="chapter" data-level="3.2" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#imputing-missing-data"><i class="fa fa-check"></i><b>3.2</b> Imputing missing data</a></li>
+<li class="chapter" data-level="3.3" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#alternative-approaches-to-imputation"><i class="fa fa-check"></i><b>3.3</b> Alternative approaches to imputation</a></li>
+<li class="chapter" data-level="3.4" data-path="dealing-with-missing-data.html"><a href="dealing-with-missing-data.html#packages-used-in-this-chapter-2"><i class="fa fa-check"></i><b>3.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html"><i class="fa fa-check"></i><b>4</b> MANOVA (Multivariate Analysis of Variance)</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#running-manova"><i class="fa fa-check"></i><b>4.1</b> Running MANOVA</a></li>
+<li class="chapter" data-level="4.2" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#what-does-manova-test"><i class="fa fa-check"></i><b>4.2</b> What does MANOVA test?</a></li>
+<li class="chapter" data-level="4.3" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#bonus-hierarchical-bayes-instead-of-manova"><i class="fa fa-check"></i><b>4.3</b> BONUS: Hierarchical Bayes instead of MANOVA</a></li>
+<li class="chapter" data-level="4.4" data-path="manova-multivariate-analysis-of-variance.html"><a href="manova-multivariate-analysis-of-variance.html#packages-used-in-this-chapter-3"><i class="fa fa-check"></i><b>4.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html"><i class="fa fa-check"></i><b>5</b> Canonical Variate Analysis</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#what-is-cva"><i class="fa fa-check"></i><b>5.1</b> What is CVA?</a></li>
+<li class="chapter" data-level="5.2" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#application-of-cva"><i class="fa fa-check"></i><b>5.2</b> Application of CVA</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#basic-visualization-of-cva"><i class="fa fa-check"></i><b>5.2.1</b> Basic visualization of CVA</a></li>
+<li class="chapter" data-level="5.2.2" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#an-aside-on-exporting-r-plots"><i class="fa fa-check"></i><b>5.2.2</b> An aside on exporting R plots</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#plotting-uncertainty-in-cva"><i class="fa fa-check"></i><b>5.3</b> Plotting uncertainty in CVA</a></li>
+<li class="chapter" data-level="5.4" data-path="canonical-variate-analysis.html"><a href="canonical-variate-analysis.html#packages-used-in-this-chapter-4"><i class="fa fa-check"></i><b>5.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html"><i class="fa fa-check"></i><b>6</b> Principal Components Analysis (PCA)</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#what-does-pca-do"><i class="fa fa-check"></i><b>6.1</b> What does PCA do?</a></li>
+<li class="chapter" data-level="6.2" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#lets-do-pca"><i class="fa fa-check"></i><b>6.2</b> Let’s do PCA!</a></li>
+<li class="chapter" data-level="6.3" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#in-depth-interpretation"><i class="fa fa-check"></i><b>6.3</b> In-depth interpretation</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#correlations-or-squared-loadings-or-contributions"><i class="fa fa-check"></i><b>6.3.1</b> Correlations or (squared) loadings or contributions</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#pca-with-resampling-for-confidence-intervals"><i class="fa fa-check"></i><b>6.4</b> PCA with resampling for confidence intervals</a></li>
+<li class="chapter" data-level="6.5" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#comparison-of-products-with-pca"><i class="fa fa-check"></i><b>6.5</b> Comparison of products with PCA</a></li>
+<li class="chapter" data-level="6.6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#packages-used-in-this-chapter-5"><i class="fa fa-check"></i><b>6.6</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="cluster-analysis.html"><a href="cluster-analysis.html"><i class="fa fa-check"></i><b>7</b> Cluster analysis</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="cluster-analysis.html"><a href="cluster-analysis.html#hierarchical-clustering-on-distances"><i class="fa fa-check"></i><b>7.1</b> Hierarchical clustering on distances</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="cluster-analysis.html"><a href="cluster-analysis.html#wards-method"><i class="fa fa-check"></i><b>7.1.1</b> Ward’s Method</a></li>
+<li class="chapter" data-level="7.1.2" data-path="cluster-analysis.html"><a href="cluster-analysis.html#single-linkage"><i class="fa fa-check"></i><b>7.1.2</b> Single linkage</a></li>
+<li class="chapter" data-level="7.1.3" data-path="cluster-analysis.html"><a href="cluster-analysis.html#complete-linkage"><i class="fa fa-check"></i><b>7.1.3</b> Complete Linkage</a></li>
+<li class="chapter" data-level="7.1.4" data-path="cluster-analysis.html"><a href="cluster-analysis.html#average-linkage"><i class="fa fa-check"></i><b>7.1.4</b> Average Linkage</a></li>
+<li class="chapter" data-level="7.1.5" data-path="cluster-analysis.html"><a href="cluster-analysis.html#comparing-methods"><i class="fa fa-check"></i><b>7.1.5</b> Comparing methods</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="cluster-analysis.html"><a href="cluster-analysis.html#using-cluster-ids"><i class="fa fa-check"></i><b>7.2</b> Using cluster IDs</a></li>
+<li class="chapter" data-level="7.3" data-path="cluster-analysis.html"><a href="cluster-analysis.html#k-means-clustering"><i class="fa fa-check"></i><b>7.3</b> K-means clustering</a></li>
+<li class="chapter" data-level="7.4" data-path="cluster-analysis.html"><a href="cluster-analysis.html#packages-used-in-this-chapter-6"><i class="fa fa-check"></i><b>7.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html"><i class="fa fa-check"></i><b>8</b> Multidimensional Scaling (MDS)</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#metric-vs-non-metric"><i class="fa fa-check"></i><b>8.1</b> Metric vs non-metric</a></li>
+<li class="chapter" data-level="8.2" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#metric-mds"><i class="fa fa-check"></i><b>8.2</b> Metric MDS</a></li>
+<li class="chapter" data-level="8.3" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#non-metric-mds"><i class="fa fa-check"></i><b>8.3</b> Non-metric MDS</a></li>
+<li class="chapter" data-level="8.4" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#wrap-up"><i class="fa fa-check"></i><b>8.4</b> Wrap up</a></li>
+<li class="chapter" data-level="8.5" data-path="multidimensional-scaling-mds.html"><a href="multidimensional-scaling-mds.html#packages-used-in-this-chapter-7"><i class="fa fa-check"></i><b>8.5</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="distatis.html"><a href="distatis.html"><i class="fa fa-check"></i><b>9</b> DISTATIS</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="distatis.html"><a href="distatis.html#the-dataset-sorting-wines-by-color"><i class="fa fa-check"></i><b>9.1</b> The dataset: sorting wines by color</a></li>
+<li class="chapter" data-level="9.2" data-path="distatis.html"><a href="distatis.html#distatis-demonstrated"><i class="fa fa-check"></i><b>9.2</b> DISTATIS demonstrated</a></li>
+<li class="chapter" data-level="9.3" data-path="distatis.html"><a href="distatis.html#comparison-to-mds"><i class="fa fa-check"></i><b>9.3</b> Comparison to MDS</a></li>
+<li class="chapter" data-level="9.4" data-path="distatis.html"><a href="distatis.html#packages-used-in-this-chapter-8"><i class="fa fa-check"></i><b>9.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="correspondence-analysis-ca.html"><a href="correspondence-analysis-ca.html"><i class="fa fa-check"></i><b>10</b> Correspondence Analysis (CA)</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="correspondence-analysis-ca.html"><a href="correspondence-analysis-ca.html#packages-used-in-this-chapter-9"><i class="fa fa-check"></i><b>10.1</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="preference-mapping.html"><a href="preference-mapping.html"><i class="fa fa-check"></i><b>11</b> Preference Mapping</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="preference-mapping.html"><a href="preference-mapping.html#data"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
+<li class="chapter" data-level="11.2" data-path="preference-mapping.html"><a href="preference-mapping.html#internal-preference-mapping"><i class="fa fa-check"></i><b>11.2</b> Internal preference mapping</a></li>
+<li class="chapter" data-level="11.3" data-path="preference-mapping.html"><a href="preference-mapping.html#external-preference-mapping"><i class="fa fa-check"></i><b>11.3</b> External preference mapping</a>
+<ul>
+<li class="chapter" data-level="11.3.1" data-path="preference-mapping.html"><a href="preference-mapping.html#partial-least-squares-regression"><i class="fa fa-check"></i><b>11.3.1</b> Partial Least Squares Regression</a></li>
+</ul></li>
+<li class="chapter" data-level="11.4" data-path="preference-mapping.html"><a href="preference-mapping.html#other-approaches"><i class="fa fa-check"></i><b>11.4</b> Other approaches</a></li>
+<li class="chapter" data-level="11.5" data-path="preference-mapping.html"><a href="preference-mapping.html#principal-components-regression"><i class="fa fa-check"></i><b>11.5</b> Principal Components Regression</a></li>
+<li class="chapter" data-level="11.6" data-path="preference-mapping.html"><a href="preference-mapping.html#packages-used-in-this-chapter-10"><i class="fa fa-check"></i><b>11.6</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html"><i class="fa fa-check"></i><b>12</b> Multiple Factor(ial) Analysis (MFA)</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#mfa-vs-pca"><i class="fa fa-check"></i><b>12.1</b> MFA vs PCA</a></li>
+<li class="chapter" data-level="12.2" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#mfa-with-different-measurements"><i class="fa fa-check"></i><b>12.2</b> MFA with different measurements</a></li>
+<li class="chapter" data-level="12.3" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#wrapping-up"><i class="fa fa-check"></i><b>12.3</b> Wrapping up</a></li>
+<li class="chapter" data-level="12.4" data-path="multiple-factorial-analysis-mfa.html"><a href="multiple-factorial-analysis-mfa.html#packages-used-in-this-chapter-11"><i class="fa fa-check"></i><b>12.4</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html"><i class="fa fa-check"></i><b>13</b> Generalized Procrustes Analysis</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="generalized-procrustes-analysis.html"><a href="generalized-procrustes-analysis.html#packages-used-in-this-chapter-12"><i class="fa fa-check"></i><b>13.1</b> Packages used in this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="wrapping-up-1.html"><a href="wrapping-up-1.html"><i class="fa fa-check"></i><b>14</b> Wrapping up</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The R Opus v2</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="multidimensional-scaling-mds" class="section level1 hasAnchor" number="8">
+<h1><span class="header-section-number">Chapter 8</span> Multidimensional Scaling (MDS)<a href="multidimensional-scaling-mds.html#multidimensional-scaling-mds" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Multidimensional scaling (MDS) is a method of representing the distances among a set of items or observations. These distances can come originally from a high-dimensional space (such as the 20-dimensional space that defines our DA data), or from a low-dimensional space. Regardless, the goal of MDS is to find a low-dimensional (2- or 3-dimensional, usually) representation of the items in which the distances among the items is a close approximation of the original distance matrix.</p>
+<p>You may notice that MDS operates on the same input data as the clustering techniques we just explored in the <a href="cluster-analysis.html#cluster-analysis">previous chapter</a>. In clustering, the goal is not to find a metric or spatial arrangement of objects, but instead to determine some smaller number of <em>clusters</em> or <em>groups</em> that summarize or explain the observed distances among our samples. In MDS, the goal is to provide a visual and spatial representation of the distances.</p>
+<p>In the <strong>R Opus</strong>, HGH applied MDS to the DA data. We’ll explore the same approach once we review the key concept of metric and non-metric MDS.</p>
+<div id="metric-vs-non-metric" class="section level2 hasAnchor" number="8.1">
+<h2><span class="header-section-number">8.1</span> Metric vs non-metric<a href="multidimensional-scaling-mds.html#metric-vs-non-metric" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Without going into details, MDS comes in two “flavors”: metric and non-metric. In <strong>metric MDS</strong>, the distances among objects are taken as “metric” or measurement data: the units themselves are meaningful (another way of saying this is that they are <em>interval</em> or <em>ratio</em> data). In this case, the underlying algorithm for MDS is very similar to PCA, in which an eigendecomposition provides the optimal solution for finding a low-dimensional representation that explains the majority of the variations in distances among samples. Most sensory data is suitable for metric MDS, and in fact the <a href="distatis.html#distatis">DISTATIS method we will use next</a> is predicated on a proof that distances even among sorting groups are metric (specifically, Euclidean).</p>
+<p>For non-metric MDS, the assumption of the distances being meaningful metrics is relaxed; rather, we assume that the provided distances are only meaningful insofar as they represent ranks (they are <em>ordinal</em> data). In this case, non-metric MDS uses a gradient-descent approach to find an approximation by extracting orthogonal dimensions while minimizing a criterion called <span class="math inline">\(STRESS\)</span>. Typically, we won’t have to concern ourselves too much with non-metric MDS, but it could be useful when examining results from, for example, flash profiling (in which samples are ranked but not rated).</p>
+</div>
+<div id="metric-mds" class="section level2 hasAnchor" number="8.2">
+<h2><span class="header-section-number">8.2</span> Metric MDS<a href="multidimensional-scaling-mds.html#metric-mds" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>As usual, we begin by loading our required packages and the data.</p>
+<div class="sourceCode" id="cb258"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb258-1"><a href="multidimensional-scaling-mds.html#cb258-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb258-2"><a href="multidimensional-scaling-mds.html#cb258-2" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb258-3"><a href="multidimensional-scaling-mds.html#cb258-3" tabindex="-1"></a></span>
+<span id="cb258-4"><a href="multidimensional-scaling-mds.html#cb258-4" tabindex="-1"></a>descriptive_data <span class="ot">&lt;-</span> </span>
+<span id="cb258-5"><a href="multidimensional-scaling-mds.html#cb258-5" tabindex="-1"></a>  <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriDAFinal.csv&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb258-6"><a href="multidimensional-scaling-mds.html#cb258-6" tabindex="-1"></a>  <span class="co"># We&#39;ll make some factors as usual</span></span>
+<span id="cb258-7"><a href="multidimensional-scaling-mds.html#cb258-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="sc">~</span><span class="fu">as.factor</span>(.)))</span>
+<span id="cb258-8"><a href="multidimensional-scaling-mds.html#cb258-8" tabindex="-1"></a></span>
+<span id="cb258-9"><a href="multidimensional-scaling-mds.html#cb258-9" tabindex="-1"></a>descriptive_means <span class="ot">&lt;-</span> </span>
+<span id="cb258-10"><a href="multidimensional-scaling-mds.html#cb258-10" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb258-11"><a href="multidimensional-scaling-mds.html#cb258-11" tabindex="-1"></a>  <span class="co"># Get the means for each wine and descriptor</span></span>
+<span id="cb258-12"><a href="multidimensional-scaling-mds.html#cb258-12" tabindex="-1"></a>  <span class="fu">group_by</span>(ProductName) <span class="sc">%&gt;%</span></span>
+<span id="cb258-13"><a href="multidimensional-scaling-mds.html#cb258-13" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span><span class="fu">mean</span>(.))) <span class="sc">%&gt;%</span></span>
+<span id="cb258-14"><a href="multidimensional-scaling-mds.html#cb258-14" tabindex="-1"></a>  <span class="co"># Scale the data to unit variance</span></span>
+<span id="cb258-15"><a href="multidimensional-scaling-mds.html#cb258-15" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span>(. <span class="sc">-</span> <span class="fu">mean</span>(.)) <span class="sc">/</span> <span class="fu">sd</span>(.)))</span></code></pre></div>
+<p>Note that as in the previous chapter, HGH scales (normalizes) the data to <span class="math inline">\(\bar{x}=0\)</span> and <span class="math inline">\(s=1\)</span>, which is a choice rather than a necessity for these methods. We will follow for consistency.</p>
+<p>We then need to get the distances among all of our observations.</p>
+<div class="sourceCode" id="cb259"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb259-1"><a href="multidimensional-scaling-mds.html#cb259-1" tabindex="-1"></a>descriptive_distances <span class="ot">&lt;-</span> </span>
+<span id="cb259-2"><a href="multidimensional-scaling-mds.html#cb259-2" tabindex="-1"></a>  descriptive_means <span class="sc">%&gt;%</span></span>
+<span id="cb259-3"><a href="multidimensional-scaling-mds.html#cb259-3" tabindex="-1"></a>  <span class="co"># get the rownames as we go back to older functions </span></span>
+<span id="cb259-4"><a href="multidimensional-scaling-mds.html#cb259-4" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;ProductName&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb259-5"><a href="multidimensional-scaling-mds.html#cb259-5" tabindex="-1"></a>  <span class="fu">dist</span>(<span class="at">method =</span> <span class="st">&quot;euclidean&quot;</span>)</span></code></pre></div>
+<p>The <code>cmdscale()</code> function in the base <code>R</code> <code>stats</code> package will do metric MDS for us.</p>
+<div class="sourceCode" id="cb260"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb260-1"><a href="multidimensional-scaling-mds.html#cb260-1" tabindex="-1"></a>metric_mds <span class="ot">&lt;-</span> </span>
+<span id="cb260-2"><a href="multidimensional-scaling-mds.html#cb260-2" tabindex="-1"></a>  descriptive_distances <span class="sc">%&gt;%</span></span>
+<span id="cb260-3"><a href="multidimensional-scaling-mds.html#cb260-3" tabindex="-1"></a>  <span class="co"># `k` defines the # of dimensions to extract, `eig` returns the eigenvalues</span></span>
+<span id="cb260-4"><a href="multidimensional-scaling-mds.html#cb260-4" tabindex="-1"></a>  <span class="co"># for the spectral (eigen)decomposition</span></span>
+<span id="cb260-5"><a href="multidimensional-scaling-mds.html#cb260-5" tabindex="-1"></a>  <span class="fu">cmdscale</span>(<span class="at">k =</span> <span class="dv">2</span>, <span class="at">eig =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb260-6"><a href="multidimensional-scaling-mds.html#cb260-6" tabindex="-1"></a></span>
+<span id="cb260-7"><a href="multidimensional-scaling-mds.html#cb260-7" tabindex="-1"></a>metric_mds</span></code></pre></div>
+<pre><code>## $points
+##                    [,1]       [,2]
+## C_MERLOT    -0.66017528 -1.4236819
+## C_REFOSCO   -2.05394351 -3.2971758
+## C_SYRAH     -0.08165706 -0.4392567
+## C_ZINFANDEL  1.20071498 -1.5563951
+## I_MERLOT    -2.87771919  1.5668345
+## I_PRIMITIVO  4.11149279 -0.4593610
+## I_REFOSCO   -3.14226246  2.8789771
+## I_SYRAH      3.50354973  2.7300588
+## 
+## $eig
+## [1] 5.343721e+01 3.392126e+01 1.755089e+01 1.363281e+01 1.225350e+01
+## [6] 7.141861e+00 2.062458e+00 1.796329e-15
+## 
+## $x
+## NULL
+## 
+## $ac
+## [1] 0
+## 
+## $GOF
+## [1] 0.6239891 0.6239891</code></pre>
+<p>At this point you are familiar with our plot and wrangle approach - we’re going to get that <code>$points</code> table and pipe it into <code>ggplot2</code> to make a nicer looking plot.</p>
+<div class="sourceCode" id="cb262"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb262-1"><a href="multidimensional-scaling-mds.html#cb262-1" tabindex="-1"></a>p_metric <span class="ot">&lt;-</span> </span>
+<span id="cb262-2"><a href="multidimensional-scaling-mds.html#cb262-2" tabindex="-1"></a>  metric_mds<span class="sc">$</span>points <span class="sc">%&gt;%</span></span>
+<span id="cb262-3"><a href="multidimensional-scaling-mds.html#cb262-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb262-4"><a href="multidimensional-scaling-mds.html#cb262-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> V1, <span class="at">y =</span> V2)) <span class="sc">+</span> </span>
+<span id="cb262-5"><a href="multidimensional-scaling-mds.html#cb262-5" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb262-6"><a href="multidimensional-scaling-mds.html#cb262-6" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> sample)) <span class="sc">+</span> </span>
+<span id="cb262-7"><a href="multidimensional-scaling-mds.html#cb262-7" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Dimension 1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dimension 2&quot;</span>,</span>
+<span id="cb262-8"><a href="multidimensional-scaling-mds.html#cb262-8" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">&quot;Metric MDS for wine DA data&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb262-9"><a href="multidimensional-scaling-mds.html#cb262-9" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span> </span>
+<span id="cb262-10"><a href="multidimensional-scaling-mds.html#cb262-10" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<pre><code>## Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if
+## `.name_repair` is omitted as of tibble 2.0.0.
+## ℹ Using compatibility `.name_repair`.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.</code></pre>
+<div class="sourceCode" id="cb264"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb264-1"><a href="multidimensional-scaling-mds.html#cb264-1" tabindex="-1"></a>p_metric</span></code></pre></div>
+<p><img src="08-MDS_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>We can also examine a scree-plot of the eigenvalues to get a (qualitative) view of this solution.</p>
+<div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb265-1"><a href="multidimensional-scaling-mds.html#cb265-1" tabindex="-1"></a>metric_mds<span class="sc">$</span>eig <span class="sc">%&gt;%</span></span>
+<span id="cb265-2"><a href="multidimensional-scaling-mds.html#cb265-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb265-3"><a href="multidimensional-scaling-mds.html#cb265-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dim =</span> <span class="fu">str_c</span>(<span class="st">&quot;Dimension &quot;</span>, <span class="fu">row_number</span>()),</span>
+<span id="cb265-4"><a href="multidimensional-scaling-mds.html#cb265-4" tabindex="-1"></a>         <span class="at">value =</span> value <span class="sc">/</span> <span class="fu">sum</span>(value)) <span class="sc">%&gt;%</span></span>
+<span id="cb265-5"><a href="multidimensional-scaling-mds.html#cb265-5" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> dim, <span class="at">y =</span> value)) <span class="sc">+</span> </span>
+<span id="cb265-6"><a href="multidimensional-scaling-mds.html#cb265-6" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb265-7"><a href="multidimensional-scaling-mds.html#cb265-7" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> <span class="dv">1</span>)) <span class="sc">+</span> </span>
+<span id="cb265-8"><a href="multidimensional-scaling-mds.html#cb265-8" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb265-9"><a href="multidimensional-scaling-mds.html#cb265-9" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>, </span>
+<span id="cb265-10"><a href="multidimensional-scaling-mds.html#cb265-10" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">&quot;Scree plot for metric MDS&quot;</span>)</span></code></pre></div>
+<p><img src="08-MDS_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>We can see that, arguably, a 2-dimensional solution is not great for capturing the distances among these samples. See that bend <em>after</em> the 3rd dimension? That’s where we’d often want to put a cut. But this is a little academic - in practice we often only look at the first dimensions.</p>
+<p>Let’s compare the distances from our MDS solution to the actual distances:</p>
+<div class="sourceCode" id="cb266"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb266-1"><a href="multidimensional-scaling-mds.html#cb266-1" tabindex="-1"></a><span class="co"># Actual distances</span></span>
+<span id="cb266-2"><a href="multidimensional-scaling-mds.html#cb266-2" tabindex="-1"></a>descriptive_distances</span></code></pre></div>
+<pre><code>##             C_MERLOT C_REFOSCO  C_SYRAH C_ZINFANDEL I_MERLOT I_PRIMITIVO
+## C_REFOSCO   5.083950                                                    
+## C_SYRAH     4.525147  5.472269                                          
+## C_ZINFANDEL 3.909011  5.856348 4.817566                                 
+## I_MERLOT    4.503404  6.405151 6.153529    6.522035                     
+## I_PRIMITIVO 6.129930  7.853063 5.998705    5.543431 7.842528            
+## I_REFOSCO   6.272963  6.992652 5.408757    6.917554 4.452965    8.514098
+## I_SYRAH     6.911105  8.427799 6.359281    6.170264 7.546229    5.747512
+##             I_REFOSCO
+## C_REFOSCO            
+## C_SYRAH              
+## C_ZINFANDEL          
+## I_MERLOT             
+## I_PRIMITIVO          
+## I_REFOSCO            
+## I_SYRAH      7.537424</code></pre>
+<div class="sourceCode" id="cb268"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb268-1"><a href="multidimensional-scaling-mds.html#cb268-1" tabindex="-1"></a><span class="co"># Approximate distances</span></span>
+<span id="cb268-2"><a href="multidimensional-scaling-mds.html#cb268-2" tabindex="-1"></a>metric_mds<span class="sc">$</span>points <span class="sc">%&gt;%</span></span>
+<span id="cb268-3"><a href="multidimensional-scaling-mds.html#cb268-3" tabindex="-1"></a>  <span class="fu">dist</span>(<span class="at">method =</span> <span class="st">&quot;euclidean&quot;</span>)</span></code></pre></div>
+<pre><code>##             C_MERLOT C_REFOSCO  C_SYRAH C_ZINFANDEL I_MERLOT I_PRIMITIVO
+## C_REFOSCO   2.335074                                                    
+## C_SYRAH     1.141830  3.472408                                          
+## C_ZINFANDEL 1.865617  3.690951 1.700728                                 
+## I_MERLOT    3.722995  4.933275 3.441274    5.136944                     
+## I_PRIMITIVO 4.868134  6.787179 4.193198    3.110645 7.276988            
+## I_REFOSCO   4.967256  6.271308 4.514198    6.207574 1.338544    7.985078
+## I_SYRAH     5.881341  8.198371 4.785214    4.865875 6.486423    3.246844
+##             I_REFOSCO
+## C_REFOSCO            
+## C_SYRAH              
+## C_ZINFANDEL          
+## I_MERLOT             
+## I_PRIMITIVO          
+## I_REFOSCO            
+## I_SYRAH      6.647480</code></pre>
+<p>Here we can see that the distances are indeed only approximate (and not that good an approximation).</p>
+<p>Would this get better if we went up to 3 dimensions? We can answer that pretty easily:</p>
+<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb270-1"><a href="multidimensional-scaling-mds.html#cb270-1" tabindex="-1"></a>descriptive_distances <span class="sc">%&gt;%</span></span>
+<span id="cb270-2"><a href="multidimensional-scaling-mds.html#cb270-2" tabindex="-1"></a>  <span class="fu">cmdscale</span>(<span class="at">k =</span> <span class="dv">3</span>, <span class="at">eig =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb270-3"><a href="multidimensional-scaling-mds.html#cb270-3" tabindex="-1"></a>  .<span class="sc">$</span>points <span class="sc">%&gt;%</span></span>
+<span id="cb270-4"><a href="multidimensional-scaling-mds.html#cb270-4" tabindex="-1"></a>  <span class="fu">dist</span>()</span></code></pre></div>
+<pre><code>##             C_MERLOT C_REFOSCO  C_SYRAH C_ZINFANDEL I_MERLOT I_PRIMITIVO
+## C_REFOSCO   3.882087                                                    
+## C_SYRAH     3.867494  3.522813                                          
+## C_ZINFANDEL 2.323006  4.070842 2.869323                                 
+## I_MERLOT    3.775222  6.182909 5.523805    5.516157                     
+## I_PRIMITIVO 4.910980  7.217195 5.183820    3.196724 7.387510            
+## I_REFOSCO   5.696284  6.279119 4.604395    6.364382 3.667013    8.267098
+## I_SYRAH     6.453639  8.210405 4.896535    5.029587 7.269797    3.818459
+##             I_REFOSCO
+## C_REFOSCO            
+## C_SYRAH              
+## C_ZINFANDEL          
+## I_MERLOT             
+## I_PRIMITIVO          
+## I_REFOSCO            
+## I_SYRAH      6.648776</code></pre>
+<p>It does look like we’re getting closer to the original distances as we go up in dimensionality - the algorithm is able to find “space” to place the points further apart.</p>
+<p>Let’s examine one more thing that will lead us to <em>non</em>-metric MDS: does our 2-dimensional MDS solution capture the correct <em>rank order</em> of distances? In other words, is each pairwise distance in the MDS approximation in the same <em>order</em> as it would be in the actual distance matrix?</p>
+<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="multidimensional-scaling-mds.html#cb272-1" tabindex="-1"></a><span class="co"># I am getting sick of manually tidying distance matrices, so we&#39;re going to</span></span>
+<span id="cb272-2"><a href="multidimensional-scaling-mds.html#cb272-2" tabindex="-1"></a><span class="co"># enlist the `widyr` package to automate this.</span></span>
+<span id="cb272-3"><a href="multidimensional-scaling-mds.html#cb272-3" tabindex="-1"></a><span class="fu">library</span>(widyr)</span>
+<span id="cb272-4"><a href="multidimensional-scaling-mds.html#cb272-4" tabindex="-1"></a></span>
+<span id="cb272-5"><a href="multidimensional-scaling-mds.html#cb272-5" tabindex="-1"></a><span class="co"># Of course this creates a new set of needs, including getting our data into a</span></span>
+<span id="cb272-6"><a href="multidimensional-scaling-mds.html#cb272-6" tabindex="-1"></a><span class="co"># tidy format to start with</span></span>
+<span id="cb272-7"><a href="multidimensional-scaling-mds.html#cb272-7" tabindex="-1"></a>tidy_descriptive_distances <span class="ot">&lt;-</span> </span>
+<span id="cb272-8"><a href="multidimensional-scaling-mds.html#cb272-8" tabindex="-1"></a>  descriptive_means <span class="sc">%&gt;%</span></span>
+<span id="cb272-9"><a href="multidimensional-scaling-mds.html#cb272-9" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>ProductName,</span>
+<span id="cb272-10"><a href="multidimensional-scaling-mds.html#cb272-10" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;descriptor&quot;</span>,</span>
+<span id="cb272-11"><a href="multidimensional-scaling-mds.html#cb272-11" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;rating&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb272-12"><a href="multidimensional-scaling-mds.html#cb272-12" tabindex="-1"></a>  <span class="fu">arrange</span>(ProductName) <span class="sc">%&gt;%</span></span>
+<span id="cb272-13"><a href="multidimensional-scaling-mds.html#cb272-13" tabindex="-1"></a>  <span class="co"># The distance between `ProductName`, based on `descriptor`, with values</span></span>
+<span id="cb272-14"><a href="multidimensional-scaling-mds.html#cb272-14" tabindex="-1"></a>  <span class="co"># stored in `rating`</span></span>
+<span id="cb272-15"><a href="multidimensional-scaling-mds.html#cb272-15" tabindex="-1"></a>  <span class="fu">pairwise_dist</span>(<span class="at">item =</span> ProductName, <span class="at">feature =</span> descriptor, <span class="at">value =</span> rating,</span>
+<span id="cb272-16"><a href="multidimensional-scaling-mds.html#cb272-16" tabindex="-1"></a>                <span class="at">upper =</span> <span class="cn">FALSE</span>, <span class="at">method =</span> <span class="st">&quot;euclidean&quot;</span>)</span>
+<span id="cb272-17"><a href="multidimensional-scaling-mds.html#cb272-17" tabindex="-1"></a></span>
+<span id="cb272-18"><a href="multidimensional-scaling-mds.html#cb272-18" tabindex="-1"></a><span class="co"># We&#39;ll do the same thing with our MDS results</span></span>
+<span id="cb272-19"><a href="multidimensional-scaling-mds.html#cb272-19" tabindex="-1"></a>tidy_mds_distances <span class="ot">&lt;-</span> </span>
+<span id="cb272-20"><a href="multidimensional-scaling-mds.html#cb272-20" tabindex="-1"></a>  metric_mds<span class="sc">$</span>points <span class="sc">%&gt;%</span></span>
+<span id="cb272-21"><a href="multidimensional-scaling-mds.html#cb272-21" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;product&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb272-22"><a href="multidimensional-scaling-mds.html#cb272-22" tabindex="-1"></a>  <span class="fu">arrange</span>(product) <span class="sc">%&gt;%</span></span>
+<span id="cb272-23"><a href="multidimensional-scaling-mds.html#cb272-23" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>product) <span class="sc">%&gt;%</span></span>
+<span id="cb272-24"><a href="multidimensional-scaling-mds.html#cb272-24" tabindex="-1"></a>  <span class="fu">pairwise_dist</span>(<span class="at">item =</span> product, <span class="at">feature =</span> name, <span class="at">value =</span> value,</span>
+<span id="cb272-25"><a href="multidimensional-scaling-mds.html#cb272-25" tabindex="-1"></a>                <span class="at">upper =</span> <span class="cn">FALSE</span>, <span class="at">method =</span> <span class="st">&quot;euclidean&quot;</span>)</span></code></pre></div>
+<p>We can now look at the ranks of pairwise distances and see how many are misaligned.</p>
+<div class="sourceCode" id="cb273"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb273-1"><a href="multidimensional-scaling-mds.html#cb273-1" tabindex="-1"></a><span class="co"># We will rank the pairwise distances from the original data</span></span>
+<span id="cb273-2"><a href="multidimensional-scaling-mds.html#cb273-2" tabindex="-1"></a>tidy_descriptive_distances <span class="sc">%&gt;%</span></span>
+<span id="cb273-3"><a href="multidimensional-scaling-mds.html#cb273-3" tabindex="-1"></a>  <span class="fu">unite</span>(item1, item2, <span class="at">col =</span> <span class="st">&quot;items&quot;</span>, <span class="at">sep =</span> <span class="st">&quot; &lt;--&gt; &quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb273-4"><a href="multidimensional-scaling-mds.html#cb273-4" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">observed_rank =</span> items,</span>
+<span id="cb273-5"><a href="multidimensional-scaling-mds.html#cb273-5" tabindex="-1"></a>            <span class="at">distance_rank =</span> <span class="fu">dense_rank</span>(distance)) <span class="sc">%&gt;%</span></span>
+<span id="cb273-6"><a href="multidimensional-scaling-mds.html#cb273-6" tabindex="-1"></a>  <span class="fu">arrange</span>(distance_rank) <span class="sc">%&gt;%</span></span>
+<span id="cb273-7"><a href="multidimensional-scaling-mds.html#cb273-7" tabindex="-1"></a>  <span class="co"># And now we&#39;ll line this up with the MDS results</span></span>
+<span id="cb273-8"><a href="multidimensional-scaling-mds.html#cb273-8" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb273-9"><a href="multidimensional-scaling-mds.html#cb273-9" tabindex="-1"></a>    tidy_mds_distances <span class="sc">%&gt;%</span></span>
+<span id="cb273-10"><a href="multidimensional-scaling-mds.html#cb273-10" tabindex="-1"></a>      <span class="fu">unite</span>(item1, item2, <span class="at">col =</span> <span class="st">&quot;items&quot;</span>, <span class="at">sep =</span> <span class="st">&quot; &lt;--&gt; &quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb273-11"><a href="multidimensional-scaling-mds.html#cb273-11" tabindex="-1"></a>      <span class="fu">transmute</span>(<span class="at">mds_rank =</span> items,</span>
+<span id="cb273-12"><a href="multidimensional-scaling-mds.html#cb273-12" tabindex="-1"></a>                <span class="at">distance_rank =</span> <span class="fu">dense_rank</span>(distance)) <span class="sc">%&gt;%</span></span>
+<span id="cb273-13"><a href="multidimensional-scaling-mds.html#cb273-13" tabindex="-1"></a>      <span class="fu">arrange</span>(distance_rank),</span>
+<span id="cb273-14"><a href="multidimensional-scaling-mds.html#cb273-14" tabindex="-1"></a>    <span class="co"># This is the line that lines them up (`by = `)</span></span>
+<span id="cb273-15"><a href="multidimensional-scaling-mds.html#cb273-15" tabindex="-1"></a>    <span class="at">by =</span> <span class="st">&quot;distance_rank&quot;</span></span>
+<span id="cb273-16"><a href="multidimensional-scaling-mds.html#cb273-16" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb273-17"><a href="multidimensional-scaling-mds.html#cb273-17" tabindex="-1"></a>  <span class="co"># And finally we&#39;ll check which are the same</span></span>
+<span id="cb273-18"><a href="multidimensional-scaling-mds.html#cb273-18" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">match =</span> observed_rank <span class="sc">==</span> mds_rank) <span class="sc">%&gt;%</span></span>
+<span id="cb273-19"><a href="multidimensional-scaling-mds.html#cb273-19" tabindex="-1"></a>  <span class="fu">count</span>(match)</span></code></pre></div>
+<pre><code>## # A tibble: 2 × 2
+##   match     n
+##   &lt;lgl&gt; &lt;int&gt;
+## 1 FALSE    21
+## 2 TRUE      7</code></pre>
+<p>That’s actually very bad! We see only 1/4 of the original distances captured by the 2-dimensional MDS solution. Yikes.</p>
+<p>Let’s take a look and see if a non-metric MDS can do better.</p>
+</div>
+<div id="non-metric-mds" class="section level2 hasAnchor" number="8.3">
+<h2><span class="header-section-number">8.3</span> Non-metric MDS<a href="multidimensional-scaling-mds.html#non-metric-mds" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In non-metric MDS, we assume that the observed distances are non-metric: they only represent an <em>ordination</em> of the distances among the items. An example would be, in our actual data, that the observed distances represent estimates or opinions from our panelists:</p>
+<div class="sourceCode" id="cb275"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb275-1"><a href="multidimensional-scaling-mds.html#cb275-1" tabindex="-1"></a>tidy_descriptive_distances <span class="sc">%&gt;%</span></span>
+<span id="cb275-2"><a href="multidimensional-scaling-mds.html#cb275-2" tabindex="-1"></a>  <span class="fu">arrange</span>(distance)</span></code></pre></div>
+<pre><code>## # A tibble: 28 × 3
+##    item1       item2       distance
+##    &lt;fct&gt;       &lt;fct&gt;          &lt;dbl&gt;
+##  1 C_MERLOT    C_ZINFANDEL     3.91
+##  2 I_MERLOT    I_REFOSCO       4.45
+##  3 C_MERLOT    I_MERLOT        4.50
+##  4 C_MERLOT    C_SYRAH         4.53
+##  5 C_SYRAH     C_ZINFANDEL     4.82
+##  6 C_MERLOT    C_REFOSCO       5.08
+##  7 C_SYRAH     I_REFOSCO       5.41
+##  8 C_REFOSCO   C_SYRAH         5.47
+##  9 C_ZINFANDEL I_PRIMITIVO     5.54
+## 10 I_PRIMITIVO I_SYRAH         5.75
+## # ℹ 18 more rows</code></pre>
+<p>The closest samples are <code>C_MERLOT</code> and <code>C_ZINFANDEL</code>, and the second closest are <code>I_MERLOT</code> and <code>I_REFOSCO</code>. If our distances are merely ordinations, we can only say that–we can’t compare the actual “differences of distances” as we could if these were metric. In the metric case, we could subtract the distance between <code>C_MERLOT</code> and <code>C_ZINFANDEL</code> and <code>I_MERLOT</code> and <code>I_REFOSCO</code> (<span class="math inline">\(\approx4.5-3.9\approx0.6\)</span>) and say that the difference between those distances is larger than that between the second and third smallest distances (<code>I_MERLOT</code> and <code>I_REFOSCO</code> vs <code>C_MERLOT</code> and <code>I_MERLOT</code>, which is <span class="math inline">\(\approx4.5-4.45\approx0\)</span>). So we could say something like “the difference between the two closest pairs of samples is quite large, but the difference between the next two closest is approximately the same”. We can’t do that with an ordination, because we only know the relative ranks:</p>
+<div class="sourceCode" id="cb277"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb277-1"><a href="multidimensional-scaling-mds.html#cb277-1" tabindex="-1"></a>tidy_descriptive_distances <span class="sc">%&gt;%</span></span>
+<span id="cb277-2"><a href="multidimensional-scaling-mds.html#cb277-2" tabindex="-1"></a>  <span class="fu">transmute</span>(item1, item2, </span>
+<span id="cb277-3"><a href="multidimensional-scaling-mds.html#cb277-3" tabindex="-1"></a>            <span class="at">distance_rank =</span> <span class="fu">dense_rank</span>(distance)) <span class="sc">%&gt;%</span></span>
+<span id="cb277-4"><a href="multidimensional-scaling-mds.html#cb277-4" tabindex="-1"></a>  <span class="fu">arrange</span>(distance_rank)</span></code></pre></div>
+<pre><code>## # A tibble: 28 × 3
+##    item1       item2       distance_rank
+##    &lt;fct&gt;       &lt;fct&gt;               &lt;int&gt;
+##  1 C_MERLOT    C_ZINFANDEL             1
+##  2 I_MERLOT    I_REFOSCO               2
+##  3 C_MERLOT    I_MERLOT                3
+##  4 C_MERLOT    C_SYRAH                 4
+##  5 C_SYRAH     C_ZINFANDEL             5
+##  6 C_MERLOT    C_REFOSCO               6
+##  7 C_SYRAH     I_REFOSCO               7
+##  8 C_REFOSCO   C_SYRAH                 8
+##  9 C_ZINFANDEL I_PRIMITIVO             9
+## 10 I_PRIMITIVO I_SYRAH                10
+## # ℹ 18 more rows</code></pre>
+<p>We can no longer know if the difference between 1st and 2nd place (so to speak, of <code>distance_rank</code>) is the same as the difference between 2nd and 3rd place, and so on. We only know that <code>C_MERLOT</code> and <code>C_ZINFANDEL</code> are closer than <code>I_MERLOT</code> and <code>I_REFOSCO</code>, and so on.</p>
+<p>OK, with that out of the way, let’s take a look at non-metric MDS. For this, we will use the <code>MASS</code> package. <code>MASS</code> is bundled with <code>R</code>, but is not loaded by default. It contains many useful core functions for statistics, especially non-linear and multivariate stats. You can learn more about it <a href="https://www.stats.ox.ac.uk/pub/MASS4/">at the authors’ website</a>.</p>
+<div class="sourceCode" id="cb279"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb279-1"><a href="multidimensional-scaling-mds.html#cb279-1" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb279-2"><a href="multidimensional-scaling-mds.html#cb279-2" tabindex="-1"></a></span>
+<span id="cb279-3"><a href="multidimensional-scaling-mds.html#cb279-3" tabindex="-1"></a><span class="co"># the `isoMDS()` function will be what we use.</span></span>
+<span id="cb279-4"><a href="multidimensional-scaling-mds.html#cb279-4" tabindex="-1"></a></span>
+<span id="cb279-5"><a href="multidimensional-scaling-mds.html#cb279-5" tabindex="-1"></a>nonmetric_mds <span class="ot">&lt;-</span></span>
+<span id="cb279-6"><a href="multidimensional-scaling-mds.html#cb279-6" tabindex="-1"></a>  <span class="fu">isoMDS</span>(<span class="at">d =</span> descriptive_distances, <span class="at">k =</span> <span class="dv">2</span>)</span></code></pre></div>
+<pre><code>## initial  value 9.444389 
+## iter   5 value 7.065995
+## iter  10 value 6.940918
+## final  value 6.928604 
+## converged</code></pre>
+<p>As mentioned, non-metric MDS is an iterative optimization problem. We are told that the solution has “converged” because the <span class="math inline">\(STRESS\)</span> value is no longer going down with subsequent iterations. Let’s look at our results.</p>
+<div class="sourceCode" id="cb281"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb281-1"><a href="multidimensional-scaling-mds.html#cb281-1" tabindex="-1"></a>p_nonmetric <span class="ot">&lt;-</span></span>
+<span id="cb281-2"><a href="multidimensional-scaling-mds.html#cb281-2" tabindex="-1"></a>  nonmetric_mds<span class="sc">$</span>points <span class="sc">%&gt;%</span></span>
+<span id="cb281-3"><a href="multidimensional-scaling-mds.html#cb281-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb281-4"><a href="multidimensional-scaling-mds.html#cb281-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> V1, <span class="at">y =</span> V2)) <span class="sc">+</span> </span>
+<span id="cb281-5"><a href="multidimensional-scaling-mds.html#cb281-5" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb281-6"><a href="multidimensional-scaling-mds.html#cb281-6" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> sample)) <span class="sc">+</span> </span>
+<span id="cb281-7"><a href="multidimensional-scaling-mds.html#cb281-7" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Dimension 1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dimension 2&quot;</span>,</span>
+<span id="cb281-8"><a href="multidimensional-scaling-mds.html#cb281-8" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">&quot;Non-metric MDS for wine DA data&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb281-9"><a href="multidimensional-scaling-mds.html#cb281-9" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span> </span>
+<span id="cb281-10"><a href="multidimensional-scaling-mds.html#cb281-10" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb281-11"><a href="multidimensional-scaling-mds.html#cb281-11" tabindex="-1"></a></span>
+<span id="cb281-12"><a href="multidimensional-scaling-mds.html#cb281-12" tabindex="-1"></a>p_nonmetric</span></code></pre></div>
+<p><img src="08-MDS_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>I’d like to compare our metric and non-metric configurations. To do so we can use the <code>patchwork</code> package, as we have before.</p>
+<div class="sourceCode" id="cb282"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb282-1"><a href="multidimensional-scaling-mds.html#cb282-1" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb282-2"><a href="multidimensional-scaling-mds.html#cb282-2" tabindex="-1"></a></span>
+<span id="cb282-3"><a href="multidimensional-scaling-mds.html#cb282-3" tabindex="-1"></a>p_metric <span class="sc">+</span> p_nonmetric</span></code></pre></div>
+<p><img src="08-MDS_files/figure-html/unnamed-chunk-14-1.png" width="768" /></p>
+<p>Note that the configurations are quite similar, but with some notable sifts (e.g., the positioning of <code>I_MERLOT</code> pops out). This makes sense: if you read the <code>?isoMDS</code> documentation, you’ll see that the initial configuration for the non-metric MDS <em>is</em> the metric MDS solution, so this approach starts with our metric MDS configuration and improves on it.</p>
+<p>Let’s see if we’ve improved the representation of our relative ranks for distances:</p>
+<div class="sourceCode" id="cb283"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb283-1"><a href="multidimensional-scaling-mds.html#cb283-1" tabindex="-1"></a>tidy_nonmetric_mds_distances <span class="ot">&lt;-</span> </span>
+<span id="cb283-2"><a href="multidimensional-scaling-mds.html#cb283-2" tabindex="-1"></a>  nonmetric_mds<span class="sc">$</span>points <span class="sc">%&gt;%</span></span>
+<span id="cb283-3"><a href="multidimensional-scaling-mds.html#cb283-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;product&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb283-4"><a href="multidimensional-scaling-mds.html#cb283-4" tabindex="-1"></a>  <span class="fu">arrange</span>(product) <span class="sc">%&gt;%</span></span>
+<span id="cb283-5"><a href="multidimensional-scaling-mds.html#cb283-5" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>product) <span class="sc">%&gt;%</span></span>
+<span id="cb283-6"><a href="multidimensional-scaling-mds.html#cb283-6" tabindex="-1"></a>  <span class="fu">pairwise_dist</span>(<span class="at">item =</span> product, <span class="at">feature =</span> name, <span class="at">value =</span> value,</span>
+<span id="cb283-7"><a href="multidimensional-scaling-mds.html#cb283-7" tabindex="-1"></a>                <span class="at">upper =</span> <span class="cn">FALSE</span>, <span class="at">method =</span> <span class="st">&quot;euclidean&quot;</span>)</span>
+<span id="cb283-8"><a href="multidimensional-scaling-mds.html#cb283-8" tabindex="-1"></a></span>
+<span id="cb283-9"><a href="multidimensional-scaling-mds.html#cb283-9" tabindex="-1"></a>tidy_descriptive_distances <span class="sc">%&gt;%</span></span>
+<span id="cb283-10"><a href="multidimensional-scaling-mds.html#cb283-10" tabindex="-1"></a>  <span class="fu">unite</span>(item1, item2, <span class="at">col =</span> <span class="st">&quot;items&quot;</span>, <span class="at">sep =</span> <span class="st">&quot; &lt;--&gt; &quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb283-11"><a href="multidimensional-scaling-mds.html#cb283-11" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">observed_rank =</span> items,</span>
+<span id="cb283-12"><a href="multidimensional-scaling-mds.html#cb283-12" tabindex="-1"></a>            <span class="at">distance_rank =</span> <span class="fu">dense_rank</span>(distance)) <span class="sc">%&gt;%</span></span>
+<span id="cb283-13"><a href="multidimensional-scaling-mds.html#cb283-13" tabindex="-1"></a>  <span class="fu">arrange</span>(distance_rank) <span class="sc">%&gt;%</span></span>
+<span id="cb283-14"><a href="multidimensional-scaling-mds.html#cb283-14" tabindex="-1"></a>  <span class="co"># And now we&#39;ll line this up with the MDS results</span></span>
+<span id="cb283-15"><a href="multidimensional-scaling-mds.html#cb283-15" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb283-16"><a href="multidimensional-scaling-mds.html#cb283-16" tabindex="-1"></a>    tidy_nonmetric_mds_distances <span class="sc">%&gt;%</span></span>
+<span id="cb283-17"><a href="multidimensional-scaling-mds.html#cb283-17" tabindex="-1"></a>      <span class="fu">unite</span>(item1, item2, <span class="at">col =</span> <span class="st">&quot;items&quot;</span>, <span class="at">sep =</span> <span class="st">&quot; &lt;--&gt; &quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb283-18"><a href="multidimensional-scaling-mds.html#cb283-18" tabindex="-1"></a>      <span class="fu">transmute</span>(<span class="at">mds_rank =</span> items,</span>
+<span id="cb283-19"><a href="multidimensional-scaling-mds.html#cb283-19" tabindex="-1"></a>                <span class="at">distance_rank =</span> <span class="fu">dense_rank</span>(distance)) <span class="sc">%&gt;%</span></span>
+<span id="cb283-20"><a href="multidimensional-scaling-mds.html#cb283-20" tabindex="-1"></a>      <span class="fu">arrange</span>(distance_rank),</span>
+<span id="cb283-21"><a href="multidimensional-scaling-mds.html#cb283-21" tabindex="-1"></a>    <span class="co"># This is the line that lines them up (`by = `)</span></span>
+<span id="cb283-22"><a href="multidimensional-scaling-mds.html#cb283-22" tabindex="-1"></a>    <span class="at">by =</span> <span class="st">&quot;distance_rank&quot;</span></span>
+<span id="cb283-23"><a href="multidimensional-scaling-mds.html#cb283-23" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb283-24"><a href="multidimensional-scaling-mds.html#cb283-24" tabindex="-1"></a>  <span class="co"># And finally we&#39;ll check which are the same</span></span>
+<span id="cb283-25"><a href="multidimensional-scaling-mds.html#cb283-25" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">match =</span> observed_rank <span class="sc">==</span> mds_rank) <span class="sc">%&gt;%</span></span>
+<span id="cb283-26"><a href="multidimensional-scaling-mds.html#cb283-26" tabindex="-1"></a>  <span class="fu">count</span>(match)</span></code></pre></div>
+<pre><code>## # A tibble: 2 × 2
+##   match     n
+##   &lt;lgl&gt; &lt;int&gt;
+## 1 FALSE    25
+## 2 TRUE      3</code></pre>
+<p>It certainly doesn’t seem like we have! Yikes! I think a higher-dimensional solution is certainly required to adequately capture the configuration of these products.</p>
+</div>
+<div id="wrap-up" class="section level2 hasAnchor" number="8.4">
+<h2><span class="header-section-number">8.4</span> Wrap up<a href="multidimensional-scaling-mds.html#wrap-up" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>To be fair, saying “Yikes!” is probably a little overblown. If we examined the tables above I used to compare the observed and estimated ranks in more detail, we’d see that the variation is quite small, for example, for the non-metric data:</p>
+<pre><code>## # A tibble: 28 × 4
+##    observed_rank                distance_rank mds_rank                     match
+##    &lt;chr&gt;                                &lt;int&gt; &lt;chr&gt;                        &lt;lgl&gt;
+##  1 C_MERLOT &lt;--&gt; C_ZINFANDEL                1 C_MERLOT &lt;--&gt; C_ZINFANDEL    TRUE 
+##  2 I_MERLOT &lt;--&gt; I_REFOSCO                  2 C_SYRAH &lt;--&gt; C_ZINFANDEL     FALSE
+##  3 C_MERLOT &lt;--&gt; I_MERLOT                   3 C_MERLOT &lt;--&gt; C_SYRAH        FALSE
+##  4 C_MERLOT &lt;--&gt; C_SYRAH                    4 I_MERLOT &lt;--&gt; I_REFOSCO      FALSE
+##  5 C_SYRAH &lt;--&gt; C_ZINFANDEL                 5 C_MERLOT &lt;--&gt; I_MERLOT       FALSE
+##  6 C_MERLOT &lt;--&gt; C_REFOSCO                  6 C_MERLOT &lt;--&gt; C_REFOSCO      TRUE 
+##  7 C_SYRAH &lt;--&gt; I_REFOSCO                   7 C_ZINFANDEL &lt;--&gt; I_PRIMITIVO FALSE
+##  8 C_REFOSCO &lt;--&gt; C_SYRAH                   8 C_SYRAH &lt;--&gt; I_MERLOT        FALSE
+##  9 C_ZINFANDEL &lt;--&gt; I_PRIMITIVO             9 C_REFOSCO &lt;--&gt; I_MERLOT      FALSE
+## 10 I_PRIMITIVO &lt;--&gt; I_SYRAH                10 C_REFOSCO &lt;--&gt; C_ZINFANDEL   FALSE
+## # ℹ 18 more rows</code></pre>
+<p>As we can see, while indeed there are rank reversals, they are relatively minor: it isn’t like samples that are close in the actual distance matrix are ending up being very far in the non-metric MDS 2-dimensional solution.</p>
+</div>
+<div id="packages-used-in-this-chapter-7" class="section level2 hasAnchor" number="8.5">
+<h2><span class="header-section-number">8.5</span> Packages used in this chapter<a href="multidimensional-scaling-mds.html#packages-used-in-this-chapter-7" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb286"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb286-1"><a href="multidimensional-scaling-mds.html#cb286-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.3.1 (2023-06-16)
+## Platform: aarch64-apple-darwin20 (64-bit)
+## Running under: macOS Ventura 13.6.1
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## time zone: America/New_York
+## tzcode source: internal
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] patchwork_1.1.2 MASS_7.3-60     widyr_0.1.5     here_1.0.1     
+##  [5] lubridate_1.9.2 forcats_1.0.0   stringr_1.5.0   dplyr_1.1.2    
+##  [9] purrr_1.0.1     readr_2.1.4     tidyr_1.3.0     tibble_3.2.1   
+## [13] ggplot2_3.4.3   tidyverse_2.0.0
+## 
+## loaded via a namespace (and not attached):
+##  [1] sass_0.4.7        utf8_1.2.3        generics_0.1.3    lattice_0.21-8   
+##  [5] stringi_1.7.12    hms_1.1.3         digest_0.6.33     magrittr_2.0.3   
+##  [9] evaluate_0.21     grid_4.3.1        timechange_0.2.0  bookdown_0.37    
+## [13] fastmap_1.1.1     plyr_1.8.8        Matrix_1.6-0      rprojroot_2.0.3  
+## [17] jsonlite_1.8.7    ggrepel_0.9.3     backports_1.4.1   fansi_1.0.4      
+## [21] scales_1.2.1      jquerylib_0.1.4   cli_3.6.1         rlang_1.1.1      
+## [25] crayon_1.5.2      bit64_4.0.5       munsell_0.5.0     withr_2.5.0      
+## [29] cachem_1.0.8      yaml_2.3.7        tools_4.3.1       parallel_4.3.1   
+## [33] reshape2_1.4.4    tzdb_0.4.0        colorspace_2.1-0  broom_1.0.5      
+## [37] vctrs_0.6.3       R6_2.5.1          lifecycle_1.0.3   bit_4.0.5        
+## [41] vroom_1.6.3       pkgconfig_2.0.3   pillar_1.9.0      bslib_0.5.1      
+## [45] gtable_0.3.4      Rcpp_1.0.11       glue_1.6.2        highr_0.10       
+## [49] xfun_0.39         tidyselect_1.2.0  rstudioapi_0.15.0 knitr_1.43       
+## [53] farver_2.1.1      htmltools_0.5.6   labeling_0.4.3    rmarkdown_2.23   
+## [57] compiler_4.3.1</code></pre>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="cluster-analysis.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="distatis.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/08-MDS.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": true
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

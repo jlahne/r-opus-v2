@@ -1,0 +1,546 @@
+---
+output: html_document
+---
+
+# Analysis of Variance
+
+So far we've imported and inspected our data.  In case that got left behind, let's do it again (as well as setting up the basic packages we're going to use).
+
+```{r, message = FALSE}
+library(tidyverse)
+library(here)
+
+descriptive_data <- read_csv(here("data/torriDAFinal.csv"))
+consumer_data <- read_csv(here("data/torriconsFinal.csv"))
+
+```
+
+## Univariate analysis with the linear model
+
+In the original **R Opus**, HGH made sure that the classifying variables in the `descriptive_data` were set to the `factor` data type.  [There is a *looong* history of factors in `R`](https://notstatschat.tumblr.com/post/124987394001/stringsasfactors-sigh), and you can get a better crash course than I am going to give in some introductory course like [Stat545](https://stat545.com/factors-boss.html).  Suffice it to say here that the `factor` data type is a labeled integer, and that it ~~is~~ used to be the default way that `R` imports strings.  It has some desirable characteristics, but it can often be non-intuitive for those learning `R`.  Much of base `R` has now evolved to silently handle `character` data as `factor` when necessary, so unless you're a hardcore `R` user you probably don't need to worry about this too much.
+
+*That being said*, let's take the opportunity to follow along with HGH's intentions in order to learn some more data wrangling.  In this case, HGH says that the `NJ`, `NR`, and `ProductName` variables in `descriptive_data` should be `factor` data type, so let's make it so (this is definitely a good idea for `NJ` and `NR`, which are stored as numerals, as otherwise `R` will treat them as continuous numeric variables).
+
+```{r}
+descriptive_data <- 
+  descriptive_data %>%
+  mutate(NJ = as.factor(NJ),
+         NR = as.factor(NR),
+         ProductName = as.factor(ProductName))
+
+glimpse(descriptive_data)
+```
+
+Great.  We got it.  Now, when we do something like regression (with `lm()`) or ANOVA (with `aov()`) using those variables as predictors, `R` will treat them as discrete, unordered levels rather than the numbers that they are encoded as.
+
+The other trick that HGH does in her original **R Opus** is to run linear models on a matrix of outcomes.  We're going to take a slightly different approach using the "split-apply-combine" approach that the `nest()` function gives us access to in `dplyr`.  
+
+```{r}
+# First, we will retidy our data
+descriptive_data_tidy <- 
+  descriptive_data %>%
+  pivot_longer(cols = -c(NJ, NR, ProductName),
+               names_to = "descriptor",
+               values_to = "rating")
+
+nested_AOV_res <- 
+  descriptive_data_tidy %>%
+  nest(data = -descriptor) %>%
+  mutate(anova_res = map(.x = data,
+                         .f = ~aov(rating ~ (NJ + ProductName + NR)^2, data = .x)))
+```
+
+This functional programming is rather advanced, so let me walk through what we did:
+
+1.    We used `nest()` to make a bunch of sub-tables, each of which contained the data only for a single descriptor rating.  We have a table for `Red_berry`, a table for `Jam`, and so on.
+2.    We used `mutate()` to make a new column to store our ANOVA results in, which we created through the use of `map()`, as discussed below:
+3.    We used `map()` to take each of the nested subtables, now called `data`, and pass it to the `aov()` function.  This works because each ANOVA model has the exact same formula: `rating ~ (NJ + ProductName + NR)^2`.  In `R` formula syntax, this means we are modeling the variability in `rating` as a the outcome of judge (`NJ`), wine (`ProductName`), and rep (`NR`) *for each individual descriptor*.  The "one-sided `~`" syntax we use in the `.f = ` line defines this function, which is then applied to each of the nested subtables we built in the previous step.  By tidying the data, we are able to do this in this succinct but somewhat intimidating syntax.  "Split, apply, combine."
+
+This whole workflow is based on Hadley Wickham's work, and you can find more details here.  The outcome is a "tibble of tibbles", taking advantage of the fact that `R` lets us store arbitrary data into the cells of a `tibble` object.
+
+```{r}
+nested_AOV_res
+```
+If we dig into this structure, we can see that we're creating, in parallel, a bunch of model fits:
+
+```{r}
+# The first fitted model
+nested_AOV_res$anova_res[[1]]
+```
+
+We can continue to use `map()` to get summaries from these models.  We use the broom::tidy() function in order to get the same results as the typical `summary()` function, but in a manipulable `tibble`/`data.frame` object instead of in a `summary` object.
+
+```{r}
+da_aov_res <-
+  nested_AOV_res %>%
+  mutate(aov_summaries = map(.x = anova_res, 
+                             .f = ~broom::tidy(.x))) %>%
+  
+  # unnest() does the reverse of nest(): it takes a nested subtable and expands it
+  # back into the data frame, duplicating all of the classifying variables
+  # necessary to uniquely identify it.
+  
+  unnest(aov_summaries) %>%
+  select(-data, -anova_res)
+
+da_aov_res
+```
+
+We now have a table of all of the model results for running a 3-way ANOVA with two-way interactions on each of the individual sensory descriptors.  We can use this format to easily look for results that are significant.  For example, let's filter down to only rows where the model `term` represents variation from the wine (e.g., `ProductName`), and there is what is typically described as a signficant *p*-value (i.e., $p<0.05$).
+
+```{r}
+naive_significance <- 
+  da_aov_res %>%
+  filter(term == "ProductName",
+         p.value < 0.05) %>%
+  select(descriptor, p.value)
+
+naive_significance
+```
+We see that there are 17 descriptors that fit this criteria!  For these descriptors, ratings vary significantly for different wines.
+
+## Pseudo-mixed ANOVA
+
+In the original **R Opus**, HGH promotes the use of "pseudo-mixed" ANOVA in order to account for added variability from lack of judge consistency.  Specifically, we will see that several of our models show *significant interaction terms* between wines and judges or wines and replicates.  Let's find these products:
+
+```{r}
+da_aov_res %>%
+  filter(term %in% c("NJ:ProductName", "ProductName:NR"),
+         p.value < 0.05)
+```
+
+For these descriptors, the amount of variance explained by the interaction between the judge and the wine (`NJ:ProductName`) or the wine and the rep (`ProductName:Rep`) is significantly larger than the residual variation.  But these interactions themselves are an undesirable source of variation: different judges are using these descriptors differently on the same wines, or descriptors are being used differently on the same wines in different reps!
+
+The **pseudo-mixed model** is a conservative approach to accounting for this extra, undesirable error.  Without getting too into the weeds on the linear model, the basic intution is that, since these interactions, which represents undesirable variability, are significantly larger than the error term for each of these 5 descriptors, we will substitute the interaction in our normal linear model for the error term when calculating and evaluating our *F*-statistic, which as you may recall is the ratio of variance from a known source (in this case our wines, `ProductName`) and the error variance.
+
+How are we going to do this?  With some good, old-fashioned functional programming:
+
+```{r}
+get_pseudomixed_results <- function(aov_res){
+  
+  # The relevant ANOVA results for NJ:ProductName are in the 4th row
+  product_by_judge <- aov_res[4, ]
+  # The relevant ANOVA results for ProductName:NR are in the 6th row
+  product_by_rep <- aov_res[6, ]
+  # The relevant main effect for ProductName
+  product_effect <- aov_res[2, ]
+  
+  # If neither of the interactions is significant, 
+  if(product_by_judge$p.value > 0.05 & product_by_rep$p.value > 0.05){
+    return(tibble(sig_effect = product_effect$term,
+                  f_stat = product_effect$statistic,
+                  df_error = aov_res$df[7],
+                  p_val = product_effect$p.value))
+  }
+  if(product_by_judge$p.value < product_by_rep$p.value){
+    return(tibble(sig_effect = product_by_judge$term,
+                  f_stat = product_effect$meansq / product_by_judge$meansq,
+                  df_error = product_by_judge$df,
+                  p_val = 1 - pf(q = f_stat, df1 = product_effect$df, df2 = df_error)))
+  }else{
+    return(tibble(sig_effect = product_by_rep$term,
+                  f_stat = product_effect$meansq / product_by_rep$meansq,
+                  df_error = product_by_rep$df,
+                  p_val = 1- pf(q = f_stat, df1 = product_effect$df, df2 = df_error)))
+  }
+}
+
+da_aov_res %>%
+  filter(descriptor == "Red_berry") %>%
+  get_pseudomixed_results()
+```
+
+This function will take a `tibble` of 3-way ANOVA results from our analysis, look at the relevant interactions, and, if they are large enough, run a pseudomixed analysis.  If both of the interactions are significant it will test the largest (most significant) interaction as the one to examine.  It will then return the results of that modified, pseudomixed ANOVA in a nice table that tells us the relevant details: what effect was tested, the *F*-statistic and degrees of freedom for the denominator (the numerator degrees of freedom will remain the same), and the new *p*-value.
+
+In the case of `Red_berry` above, the `NJ:ProductName` interaction is the most significant, and results in a non-significant pseudomixed test.
+
+**NB:** Because I used numeric indexing (e.g., `aov_res[6, ]`) to write this function "quick and dirty", it would need to be modified if I had a different linear model defined for my ANOVA (the model specified as `rating ~ (NJ + ProductName + NR)^2` in my `aov()` call above), or even if I reordered the terms in *that* model.
+
+We use the same split-apply-combine workflow with `nest()` and `map()` to first make subtables for each of our descriptors' original ANOVA results, and then run our new function on them.
+
+```{r}
+
+da_aov_res %>%
+  nest(data = -descriptor) %>%
+  mutate(pseudomixed_res = map(data, ~get_pseudomixed_results(.x))) %>%
+  unnest(pseudomixed_res) %>%
+  filter(p_val < 0.05)
+
+```
+
+From these results, we see that almost all of our products have significant interactions, and that we've lost a few significant descriptors: we're down to 13/20 being significant, from 17/20 from our naive evaluation.  Furthermore, when we had significant interactions, they were all wine-by-judge interactions: believe it or not, this is good news.  As noted by @brockhoffTaking2015, even trained judges are almost never aligned in scale use, so the pseudomixed model is good insurance against this variability.  A larger wine-by-rep interaction would be more concerning: it would indicate that the product may have changed in a particular presentation (perhaps it was exposed to oxygen?), and this would warrant a reconsideration of the results.
+
+## Mean comparison (post-hoc testing)
+
+In the original **R Opus**, HGH demonstrates how to calculate Fisher's Least Significant Difference (Fisher's LSD), but I discourage the use of this test, even though it is arguable that the significant ANOVA result means that there is some protection against familywise error @rencherMethods2002  The Tukey's Honestly Significant Difference (HSD) is probably preferable, and as a reviewer I push authors to use this test.
+
+We're going to go back to our `nested_AOV_res` object because we don't need the sum-of-squares/ANOVA table output, we need the actual model fit results.  HGH uses the `agricolae` package's `HSD.test()` function, and we're going to wrap that up in a convenience function to let us easily capture the results and drop them into a `tibble` for easy access and plotting.
+
+```{r}
+library(agricolae)
+
+tidy_hsd <- function(anova_res, treatment = "ProductName"){
+  
+  hsd_res <- HSD.test(anova_res, trt = treatment)
+  
+  return(
+    hsd_res$means %>%
+      as_tibble(rownames = "wine") %>%
+      left_join(hsd_res$groups %>% 
+                  as_tibble(rownames = "wine")) %>%
+      arrange(groups)
+  )
+  
+}
+
+# We can test this on the Red_berry descriptor
+nested_AOV_res$anova_res[[1]] %>% 
+  tidy_hsd()
+
+```
+
+**NB, again:** Once again I have written this function to be quick and dirty--I have hardcoded some of the information about the structure of our analysis into the function, so if we change how our `aov()` is fit or our column names are defined, this will no longer work.
+
+This function returns a nice table of our wines arranged by their group membership in an HSD test.  We can use this to get mean separations for all of our significant attributes with a bit of data wrangling.
+
+```{r, message = FALSE}
+# First, we'll get a list of significant descriptors from pseudomixed ANOVA
+significant_descriptors <- 
+  da_aov_res %>%
+  nest(data = -descriptor) %>%
+  mutate(pseudomixed_res = map(data, ~get_pseudomixed_results(.x))) %>%
+  unnest(pseudomixed_res) %>%
+  filter(p_val < 0.05) %>%
+  pull(descriptor)
+
+# Then we'll take our original models and only run HSD on the significant ones
+
+hsd_tbl <- 
+  nested_AOV_res %>%
+  filter(descriptor %in% significant_descriptors) %>%
+  mutate(hsd_res = map(anova_res, ~tidy_hsd(.x))) %>%
+  select(-data, -anova_res) %>%
+  unnest(hsd_res)
+
+hsd_tbl
+
+```
+
+Again, using the same split-apply-combine workflow (but we started with an already nested table), we get a set of results suitable for reporting in a paper or plotting.  Let's take a look at how to make a basic visualization of these results using `ggplot2`.  
+
+```{r fig.width=10, fig.height = 10}
+library(tidytext)
+
+hsd_tbl %>%
+  # Here we define a standard normal confidence interval
+  mutate(interval = 1.96 * (std / sqrt(r))) %>%
+  # Here we use the tidytext::reorder_within() function to order samples
+  # separately across facets, getting nice visualizations
+  mutate(wine = reorder_within(wine, by = rating, within = descriptor)) %>%
+  ggplot(aes(x = rating, y = wine, color = groups)) + 
+  geom_point() + 
+  geom_segment(aes(x = rating - interval, 
+                   xend = rating + interval, 
+                   y = wine, yend = wine, 
+                   color = groups), 
+               inherit.aes = FALSE) + 
+  scale_y_reordered() +
+  facet_wrap(~descriptor, ncol = 3, scales = "free") + 
+  theme_bw() +
+  theme(legend.position = "top") + 
+  labs(x = NULL) + 
+  guides(color = guide_legend(title = "HSD group", nrow = 1))
+
+```
+
+## BONUS: Bayesian approaches to ANOVA
+
+As I have worked longer in our field and with applied statistics, I've gotten less satisfied with ["Null Hypothesis Statistics Testing" (NHST)](https://link.springer.com/article/10.3758/s13423-016-1221-4), and more interested in a general Bayesian framework.  I'm not nearly expert enough to give a rigorous definition of Bayesian statistics, but the gist is that Bayesian statistics combines our prior knowledge (from theory, previous experience, observation) with data from an experiment to give us estimates about our certainty around parameters of interest.  Essentially, instead of rejecting a (usually implausible) $H_0$ as a consequence of finding data incompatible with that hypothesis, Bayesian statistics evaluates what range of *parameters* are compatible with observed data.  This, to me, seems more of a satisfying use of statistical analysis.
+
+Put less generally, for our observed data from subjects rating wines' sensory attributes, we would be able to use a Bayesian approach to not just determine whether the observed means are "significantly different" (at some given level of $\alpha$, usually $\alpha=0.05$), but to give *plausible estimates of the underlying descriptor means for each wine*.  This seems worthwhile to me.
+
+So if Bayesian statistics are so great, why isn't everyone using them?  There are two reasons (in my understanding):
+
+1. Many statisticians, particularly those influenced by Fisher, Neyman, and Pearson (generally called "Frequentists") reject the requirement in Bayesian modeling for providing an estimate of *prior* knowledge, since it is based on opinion.  I think this is silly, because it pretends that our experimental approach (science, writ broadly) doesn't integrate prior, subjective knowledge with rigorous data collection.  For more on this (silly) objection, consider the excellently titled [*The Theory That Would Not Die*](https://yalebooks.yale.edu/book/9780300188226/the-theory-that-would-not-die/).
+2. Application of Bayes theorem requires numerical integration of complicated integrands which, without modern computational methods, was essentially impossible. Thus, even enthusiastic Bayesians couldn't actually apply the approach to many practical problems.  This barrier has been progressively broken down, as computational power has increased and better, more user-friendly tools have been developed.  
+
+Following point 2, I will be using a combination of [*Stan*](https://mc-stan.org/) (a standalone tool for Bayesian estimation) and the `R` packages associated with Stan, particularly `brms` ("brooms") and `tidybayes`, to work through this section.  Their installation requires extra steps that [can be found at the Stan website](https://mc-stan.org/users/interfaces/).
+
+There are [many](https://xcelab.net/rm/statistical-rethinking/), [many](https://avehtari.github.io/ROS-Examples/), [many](https://sites.google.com/site/doingbayesiandataanalysis/) excellent introductions to Bayesian statistics available, so I am not going to embarrass myself by trying to stumble through an explanation.  For my own benefit, instead, I am going to try to work through an application of simple Bayesian methods to the multi-way ANOVAs we ran above.  This is based on material from A. Solomon Kurz's [-@kurzDoingBayesianDataAnalysis2023] truly excellent walkthrough to modern `R`-based approaches to Bayesian modeling.  Let's see how it goes!
+
+First, we load the extra required packages.
+
+```{r message=FALSE}
+library(brms)
+library(tidybayes)
+```
+
+Then we're going to use the approach to setting up ANOVA-like models in Stan that [A. Solomon Kurz details in his excellent online companion](https://bookdown.org/content/3686/metric-predicted-variable-with-multiple-nominal-predictors.html) to Kruschke's *Doing Bayesian Data Analysis* @kruschkeDoing2014.
+
+We are first going to apply this approach to a single outcome: `Bitter`.  We know that above we found a significant difference between Bitter ratings for the various wines.  Let's let a Bayesian approach explore that result for us.
+
+```{r}
+# Let's make a less unwieldy tibble to work with
+
+bayes_data <- 
+  descriptive_data_tidy %>%
+  filter(descriptor == "Bitter")
+bayes_data
+
+# and we'll store some information about our data so that we can use it in our
+# brm() call later:
+
+mean_y <- mean(bayes_data$rating)
+sd_y <- sd(bayes_data$rating)
+```
+
+Finally, we're going to take a function from Kurz that gives parameters for a gamma distribution with a specific mode and standard deviation; to learn about why we're doing this consult Kurz or Kruschke.
+
+```{r}
+gamma_a_b_from_omega_sigma <- function(mode, sd) {
+  if (mode <= 0) stop("mode must be > 0")
+  if (sd   <= 0) stop("sd must be > 0")
+  rate <- (mode + sqrt(mode^2 + 4 * sd^2)) / (2 * sd^2)
+  shape <- 1 + mode * rate
+  return(list(shape = shape, rate = rate))
+}
+
+shape_rate <- gamma_a_b_from_omega_sigma(mode = sd_y / 2, sd = sd_y * 2)
+```
+
+We store all of this information into a `stanvar` object, which lets us send this information to Stan through `brms`.
+
+```{r}
+stanvars <- 
+  stanvar(mean_y, name = "mean_y") +
+  stanvar(sd_y, name = "sd_y") + 
+  stanvar(shape_rate$shape, name = "alpha") +
+  stanvar(shape_rate$rate, name = "beta")
+
+# If you're curious, stanvar() creates lists of named variables that can be
+# passed off to Stan for processing; we could calculate these directly in our
+# call to brm() but it would be messier looking and potentially more fragile
+# (e.g., if we change our model and forget to change the calculation, that would
+# be bad).
+
+str(stanvars)
+```
+
+OK!  As per usual, my attempt to explain (to myself, mostly) what I am doing is much longer than I intended!  Let's get to modeling.
+
+We are going to develop a model that is equivalent to the 3-way ANOVA we proposed for each variable: we want to allow 2-way interactions between all main effects, as well.  It will be slightly uglier because we're going to be using syntax that is common for non-linear or repeated-effects modeling in `R`.  To save typing, I am going to omit the interactions between `NR` and the other factors, as (happily) they were never large, and are not of theoretical interest.
+
+```{r eval=FALSE}
+b_bitter <- 
+  brm(data = bayes_data,
+      family = gaussian,
+      formula = rating ~ 1 + (1 | NJ) + (1 | NR) + (1 | ProductName) + (1 | NJ:ProductName),
+      prior = c(prior(normal(mean_y, sd_y * 5), class = Intercept),
+                prior(gamma(alpha, beta), class = sd),
+                prior(cauchy(0, sd_y), class = sigma)),
+      stanvars = stanvars, seed = 2, chains = 4, cores = 4, iter = 4000,
+      warmup = 2000, control = list(adapt_delta = 0.999, max_treedepth = 13),
+      file = here("fits/fit_02_bitter"))
+```
+
+```{r include=FALSE, text=FALSE}
+b_bitter <- readRDS(here("fits/fit_02_bitter.rds"))
+```
+
+
+This resulted in at least one diagnostic warning that, after inspection, seems trivial enough to ignore for now (only a few divergent transitions with good $\hat{R}$ and $ESS$ values), as can be seen in the summary and diagnostic plots below:
+
+```{r}
+b_bitter
+
+plot(b_bitter, N = 6, widths = c(2, 3))
+```
+
+We can examine the actual "draws" from the joint posterior using the `as_draws_df()` function and doing some wrangling.
+
+```{r}
+draws <- 
+  b_bitter %>%
+  as_draws_df()
+
+draws
+```
+
+You'll note that there are a *lot* of variables.  We are estimating (as I understand it) deflections from the grand mean for all of the levels of all of our main effects.  We can summarize these using the `posterior_summary()` function:
+
+```{r}
+posterior_summary(b_bitter) %>%
+  as_tibble(rownames = "parameter") %>%
+  mutate(across(where(is.numeric), ~round(., 2)))
+```
+
+For a sanity check, notice that the estimate for our grand mean (`b_Intercept`) is the observed value.
+
+```{r}
+mean_y
+```
+
+```{r warning=FALSE}
+nd <- 
+  bayes_data %>%
+  distinct(ProductName)
+
+# we use `re_formula` to marginalize across the other factors
+
+f <-
+  fitted(b_bitter,
+         newdata = nd,
+         re_formula = ~ (1 | ProductName),
+         summary = FALSE) %>%
+  as_tibble() %>%
+  set_names(nd$ProductName)
+
+# We can look at the plausible 95% HDI for each wine's rated bitterness.
+
+f %>%
+  pivot_longer(everything()) %>%
+  mutate(name = fct(name) %>% fct_reorder(.x = value, .fun = mean)) %>%
+  ggplot(aes(x = value, y = name)) + 
+  geom_vline(xintercept = fixef(b_bitter)[, 1], size = 1, color = "red") + 
+  stat_dotsinterval(point_interval = mode_hdi, .width = 0.95, quantiles = 100) + 
+  theme_classic() + 
+  labs(caption = "Red line is the model-implied grand mean.")
+
+```
+
+It sure looks like these wines are not easy to discriminate.  One advantage of Bayesian approaches is that the paradigm of investigation allows us to investigate the posterior draws to explore things like pairwise comparisons with no need to worry about ideas like "family-wise error" (because we are not in a hypothesis-testing framework).
+
+```{r}
+# Let's see if the Italian Syrah is plausibly more bitter than the Californian Merlot:
+
+f %>%
+  transmute(diff = I_SYRAH - C_MERLOT) %>%
+  ggplot(aes(x = diff)) + 
+  geom_rect(aes(xmin = -0.05, xmax = 0.05,
+                ymin = -Inf, ymax = Inf), 
+            size = 1, fill = "pink", alpha = 1/3) + 
+  stat_dotsinterval(point_interval = mode_hdi, .width = 0.95, quantiles = 100) + 
+  theme_classic() +
+  labs(x = "Italian Syrah vs. Californian Merlot in rated bitterness",
+       caption = "Pink area is a [-0.05, 0.05] ROPE around 0 difference.")
+
+```
+
+It looks like the posterior differences between the most-bitter and least-bitter wines don't exclude a small "region of plausible equivalence" around 0 from the 95% area of highest posterior density, so even though there is a modal difference of around 0.75 points in bitterness between these wines, we can't entirely dismiss the possibility that there is no difference in bitterness.  That being said, there is at least as much posterior probability density around 1.5 points of bitterness difference, so it seems unreasonable to me to claim that these wines are exactly the same in their level of bitterness--it just probably isn't that large a difference!
+
+We also have the freedom to explore any contrasts that might be of interest.  For example, we might be interested (for either exploratory data analysis based on the HDIs above or because of *a priori* theory) in knowing whether Italian wines are on average more bitter than California wines.  We can do so simply:
+
+```{r}
+f %>%
+  transmute(diff = (I_SYRAH + I_MERLOT + I_PRIMITIVO + I_REFOSCO) / 4 - 
+              (C_MERLOT + C_SYRAH + C_ZINFANDEL + C_REFOSCO) / 4) %>%
+  ggplot(aes(x = diff)) + 
+  geom_rect(aes(xmin = -0.05, xmax = 0.05,
+                ymin = -Inf, ymax = Inf), 
+            size = 1, fill = "pink", alpha = 1/3) + 
+  stat_dotsinterval(point_interval = mode_hdi, .width = 0.95, quantiles = 100) + 
+  theme_classic() +
+  labs(x = "Italian vs. Californian wines for rated bitterness",
+       caption = "Pink area is a [-0.05, 0.05] ROPE around 0 difference.")
+```
+
+Unsurprisingly, given the figures above, we see that there is some possibility of a very small amount of overall bitterness, but we'd be pretty hesitant to make broad statements when a ROPE around 0 is so clearly within the HDI for this contrast.
+
+Finally, for my own interest, I am curious how `brms` would do using defaults in fitting the same ANOVA-like model.  
+
+```{r eval=FALSE}
+b_bitter_default <-
+  brm(data = bayes_data,
+      family = gaussian,
+      formula = rating ~ 1 + (1 | NJ) + (1 | NR) + (1 | ProductName) + (1 | NJ:ProductName),
+      seed = 2, chains = 4, cores = 4, control = list(adapt_delta = 0.999, max_treedepth = 13),
+      file = here("fits/fit_02_bitter_default"))
+```
+
+```{r include=FALSE}
+b_bitter_default <- readRDS(here("fits/fit_02_bitter_default.rds"))
+```
+
+Interestingly, this model seemed to take much less time to fit and didn't have the issues with transitions.  Let's look at the chains and the parameter estimates.
+
+```{r}
+b_bitter_default
+
+plot(b_bitter_default, N = 6, width = c(2, 3))
+```
+
+It all looks ok, but it seems like the estimates for some parameters are a bit less precise, probably because we allowed the model to use uninformed priors.  We can see how that was done using the `get_prior()` function on the formula and data, as so:
+
+```{r}
+get_prior(formula = rating ~ 1 + (1 | NJ) + (1 | NR) + (1 | ProductName) + (1 | NJ:ProductName),
+          data = bayes_data)
+```
+
+It looks like, by default, `brm()` uses very broad Student's $t$ priors for all the parameters; I'm no expert but I think this is what are called "uninformed priors" and so will be almost entirely influenced by the data.  For example, if we compare our original fit following Kurz's example where we use a normal distribution with `mean` and `sd` influenced by our data, we see a distinct difference in parameter estimates for the intercept:
+
+```{r}
+# The original model with specified priors
+plot(b_bitter, variable = "b_Intercept")
+
+# The model with default priors
+plot(b_bitter_default, variable = "b_Intercept")
+```
+
+So we lose some precision in exchange for speed.  Let's look at how the default model predicts mean separation:
+
+```{r}
+nd <- 
+  bayes_data %>%
+  distinct(ProductName)
+
+# we use `re_formula` to marginalize across the other factors
+
+f <-
+  fitted(b_bitter_default,
+         newdata = nd,
+         re_formula = ~ (1 | ProductName),
+         summary = FALSE) %>%
+  as_tibble() %>%
+  set_names(nd$ProductName)
+
+# We can look at the plausible 95% HDI for each wine's rated bitterness.
+
+f %>%
+  pivot_longer(everything()) %>%
+  mutate(name = fct(name) %>% fct_reorder(.x = value, .fun = mean)) %>%
+  ggplot(aes(x = value, y = name)) + 
+  geom_vline(xintercept = fixef(b_bitter_default)[, 1], size = 1, color = "red") + 
+  stat_dotsinterval(point_interval = mode_hdi, .width = 0.95, quantiles = 100) + 
+  theme_classic() + 
+  labs(caption = "Red line is the model-implied grand mean.",
+       subtitle = "The HDIs are broader with the `brms` default priors")
+```
+
+And we can do the same kind of check with the individual differences:
+
+```{r}
+# Let's see if the Italian Syrah is plausibly more bitter than the Californian Merlot:
+
+f %>%
+  transmute(diff = I_SYRAH - C_MERLOT) %>%
+  ggplot(aes(x = diff)) + 
+  geom_rect(aes(xmin = -0.05, xmax = 0.05,
+                ymin = -Inf, ymax = Inf), 
+            size = 1, fill = "pink", alpha = 1/3) + 
+  stat_dotsinterval(point_interval = mode_hdi, .width = 0.95, quantiles = 100) + 
+  theme_classic() +
+  labs(x = "Italian Syrah vs. Californian Merlot in rated bitterness",
+       caption = "Pink area is a [-0.05, 0.05] ROPE around 0 difference.",
+       subtitle = "Our overall conclusions, however, would not change much using the defaults.")
+
+```
+
+So in this case, it seems like the speed of using `brms` defaults, at least for exploratory data analysis, may be worthwhile.
+
+I might try to incorporate some more Bayesian tools as we go along, as I find them very interesting.  If you want to learn more about these, I recommend the sources listed above and cited in the text here.
+
+## Packages used in this chapter
+
+```{r}
+sessionInfo()
+```
