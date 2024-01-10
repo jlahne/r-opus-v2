@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 5 Canonical Variate Analysis | The R Opus v2</title>
+  <title>Chapter 5 Canonical Variate Analysis |  “The R Opus v2”</title>
   <meta name="description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
 walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
   <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 5 Canonical Variate Analysis | The R Opus v2" />
+  <meta property="og:title" content="Chapter 5 Canonical Variate Analysis |  “The R Opus v2”" />
   <meta property="og:type" content="book" />
   <meta property="og:image" content="/img/r-opus-cover.jpg" />
   <meta property="og:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
@@ -19,7 +19,7 @@ walkthroughs on common multivariate analyses in <code>R</code> for sensory-evalu
   <meta name="github-repo" content="jlahne/r-opus-v2" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 5 Canonical Variate Analysis | The R Opus v2" />
+  <meta name="twitter:title" content="Chapter 5 Canonical Variate Analysis |  “The R Opus v2”" />
   
   <meta name="twitter:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
@@ -303,7 +303,8 @@ div.csl-indent {
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The R Opus v2</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"><p><img src="img/r-opus-cover.jpg" style="width:6in" /><br />
+“The R Opus v2”</p></a>
           </h1>
         </div>
 
@@ -689,16 +690,16 @@ div.csl-indent {
 <span id="cb181-46"><a href="canonical-variate-analysis.html#cb181-46" tabindex="-1"></a><span class="co"># For example, here is the result of our function</span></span>
 <span id="cb181-47"><a href="canonical-variate-analysis.html#cb181-47" tabindex="-1"></a><span class="fu">get_bootstrapped_means</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 8 × 3
-##   ProductName    Can1   Can2
-##   &lt;fct&gt;         &lt;dbl&gt;  &lt;dbl&gt;
-## 1 C_MERLOT     0.0524  0.290
-## 2 C_REFOSCO    1.31    0.205
-## 3 C_SYRAH      0.368   0.225
-## 4 C_ZINFANDEL -0.248   0.417
-## 5 I_MERLOT     0.497  -1.07 
-## 6 I_PRIMITIVO -1.18    0.542
-## 7 I_REFOSCO    0.406  -1.28 
-## 8 I_SYRAH     -1.20    0.669</code></pre>
+##   ProductName   Can1   Can2
+##   &lt;fct&gt;        &lt;dbl&gt;  &lt;dbl&gt;
+## 1 C_MERLOT     0.466  0.160
+## 2 C_REFOSCO    1.07   0.313
+## 3 C_SYRAH      0.441  0.199
+## 4 C_ZINFANDEL -0.287  0.234
+## 5 I_MERLOT     0.505 -0.735
+## 6 I_PRIMITIVO -1.04   0.446
+## 7 I_REFOSCO   -0.313 -1.29 
+## 8 I_SYRAH     -0.836  0.676</code></pre>
 <div class="sourceCode" id="cb183"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb183-1"><a href="canonical-variate-analysis.html#cb183-1" tabindex="-1"></a><span class="co"># In order to generate a set of resampled confidence ellipses for our results,</span></span>
 <span id="cb183-2"><a href="canonical-variate-analysis.html#cb183-2" tabindex="-1"></a><span class="co"># we&#39;ll run this 100 times for speed (for accuracy, 1000x would be better) and use</span></span>
 <span id="cb183-3"><a href="canonical-variate-analysis.html#cb183-3" tabindex="-1"></a><span class="co"># stat_ellipse() to draw those.</span></span>
@@ -815,7 +816,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/USERNAME/REPO/edit/BRANCH/05-CVA.Rmd",
+"link": "https://github.com/jlahne/r-opus-v2/edit/main/05-CVA.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -826,7 +827,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["_main.pdf", "_main.epub"],
+"download": "R-opus-v2.pdf",
 "search": {
 "engine": "fuse",
 "options": null

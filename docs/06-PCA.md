@@ -49,7 +49,7 @@ descriptive_means
 ```
 
 ```
-## # A tibble: 8 × 21
+## # A tibble: 8 x 21
 ##   ProductName Red_berry Dark_berry   Jam Dried_fruit Artificial_frui Chocolate
 ##   <fct>           <dbl>      <dbl> <dbl>       <dbl>           <dbl>     <dbl>
 ## 1 C_MERLOT         2.46       3.05 1.37         1.86           0.776     1.19 
@@ -60,7 +60,7 @@ descriptive_means
 ## 6 I_PRIMITIVO      3.85       3.38 3.61         1.44           2.19      1.38 
 ## 7 I_REFOSCO        2.48       3.01 1.54         1.87           1.11      0.810
 ## 8 I_SYRAH          3.17       4.48 3.10         2.16           2.43      1.20 
-## # ℹ 14 more variables: Vanilla <dbl>, Oak <dbl>, Burned <dbl>, Leather <dbl>,
+## # i 14 more variables: Vanilla <dbl>, Oak <dbl>, Burned <dbl>, Leather <dbl>,
 ## #   Earthy <dbl>, Spicy <dbl>, Pepper <dbl>, Grassy <dbl>, Medicinal <dbl>,
 ## #   `Band-aid` <dbl>, Sour <dbl>, Bitter <dbl>, Alcohol <dbl>, Astringent <dbl>
 ```
@@ -129,7 +129,7 @@ means_pca$eig %>%
   theme_bw()
 ```
 
-<img src="06-PCA_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+![](06-PCA_files/figure-latex/unnamed-chunk-4-1.pdf)<!-- --> 
 
 We can see that the "elbow" here occurs at the third or fourth component, but we're going to only examine the first 2 components.  Keep in mind that this means some variation might not be apparent.
 
@@ -207,7 +207,7 @@ p_loadings <-
 
 ```
 ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-## ℹ Please use `linewidth` instead.
+## i Please use `linewidth` instead.
 ## This warning is displayed once every 8 hours.
 ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 ## generated.
@@ -217,7 +217,7 @@ p_loadings <-
 p_loadings
 ```
 
-<img src="06-PCA_files/figure-html/unnamed-chunk-6-1.png" width="672" />
+![](06-PCA_files/figure-latex/unnamed-chunk-6-1.pdf)<!-- --> 
 
 Typically, we'd interpret this by looking at variables that are very "close" (make acute angles to) the x- or y-axes (which are the first and second components, respectively), and that are very long.  The magnitude of the vector indicates the coefficient for that variable in the linear combination making up each of the two principal components that serve as axes of the displayed space.  Therefore, we'd say that the fruity flavors (e.g., `Jam`) are loading strongly and positively on the first component, and almost not at all to the second component, and that the strongest negative contributions come from `Burned`, which is also strongly negatively loaded on the second component.  For the second component, `Medicinal` and `Band-aid`, with other associated flavors, are strongly positively loaded (and negatively loaded on the first dimension), whereas `Sour` loads positively almost entirely on the first component, but not as strongly.  There are many other observations we could make from this plot.  It is worth comparing it to the loading/coefficient plot for the CVA; you will see that while the values of the coefficients are not identical, the patterns are very similar.
 
@@ -280,13 +280,13 @@ means_pca$svd$V %>%
 ```
 ## Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if
 ## `.name_repair` is omitted as of tibble 2.0.0.
-## ℹ Using compatibility `.name_repair`.
+## i Using compatibility `.name_repair`.
 ## This warning is displayed once every 8 hours.
 ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 ## generated.
 ```
 
-<img src="06-PCA_files/figure-html/unnamed-chunk-8-1.png" width="672" />
+![](06-PCA_files/figure-latex/unnamed-chunk-8-1.pdf)<!-- --> 
 
 
 OK, with all that said, if we multiply our means-vector ratings (mean-centered for each column) by the loadings we just spent a while getting, we get the *scores* for our mean vectors in the PCA space.  These are stored in the `$ind$coord` matrix. 
@@ -310,7 +310,7 @@ p_scores <-
 p_scores
 ```
 
-<img src="06-PCA_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+![](06-PCA_files/figure-latex/unnamed-chunk-9-1.pdf)<!-- --> 
 
 We interpret this plot by noting the spatial separation of sample mean-vectors, as well as noting the proximity to the axes, which we interpret by their loadings from variables.  In order to facilitate this second task, it is often helpful to have the loadings and scores plots side by side.  We can accomplish this using the nifty `patchwork` package, which lets us arrange saved plots however we want.
 
@@ -321,7 +321,7 @@ library(patchwork)
 p_scores + p_loadings + plot_layout(widths = c(2, 2))
 ```
 
-<img src="06-PCA_files/figure-html/unnamed-chunk-10-1.png" width="864" />
+![](06-PCA_files/figure-latex/unnamed-chunk-10-1.pdf)<!-- --> 
 
 By looking at these plots together, we can see that the first dimension, which we previously noted separated fruity flavors from medicinal and burnt flavors, is driven by a separation of the Italian Primitivo and Syrah samples from the other samples.  The second dimension, which is separating the medicinal and burnt flavors, is interestingly also separating the Californian and Italian wines made from two sets of the same grape, Refosco and Merlot.
 
@@ -340,7 +340,7 @@ means_pca$var$cor %>%
 ```
 
 ```
-## # A tibble: 6 × 3
+## # A tibble: 6 x 3
 ##   descriptor       Dim.1  Dim.2
 ##   <chr>            <dbl>  <dbl>
 ## 1 Jam              0.972 0.0485
@@ -361,7 +361,7 @@ means_pca$var$cor %>%
 ```
 
 ```
-## # A tibble: 6 × 3
+## # A tibble: 6 x 3
 ##   descriptor    Dim.1  Dim.2
 ##   <chr>         <dbl>  <dbl>
 ## 1 Sour        0.0997   0.850
@@ -393,7 +393,7 @@ means_pca$var$cor %>%
 ```
 
 ```
-## # A tibble: 5 × 2
+## # A tibble: 5 x 2
 ##   name  total
 ##   <chr> <dbl>
 ## 1 Dim.1  7.46
@@ -414,7 +414,7 @@ means_pca$svd$V %>%
 ```
 
 ```
-## # A tibble: 5 × 2
+## # A tibble: 5 x 2
 ##   name  total
 ##   <chr> <dbl>
 ## 1 V1     1.00
@@ -528,7 +528,7 @@ means_pca$var$contrib %>%
   facet_wrap(~name, scales = "free")
 ```
 
-<img src="06-PCA_files/figure-html/unnamed-chunk-15-1.png" width="672" />
+![](06-PCA_files/figure-latex/unnamed-chunk-15-1.pdf)<!-- --> 
 
 We can see that for PC1, contributions seem to be coming from a lot of fruity flavors, as well as some influence from complex flavors that I would attribute to possible Brettanomyces influence in some of the wines.  In PC2, there appears to be instead more influence of oak ("Chocolate" and "Vanilla") as well as the same Brettanomyces flavors.  Note that contributions, as squared measurements, are always positive - these are *absolute* measures of influence on the dimensions.
 
@@ -551,7 +551,7 @@ panellipse_res <-
                          col.p = 2, col.j = 1, firstvar = 4, scale.unit = FALSE)
 ```
 
-<img src="06-PCA_files/figure-html/unnamed-chunk-16-1.png" width="672" /><img src="06-PCA_files/figure-html/unnamed-chunk-16-2.png" width="672" /><img src="06-PCA_files/figure-html/unnamed-chunk-16-3.png" width="672" /><img src="06-PCA_files/figure-html/unnamed-chunk-16-4.png" width="672" />
+![](06-PCA_files/figure-latex/unnamed-chunk-16-1.pdf)<!-- --> ![](06-PCA_files/figure-latex/unnamed-chunk-16-2.pdf)<!-- --> ![](06-PCA_files/figure-latex/unnamed-chunk-16-3.pdf)<!-- --> ![](06-PCA_files/figure-latex/unnamed-chunk-16-4.pdf)<!-- --> 
 
 I'm not a huge fan of `panellipse()` because it's pretty opaque.  I can't find the documentation on what it's doing, and there doesn't seem to be an associated journal article.  It doesn't really document how it is resampling or give easily understood descriptions of what the results (both numerical and graphical) it is producing *mean*.  Here is the plot that HGH uses for the original **R Opus**:
 
@@ -560,7 +560,7 @@ I'm not a huge fan of `panellipse()` because it's pretty opaque.  I can't find t
 panellipse_res$graph$plotIndEll
 ```
 
-<img src="06-PCA_files/figure-html/unnamed-chunk-17-1.png" width="672" />
+![](06-PCA_files/figure-latex/unnamed-chunk-17-1.pdf)<!-- --> 
 
 The confidence ellipses are definitely being drawn around 95% of the resampled results from the bootstrapping procedure, but I'm not sure if this is a bootstrap based on, for example, the "partial bootstrap" or the "truncated bootstrap".  We will us a naive approach to producing a partial bootstrap in order to do some resampling and compare it.
 
@@ -606,7 +606,7 @@ p_scores +
                aes(x = pc1, y = pc2, color = ProductName))
 ```
 
-<img src="06-PCA_files/figure-html/unnamed-chunk-18-1.png" width="672" />
+![](06-PCA_files/figure-latex/unnamed-chunk-18-1.pdf)<!-- --> 
 
 Our results are pretty close, but not exactly the same.  It seems like our method of generating bootstrapped scores (via resampling followed by projection via the $\mathbf Q$ matrix from SVD) is potentially more liberal in product separation than that from the `panellipse()` function.  Perhaps `panellipse()` is using the "truncated bootstrap" approach **REF Peltier**, which solves a full PCA with the resampled data, then aligns it with the original observed space via Generalized Procrustes Analysis, then repeats that process a large number (e.g., 1000) times.. 
 
@@ -630,7 +630,7 @@ The `SensoMineR::coltable()` function HGH used is a visualization function for t
 SensoMineR::coltable(panellipse_res$hotelling, main.title = "Hotelling's T2 for all products")
 ```
 
-<img src="06-PCA_files/figure-html/unnamed-chunk-20-1.png" width="672" />
+![](06-PCA_files/figure-latex/unnamed-chunk-20-1.pdf)<!-- --> 
 
 Let's practice how to make a similar table from this kind of data.  The actual `panellipse_res$hotelling` object is just a square matrix.  We can use this as input for something like the `geom_tile()` function with the right kind of wrangling.  
 
@@ -667,7 +667,7 @@ panellipse_res$hotelling %>%
         panel.grid = element_blank())
 ```
 
-<img src="06-PCA_files/figure-html/unnamed-chunk-21-1.png" width="672" />
+![](06-PCA_files/figure-latex/unnamed-chunk-21-1.pdf)<!-- --> 
 
 Notice the `ggplot2` syntax above is kind of complicated, but that's because I did it all at once, and I wanted to do a lot of minor things like remove axis ticks, so as to replicate the plot from  the `panellipse()` function closely.  Notice that I don't think the degrees of freedom for the Hotelling's $T^2$ plot.
 
@@ -735,29 +735,28 @@ sessionInfo()
 ##  [7] digest_0.6.33        timechange_0.2.0     estimability_1.4.1  
 ## [10] lifecycle_1.0.3      cluster_2.1.4        multcompView_0.1-9  
 ## [13] tokenizers_0.3.0     lmom_3.0             magrittr_2.0.3      
-## [16] compiler_4.3.1       rlang_1.1.1          sass_0.4.7          
-## [19] tools_4.3.1          utf8_1.2.3           yaml_2.3.7          
-## [22] tidytext_0.4.1       data.table_1.14.8    knitr_1.43          
-## [25] labeling_0.4.3       htmlwidgets_1.6.2    bit_4.0.5           
-## [28] scatterplot3d_0.3-44 plyr_1.8.8           KernSmooth_2.23-21  
-## [31] expm_0.999-7         withr_2.5.0          grid_4.3.1          
-## [34] fansi_1.0.4          SensoMineR_1.26      AlgDesign_1.2.1     
-## [37] e1071_1.7-13         xtable_1.8-4         colorspace_2.1-0    
-## [40] emmeans_1.8.7        scales_1.2.1         gtools_3.9.4        
-## [43] MASS_7.3-60          flashClust_1.01-2    cli_3.6.1           
-## [46] mvtnorm_1.2-2        rmarkdown_2.23       crayon_1.5.2        
-## [49] generics_0.1.3       rstudioapi_0.15.0    httr_1.4.6          
-## [52] reshape2_1.4.4       tzdb_0.4.0           readxl_1.4.3        
-## [55] gld_2.6.6            proxy_0.4-27         cachem_1.0.8        
-## [58] parallel_4.3.1       cellranger_1.1.0     vctrs_0.6.3         
-## [61] boot_1.3-28.1        Matrix_1.6-0         jsonlite_1.8.7      
-## [64] bookdown_0.37        hms_1.1.3            bit64_4.0.5         
-## [67] ggrepel_0.9.3        jquerylib_0.1.4      glue_1.6.2          
-## [70] DT_0.28              stringi_1.7.12       gtable_0.3.4        
-## [73] munsell_0.5.0        pillar_1.9.0         htmltools_0.5.6     
-## [76] R6_2.5.1             rprojroot_2.0.3      vroom_1.6.3         
-## [79] evaluate_0.21        lattice_0.21-8       highr_0.10          
-## [82] SnowballC_0.7.1      leaps_3.1            bslib_0.5.1         
-## [85] class_7.3-22         DescTools_0.99.50    Rcpp_1.0.11         
-## [88] coda_0.19-4          xfun_0.39            pkgconfig_2.0.3
+## [16] compiler_4.3.1       rlang_1.1.1          tools_4.3.1         
+## [19] utf8_1.2.3           tidytext_0.4.1       yaml_2.3.7          
+## [22] data.table_1.14.8    knitr_1.43           labeling_0.4.3      
+## [25] htmlwidgets_1.6.2    bit_4.0.5            scatterplot3d_0.3-44
+## [28] plyr_1.8.8           KernSmooth_2.23-21   expm_0.999-7        
+## [31] withr_2.5.0          grid_4.3.1           fansi_1.0.4         
+## [34] SensoMineR_1.26      AlgDesign_1.2.1      xtable_1.8-4        
+## [37] e1071_1.7-13         colorspace_2.1-0     emmeans_1.8.7       
+## [40] scales_1.2.1         gtools_3.9.4         MASS_7.3-60         
+## [43] flashClust_1.01-2    cli_3.6.1            mvtnorm_1.2-2       
+## [46] rmarkdown_2.23       crayon_1.5.2         generics_0.1.3      
+## [49] rstudioapi_0.15.0    httr_1.4.6           reshape2_1.4.4      
+## [52] tzdb_0.4.0           readxl_1.4.3         gld_2.6.6           
+## [55] proxy_0.4-27         parallel_4.3.1       cellranger_1.1.0    
+## [58] vctrs_0.6.3          boot_1.3-28.1        Matrix_1.6-0        
+## [61] bookdown_0.37        hms_1.1.3            bit64_4.0.5         
+## [64] ggrepel_0.9.3        glue_1.6.2           DT_0.28             
+## [67] stringi_1.7.12       gtable_0.3.4         munsell_0.5.0       
+## [70] pillar_1.9.0         htmltools_0.5.6      R6_2.5.1            
+## [73] rprojroot_2.0.3      vroom_1.6.3          evaluate_0.21       
+## [76] lattice_0.21-8       highr_0.10           SnowballC_0.7.1     
+## [79] leaps_3.1            DescTools_0.99.50    class_7.3-22        
+## [82] Rcpp_1.0.11          coda_0.19-4          xfun_0.39           
+## [85] pkgconfig_2.0.3
 ```

@@ -1,5 +1,7 @@
 --- 
-title: "The R Opus v2"
+title: |
+  ![](img/r-opus-cover.jpg){width=6in}  
+  "The R Opus v2"
 author: "Jacob Lahne"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site

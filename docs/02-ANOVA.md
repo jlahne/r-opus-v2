@@ -35,29 +35,29 @@ glimpse(descriptive_data)
 ```
 ## Rows: 336
 ## Columns: 23
-## $ NJ              <fct> 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1400, …
-## $ ProductName     <fct> C_MERLOT, C_SYRAH, C_ZINFANDEL, C_REFOSCO, I_MERLOT, I…
-## $ NR              <fct> 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, …
-## $ Red_berry       <dbl> 5.1, 5.6, 4.9, 5.0, 3.3, 5.7, 2.9, 3.2, 0.1, 1.6, 4.5,…
-## $ Dark_berry      <dbl> 5.8, 1.9, 2.6, 1.9, 7.2, 3.6, 5.1, 6.0, 0.1, 0.7, 2.9,…
-## $ Jam             <dbl> 2.1, 3.9, 1.4, 7.8, 0.5, 8.7, 8.7, 4.0, 0.2, 0.0, 0.3,…
-## $ Dried_fruit     <dbl> 4.7, 1.2, 5.9, 0.6, 5.8, 1.9, 0.4, 0.7, 2.9, 6.4, 2.4,…
-## $ Artificial_frui <dbl> 1.0, 7.9, 0.8, 6.6, 0.7, 7.4, 6.2, 4.1, 0.1, 0.1, 0.1,…
-## $ Chocolate       <dbl> 2.9, 1.0, 2.0, 6.4, 2.1, 3.3, 3.4, 3.6, 0.2, 1.0, 0.2,…
-## $ Vanilla         <dbl> 5.0, 8.3, 2.7, 5.5, 1.3, 6.9, 8.1, 4.8, 2.0, 0.8, 1.9,…
-## $ Oak             <dbl> 5.0, 2.3, 5.6, 3.6, 2.1, 1.5, 1.8, 2.6, 3.0, 5.4, 6.1,…
-## $ Burned          <dbl> 1.4, 1.8, 1.9, 3.2, 5.6, 0.2, 0.4, 4.7, 7.5, 5.1, 0.3,…
-## $ Leather         <dbl> 2.3, 3.5, 4.3, 0.3, 6.5, 1.5, 4.1, 6.5, 0.7, 0.8, 0.2,…
-## $ Earthy          <dbl> 0.6, 1.0, 0.6, 0.2, 4.7, 0.3, 0.5, 1.9, 0.7, 3.0, 1.3,…
-## $ Spicy           <dbl> 3.2, 0.7, 1.4, 2.9, 0.7, 3.1, 0.7, 1.4, 0.3, 3.2, 3.1,…
-## $ Pepper          <dbl> 5.4, 3.0, 4.1, 0.9, 2.8, 1.6, 3.6, 4.5, 0.1, 2.0, 0.9,…
-## $ Grassy          <dbl> 2.1, 0.6, 3.6, 1.8, 3.8, 0.9, 2.3, 0.8, 0.1, 1.3, 0.4,…
-## $ Medicinal       <dbl> 0.4, 2.2, 1.7, 0.2, 2.6, 0.5, 0.2, 3.8, 0.1, 2.1, 0.1,…
-## $ `Band-aid`      <dbl> 0.4, 0.4, 0.1, 0.2, 5.1, 1.2, 0.2, 6.2, 0.1, 1.1, 0.1,…
-## $ Sour            <dbl> 5.0, 9.7, 7.8, 8.3, 7.6, 7.2, 5.9, 6.3, 5.7, 6.4, 5.4,…
-## $ Bitter          <dbl> 5.9, 5.2, 3.5, 3.0, 1.9, 9.8, 2.9, 0.2, 0.6, 2.9, 0.1,…
-## $ Alcohol         <dbl> 9.0, 7.2, 4.7, 8.9, 2.8, 8.7, 1.6, 7.0, 1.6, 5.4, 4.9,…
-## $ Astringent      <dbl> 8.7, 8.3, 5.0, 7.8, 5.9, 8.0, 2.6, 4.2, 5.5, 5.1, 5.9,…
+## $ NJ              <fct> 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1400, ~
+## $ ProductName     <fct> C_MERLOT, C_SYRAH, C_ZINFANDEL, C_REFOSCO, I_MERLOT, I~
+## $ NR              <fct> 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, ~
+## $ Red_berry       <dbl> 5.1, 5.6, 4.9, 5.0, 3.3, 5.7, 2.9, 3.2, 0.1, 1.6, 4.5,~
+## $ Dark_berry      <dbl> 5.8, 1.9, 2.6, 1.9, 7.2, 3.6, 5.1, 6.0, 0.1, 0.7, 2.9,~
+## $ Jam             <dbl> 2.1, 3.9, 1.4, 7.8, 0.5, 8.7, 8.7, 4.0, 0.2, 0.0, 0.3,~
+## $ Dried_fruit     <dbl> 4.7, 1.2, 5.9, 0.6, 5.8, 1.9, 0.4, 0.7, 2.9, 6.4, 2.4,~
+## $ Artificial_frui <dbl> 1.0, 7.9, 0.8, 6.6, 0.7, 7.4, 6.2, 4.1, 0.1, 0.1, 0.1,~
+## $ Chocolate       <dbl> 2.9, 1.0, 2.0, 6.4, 2.1, 3.3, 3.4, 3.6, 0.2, 1.0, 0.2,~
+## $ Vanilla         <dbl> 5.0, 8.3, 2.7, 5.5, 1.3, 6.9, 8.1, 4.8, 2.0, 0.8, 1.9,~
+## $ Oak             <dbl> 5.0, 2.3, 5.6, 3.6, 2.1, 1.5, 1.8, 2.6, 3.0, 5.4, 6.1,~
+## $ Burned          <dbl> 1.4, 1.8, 1.9, 3.2, 5.6, 0.2, 0.4, 4.7, 7.5, 5.1, 0.3,~
+## $ Leather         <dbl> 2.3, 3.5, 4.3, 0.3, 6.5, 1.5, 4.1, 6.5, 0.7, 0.8, 0.2,~
+## $ Earthy          <dbl> 0.6, 1.0, 0.6, 0.2, 4.7, 0.3, 0.5, 1.9, 0.7, 3.0, 1.3,~
+## $ Spicy           <dbl> 3.2, 0.7, 1.4, 2.9, 0.7, 3.1, 0.7, 1.4, 0.3, 3.2, 3.1,~
+## $ Pepper          <dbl> 5.4, 3.0, 4.1, 0.9, 2.8, 1.6, 3.6, 4.5, 0.1, 2.0, 0.9,~
+## $ Grassy          <dbl> 2.1, 0.6, 3.6, 1.8, 3.8, 0.9, 2.3, 0.8, 0.1, 1.3, 0.4,~
+## $ Medicinal       <dbl> 0.4, 2.2, 1.7, 0.2, 2.6, 0.5, 0.2, 3.8, 0.1, 2.1, 0.1,~
+## $ `Band-aid`      <dbl> 0.4, 0.4, 0.1, 0.2, 5.1, 1.2, 0.2, 6.2, 0.1, 1.1, 0.1,~
+## $ Sour            <dbl> 5.0, 9.7, 7.8, 8.3, 7.6, 7.2, 5.9, 6.3, 5.7, 6.4, 5.4,~
+## $ Bitter          <dbl> 5.9, 5.2, 3.5, 3.0, 1.9, 9.8, 2.9, 0.2, 0.6, 2.9, 0.1,~
+## $ Alcohol         <dbl> 9.0, 7.2, 4.7, 8.9, 2.8, 8.7, 1.6, 7.0, 1.6, 5.4, 4.9,~
+## $ Astringent      <dbl> 8.7, 8.3, 5.0, 7.8, 5.9, 8.0, 2.6, 4.2, 5.5, 5.1, 5.9,~
 ```
 
 Great.  We got it.  Now, when we do something like regression (with `lm()`) or ANOVA (with `aov()`) using those variables as predictors, `R` will treat them as discrete, unordered levels rather than the numbers that they are encoded as.
@@ -94,29 +94,29 @@ nested_AOV_res
 ```
 
 ```
-## # A tibble: 20 × 3
+## # A tibble: 20 x 3
 ##    descriptor      data               anova_res
 ##    <chr>           <list>             <list>   
-##  1 Red_berry       <tibble [336 × 4]> <aov>    
-##  2 Dark_berry      <tibble [336 × 4]> <aov>    
-##  3 Jam             <tibble [336 × 4]> <aov>    
-##  4 Dried_fruit     <tibble [336 × 4]> <aov>    
-##  5 Artificial_frui <tibble [336 × 4]> <aov>    
-##  6 Chocolate       <tibble [336 × 4]> <aov>    
-##  7 Vanilla         <tibble [336 × 4]> <aov>    
-##  8 Oak             <tibble [336 × 4]> <aov>    
-##  9 Burned          <tibble [336 × 4]> <aov>    
-## 10 Leather         <tibble [336 × 4]> <aov>    
-## 11 Earthy          <tibble [336 × 4]> <aov>    
-## 12 Spicy           <tibble [336 × 4]> <aov>    
-## 13 Pepper          <tibble [336 × 4]> <aov>    
-## 14 Grassy          <tibble [336 × 4]> <aov>    
-## 15 Medicinal       <tibble [336 × 4]> <aov>    
-## 16 Band-aid        <tibble [336 × 4]> <aov>    
-## 17 Sour            <tibble [336 × 4]> <aov>    
-## 18 Bitter          <tibble [336 × 4]> <aov>    
-## 19 Alcohol         <tibble [336 × 4]> <aov>    
-## 20 Astringent      <tibble [336 × 4]> <aov>
+##  1 Red_berry       <tibble [336 x 4]> <aov>    
+##  2 Dark_berry      <tibble [336 x 4]> <aov>    
+##  3 Jam             <tibble [336 x 4]> <aov>    
+##  4 Dried_fruit     <tibble [336 x 4]> <aov>    
+##  5 Artificial_frui <tibble [336 x 4]> <aov>    
+##  6 Chocolate       <tibble [336 x 4]> <aov>    
+##  7 Vanilla         <tibble [336 x 4]> <aov>    
+##  8 Oak             <tibble [336 x 4]> <aov>    
+##  9 Burned          <tibble [336 x 4]> <aov>    
+## 10 Leather         <tibble [336 x 4]> <aov>    
+## 11 Earthy          <tibble [336 x 4]> <aov>    
+## 12 Spicy           <tibble [336 x 4]> <aov>    
+## 13 Pepper          <tibble [336 x 4]> <aov>    
+## 14 Grassy          <tibble [336 x 4]> <aov>    
+## 15 Medicinal       <tibble [336 x 4]> <aov>    
+## 16 Band-aid        <tibble [336 x 4]> <aov>    
+## 17 Sour            <tibble [336 x 4]> <aov>    
+## 18 Bitter          <tibble [336 x 4]> <aov>    
+## 19 Alcohol         <tibble [336 x 4]> <aov>    
+## 20 Astringent      <tibble [336 x 4]> <aov>
 ```
 If we dig into this structure, we can see that we're creating, in parallel, a bunch of model fits:
 
@@ -162,7 +162,7 @@ da_aov_res
 ```
 
 ```
-## # A tibble: 140 × 7
+## # A tibble: 140 x 7
 ##    descriptor term              df  sumsq meansq statistic   p.value
 ##    <chr>      <chr>          <dbl>  <dbl>  <dbl>     <dbl>     <dbl>
 ##  1 Red_berry  NJ                13 598.    46.0     12.8    9.35e-20
@@ -175,7 +175,7 @@ da_aov_res
 ##  8 Dark_berry NJ                13 813.    62.5     15.5    2.50e-23
 ##  9 Dark_berry ProductName        7 126.    18.0      4.47   1.28e- 4
 ## 10 Dark_berry NR                 2  18.9    9.47     2.35   9.81e- 2
-## # ℹ 130 more rows
+## # i 130 more rows
 ```
 
 We now have a table of all of the model results for running a 3-way ANOVA with two-way interactions on each of the individual sensory descriptors.  We can use this format to easily look for results that are significant.  For example, let's filter down to only rows where the model `term` represents variation from the wine (e.g., `ProductName`), and there is what is typically described as a signficant *p*-value (i.e., $p<0.05$).
@@ -192,7 +192,7 @@ naive_significance
 ```
 
 ```
-## # A tibble: 17 × 2
+## # A tibble: 17 x 2
 ##    descriptor       p.value
 ##    <chr>              <dbl>
 ##  1 Red_berry       6.52e- 3
@@ -227,7 +227,7 @@ da_aov_res %>%
 ```
 
 ```
-## # A tibble: 20 × 7
+## # A tibble: 20 x 7
 ##    descriptor      term              df sumsq meansq statistic  p.value
 ##    <chr>           <chr>          <dbl> <dbl>  <dbl>     <dbl>    <dbl>
 ##  1 Red_berry       NJ:ProductName    91 659.    7.24      2.02 3.18e- 5
@@ -295,7 +295,7 @@ da_aov_res %>%
 ```
 
 ```
-## # A tibble: 1 × 4
+## # A tibble: 1 x 4
 ##   sig_effect     f_stat df_error p_val
 ##   <chr>           <dbl>    <dbl> <dbl>
 ## 1 NJ:ProductName   1.44       91 0.198
@@ -319,22 +319,22 @@ da_aov_res %>%
 ```
 
 ```
-## # A tibble: 13 × 6
+## # A tibble: 13 x 6
 ##    descriptor      data             sig_effect     f_stat df_error       p_val
 ##    <chr>           <list>           <chr>           <dbl>    <dbl>       <dbl>
-##  1 Dark_berry      <tibble [7 × 6]> NJ:ProductName   2.33       91 0.0311     
-##  2 Jam             <tibble [7 × 6]> NJ:ProductName   7.60       91 0.000000336
-##  3 Artificial_frui <tibble [7 × 6]> NJ:ProductName   4.99       91 0.0000819  
-##  4 Chocolate       <tibble [7 × 6]> NJ:ProductName   2.88       91 0.00912    
-##  5 Vanilla         <tibble [7 × 6]> NJ:ProductName   2.97       91 0.00753    
-##  6 Oak             <tibble [7 × 6]> NJ:ProductName   2.62       91 0.0163     
-##  7 Burned          <tibble [7 × 6]> NJ:ProductName   6.83       91 0.00000162 
-##  8 Leather         <tibble [7 × 6]> NJ:ProductName   3.37       91 0.00306    
-##  9 Earthy          <tibble [7 × 6]> NJ:ProductName   2.30       91 0.0335     
-## 10 Medicinal       <tibble [7 × 6]> NJ:ProductName   5.18       91 0.0000544  
-## 11 Band-aid        <tibble [7 × 6]> NJ:ProductName   3.91       91 0.000899   
-## 12 Bitter          <tibble [7 × 6]> ProductName      2.83      182 0.00807    
-## 13 Alcohol         <tibble [7 × 6]> ProductName      4.32      182 0.000191
+##  1 Dark_berry      <tibble [7 x 6]> NJ:ProductName   2.33       91 0.0311     
+##  2 Jam             <tibble [7 x 6]> NJ:ProductName   7.60       91 0.000000336
+##  3 Artificial_frui <tibble [7 x 6]> NJ:ProductName   4.99       91 0.0000819  
+##  4 Chocolate       <tibble [7 x 6]> NJ:ProductName   2.88       91 0.00912    
+##  5 Vanilla         <tibble [7 x 6]> NJ:ProductName   2.97       91 0.00753    
+##  6 Oak             <tibble [7 x 6]> NJ:ProductName   2.62       91 0.0163     
+##  7 Burned          <tibble [7 x 6]> NJ:ProductName   6.83       91 0.00000162 
+##  8 Leather         <tibble [7 x 6]> NJ:ProductName   3.37       91 0.00306    
+##  9 Earthy          <tibble [7 x 6]> NJ:ProductName   2.30       91 0.0335     
+## 10 Medicinal       <tibble [7 x 6]> NJ:ProductName   5.18       91 0.0000544  
+## 11 Band-aid        <tibble [7 x 6]> NJ:ProductName   3.91       91 0.000899   
+## 12 Bitter          <tibble [7 x 6]> ProductName      2.83      182 0.00807    
+## 13 Alcohol         <tibble [7 x 6]> ProductName      4.32      182 0.000191
 ```
 
 From these results, we see that almost all of our products have significant interactions, and that we've lost a few significant descriptors: we're down to 13/20 being significant, from 17/20 from our naive evaluation.  Furthermore, when we had significant interactions, they were all wine-by-judge interactions: believe it or not, this is good news.  As noted by @brockhoffTaking2015, even trained judges are almost never aligned in scale use, so the pseudomixed model is good insurance against this variability.  A larger wine-by-rep interaction would be more concerning: it would indicate that the product may have changed in a particular presentation (perhaps it was exposed to oxygen?), and this would warrant a reconsideration of the results.
@@ -373,7 +373,7 @@ nested_AOV_res$anova_res[[1]] %>%
 ```
 
 ```
-## # A tibble: 8 × 11
+## # A tibble: 8 x 11
 ##   wine        rating   std     r    se   Min   Max   Q25   Q50   Q75 groups
 ##   <chr>        <dbl> <dbl> <int> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr> 
 ## 1 I_PRIMITIVO   3.85  2.96    42 0.292     0   9.2 1.42   3.1   6.2  a     
@@ -414,7 +414,7 @@ hsd_tbl
 ```
 
 ```
-## # A tibble: 104 × 12
+## # A tibble: 104 x 12
 ##    descriptor wine        rating   std     r    se   Min   Max   Q25   Q50   Q75
 ##    <chr>      <chr>        <dbl> <dbl> <int> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
 ##  1 Dark_berry I_SYRAH       4.48  3.24    42 0.310     0   9.9 1.58   4.1   7.82
@@ -427,8 +427,8 @@ hsd_tbl
 ##  8 Dark_berry I_REFOSCO     3.01  2.36    42 0.310     0   8.5 1.1    2.4   5.02
 ##  9 Jam        I_PRIMITIVO   3.61  3.08    42 0.248     0   9.8 0.95   2.5   6.35
 ## 10 Jam        I_SYRAH       3.10  2.93    42 0.248     0   9.5 0.475  1.9   5.15
-## # ℹ 94 more rows
-## # ℹ 1 more variable: groups <chr>
+## # i 94 more rows
+## # i 1 more variable: groups <chr>
 ```
 
 Again, using the same split-apply-combine workflow (but we started with an already nested table), we get a set of results suitable for reporting in a paper or plotting.  Let's take a look at how to make a basic visualization of these results using `ggplot2`.  
@@ -458,7 +458,7 @@ hsd_tbl %>%
   guides(color = guide_legend(title = "HSD group", nrow = 1))
 ```
 
-<img src="02-ANOVA_files/figure-html/unnamed-chunk-13-1.png" width="960" />
+![](02-ANOVA_files/figure-latex/unnamed-chunk-13-1.pdf)<!-- --> 
 
 ## BONUS: Bayesian approaches to ANOVA
 
@@ -498,7 +498,7 @@ bayes_data
 ```
 
 ```
-## # A tibble: 336 × 5
+## # A tibble: 336 x 5
 ##    NJ    ProductName NR    descriptor rating
 ##    <fct> <fct>       <fct> <chr>       <dbl>
 ##  1 1331  C_MERLOT    7     Bitter        5.9
@@ -511,7 +511,7 @@ bayes_data
 ##  8 1331  I_REFOSCO   7     Bitter        0.2
 ##  9 1400  C_MERLOT    7     Bitter        0.6
 ## 10 1400  C_SYRAH     7     Bitter        2.9
-## # ℹ 326 more rows
+## # i 326 more rows
 ```
 
 ```r
@@ -665,7 +665,7 @@ b_bitter
 plot(b_bitter, N = 6, widths = c(2, 3))
 ```
 
-<img src="02-ANOVA_files/figure-html/unnamed-chunk-20-1.png" width="672" />
+![](02-ANOVA_files/figure-latex/unnamed-chunk-20-1.pdf)<!-- --> 
 
 We can examine the actual "draws" from the joint posterior using the `as_draws_df()` function and doing some wrangling.
 
@@ -716,7 +716,7 @@ posterior_summary(b_bitter) %>%
 ```
 
 ```
-## # A tibble: 145 × 5
+## # A tibble: 145 x 5
 ##    parameter                    Estimate Est.Error  Q2.5 Q97.5
 ##    <chr>                           <dbl>     <dbl> <dbl> <dbl>
 ##  1 b_Intercept                      3.5       0.95  1.79  5.45
@@ -729,7 +729,7 @@ posterior_summary(b_bitter) %>%
 ##  8 r_NJ[1400,Intercept]            -1.78      0.73 -3.22 -0.32
 ##  9 r_NJ[1401,Intercept]             2.34      0.72  0.96  3.8 
 ## 10 r_NJ[1402,Intercept]             2.31      0.72  0.92  3.74
-## # ℹ 135 more rows
+## # i 135 more rows
 ```
 
 For a sanity check, notice that the estimate for our grand mean (`b_Intercept`) is the observed value.
@@ -771,7 +771,7 @@ f %>%
   labs(caption = "Red line is the model-implied grand mean.")
 ```
 
-<img src="02-ANOVA_files/figure-html/unnamed-chunk-24-1.png" width="672" />
+![](02-ANOVA_files/figure-latex/unnamed-chunk-24-1.pdf)<!-- --> 
 
 It sure looks like these wines are not easy to discriminate.  One advantage of Bayesian approaches is that the paradigm of investigation allows us to investigate the posterior draws to explore things like pairwise comparisons with no need to worry about ideas like "family-wise error" (because we are not in a hypothesis-testing framework).
 
@@ -791,7 +791,7 @@ f %>%
        caption = "Pink area is a [-0.05, 0.05] ROPE around 0 difference.")
 ```
 
-<img src="02-ANOVA_files/figure-html/unnamed-chunk-25-1.png" width="672" />
+![](02-ANOVA_files/figure-latex/unnamed-chunk-25-1.pdf)<!-- --> 
 
 It looks like the posterior differences between the most-bitter and least-bitter wines don't exclude a small "region of plausible equivalence" around 0 from the 95% area of highest posterior density, so even though there is a modal difference of around 0.75 points in bitterness between these wines, we can't entirely dismiss the possibility that there is no difference in bitterness.  That being said, there is at least as much posterior probability density around 1.5 points of bitterness difference, so it seems unreasonable to me to claim that these wines are exactly the same in their level of bitterness--it just probably isn't that large a difference!
 
@@ -812,7 +812,7 @@ f %>%
        caption = "Pink area is a [-0.05, 0.05] ROPE around 0 difference.")
 ```
 
-<img src="02-ANOVA_files/figure-html/unnamed-chunk-26-1.png" width="672" />
+![](02-ANOVA_files/figure-latex/unnamed-chunk-26-1.pdf)<!-- --> 
 
 Unsurprisingly, given the figures above, we see that there is some possibility of a very small amount of overall bitterness, but we'd be pretty hesitant to make broad statements when a ROPE around 0 is so clearly within the HDI for this contrast.
 
@@ -879,7 +879,7 @@ b_bitter_default
 plot(b_bitter_default, N = 6, width = c(2, 3))
 ```
 
-<img src="02-ANOVA_files/figure-html/unnamed-chunk-29-1.png" width="672" />
+![](02-ANOVA_files/figure-latex/unnamed-chunk-29-1.pdf)<!-- --> 
 
 It all looks ok, but it seems like the estimates for some parameters are a bit less precise, probably because we allowed the model to use uninformed priors.  We can see how that was done using the `get_prior()` function on the formula and data, as so:
 
@@ -924,14 +924,14 @@ It looks like, by default, `brm()` uses very broad Student's $t$ priors for all 
 plot(b_bitter, variable = "b_Intercept")
 ```
 
-<img src="02-ANOVA_files/figure-html/unnamed-chunk-31-1.png" width="672" />
+![](02-ANOVA_files/figure-latex/unnamed-chunk-31-1.pdf)<!-- --> 
 
 ```r
 # The model with default priors
 plot(b_bitter_default, variable = "b_Intercept")
 ```
 
-<img src="02-ANOVA_files/figure-html/unnamed-chunk-31-2.png" width="672" />
+![](02-ANOVA_files/figure-latex/unnamed-chunk-31-2.pdf)<!-- --> 
 
 So we lose some precision in exchange for speed.  Let's look at how the default model predicts mean separation:
 
@@ -964,7 +964,7 @@ f %>%
        subtitle = "The HDIs are broader with the `brms` default priors")
 ```
 
-<img src="02-ANOVA_files/figure-html/unnamed-chunk-32-1.png" width="672" />
+![](02-ANOVA_files/figure-latex/unnamed-chunk-32-1.pdf)<!-- --> 
 
 And we can do the same kind of check with the individual differences:
 
@@ -985,7 +985,7 @@ f %>%
        subtitle = "Our overall conclusions, however, would not change much using the defaults.")
 ```
 
-<img src="02-ANOVA_files/figure-html/unnamed-chunk-33-1.png" width="672" />
+![](02-ANOVA_files/figure-latex/unnamed-chunk-33-1.pdf)<!-- --> 
 
 So in this case, it seems like the speed of using `brms` defaults, at least for exploratory data analysis, may be worthwhile.
 
@@ -1023,45 +1023,43 @@ sessionInfo()
 ## [13] tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.3   tidyverse_2.0.0
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] tensorA_0.36.2       rstudioapi_0.15.0    jsonlite_1.8.7      
-##   [4] magrittr_2.0.3       estimability_1.4.1   farver_2.1.1        
-##   [7] rmarkdown_2.23       vctrs_0.6.3          base64enc_0.1-3     
-##  [10] htmltools_0.5.6      distributional_0.3.2 haven_2.5.3         
-##  [13] broom_1.0.5          janeaustenr_1.0.0    sass_0.4.7          
-##  [16] StanHeaders_2.26.27  bslib_0.5.1          htmlwidgets_1.6.2   
-##  [19] tokenizers_0.3.0     plyr_1.8.8           emmeans_1.8.7       
-##  [22] zoo_1.8-12           cachem_1.0.8         igraph_1.5.0.1      
-##  [25] mime_0.12            lifecycle_1.0.3      pkgconfig_2.0.3     
-##  [28] colourpicker_1.3.0   Matrix_1.6-0         R6_2.5.1            
-##  [31] fastmap_1.1.1        shiny_1.7.5          digest_0.6.33       
-##  [34] klaR_1.7-2           colorspace_2.1-0     ps_1.7.5            
-##  [37] rprojroot_2.0.3      crosstalk_1.2.0      SnowballC_0.7.1     
-##  [40] labeling_0.4.3       fansi_1.0.4          timechange_0.2.0    
-##  [43] abind_1.4-5          compiler_4.3.1       bit64_4.0.5         
-##  [46] withr_2.5.0          backports_1.4.1      inline_0.3.19       
-##  [49] shinystan_2.6.0      pkgbuild_1.4.2       highr_0.10          
-##  [52] MASS_7.3-60          gtools_3.9.4         loo_2.6.0           
-##  [55] tools_4.3.1          httpuv_1.6.11        threejs_0.3.3       
-##  [58] quadprog_1.5-8       glue_1.6.2           questionr_0.7.8     
-##  [61] callr_3.7.3          nlme_3.1-162         promises_1.2.1      
-##  [64] grid_4.3.1           checkmate_2.2.0      cluster_2.1.4       
-##  [67] reshape2_1.4.4       generics_0.1.3       gtable_0.3.4        
-##  [70] labelled_2.12.0      tzdb_0.4.0           hms_1.1.3           
-##  [73] utf8_1.2.3           ggdist_3.3.0         pillar_1.9.0        
-##  [76] markdown_1.8         vroom_1.6.3          posterior_1.4.1     
-##  [79] later_1.3.1          lattice_0.21-8       AlgDesign_1.2.1     
-##  [82] bit_4.0.5            tidyselect_1.2.0     miniUI_0.1.1.1      
-##  [85] knitr_1.43           arrayhelpers_1.1-0   gridExtra_2.3       
-##  [88] bookdown_0.37        stats4_4.3.1         xfun_0.39           
-##  [91] bridgesampling_1.1-2 matrixStats_1.0.0    DT_0.28             
-##  [94] rstan_2.21.8         stringi_1.7.12       yaml_2.3.7          
-##  [97] evaluate_0.21        codetools_0.2-19     cli_3.6.1           
-## [100] RcppParallel_5.1.7   shinythemes_1.2.0    xtable_1.8-4        
-## [103] munsell_0.5.0        processx_3.8.2       jquerylib_0.1.4     
-## [106] coda_0.19-4          svUnit_1.0.6         parallel_4.3.1      
-## [109] rstantools_2.3.1.1   ellipsis_0.3.2       prettyunits_1.1.1   
-## [112] dygraphs_1.1.1.6     bayesplot_1.10.0     Brobdingnag_1.2-9   
-## [115] mvtnorm_1.2-2        scales_1.2.1         xts_0.13.1          
-## [118] crayon_1.5.2         combinat_0.0-8       rlang_1.1.1         
-## [121] shinyjs_2.1.0
+##   [1] tensorA_0.36.2       rstudioapi_0.15.0    magrittr_2.0.3      
+##   [4] estimability_1.4.1   farver_2.1.1         rmarkdown_2.23      
+##   [7] vctrs_0.6.3          base64enc_0.1-3      htmltools_0.5.6     
+##  [10] distributional_0.3.2 haven_2.5.3          broom_1.0.5         
+##  [13] janeaustenr_1.0.0    StanHeaders_2.26.27  htmlwidgets_1.6.2   
+##  [16] tokenizers_0.3.0     plyr_1.8.8           emmeans_1.8.7       
+##  [19] zoo_1.8-12           igraph_1.5.0.1       mime_0.12           
+##  [22] lifecycle_1.0.3      pkgconfig_2.0.3      colourpicker_1.3.0  
+##  [25] Matrix_1.6-0         R6_2.5.1             fastmap_1.1.1       
+##  [28] shiny_1.7.5          digest_0.6.33        klaR_1.7-2          
+##  [31] colorspace_2.1-0     ps_1.7.5             rprojroot_2.0.3     
+##  [34] crosstalk_1.2.0      SnowballC_0.7.1      labeling_0.4.3      
+##  [37] fansi_1.0.4          timechange_0.2.0     abind_1.4-5         
+##  [40] compiler_4.3.1       bit64_4.0.5          withr_2.5.0         
+##  [43] backports_1.4.1      inline_0.3.19        shinystan_2.6.0     
+##  [46] pkgbuild_1.4.2       highr_0.10           MASS_7.3-60         
+##  [49] gtools_3.9.4         loo_2.6.0            tools_4.3.1         
+##  [52] httpuv_1.6.11        threejs_0.3.3        quadprog_1.5-8      
+##  [55] glue_1.6.2           questionr_0.7.8      callr_3.7.3         
+##  [58] nlme_3.1-162         promises_1.2.1       grid_4.3.1          
+##  [61] checkmate_2.2.0      cluster_2.1.4        reshape2_1.4.4      
+##  [64] generics_0.1.3       gtable_0.3.4         labelled_2.12.0     
+##  [67] tzdb_0.4.0           hms_1.1.3            utf8_1.2.3          
+##  [70] pillar_1.9.0         ggdist_3.3.0         markdown_1.8        
+##  [73] vroom_1.6.3          posterior_1.4.1      later_1.3.1         
+##  [76] lattice_0.21-8       AlgDesign_1.2.1      bit_4.0.5           
+##  [79] tidyselect_1.2.0     miniUI_0.1.1.1       knitr_1.43          
+##  [82] arrayhelpers_1.1-0   gridExtra_2.3        bookdown_0.37       
+##  [85] stats4_4.3.1         xfun_0.39            bridgesampling_1.1-2
+##  [88] matrixStats_1.0.0    DT_0.28              rstan_2.21.8        
+##  [91] stringi_1.7.12       yaml_2.3.7           evaluate_0.21       
+##  [94] codetools_0.2-19     cli_3.6.1            RcppParallel_5.1.7  
+##  [97] shinythemes_1.2.0    xtable_1.8-4         munsell_0.5.0       
+## [100] processx_3.8.2       coda_0.19-4          svUnit_1.0.6        
+## [103] parallel_4.3.1       rstantools_2.3.1.1   ellipsis_0.3.2      
+## [106] prettyunits_1.1.1    dygraphs_1.1.1.6     bayesplot_1.10.0    
+## [109] Brobdingnag_1.2-9    mvtnorm_1.2-2        scales_1.2.1        
+## [112] xts_0.13.1           crayon_1.5.2         combinat_0.0-8      
+## [115] rlang_1.1.1          shinyjs_2.1.0
 ```

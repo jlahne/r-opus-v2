@@ -64,29 +64,29 @@ descriptive_data %>%
 ```
 ## Rows: 336
 ## Columns: 23
-## $ NJ              <fct> 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1400, …
-## $ ProductName     <fct> C_MERLOT, C_SYRAH, C_ZINFANDEL, C_REFOSCO, I_MERLOT, I…
-## $ NR              <fct> 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, …
-## $ Red_berry       <dbl> 5.1, 5.6, 4.9, 5.0, 3.3, 5.7, 2.9, 3.2, 0.1, 1.6, 4.5,…
-## $ Dark_berry      <dbl> 5.8, 1.9, 2.6, 1.9, 7.2, 3.6, 5.1, 6.0, 0.1, 0.7, 2.9,…
-## $ Jam             <dbl> 2.1, 3.9, 1.4, 7.8, 0.5, 8.7, 8.7, 4.0, 0.2, 0.0, 0.3,…
-## $ Dried_fruit     <dbl> 4.7, 1.2, 5.9, 0.6, 5.8, 1.9, 0.4, 0.7, 2.9, 6.4, 2.4,…
-## $ Artificial_frui <dbl> 1.0, 7.9, 0.8, 6.6, 0.7, 7.4, 6.2, 4.1, 0.1, 0.1, 0.1,…
-## $ Chocolate       <dbl> 2.9, 1.0, 2.0, 6.4, 2.1, 3.3, 3.4, 3.6, 0.2, 1.0, 0.2,…
-## $ Vanilla         <dbl> 5.0, 8.3, 2.7, 5.5, 1.3, 6.9, 8.1, 4.8, 2.0, 0.8, 1.9,…
-## $ Oak             <dbl> 5.0, 2.3, 5.6, 3.6, 2.1, 1.5, 1.8, 2.6, 3.0, 5.4, 6.1,…
-## $ Burned          <dbl> 1.4, 1.8, 1.9, 3.2, 5.6, 0.2, 0.4, 4.7, 7.5, 5.1, 0.3,…
-## $ Leather         <dbl> 2.3, 3.5, 4.3, 0.3, 6.5, 1.5, 4.1, 6.5, 0.7, 0.8, 0.2,…
-## $ Earthy          <dbl> 0.6, 1.0, 0.6, 0.2, 4.7, 0.3, 0.5, 1.9, 0.7, 3.0, 1.3,…
-## $ Spicy           <dbl> 3.2, 0.7, 1.4, 2.9, 0.7, 3.1, 0.7, 1.4, 0.3, 3.2, 3.1,…
-## $ Pepper          <dbl> 5.4, 3.0, 4.1, 0.9, 2.8, 1.6, 3.6, 4.5, 0.1, 2.0, 0.9,…
-## $ Grassy          <dbl> 2.1, 0.6, 3.6, 1.8, 3.8, 0.9, 2.3, 0.8, 0.1, 1.3, 0.4,…
-## $ Medicinal       <dbl> 0.4, 2.2, 1.7, 0.2, 2.6, 0.5, 0.2, 3.8, 0.1, 2.1, 0.1,…
-## $ `Band-aid`      <dbl> 0.4, 0.4, 0.1, 0.2, 5.1, 1.2, 0.2, 6.2, 0.1, 1.1, 0.1,…
-## $ Sour            <dbl> 5.0, 9.7, 7.8, 8.3, 7.6, 7.2, 5.9, 6.3, 5.7, 6.4, 5.4,…
-## $ Bitter          <dbl> 5.9, 5.2, 3.5, 3.0, 1.9, 9.8, 2.9, 0.2, 0.6, 2.9, 0.1,…
-## $ Alcohol         <dbl> 9.0, 7.2, 4.7, 8.9, 2.8, 8.7, 1.6, 7.0, 1.6, 5.4, 4.9,…
-## $ Astringent      <dbl> 8.7, 8.3, 5.0, 7.8, 5.9, 8.0, 2.6, 4.2, 5.5, 5.1, 5.9,…
+## $ NJ              <fct> 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1400, ~
+## $ ProductName     <fct> C_MERLOT, C_SYRAH, C_ZINFANDEL, C_REFOSCO, I_MERLOT, I~
+## $ NR              <fct> 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, ~
+## $ Red_berry       <dbl> 5.1, 5.6, 4.9, 5.0, 3.3, 5.7, 2.9, 3.2, 0.1, 1.6, 4.5,~
+## $ Dark_berry      <dbl> 5.8, 1.9, 2.6, 1.9, 7.2, 3.6, 5.1, 6.0, 0.1, 0.7, 2.9,~
+## $ Jam             <dbl> 2.1, 3.9, 1.4, 7.8, 0.5, 8.7, 8.7, 4.0, 0.2, 0.0, 0.3,~
+## $ Dried_fruit     <dbl> 4.7, 1.2, 5.9, 0.6, 5.8, 1.9, 0.4, 0.7, 2.9, 6.4, 2.4,~
+## $ Artificial_frui <dbl> 1.0, 7.9, 0.8, 6.6, 0.7, 7.4, 6.2, 4.1, 0.1, 0.1, 0.1,~
+## $ Chocolate       <dbl> 2.9, 1.0, 2.0, 6.4, 2.1, 3.3, 3.4, 3.6, 0.2, 1.0, 0.2,~
+## $ Vanilla         <dbl> 5.0, 8.3, 2.7, 5.5, 1.3, 6.9, 8.1, 4.8, 2.0, 0.8, 1.9,~
+## $ Oak             <dbl> 5.0, 2.3, 5.6, 3.6, 2.1, 1.5, 1.8, 2.6, 3.0, 5.4, 6.1,~
+## $ Burned          <dbl> 1.4, 1.8, 1.9, 3.2, 5.6, 0.2, 0.4, 4.7, 7.5, 5.1, 0.3,~
+## $ Leather         <dbl> 2.3, 3.5, 4.3, 0.3, 6.5, 1.5, 4.1, 6.5, 0.7, 0.8, 0.2,~
+## $ Earthy          <dbl> 0.6, 1.0, 0.6, 0.2, 4.7, 0.3, 0.5, 1.9, 0.7, 3.0, 1.3,~
+## $ Spicy           <dbl> 3.2, 0.7, 1.4, 2.9, 0.7, 3.1, 0.7, 1.4, 0.3, 3.2, 3.1,~
+## $ Pepper          <dbl> 5.4, 3.0, 4.1, 0.9, 2.8, 1.6, 3.6, 4.5, 0.1, 2.0, 0.9,~
+## $ Grassy          <dbl> 2.1, 0.6, 3.6, 1.8, 3.8, 0.9, 2.3, 0.8, 0.1, 1.3, 0.4,~
+## $ Medicinal       <dbl> 0.4, 2.2, 1.7, 0.2, 2.6, 0.5, 0.2, 3.8, 0.1, 2.1, 0.1,~
+## $ `Band-aid`      <dbl> 0.4, 0.4, 0.1, 0.2, 5.1, 1.2, 0.2, 6.2, 0.1, 1.1, 0.1,~
+## $ Sour            <dbl> 5.0, 9.7, 7.8, 8.3, 7.6, 7.2, 5.9, 6.3, 5.7, 6.4, 5.4,~
+## $ Bitter          <dbl> 5.9, 5.2, 3.5, 3.0, 1.9, 9.8, 2.9, 0.2, 0.6, 2.9, 0.1,~
+## $ Alcohol         <dbl> 9.0, 7.2, 4.7, 8.9, 2.8, 8.7, 1.6, 7.0, 1.6, 5.4, 4.9,~
+## $ Astringent      <dbl> 8.7, 8.3, 5.0, 7.8, 5.9, 8.0, 2.6, 4.2, 5.5, 5.1, 5.9,~
 ```
 
 We can't see in 20 dimensions!  So how does CVA help us not only separate our observations, but visualize them?  It turns out, without digging too far into the matrix algebra, that the following are properties of CVA:
@@ -206,7 +206,7 @@ scores_p_1 <-
 scores_p_1
 ```
 
-<img src="05-CVA_files/figure-html/unnamed-chunk-6-1.png" width="672" />
+![](05-CVA_files/figure-latex/unnamed-chunk-6-1.pdf)<!-- --> 
 
 ```r
 # And here is the plot of the canonical variates 1 and 2 from the multiway MANOVA
@@ -226,7 +226,7 @@ scores_p_2 <-
 scores_p_2
 ```
 
-<img src="05-CVA_files/figure-html/unnamed-chunk-6-2.png" width="672" />
+![](05-CVA_files/figure-latex/unnamed-chunk-6-2.pdf)<!-- --> 
 
 Besides a reversal of the x-axis (a trivial reflection which does not change meaning), the product mean separation appears to be identical in these two solutions, and the proportion of explained variation remains almost identical.  We'll keep up this comparison as we investigate the rest of the solution.
 
@@ -242,7 +242,7 @@ cva_res_oneway$coeffs.raw %>%
 ```
 
 ```
-## # A tibble: 20 × 8
+## # A tibble: 20 x 8
 ##    descriptor       Can1  Can2  Can3  Can4  Can5  Can6  Can7
 ##    <chr>           <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
 ##  1 Red_berry        0.01  0.03 -0.04 -0.1  -0.21 -0.06 -0.18
@@ -286,7 +286,7 @@ cva_res_oneway$structure %>%
   theme_bw()
 ```
 
-<img src="05-CVA_files/figure-html/unnamed-chunk-8-1.png" width="672" />
+![](05-CVA_files/figure-latex/unnamed-chunk-8-1.pdf)<!-- --> 
 
 We can see from this plot that the first canonical variate has large positive contributions from "Burned" characteristics and smaller contributions from "Oak", and strong negative contributions from fruit-related terms like "Jam", "Artificial_frui [sic]", etc.  The second canonical variate has large positive contributions from both "Vanilla" and "Chocolate", and negative contributions from flaw/complex terms like "Medicinal", "Band-aid", etc.
 
@@ -307,7 +307,7 @@ cva_res$structure %>%
   theme_bw()
 ```
 
-<img src="05-CVA_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+![](05-CVA_files/figure-latex/unnamed-chunk-9-1.pdf)<!-- --> 
 
 ### An aside on exporting R plots
 
@@ -350,7 +350,7 @@ cva_res_oneway$scores %>%
 ```
 
 ```
-## # A tibble: 336 × 8
+## # A tibble: 336 x 8
 ##    ProductName   Can1   Can2   Can3   Can4     Can5   Can6    Can7
 ##    <fct>        <dbl>  <dbl>  <dbl>  <dbl>    <dbl>  <dbl>   <dbl>
 ##  1 C_MERLOT     0.378  1.23  -2.16   1.33   1.25    -0.177 -1.38  
@@ -363,7 +363,7 @@ cva_res_oneway$scores %>%
 ##  8 I_REFOSCO    0.881 -0.986  1.14  -2.60  -0.0514  -1.25   1.56  
 ##  9 C_MERLOT     2.39   1.16   0.794  0.678 -0.340   -0.469  1.06  
 ## 10 C_SYRAH      1.95   0.928 -1.09   0.847  1.01     0.644 -0.155 
-## # ℹ 326 more rows
+## # i 326 more rows
 ```
 
 ```r
@@ -372,7 +372,7 @@ cva_res$scores %>%
 ```
 
 ```
-## # A tibble: 336 × 10
+## # A tibble: 336 x 10
 ##    ProductName NJ    NR      Can1   Can2   Can3    Can4    Can5   Can6    Can7
 ##    <fct>       <fct> <fct>  <dbl>  <dbl>  <dbl>   <dbl>   <dbl>  <dbl>   <dbl>
 ##  1 C_MERLOT    1331  7     -0.478  1.14  -0.778 -0.633  -2.51   -1.06   2.46  
@@ -385,7 +385,7 @@ cva_res$scores %>%
 ##  8 I_REFOSCO   1331  7     -1.73  -0.271  5.68  -0.973   1.75   -1.96  -0.896 
 ##  9 C_MERLOT    1400  7     -3.98   2.69  -0.498  0.0528 -0.804  -1.02  -1.57  
 ## 10 C_SYRAH     1400  7     -3.49   1.72  -1.04  -1.39   -2.38   -0.338  0.563 
-## # ℹ 326 more rows
+## # i 326 more rows
 ```
 
 We can add these to our mean-scores plots using the `ggplot2` layering capabilities--another example of using `ggplot2` over base R graphics.
@@ -404,7 +404,7 @@ scores_p_1 +
 ## replace the existing one.
 ```
 
-<img src="05-CVA_files/figure-html/unnamed-chunk-12-1.png" width="672" />
+![](05-CVA_files/figure-latex/unnamed-chunk-12-1.pdf)<!-- --> 
 
 ```r
 # This is in some contrast to the original R Opus, in which HGH used 95% confidence circles
@@ -422,7 +422,7 @@ scores_p_1 +
 ## replace the existing one.
 ```
 
-<img src="05-CVA_files/figure-html/unnamed-chunk-12-2.png" width="672" />
+![](05-CVA_files/figure-latex/unnamed-chunk-12-2.pdf)<!-- --> 
 
 While I don't have immediate access to the original reference HGH cites, the calculation provided in the original **R Opus** and repeated above draws a circle of confidence based on the number of observations in each group, which to my mind seems likely to underestimate the overlap between samples.  On the other hand, my simple confidence ellipses are for the raw observations, rather than the "barycentric" (mean vector) confidence intervals that the method given by HGH hopes to provide.  We can look at this by looking at the actual observations plotted in the CVA space.
 
@@ -448,7 +448,7 @@ scores_p_1 +
 ## replace the existing one.
 ```
 
-<img src="05-CVA_files/figure-html/unnamed-chunk-13-1.png" width="672" />
+![](05-CVA_files/figure-latex/unnamed-chunk-13-1.pdf)<!-- --> 
 
 When we plot the actual observations, it is apparent that the proposed confidence circles don't do a good job of capturing the observed variability in the data.  They are probably overgenerous in their estimation of the separability of the individual observations, as from what I can tell the radius of the circles is simply a function of the number of observations.  This would decrease as the number of observations go up, which makes sense as more observations will give more stable mean vectors, but it doesn't really take advantage of the raw data. On the other hand, the confidence intervals based on raw observations (which are no longer barycentric) don't tell us much about mean separation--they are more akin to predicting the orientation of other new observations for each wine in the CVA space.
 
@@ -506,17 +506,17 @@ get_bootstrapped_means()
 ```
 
 ```
-## # A tibble: 8 × 3
-##   ProductName    Can1   Can2
-##   <fct>         <dbl>  <dbl>
-## 1 C_MERLOT     0.0524  0.290
-## 2 C_REFOSCO    1.31    0.205
-## 3 C_SYRAH      0.368   0.225
-## 4 C_ZINFANDEL -0.248   0.417
-## 5 I_MERLOT     0.497  -1.07 
-## 6 I_PRIMITIVO -1.18    0.542
-## 7 I_REFOSCO    0.406  -1.28 
-## 8 I_SYRAH     -1.20    0.669
+## # A tibble: 8 x 3
+##   ProductName    Can1    Can2
+##   <fct>         <dbl>   <dbl>
+## 1 C_MERLOT     0.299   0.0649
+## 2 C_REFOSCO    1.34    0.983 
+## 3 C_SYRAH      0.242   0.0848
+## 4 C_ZINFANDEL -0.0792  0.118 
+## 5 I_MERLOT     0.446  -0.847 
+## 6 I_PRIMITIVO -0.979   0.222 
+## 7 I_REFOSCO   -0.0958 -1.14  
+## 8 I_SYRAH     -1.17    0.515
 ```
 
 ```r
@@ -543,7 +543,7 @@ scores_p_1 +
 ## replace the existing one.
 ```
 
-<img src="05-CVA_files/figure-html/unnamed-chunk-14-1.png" width="672" />
+![](05-CVA_files/figure-latex/unnamed-chunk-14-1.pdf)<!-- --> 
 
 While this requires a bit of computation time (around 5 seconds on my 2017 iMac, writing in 2022), this is still pretty tractable.  It would take about 1 minute to do a "publishable" bootstrap of 1000 samples, which is still fine.  As we'll see, this resampling approach will generalize easily to other needs.
 
@@ -582,18 +582,17 @@ sessionInfo()
 ## [17] rgl_1.2.1      
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] sass_0.4.7        utf8_1.2.3        generics_0.1.3    stringi_1.7.12   
-##  [5] hms_1.1.3         digest_0.6.33     magrittr_2.0.3    evaluate_0.21    
-##  [9] grid_4.3.1        timechange_0.2.0  bookdown_0.37     fastmap_1.1.1    
-## [13] rprojroot_2.0.3   jsonlite_1.8.7    ggrepel_0.9.3     backports_1.4.1  
-## [17] fansi_1.0.4       scales_1.2.1      jquerylib_0.1.4   abind_1.4-5      
-## [21] cli_3.6.1         crayon_1.5.2      rlang_1.1.1       bit64_4.0.5      
-## [25] munsell_0.5.0     base64enc_0.1-3   withr_2.5.0       cachem_1.0.8     
-## [29] yaml_2.3.7        parallel_4.3.1    tools_4.3.1       tzdb_0.4.0       
-## [33] colorspace_2.1-0  vctrs_0.6.3       R6_2.5.1          lifecycle_1.0.3  
-## [37] bit_4.0.5         htmlwidgets_1.6.2 vroom_1.6.3       MASS_7.3-60      
-## [41] pkgconfig_2.0.3   pillar_1.9.0      bslib_0.5.1       gtable_0.3.4     
-## [45] Rcpp_1.0.11       glue_1.6.2        highr_0.10        xfun_0.39        
-## [49] tidyselect_1.2.0  rstudioapi_0.15.0 knitr_1.43        farver_2.1.1     
-## [53] htmltools_0.5.6   labeling_0.4.3    rmarkdown_2.23    compiler_4.3.1
+##  [1] utf8_1.2.3        generics_0.1.3    stringi_1.7.12    hms_1.1.3        
+##  [5] digest_0.6.33     magrittr_2.0.3    evaluate_0.21     grid_4.3.1       
+##  [9] timechange_0.2.0  bookdown_0.37     fastmap_1.1.1     rprojroot_2.0.3  
+## [13] jsonlite_1.8.7    ggrepel_0.9.3     backports_1.4.1   fansi_1.0.4      
+## [17] scales_1.2.1      abind_1.4-5       cli_3.6.1         crayon_1.5.2     
+## [21] rlang_1.1.1       bit64_4.0.5       munsell_0.5.0     base64enc_0.1-3  
+## [25] withr_2.5.0       yaml_2.3.7        parallel_4.3.1    tools_4.3.1      
+## [29] tzdb_0.4.0        colorspace_2.1-0  vctrs_0.6.3       R6_2.5.1         
+## [33] lifecycle_1.0.3   bit_4.0.5         htmlwidgets_1.6.2 vroom_1.6.3      
+## [37] MASS_7.3-60       pkgconfig_2.0.3   pillar_1.9.0      gtable_0.3.4     
+## [41] Rcpp_1.0.11       glue_1.6.2        highr_0.10        xfun_0.39        
+## [45] tidyselect_1.2.0  rstudioapi_0.15.0 knitr_1.43        farver_2.1.1     
+## [49] htmltools_0.5.6   labeling_0.4.3    rmarkdown_2.23    compiler_4.3.1
 ```

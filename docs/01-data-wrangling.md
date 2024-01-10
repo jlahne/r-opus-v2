@@ -34,29 +34,29 @@ glimpse(descriptive_data)
 ```
 ## Rows: 336
 ## Columns: 23
-## $ NJ              <dbl> 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1400, …
-## $ ProductName     <chr> "C_MERLOT", "C_SYRAH", "C_ZINFANDEL", "C_REFOSCO", "I_…
-## $ NR              <dbl> 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, …
-## $ Red_berry       <dbl> 5.1, 5.6, 4.9, 5.0, 3.3, 5.7, 2.9, 3.2, 0.1, 1.6, 4.5,…
-## $ Dark_berry      <dbl> 5.8, 1.9, 2.6, 1.9, 7.2, 3.6, 5.1, 6.0, 0.1, 0.7, 2.9,…
-## $ Jam             <dbl> 2.1, 3.9, 1.4, 7.8, 0.5, 8.7, 8.7, 4.0, 0.2, 0.0, 0.3,…
-## $ Dried_fruit     <dbl> 4.7, 1.2, 5.9, 0.6, 5.8, 1.9, 0.4, 0.7, 2.9, 6.4, 2.4,…
-## $ Artificial_frui <dbl> 1.0, 7.9, 0.8, 6.6, 0.7, 7.4, 6.2, 4.1, 0.1, 0.1, 0.1,…
-## $ Chocolate       <dbl> 2.9, 1.0, 2.0, 6.4, 2.1, 3.3, 3.4, 3.6, 0.2, 1.0, 0.2,…
-## $ Vanilla         <dbl> 5.0, 8.3, 2.7, 5.5, 1.3, 6.9, 8.1, 4.8, 2.0, 0.8, 1.9,…
-## $ Oak             <dbl> 5.0, 2.3, 5.6, 3.6, 2.1, 1.5, 1.8, 2.6, 3.0, 5.4, 6.1,…
-## $ Burned          <dbl> 1.4, 1.8, 1.9, 3.2, 5.6, 0.2, 0.4, 4.7, 7.5, 5.1, 0.3,…
-## $ Leather         <dbl> 2.3, 3.5, 4.3, 0.3, 6.5, 1.5, 4.1, 6.5, 0.7, 0.8, 0.2,…
-## $ Earthy          <dbl> 0.6, 1.0, 0.6, 0.2, 4.7, 0.3, 0.5, 1.9, 0.7, 3.0, 1.3,…
-## $ Spicy           <dbl> 3.2, 0.7, 1.4, 2.9, 0.7, 3.1, 0.7, 1.4, 0.3, 3.2, 3.1,…
-## $ Pepper          <dbl> 5.4, 3.0, 4.1, 0.9, 2.8, 1.6, 3.6, 4.5, 0.1, 2.0, 0.9,…
-## $ Grassy          <dbl> 2.1, 0.6, 3.6, 1.8, 3.8, 0.9, 2.3, 0.8, 0.1, 1.3, 0.4,…
-## $ Medicinal       <dbl> 0.4, 2.2, 1.7, 0.2, 2.6, 0.5, 0.2, 3.8, 0.1, 2.1, 0.1,…
-## $ `Band-aid`      <dbl> 0.4, 0.4, 0.1, 0.2, 5.1, 1.2, 0.2, 6.2, 0.1, 1.1, 0.1,…
-## $ Sour            <dbl> 5.0, 9.7, 7.8, 8.3, 7.6, 7.2, 5.9, 6.3, 5.7, 6.4, 5.4,…
-## $ Bitter          <dbl> 5.9, 5.2, 3.5, 3.0, 1.9, 9.8, 2.9, 0.2, 0.6, 2.9, 0.1,…
-## $ Alcohol         <dbl> 9.0, 7.2, 4.7, 8.9, 2.8, 8.7, 1.6, 7.0, 1.6, 5.4, 4.9,…
-## $ Astringent      <dbl> 8.7, 8.3, 5.0, 7.8, 5.9, 8.0, 2.6, 4.2, 5.5, 5.1, 5.9,…
+## $ NJ              <dbl> 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1400, ~
+## $ ProductName     <chr> "C_MERLOT", "C_SYRAH", "C_ZINFANDEL", "C_REFOSCO", "I_~
+## $ NR              <dbl> 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, ~
+## $ Red_berry       <dbl> 5.1, 5.6, 4.9, 5.0, 3.3, 5.7, 2.9, 3.2, 0.1, 1.6, 4.5,~
+## $ Dark_berry      <dbl> 5.8, 1.9, 2.6, 1.9, 7.2, 3.6, 5.1, 6.0, 0.1, 0.7, 2.9,~
+## $ Jam             <dbl> 2.1, 3.9, 1.4, 7.8, 0.5, 8.7, 8.7, 4.0, 0.2, 0.0, 0.3,~
+## $ Dried_fruit     <dbl> 4.7, 1.2, 5.9, 0.6, 5.8, 1.9, 0.4, 0.7, 2.9, 6.4, 2.4,~
+## $ Artificial_frui <dbl> 1.0, 7.9, 0.8, 6.6, 0.7, 7.4, 6.2, 4.1, 0.1, 0.1, 0.1,~
+## $ Chocolate       <dbl> 2.9, 1.0, 2.0, 6.4, 2.1, 3.3, 3.4, 3.6, 0.2, 1.0, 0.2,~
+## $ Vanilla         <dbl> 5.0, 8.3, 2.7, 5.5, 1.3, 6.9, 8.1, 4.8, 2.0, 0.8, 1.9,~
+## $ Oak             <dbl> 5.0, 2.3, 5.6, 3.6, 2.1, 1.5, 1.8, 2.6, 3.0, 5.4, 6.1,~
+## $ Burned          <dbl> 1.4, 1.8, 1.9, 3.2, 5.6, 0.2, 0.4, 4.7, 7.5, 5.1, 0.3,~
+## $ Leather         <dbl> 2.3, 3.5, 4.3, 0.3, 6.5, 1.5, 4.1, 6.5, 0.7, 0.8, 0.2,~
+## $ Earthy          <dbl> 0.6, 1.0, 0.6, 0.2, 4.7, 0.3, 0.5, 1.9, 0.7, 3.0, 1.3,~
+## $ Spicy           <dbl> 3.2, 0.7, 1.4, 2.9, 0.7, 3.1, 0.7, 1.4, 0.3, 3.2, 3.1,~
+## $ Pepper          <dbl> 5.4, 3.0, 4.1, 0.9, 2.8, 1.6, 3.6, 4.5, 0.1, 2.0, 0.9,~
+## $ Grassy          <dbl> 2.1, 0.6, 3.6, 1.8, 3.8, 0.9, 2.3, 0.8, 0.1, 1.3, 0.4,~
+## $ Medicinal       <dbl> 0.4, 2.2, 1.7, 0.2, 2.6, 0.5, 0.2, 3.8, 0.1, 2.1, 0.1,~
+## $ `Band-aid`      <dbl> 0.4, 0.4, 0.1, 0.2, 5.1, 1.2, 0.2, 6.2, 0.1, 1.1, 0.1,~
+## $ Sour            <dbl> 5.0, 9.7, 7.8, 8.3, 7.6, 7.2, 5.9, 6.3, 5.7, 6.4, 5.4,~
+## $ Bitter          <dbl> 5.9, 5.2, 3.5, 3.0, 1.9, 9.8, 2.9, 0.2, 0.6, 2.9, 0.1,~
+## $ Alcohol         <dbl> 9.0, 7.2, 4.7, 8.9, 2.8, 8.7, 1.6, 7.0, 1.6, 5.4, 4.9,~
+## $ Astringent      <dbl> 8.7, 8.3, 5.0, 7.8, 5.9, 8.0, 2.6, 4.2, 5.5, 5.1, 5.9,~
 ```
 
 The `descriptive_data` file, read from `torriDAFinal.csv`, contains results from a descriptive analysis (DA) of wines, I believe from California and Italy (more on that in a minute).  Each row contains the observation of multiple variables (columns) from a single judge (`NJ`) on a single wine (`ProductName`) in a single replicate (`NR`).  That means we have 20 measured, quantitative sensory variables (`Red_berry:Astringent`), and the other three variables (judge, wine, rep) are ID or classifying variables.  [These data are *not* tidy](https://r4ds.hadley.nz/data-tidy.html); each row has multiple variables.
@@ -71,7 +71,7 @@ descriptive_data %>%
 ```
 
 ```
-## # A tibble: 14 × 2
+## # A tibble: 14 x 2
 ##       NJ     n
 ##    <dbl> <int>
 ##  1  1331    24
@@ -97,7 +97,7 @@ descriptive_data %>%
 ```
 
 ```
-## # A tibble: 3 × 2
+## # A tibble: 3 x 2
 ##      NR     n
 ##   <dbl> <int>
 ## 1     7   112
@@ -112,7 +112,7 @@ descriptive_data %>%
 ```
 
 ```
-## # A tibble: 8 × 2
+## # A tibble: 8 x 2
 ##   ProductName     n
 ##   <chr>       <int>
 ## 1 C_MERLOT       42
@@ -159,19 +159,19 @@ glimpse(consumer_data)
 ```
 ## Rows: 106
 ## Columns: 13
-## $ Judge            <dbl> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16…
-## $ `Wine Frequency` <dbl> 2, 3, 3, 3, 2, 3, 2, 2, 1, 2, 2, 2, 1, 1, 1, 4, 1, 1,…
-## $ `IT frequency`   <dbl> 3, 4, 1, 2, 3, 3, 4, 3, 3, 4, 3, 3, 3, 3, 3, 1, 3, 4,…
-## $ Gender           <dbl> 2, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 2, 1, 2, 2, 2,…
-## $ Age              <dbl> 22, 21, 25, 24, 31, 60, 24, 25, 26, 40, 40, 22, 23, 2…
-## $ C_MERLOT         <dbl> 5, 8, 8, 4, 4, 4, 8, 5, 7, 7, 7, 8, 6, 4, 4, 2, 3, 7,…
-## $ C_SYRAH          <dbl> 4, 5, 6, 6, 6, 4, 6, 4, 5, 1, 8, 8, 4, 2, 4, 1, 8, 6,…
-## $ C_ZINFANDEL      <dbl> 3, 8, 6, 3, 6, 4, 7, 6, 6, 4, 6, 7, 6, 8, 6, 7, 9, 7,…
-## $ C_REFOSCO        <dbl> 8, 5, 8, 4, 7, 4, 6, 6, 3, 6, 3, 7, 8, 4, 6, 1, 8, 8,…
-## $ I_MERLOT         <dbl> 7, 4, 7, 8, 2, 3, 8, 7, 6, 5, 3, 3, 3, 3, 4, 1, 6, 7,…
-## $ I_SYRAH          <dbl> 2, 8, 5, 4, 6, 3, 6, 4, 6, 8, 2, 4, 8, 7, 3, 4, 4, 8,…
-## $ I_PRIMITIVO      <dbl> 4, 4, 7, 9, 5, 4, 4, 4, 6, 1, 1, 2, 7, 3, 4, 2, 7, 6,…
-## $ I_REFOSCO        <dbl> 6, 6, 7, 2, 7, 1, 7, 3, 3, 2, 4, 3, 7, 5, 4, 4, 6, 7,…
+## $ Judge            <dbl> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16~
+## $ `Wine Frequency` <dbl> 2, 3, 3, 3, 2, 3, 2, 2, 1, 2, 2, 2, 1, 1, 1, 4, 1, 1,~
+## $ `IT frequency`   <dbl> 3, 4, 1, 2, 3, 3, 4, 3, 3, 4, 3, 3, 3, 3, 3, 1, 3, 4,~
+## $ Gender           <dbl> 2, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 2, 1, 2, 2, 2,~
+## $ Age              <dbl> 22, 21, 25, 24, 31, 60, 24, 25, 26, 40, 40, 22, 23, 2~
+## $ C_MERLOT         <dbl> 5, 8, 8, 4, 4, 4, 8, 5, 7, 7, 7, 8, 6, 4, 4, 2, 3, 7,~
+## $ C_SYRAH          <dbl> 4, 5, 6, 6, 6, 4, 6, 4, 5, 1, 8, 8, 4, 2, 4, 1, 8, 6,~
+## $ C_ZINFANDEL      <dbl> 3, 8, 6, 3, 6, 4, 7, 6, 6, 4, 6, 7, 6, 8, 6, 7, 9, 7,~
+## $ C_REFOSCO        <dbl> 8, 5, 8, 4, 7, 4, 6, 6, 3, 6, 3, 7, 8, 4, 6, 1, 8, 8,~
+## $ I_MERLOT         <dbl> 7, 4, 7, 8, 2, 3, 8, 7, 6, 5, 3, 3, 3, 3, 4, 1, 6, 7,~
+## $ I_SYRAH          <dbl> 2, 8, 5, 4, 6, 3, 6, 4, 6, 8, 2, 4, 8, 7, 3, 4, 4, 8,~
+## $ I_PRIMITIVO      <dbl> 4, 4, 7, 9, 5, 4, 4, 4, 6, 1, 1, 2, 7, 3, 4, 2, 7, 6,~
+## $ I_REFOSCO        <dbl> 6, 6, 7, 2, 7, 1, 7, 3, 3, 2, 4, 3, 7, 5, 4, 4, 6, 7,~
 ```
 
 Here we have consumer acceptance testing data on the same 8 wines from the DA.  The rows look like they represent consumers, identified by the `Judge` column.  Let's check to see if they're all unique:
@@ -184,7 +184,7 @@ consumer_data %>%
 ```
 
 ```
-## # A tibble: 106 × 2
+## # A tibble: 106 x 2
 ##    Judge     n
 ##    <dbl> <int>
 ##  1     1     1
@@ -197,7 +197,7 @@ consumer_data %>%
 ##  8     8     1
 ##  9     9     1
 ## 10    10     1
-## # ℹ 96 more rows
+## # i 96 more rows
 ```
 
 Then we have some consumption data (`Wine Frequency` and `IT Frequency`) and some demographic data (`Gender` and `Age`), and then 8 columns representing each judge's rating for each wine.  Doesn't look like we have any replication or any incomplete data.  Again, this is not tidy data--each row contains multiple observations beyond the classifying/identifying data.  We'll come back to that.
@@ -213,7 +213,7 @@ library(naniar)
 naniar::gg_miss_var(x = missing_data_example)
 ```
 
-<img src="01-data-wrangling_files/figure-html/unnamed-chunk-7-1.png" width="672" />
+![](01-data-wrangling_files/figure-latex/unnamed-chunk-7-1.pdf)<!-- --> 
 
 We could also use the useful `skimr` package to give us an informative data summary that would tell us about missingness:
 
@@ -240,32 +240,57 @@ skim(missing_data_example) %>%
 ```
 
 
-
-|skim_type |skim_variable   | n_missing| complete_rate| character.min| character.max| character.empty| character.n_unique| character.whitespace| numeric.mean| numeric.sd| numeric.p0| numeric.p25| numeric.p50| numeric.p75| numeric.p100|numeric.hist |
-|:---------|:---------------|---------:|-------------:|-------------:|-------------:|---------------:|------------------:|--------------------:|------------:|----------:|----------:|-----------:|-----------:|-----------:|------------:|:------------|
-|character |ProductName     |         0|     1.0000000|             7|            11|               0|                  8|                    0|           NA|         NA|         NA|          NA|          NA|          NA|           NA|NA           |
-|numeric   |NJ              |         0|     1.0000000|            NA|            NA|              NA|                 NA|                   NA| 1403.3571429| 20.8589537|       1331|    1402.000|     1408.50|    1414.000|       1417.0|▁▁▁▁▇        |
-|numeric   |NR              |         0|     1.0000000|            NA|            NA|              NA|                 NA|                   NA|    8.0000000|  0.8177143|          7|       7.000|        8.00|       9.000|          9.0|▇▁▇▁▇        |
-|numeric   |Red_berry       |        11|     0.9672619|            NA|            NA|              NA|                 NA|                   NA|    2.8473846|  2.5294746|          0|       0.500|        2.30|       4.800|          9.2|▇▅▂▂▁        |
-|numeric   |Dark_berry      |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    3.0953988|  2.7778038|          0|       0.500|        2.30|       5.075|          9.9|▇▃▃▂▂        |
-|numeric   |Jam             |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.8773006|  2.4022502|          0|       0.200|        0.70|       2.700|         10.0|▇▂▁▁▁        |
-|numeric   |Dried_fruit     |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.8104294|  2.1395934|          0|       0.200|        0.70|       3.275|         10.0|▇▂▂▁▁        |
-|numeric   |Artificial_frui |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.1996933|  1.9710598|          0|       0.100|        0.30|       1.200|          9.7|▇▁▁▁▁        |
-|numeric   |Chocolate       |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.2131902|  1.7648302|          0|       0.100|        0.40|       1.675|         10.0|▇▁▁▁▁        |
-|numeric   |Vanilla         |        11|     0.9672619|            NA|            NA|              NA|                 NA|                   NA|    1.6673846|  1.9758529|          0|       0.200|        0.90|       2.600|          9.3|▇▂▁▁▁        |
-|numeric   |Oak             |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    2.3024540|  1.9957632|          0|       0.500|        1.70|       3.900|          9.0|▇▃▃▁▁        |
-|numeric   |Burned          |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.5070552|  2.0622868|          0|       0.100|        0.40|       2.375|          9.7|▇▂▁▁▁        |
-|numeric   |Leather         |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.4659509|  2.0566530|          0|       0.100|        0.40|       2.400|          9.9|▇▂▁▁▁        |
-|numeric   |Earthy          |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.0929448|  1.5826888|          0|       0.100|        0.40|       1.375|          8.0|▇▁▁▁▁        |
-|numeric   |Spicy           |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.2015337|  1.6742477|          0|       0.100|        0.40|       1.800|          8.9|▇▂▁▁▁        |
-|numeric   |Pepper          |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.5165644|  2.0514989|          0|       0.200|        0.50|       2.300|         10.0|▇▁▁▁▁        |
-|numeric   |Grassy          |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    0.9361963|  1.4584638|          0|       0.100|        0.30|       1.100|          9.8|▇▁▁▁▁        |
-|numeric   |Medicinal       |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.4276074|  2.0269504|          0|       0.100|        0.40|       2.000|          9.6|▇▁▁▁▁        |
-|numeric   |Band-aid        |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.2061350|  2.0478189|          0|       0.100|        0.30|       1.075|          9.8|▇▁▁▁▁        |
-|numeric   |Sour            |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    4.6199387|  2.9908889|          0|       1.625|        4.85|       7.100|         10.0|▇▅▇▆▅        |
-|numeric   |Bitter          |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    3.4236196|  2.7514405|          0|       1.000|        3.00|       5.200|         10.0|▇▅▃▂▂        |
-|numeric   |Alcohol         |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    3.6058282|  2.4028950|          0|       1.200|        4.05|       5.200|          9.5|▇▃▇▃▁        |
-|numeric   |Astringent      |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    4.6358896|  2.6451989|          0|       2.500|        4.70|       6.400|         10.0|▆▆▇▅▃        |
+\begin{tabular}{l|l|r|r|r|r|r|r|r|r|r|r|r|r|r|r|l}
+\hline
+skim\_type & skim\_variable & n\_missing & complete\_rate & character.min & character.max & character.empty & character.n\_unique & character.whitespace & numeric.mean & numeric.sd & numeric.p0 & numeric.p25 & numeric.p50 & numeric.p75 & numeric.p100 & numeric.hist\\
+\hline
+character & ProductName & 0 & 1.0000000 & 7 & 11 & 0 & 8 & 0 & NA & NA & NA & NA & NA & NA & NA & NA\\
+\hline
+numeric & NJ & 0 & 1.0000000 & NA & NA & NA & NA & NA & 1403.3571429 & 20.8589537 & 1331 & 1402.000 & 1408.50 & 1414.000 & 1417.0 & ▁▁▁▁▇\\
+\hline
+numeric & NR & 0 & 1.0000000 & NA & NA & NA & NA & NA & 8.0000000 & 0.8177143 & 7 & 7.000 & 8.00 & 9.000 & 9.0 & ▇▁▇▁▇\\
+\hline
+numeric & Red\_berry & 11 & 0.9672619 & NA & NA & NA & NA & NA & 2.8473846 & 2.5294746 & 0 & 0.500 & 2.30 & 4.800 & 9.2 & ▇▅▂▂▁\\
+\hline
+numeric & Dark\_berry & 10 & 0.9702381 & NA & NA & NA & NA & NA & 3.0953988 & 2.7778038 & 0 & 0.500 & 2.30 & 5.075 & 9.9 & ▇▃▃▂▂\\
+\hline
+numeric & Jam & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.8773006 & 2.4022502 & 0 & 0.200 & 0.70 & 2.700 & 10.0 & ▇▂▁▁▁\\
+\hline
+numeric & Dried\_fruit & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.8104294 & 2.1395934 & 0 & 0.200 & 0.70 & 3.275 & 10.0 & ▇▂▂▁▁\\
+\hline
+numeric & Artificial\_frui & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.1996933 & 1.9710598 & 0 & 0.100 & 0.30 & 1.200 & 9.7 & ▇▁▁▁▁\\
+\hline
+numeric & Chocolate & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.2131902 & 1.7648302 & 0 & 0.100 & 0.40 & 1.675 & 10.0 & ▇▁▁▁▁\\
+\hline
+numeric & Vanilla & 11 & 0.9672619 & NA & NA & NA & NA & NA & 1.6673846 & 1.9758529 & 0 & 0.200 & 0.90 & 2.600 & 9.3 & ▇▂▁▁▁\\
+\hline
+numeric & Oak & 10 & 0.9702381 & NA & NA & NA & NA & NA & 2.3024540 & 1.9957632 & 0 & 0.500 & 1.70 & 3.900 & 9.0 & ▇▃▃▁▁\\
+\hline
+numeric & Burned & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.5070552 & 2.0622868 & 0 & 0.100 & 0.40 & 2.375 & 9.7 & ▇▂▁▁▁\\
+\hline
+numeric & Leather & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.4659509 & 2.0566530 & 0 & 0.100 & 0.40 & 2.400 & 9.9 & ▇▂▁▁▁\\
+\hline
+numeric & Earthy & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.0929448 & 1.5826888 & 0 & 0.100 & 0.40 & 1.375 & 8.0 & ▇▁▁▁▁\\
+\hline
+numeric & Spicy & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.2015337 & 1.6742477 & 0 & 0.100 & 0.40 & 1.800 & 8.9 & ▇▂▁▁▁\\
+\hline
+numeric & Pepper & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.5165644 & 2.0514989 & 0 & 0.200 & 0.50 & 2.300 & 10.0 & ▇▁▁▁▁\\
+\hline
+numeric & Grassy & 10 & 0.9702381 & NA & NA & NA & NA & NA & 0.9361963 & 1.4584638 & 0 & 0.100 & 0.30 & 1.100 & 9.8 & ▇▁▁▁▁\\
+\hline
+numeric & Medicinal & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.4276074 & 2.0269504 & 0 & 0.100 & 0.40 & 2.000 & 9.6 & ▇▁▁▁▁\\
+\hline
+numeric & Band-aid & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.2061350 & 2.0478189 & 0 & 0.100 & 0.30 & 1.075 & 9.8 & ▇▁▁▁▁\\
+\hline
+numeric & Sour & 10 & 0.9702381 & NA & NA & NA & NA & NA & 4.6199387 & 2.9908889 & 0 & 1.625 & 4.85 & 7.100 & 10.0 & ▇▅▇▆▅\\
+\hline
+numeric & Bitter & 10 & 0.9702381 & NA & NA & NA & NA & NA & 3.4236196 & 2.7514405 & 0 & 1.000 & 3.00 & 5.200 & 10.0 & ▇▅▃▂▂\\
+\hline
+numeric & Alcohol & 10 & 0.9702381 & NA & NA & NA & NA & NA & 3.6058282 & 2.4028950 & 0 & 1.200 & 4.05 & 5.200 & 9.5 & ▇▃▇▃▁\\
+\hline
+numeric & Astringent & 10 & 0.9702381 & NA & NA & NA & NA & NA & 4.6358896 & 2.6451989 & 0 & 2.500 & 4.70 & 6.400 & 10.0 & ▆▆▇▅▃\\
+\hline
+\end{tabular}
 
 Because the only difference between this data table and the `descriptive_data` table is the introduced missingness we're not going to pay much attention to it until we get to dealing with missing data.
 
@@ -277,18 +302,18 @@ sorting_data
 ```
 
 ```
-## # A tibble: 8 × 16
+## # A tibble: 8 x 16
 ##   wine      `263` `1331` `1400` `1401` `1402` `1404` `1405` `1408` `1409` `1412`
 ##   <chr>     <chr> <chr>  <chr>  <chr>  <chr>  <chr>  <chr>  <chr>  <chr>  <chr> 
 ## 1 I_REFOSCO G6    G3     G5     G4     G5     G4     G2     G2     G1     G1    
 ## 2 I_MERLOT  G1    G3     G4     G3     G2     G3     G4     G3     G1     G2    
 ## 3 I_SYRAH   G5    G4     G2     G1     G1     G2     G1     G4     G1     G2    
-## 4 I_PRIMIT… G2    G1     G3     G1     G4     G5     G3     G4     G3     G2    
+## 4 I_PRIMIT~ G2    G1     G3     G1     G4     G5     G3     G4     G3     G2    
 ## 5 C_SYRAH   G3    G2     G4     G4     G5     G6     G1     G3     G2     G4    
 ## 6 C_REFOSCO G4    G3     G1     G2     G5     G5     G2     G1     G2     G3    
 ## 7 C_MERLOT  G1    G2     G3     G3     G3     G1     G4     G3     G2     G2    
-## 8 C_ZINFAN… G1    G5     G3     G3     G2     G1     G1     G3     G1     G2    
-## # ℹ 5 more variables: `1413` <chr>, `1414` <chr>, `1415` <chr>, `1416` <chr>,
+## 8 C_ZINFAN~ G1    G5     G3     G3     G2     G1     G1     G3     G1     G2    
+## # i 5 more variables: `1413` <chr>, `1414` <chr>, `1415` <chr>, `1416` <chr>,
 ## #   `1417` <chr>
 ```
 
@@ -310,7 +335,7 @@ descriptive_data_tidy
 ```
 
 ```
-## # A tibble: 6,720 × 5
+## # A tibble: 6,720 x 5
 ##       NJ ProductName    NR descriptor      rating
 ##    <dbl> <chr>       <dbl> <chr>            <dbl>
 ##  1  1331 C_MERLOT        7 Red_berry          5.1
@@ -323,7 +348,7 @@ descriptive_data_tidy
 ##  8  1331 C_MERLOT        7 Oak                5  
 ##  9  1331 C_MERLOT        7 Burned             1.4
 ## 10  1331 C_MERLOT        7 Leather            2.3
-## # ℹ 6,710 more rows
+## # i 6,710 more rows
 ```
 
 Now we have kept our 3 ID or classifying variables and created a 4th, `descriptor`, which together uniquely describe each numeric observation, now called `rating`.  In our newly tidied dataset, the first line give the `rating`--the observation--for the judge with code `1331`, in rep `7`, for the wine `C_MERLOT`, for the `Red_berry` descriptor.  It's `5.1`.  
@@ -351,7 +376,7 @@ descriptive_data_tidy %>%
 ```
 
 ```
-## # A tibble: 8 × 5
+## # A tibble: 8 x 5
 ##   ProductName mean_jam_score se_jam_score lower_95 upper_95
 ##   <chr>                <dbl>        <dbl>    <dbl>    <dbl>
 ## 1 C_MERLOT             1.37         0.262    0.857     1.89
@@ -383,7 +408,7 @@ consumer_data_tidy
 ```
 
 ```
-## # A tibble: 848 × 7
+## # A tibble: 848 x 7
 ##    Judge `Wine Frequency` `IT frequency` Gender   Age wine        rating
 ##    <dbl>            <dbl>          <dbl>  <dbl> <dbl> <chr>        <dbl>
 ##  1     1                2              3      2    22 C_MERLOT         5
@@ -396,7 +421,7 @@ consumer_data_tidy
 ##  8     1                2              3      2    22 I_REFOSCO        6
 ##  9     2                3              4      2    21 C_MERLOT         8
 ## 10     2                3              4      2    21 C_SYRAH          5
-## # ℹ 838 more rows
+## # i 838 more rows
 ```
 
 Again, we've created a new ID/classifying column called `wine` and a new observation column called `rating`.  Now the 6 ID columns uniquely specify an observation.  Let's do something fun with this: is there a relationship between `Gender` and `rating`?
@@ -467,17 +492,16 @@ sessionInfo()
 ## [13] tidyverse_2.0.0
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] sass_0.4.7        utf8_1.2.3        generics_0.1.3    stringi_1.7.12   
-##  [5] hms_1.1.3         digest_0.6.33     magrittr_2.0.3    evaluate_0.21    
-##  [9] grid_4.3.1        timechange_0.2.0  bookdown_0.37     fastmap_1.1.1    
-## [13] rprojroot_2.0.3   jsonlite_1.8.7    fansi_1.0.4       scales_1.2.1     
-## [17] jquerylib_0.1.4   cli_3.6.1         rlang_1.1.1       crayon_1.5.2     
-## [21] bit64_4.0.5       munsell_0.5.0     base64enc_0.1-3   repr_1.1.6       
-## [25] withr_2.5.0       cachem_1.0.8      yaml_2.3.7        tools_4.3.1      
-## [29] parallel_4.3.1    tzdb_0.4.0        colorspace_2.1-0  vctrs_0.6.3      
-## [33] R6_2.5.1          lifecycle_1.0.3   bit_4.0.5         vroom_1.6.3      
-## [37] pkgconfig_2.0.3   pillar_1.9.0      bslib_0.5.1       gtable_0.3.4     
-## [41] visdat_0.6.0      glue_1.6.2        highr_0.10        xfun_0.39        
-## [45] tidyselect_1.2.0  rstudioapi_0.15.0 knitr_1.43        farver_2.1.1     
-## [49] htmltools_0.5.6   labeling_0.4.3    rmarkdown_2.23    compiler_4.3.1
+##  [1] utf8_1.2.3        generics_0.1.3    stringi_1.7.12    hms_1.1.3        
+##  [5] digest_0.6.33     magrittr_2.0.3    evaluate_0.21     grid_4.3.1       
+##  [9] timechange_0.2.0  bookdown_0.37     fastmap_1.1.1     jsonlite_1.8.7   
+## [13] rprojroot_2.0.3   fansi_1.0.4       scales_1.2.1      cli_3.6.1        
+## [17] rlang_1.1.1       crayon_1.5.2      bit64_4.0.5       munsell_0.5.0    
+## [21] base64enc_0.1-3   repr_1.1.6        withr_2.5.0       yaml_2.3.7       
+## [25] tools_4.3.1       parallel_4.3.1    tzdb_0.4.0        colorspace_2.1-0 
+## [29] vctrs_0.6.3       R6_2.5.1          lifecycle_1.0.3   bit_4.0.5        
+## [33] vroom_1.6.3       pkgconfig_2.0.3   pillar_1.9.0      gtable_0.3.4     
+## [37] glue_1.6.2        visdat_0.6.0      highr_0.10        xfun_0.39        
+## [41] tidyselect_1.2.0  rstudioapi_0.15.0 knitr_1.43        farver_2.1.1     
+## [45] htmltools_0.5.6   labeling_0.4.3    rmarkdown_2.23    compiler_4.3.1
 ```

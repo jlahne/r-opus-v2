@@ -1,5 +1,7 @@
 --- 
-title: "The R Opus v2"
+title: |
+  ![](img/r-opus-cover.jpg){width=6in}  
+  "The R Opus v2"
 author: "Jacob Lahne"
 date: "2024-01-10"
 site: bookdown::bookdown_site
@@ -42,36 +44,65 @@ While it is not strictly necessary, you will almost certainly find it more pleas
 Here's the list of packages I used in this bookdown:
 
 
-
-|package     |
-|:-----------|
-|tidyverse   |
-|FactoMineR  |
-|patchwork   |
-|ggrepel     |
-|ggedit      |
-|ggforce     |
-|DistatisR   |
-|SensoMineR  |
-|paletteer   |
-|here        |
-|broom       |
-|skimr       |
-|factoextra  |
-|naniar      |
-|agricolae   |
-|tidytext    |
-|brms        |
-|tidybayes   |
-|simputation |
-|missMDA     |
-|corrr       |
-|widyr       |
-|rgl         |
-|candisc     |
-|MASS        |
-|ca          |
-|pls         |
+\begin{tabular}{l}
+\hline
+package\\
+\hline
+tidyverse\\
+\hline
+FactoMineR\\
+\hline
+patchwork\\
+\hline
+ggrepel\\
+\hline
+ggedit\\
+\hline
+ggforce\\
+\hline
+DistatisR\\
+\hline
+SensoMineR\\
+\hline
+paletteer\\
+\hline
+here\\
+\hline
+broom\\
+\hline
+skimr\\
+\hline
+factoextra\\
+\hline
+naniar\\
+\hline
+agricolae\\
+\hline
+tidytext\\
+\hline
+brms\\
+\hline
+tidybayes\\
+\hline
+simputation\\
+\hline
+missMDA\\
+\hline
+corrr\\
+\hline
+widyr\\
+\hline
+rgl\\
+\hline
+candisc\\
+\hline
+MASS\\
+\hline
+ca\\
+\hline
+pls\\
+\hline
+\end{tabular}
 
 
 
@@ -132,19 +163,17 @@ sessionInfo()
 #> [10] tidyverse_2.0.0
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] gtable_0.3.4      jsonlite_1.8.7    compiler_4.3.1   
-#>  [4] tidyselect_1.2.0  jquerylib_0.1.4   scales_1.2.1     
-#>  [7] yaml_2.3.7        fastmap_1.1.1     R6_2.5.1         
-#> [10] generics_0.1.3    knitr_1.43        bookdown_0.37    
-#> [13] munsell_0.5.0     bslib_0.5.1       pillar_1.9.0     
-#> [16] tzdb_0.4.0        rlang_1.1.1       utf8_1.2.3       
-#> [19] stringi_1.7.12    cachem_1.0.8      xfun_0.39        
-#> [22] sass_0.4.7        timechange_0.2.0  cli_3.6.1        
-#> [25] withr_2.5.0       magrittr_2.0.3    digest_0.6.33    
-#> [28] grid_4.3.1        rstudioapi_0.15.0 hms_1.1.3        
-#> [31] lifecycle_1.0.3   vctrs_0.6.3       evaluate_0.21    
-#> [34] glue_1.6.2        fansi_1.0.4       colorspace_2.1-0 
-#> [37] rmarkdown_2.23    tools_4.3.1       pkgconfig_2.0.3  
-#> [40] htmltools_0.5.6
+#>  [1] gtable_0.3.4      compiler_4.3.1    tidyselect_1.2.0 
+#>  [4] scales_1.2.1      yaml_2.3.7        fastmap_1.1.1    
+#>  [7] R6_2.5.1          generics_0.1.3    knitr_1.43       
+#> [10] bookdown_0.37     munsell_0.5.0     pillar_1.9.0     
+#> [13] tzdb_0.4.0        rlang_1.1.1       utf8_1.2.3       
+#> [16] stringi_1.7.12    xfun_0.39         timechange_0.2.0 
+#> [19] cli_3.6.1         withr_2.5.0       magrittr_2.0.3   
+#> [22] digest_0.6.33     grid_4.3.1        rstudioapi_0.15.0
+#> [25] hms_1.1.3         lifecycle_1.0.3   vctrs_0.6.3      
+#> [28] evaluate_0.21     glue_1.6.2        fansi_1.0.4      
+#> [31] colorspace_2.1-0  rmarkdown_2.23    tools_4.3.1      
+#> [34] pkgconfig_2.0.3   htmltools_0.5.6
 ```
 

@@ -35,22 +35,37 @@ skimr::skim(consumer_data) %>%
 ```
 
 
-
-|skim_type |skim_variable  | n_missing| complete_rate| numeric.mean| numeric.sd| numeric.p0| numeric.p25| numeric.p50| numeric.p75| numeric.p100|numeric.hist |
-|:---------|:--------------|---------:|-------------:|------------:|----------:|----------:|-----------:|-----------:|-----------:|------------:|:------------|
-|numeric   |Judge          |         0|             1|    53.500000| 30.7435630|          1|       27.25|        53.5|       79.75|          106|▇▇▇▇▇        |
-|numeric   |Wine Frequency |         0|             1|     2.018868|  0.8942263|          1|        1.00|         2.0|        3.00|            4|▇▇▁▅▁        |
-|numeric   |IT frequency   |         0|             1|     2.745283|  0.7179511|          1|        2.00|         3.0|        3.00|            5|▁▅▇▁▁        |
-|numeric   |Gender         |         0|             1|     1.481132|  0.5020175|          1|        1.00|         1.0|        2.00|            2|▇▁▁▁▇        |
-|numeric   |Age            |         0|             1|    38.915094| 14.4684339|         21|       26.00|        35.0|       51.50|           67|▇▃▂▃▃        |
-|numeric   |C_MERLOT       |         0|             1|     5.773585|  1.8009681|          2|        4.00|         6.0|        7.00|            9|▃▃▇▅▅        |
-|numeric   |C_SYRAH        |         0|             1|     5.537736|  2.0150601|          1|        4.00|         6.0|        7.00|            9|▂▆▂▇▅        |
-|numeric   |C_ZINFANDEL    |         0|             1|     6.056604|  1.7611154|          1|        5.00|         6.0|        7.00|            9|▁▂▂▇▃        |
-|numeric   |C_REFOSCO      |         0|             1|     5.443396|  2.0427814|          1|        4.00|         6.0|        7.00|            9|▂▆▃▇▃        |
-|numeric   |I_MERLOT       |         0|             1|     4.547170|  1.9475605|          1|        3.00|         4.0|        6.00|            8|▅▅▇▅▅        |
-|numeric   |I_SYRAH        |         0|             1|     5.226415|  1.9187447|          1|        4.00|         6.0|        7.00|            8|▂▃▆▅▇        |
-|numeric   |I_PRIMITIVO    |         0|             1|     5.009434|  2.0023571|          1|        4.00|         5.0|        6.75|            9|▂▇▂▇▂        |
-|numeric   |I_REFOSCO      |         0|             1|     4.820755|  2.2116452|          1|        3.00|         5.0|        7.00|            9|▅▅▂▇▂        |
+\begin{tabular}{l|l|r|r|r|r|r|r|r|r|r|l}
+\hline
+skim\_type & skim\_variable & n\_missing & complete\_rate & numeric.mean & numeric.sd & numeric.p0 & numeric.p25 & numeric.p50 & numeric.p75 & numeric.p100 & numeric.hist\\
+\hline
+numeric & Judge & 0 & 1 & 53.500000 & 30.7435630 & 1 & 27.25 & 53.5 & 79.75 & 106 & ▇▇▇▇▇\\
+\hline
+numeric & Wine Frequency & 0 & 1 & 2.018868 & 0.8942263 & 1 & 1.00 & 2.0 & 3.00 & 4 & ▇▇▁▅▁\\
+\hline
+numeric & IT frequency & 0 & 1 & 2.745283 & 0.7179511 & 1 & 2.00 & 3.0 & 3.00 & 5 & ▁▅▇▁▁\\
+\hline
+numeric & Gender & 0 & 1 & 1.481132 & 0.5020175 & 1 & 1.00 & 1.0 & 2.00 & 2 & ▇▁▁▁▇\\
+\hline
+numeric & Age & 0 & 1 & 38.915094 & 14.4684339 & 21 & 26.00 & 35.0 & 51.50 & 67 & ▇▃▂▃▃\\
+\hline
+numeric & C\_MERLOT & 0 & 1 & 5.773585 & 1.8009681 & 2 & 4.00 & 6.0 & 7.00 & 9 & ▃▃▇▅▅\\
+\hline
+numeric & C\_SYRAH & 0 & 1 & 5.537736 & 2.0150601 & 1 & 4.00 & 6.0 & 7.00 & 9 & ▂▆▂▇▅\\
+\hline
+numeric & C\_ZINFANDEL & 0 & 1 & 6.056604 & 1.7611154 & 1 & 5.00 & 6.0 & 7.00 & 9 & ▁▂▂▇▃\\
+\hline
+numeric & C\_REFOSCO & 0 & 1 & 5.443396 & 2.0427814 & 1 & 4.00 & 6.0 & 7.00 & 9 & ▂▆▃▇▃\\
+\hline
+numeric & I\_MERLOT & 0 & 1 & 4.547170 & 1.9475605 & 1 & 3.00 & 4.0 & 6.00 & 8 & ▅▅▇▅▅\\
+\hline
+numeric & I\_SYRAH & 0 & 1 & 5.226415 & 1.9187447 & 1 & 4.00 & 6.0 & 7.00 & 8 & ▂▃▆▅▇\\
+\hline
+numeric & I\_PRIMITIVO & 0 & 1 & 5.009434 & 2.0023571 & 1 & 4.00 & 5.0 & 6.75 & 9 & ▂▇▂▇▂\\
+\hline
+numeric & I\_REFOSCO & 0 & 1 & 4.820755 & 2.2116452 & 1 & 3.00 & 5.0 & 7.00 & 9 & ▅▅▂▇▂\\
+\hline
+\end{tabular}
 
 So we have a lot of rows, each one of which represents a judge.  In fact, we have two kinds of data in this wide data frame: data about consumer preferences (titled with wine names, like `I_SYRAH`) and data about the judges themselves (`Wine Frequency`, `Age`, etc).  Let's break these up for ease of use.
 
@@ -83,10 +98,10 @@ consumer_data %>%
 ```
 
 ```
-## Warning: Removed 20 rows containing missing values (`geom_point()`).
+## Warning: Removed 21 rows containing missing values (`geom_point()`).
 ```
 
-<img src="11-preference-mapping_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+![](11-preference-mapping_files/figure-latex/unnamed-chunk-3-1.pdf)<!-- --> 
 
 See how I scaled that to include the entire range of possible responses on the 9-pt scale?  It shows how little variability there actually is in our data. 
 
@@ -130,7 +145,7 @@ internal_coordinates %>%
 ```
 
 ```
-## # A tibble: 2 × 6
+## # A tibble: 2 x 6
 ##   point_type Dim.1 Dim.2 Dim.3 Dim.4 Dim.5
 ##   <chr>      <dbl> <dbl> <dbl> <dbl> <dbl>
 ## 1 product    7.84  5.91  6.34  5.47  4.72 
@@ -182,11 +197,11 @@ p_internal_consumers + p_internal_products
 ```
 
 ```
-## Warning: ggrepel: 12 unlabeled data points (too many overlaps). Consider
+## Warning: ggrepel: 29 unlabeled data points (too many overlaps). Consider
 ## increasing max.overlaps
 ```
 
-<img src="11-preference-mapping_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+![](11-preference-mapping_files/figure-latex/unnamed-chunk-5-1.pdf)<!-- --> 
 
 In the original **R Opus**, HGH filtered the consumers to show those with the highest $cos^2$ values: this measures their effect (in my head I always read "leverage") on the spatial arrangement of the plotted dimensions.  She did this using the base-`R` plotting options for the `carto()` function, and I have no idea how it specifies selection - I have not tried to figure out how that function works in detail.  Instead, if we wanted to do something similar we could look into the output of `PCA()` and create a list of influential subjects:
 
@@ -216,7 +231,7 @@ internal_coordinates %>%
   theme_bw()
 ```
 
-<img src="11-preference-mapping_files/figure-html/unnamed-chunk-6-1.png" width="672" />
+![](11-preference-mapping_files/figure-latex/unnamed-chunk-6-1.pdf)<!-- --> 
 
 We get fewer points than HGH did; I am assuming that the `SensoMineR` function is filtering its subjects that are influential on ANY of the dimensions of the PCA, not just on the first 2 dimensions, but that seems to be counterindicated (to me) for looking at these 2-dimensional biplots.
 
@@ -240,7 +255,7 @@ internal_consumer_cluster %>%
 ## Adding another scale for colour, which will replace the existing scale.
 ```
 
-<img src="11-preference-mapping_files/figure-html/unnamed-chunk-7-1.png" width="672" />
+![](11-preference-mapping_files/figure-latex/unnamed-chunk-7-1.pdf)<!-- --> 
 
 I think there are plausibly 3 clusters of consumers; we could also explore the possibility that there are 2, 4, or even 5.  However, 3 seems good to me, because the distance between groups 2 and 3 (blue and green) is quite large, so forcing them to remain in a single group seems less plausible than splitting them.  
 
@@ -269,11 +284,11 @@ p_internal_consumers + p_internal_products
 ```
 
 ```
-## Warning: ggrepel: 12 unlabeled data points (too many overlaps). Consider
+## Warning: ggrepel: 29 unlabeled data points (too many overlaps). Consider
 ## increasing max.overlaps
 ```
 
-<img src="11-preference-mapping_files/figure-html/unnamed-chunk-8-1.png" width="672" />
+![](11-preference-mapping_files/figure-latex/unnamed-chunk-8-1.pdf)<!-- --> 
 
 We can see that the purple and teal-ish groups are well-separated in this space, whereas the bright green group is not.  I suspect (and leave it as an exercise to find out) that this group would be better separated in a third dimension.
 
@@ -290,24 +305,41 @@ consumer_demo %>%
 ```
 
 
-
-|skim_type |skim_variable  | cluster| n_missing| complete_rate|factor.ordered | factor.n_unique|factor.top_counts         | numeric.mean| numeric.sd| numeric.p0| numeric.p25| numeric.p50| numeric.p75| numeric.p100|numeric.hist |
-|:---------|:--------------|-------:|---------:|-------------:|:--------------|---------------:|:-------------------------|------------:|----------:|----------:|-----------:|-----------:|-----------:|------------:|:------------|
-|factor    |Judge          |       1|         0|             1|FALSE          |              56|1: 1, 4: 1, 6: 1, 8: 1    |           NA|         NA|         NA|          NA|          NA|          NA|           NA|NA           |
-|factor    |Judge          |       2|         0|             1|FALSE          |              27|2: 1, 5: 1, 13: 1, 21: 1  |           NA|         NA|         NA|          NA|          NA|          NA|           NA|NA           |
-|factor    |Judge          |       3|         0|             1|FALSE          |              23|3: 1, 7: 1, 18: 1, 19: 1  |           NA|         NA|         NA|          NA|          NA|          NA|           NA|NA           |
-|factor    |Wine Frequency |       1|         0|             1|FALSE          |               4|2: 22, 1: 16, 3: 16, 4: 2 |           NA|         NA|         NA|          NA|          NA|          NA|           NA|NA           |
-|factor    |Wine Frequency |       2|         0|             1|FALSE          |               4|1: 12, 2: 6, 3: 6, 4: 3   |           NA|         NA|         NA|          NA|          NA|          NA|           NA|NA           |
-|factor    |Wine Frequency |       3|         0|             1|FALSE          |               4|2: 12, 1: 7, 3: 3, 4: 1   |           NA|         NA|         NA|          NA|          NA|          NA|           NA|NA           |
-|factor    |IT frequency   |       1|         0|             1|FALSE          |               5|3: 35, 2: 16, 1: 2, 4: 2  |           NA|         NA|         NA|          NA|          NA|          NA|           NA|NA           |
-|factor    |IT frequency   |       2|         0|             1|FALSE          |               4|3: 11, 2: 10, 4: 5, 1: 1  |           NA|         NA|         NA|          NA|          NA|          NA|           NA|NA           |
-|factor    |IT frequency   |       3|         0|             1|FALSE          |               4|3: 14, 2: 5, 4: 3, 1: 1   |           NA|         NA|         NA|          NA|          NA|          NA|           NA|NA           |
-|factor    |Gender         |       1|         0|             1|FALSE          |               2|1: 28, 2: 28              |           NA|         NA|         NA|          NA|          NA|          NA|           NA|NA           |
-|factor    |Gender         |       2|         0|             1|FALSE          |               2|1: 14, 2: 13              |           NA|         NA|         NA|          NA|          NA|          NA|           NA|NA           |
-|factor    |Gender         |       3|         0|             1|FALSE          |               2|1: 13, 2: 10              |           NA|         NA|         NA|          NA|          NA|          NA|           NA|NA           |
-|numeric   |Age            |       1|         0|             1|NA             |              NA|NA                        |     36.92857|   14.41194|         21|       24.75|        30.5|       49.25|           67|▇▂▂▂▂        |
-|numeric   |Age            |       2|         0|             1|NA             |              NA|NA                        |     40.07407|   14.83739|         21|       26.50|        38.0|       51.50|           66|▇▃▂▃▃        |
-|numeric   |Age            |       3|         0|             1|NA             |              NA|NA                        |     42.39130|   13.97641|         24|       30.50|        39.0|       54.50|           66|▇▆▃▅▅        |
+\begin{tabular}{l|l|r|r|r|l|r|l|r|r|r|r|r|r|r|l}
+\hline
+skim\_type & skim\_variable & cluster & n\_missing & complete\_rate & factor.ordered & factor.n\_unique & factor.top\_counts & numeric.mean & numeric.sd & numeric.p0 & numeric.p25 & numeric.p50 & numeric.p75 & numeric.p100 & numeric.hist\\
+\hline
+factor & Judge & 1 & 0 & 1 & FALSE & 56 & 1: 1, 4: 1, 6: 1, 8: 1 & NA & NA & NA & NA & NA & NA & NA & NA\\
+\hline
+factor & Judge & 2 & 0 & 1 & FALSE & 27 & 2: 1, 5: 1, 13: 1, 21: 1 & NA & NA & NA & NA & NA & NA & NA & NA\\
+\hline
+factor & Judge & 3 & 0 & 1 & FALSE & 23 & 3: 1, 7: 1, 18: 1, 19: 1 & NA & NA & NA & NA & NA & NA & NA & NA\\
+\hline
+factor & Wine Frequency & 1 & 0 & 1 & FALSE & 4 & 2: 22, 1: 16, 3: 16, 4: 2 & NA & NA & NA & NA & NA & NA & NA & NA\\
+\hline
+factor & Wine Frequency & 2 & 0 & 1 & FALSE & 4 & 1: 12, 2: 6, 3: 6, 4: 3 & NA & NA & NA & NA & NA & NA & NA & NA\\
+\hline
+factor & Wine Frequency & 3 & 0 & 1 & FALSE & 4 & 2: 12, 1: 7, 3: 3, 4: 1 & NA & NA & NA & NA & NA & NA & NA & NA\\
+\hline
+factor & IT frequency & 1 & 0 & 1 & FALSE & 5 & 3: 35, 2: 16, 1: 2, 4: 2 & NA & NA & NA & NA & NA & NA & NA & NA\\
+\hline
+factor & IT frequency & 2 & 0 & 1 & FALSE & 4 & 3: 11, 2: 10, 4: 5, 1: 1 & NA & NA & NA & NA & NA & NA & NA & NA\\
+\hline
+factor & IT frequency & 3 & 0 & 1 & FALSE & 4 & 3: 14, 2: 5, 4: 3, 1: 1 & NA & NA & NA & NA & NA & NA & NA & NA\\
+\hline
+factor & Gender & 1 & 0 & 1 & FALSE & 2 & 1: 28, 2: 28 & NA & NA & NA & NA & NA & NA & NA & NA\\
+\hline
+factor & Gender & 2 & 0 & 1 & FALSE & 2 & 1: 14, 2: 13 & NA & NA & NA & NA & NA & NA & NA & NA\\
+\hline
+factor & Gender & 3 & 0 & 1 & FALSE & 2 & 1: 13, 2: 10 & NA & NA & NA & NA & NA & NA & NA & NA\\
+\hline
+numeric & Age & 1 & 0 & 1 & NA & NA & NA & 36.92857 & 14.41194 & 21 & 24.75 & 30.5 & 49.25 & 67 & ▇▂▂▂▂\\
+\hline
+numeric & Age & 2 & 0 & 1 & NA & NA & NA & 40.07407 & 14.83739 & 21 & 26.50 & 38.0 & 51.50 & 66 & ▇▃▂▃▃\\
+\hline
+numeric & Age & 3 & 0 & 1 & NA & NA & NA & 42.39130 & 13.97641 & 24 & 30.50 & 39.0 & 54.50 & 66 & ▇▆▃▅▅\\
+\hline
+\end{tabular}
 
 We can see some interesting (if minor!) differences in these groups.  Group 1, for example, has more answers for "2" and "1" for wine consumption frequency, proportionally--since I don't have the original data, I have no idea if this is more or less frequent.  I am guessing less, though, because group 1 also has a lower mean age and less of a long tale in the Age variable.
 
@@ -443,7 +475,7 @@ pls_scores
 ```
 
 ```
-## # A tibble: 8 × 8
+## # A tibble: 8 x 8
 ##   wine        `Comp 1` `Comp 2` `Comp 3` `Comp 4` `Comp 5` `Comp 6` `Comp 7`
 ##   <chr>          <dbl>    <dbl>    <dbl>    <dbl>    <dbl>    <dbl>    <dbl>
 ## 1 C_MERLOT      1.48     -1.09     1.67    0.0843   0.673    -1.15  -0.939  
@@ -474,14 +506,14 @@ pls_loadings
 ```
 
 ```
-## # A tibble: 20 × 8
+## # A tibble: 20 x 8
 ##    descriptor     `Comp 1` `Comp 2` `Comp 3` `Comp 4` `Comp 5` `Comp 6` `Comp 7`
 ##    <chr>             <dbl>    <dbl>    <dbl>    <dbl>    <dbl>    <dbl>    <dbl>
 ##  1 Red_berry      -0.299    -0.0372  0.255     0.0284 -0.161     0.333   0.317  
 ##  2 Dark_berry     -0.331     0.0726 -0.124     0.127   0.135    -0.108  -0.517  
 ##  3 Jam            -0.362    -0.0338  0.0276   -0.0759 -0.102     0.155  -0.174  
 ##  4 Dried_fruit    -0.0884    0.214   0.00334   0.192   0.600    -0.129  -0.0280 
-##  5 Artificial_fr… -0.340     0.0425 -0.0836    0.111  -0.215     0.113  -0.337  
+##  5 Artificial_fr~ -0.340     0.0425 -0.0836    0.111  -0.215     0.113  -0.337  
 ##  6 Chocolate       0.00735  -0.329  -0.265     0.126  -0.367    -0.0988 -0.133  
 ##  7 Vanilla        -0.227    -0.335  -0.0582    0.0340 -0.0204    0.251   0.0659 
 ##  8 Oak             0.205    -0.243  -0.0606    0.153   0.401     0.248  -0.192  
@@ -521,7 +553,7 @@ pls_scores %>%
   labs(subtitle = "Scores plot for wines, based on DA (predictor) data")
 ```
 
-<img src="11-preference-mapping_files/figure-html/unnamed-chunk-14-1.png" width="672" />
+![](11-preference-mapping_files/figure-latex/unnamed-chunk-14-1.pdf)<!-- --> 
 
 This plot is quite different from HGH's, but I confirmed that even using the same base-`R` plotting methods, I got the same plot shown here (but uglier).  Is it possible subject #1 made that big a difference?
 
@@ -543,7 +575,7 @@ pls_loadings %>%
   theme_bw()
 ```
 
-<img src="11-preference-mapping_files/figure-html/unnamed-chunk-15-1.png" width="672" />
+![](11-preference-mapping_files/figure-latex/unnamed-chunk-15-1.pdf)<!-- --> 
 
 
 
@@ -571,7 +603,7 @@ cor(pls_data$x, column_to_rownames(pls_scores, "wine")) %>%
   theme_classic()
 ```
 
-<img src="11-preference-mapping_files/figure-html/unnamed-chunk-16-1.png" width="672" />
+![](11-preference-mapping_files/figure-latex/unnamed-chunk-16-1.pdf)<!-- --> 
 
 The correlation plot gives us similar information to the loadings plot, above, but it is scaled so that the squared distance between each descriptor and the origin represents the amount of variance for that variable explained by the two dimensions visualized.  The dashed circles are a visual aid for 50% and 100% of variance. For this, it is clear that our 2-dimensional PLS-R fit does a good job of explaining most of the variation in the large majority of descriptors; notable exceptions are `Alcohol`, `Dried_fruit`, and `Spicy`.  
 
@@ -596,7 +628,7 @@ cor(pls_data$y, column_to_rownames(pls_scores, "wine")) %>%
   theme_classic()
 ```
 
-<img src="11-preference-mapping_files/figure-html/unnamed-chunk-17-1.png" width="672" />
+![](11-preference-mapping_files/figure-latex/unnamed-chunk-17-1.pdf)<!-- --> 
 
 And this is where our external preference map can come in.  Let's go ahead and segment these consumers by the clusters we identified previously:
 
@@ -630,7 +662,7 @@ coord_equal(xlim = c(-1, 1), ylim = c(-1, 1)) +
   theme(legend.position = "bottom")
 ```
 
-<img src="11-preference-mapping_files/figure-html/unnamed-chunk-18-1.png" width="672" />
+![](11-preference-mapping_files/figure-latex/unnamed-chunk-18-1.pdf)<!-- --> 
 
 We're doing a lot in this plot, but hopefully the previous ones have prepared you!  This shows us the same consumer plot as above, but we've clustered the consumers by the similarity between their liking scores, as we did in the internal preference mapping above.  We could change this choice--perhaps cluster them based on their loadings in the 1st 2 dimensions of the PLS-R space--but I decided this was the way I wanted to go.  
 
@@ -680,36 +712,35 @@ sessionInfo()
 ## [13] tidyverse_2.0.0
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] gridExtra_2.3        rlang_1.1.1          magrittr_2.0.3      
-##  [4] compiler_4.3.1       vctrs_0.6.3          pkgconfig_2.0.3     
-##  [7] crayon_1.5.2         fastmap_1.1.1        backports_1.4.1     
-## [10] ellipsis_0.3.2       labeling_0.4.3       utf8_1.2.3          
-## [13] promises_1.2.1       rmarkdown_2.23       tzdb_0.4.0          
-## [16] shinyAce_0.4.2       bit_4.0.5            xfun_0.39           
-## [19] cachem_1.0.8         jsonlite_1.8.7       flashClust_1.01-2   
-## [22] highr_0.10           later_1.3.1          tweenr_2.0.2        
-## [25] broom_1.0.5          parallel_4.3.1       cluster_2.1.4       
-## [28] R6_2.5.1             bslib_0.5.1          stringi_1.7.12      
-## [31] car_3.1-2            jquerylib_0.1.4      estimability_1.4.1  
-## [34] Rcpp_1.0.11          bookdown_0.37        knitr_1.43          
-## [37] base64enc_0.1-3      httpuv_1.6.11        timechange_0.2.0    
-## [40] tidyselect_1.2.0     rstudioapi_0.15.0    abind_1.4-5         
-## [43] yaml_2.3.7           viridis_0.6.4        miniUI_0.1.1.1      
-## [46] ggedit_0.3.1         lattice_0.21-8       plyr_1.8.8          
-## [49] shiny_1.7.5          withr_2.5.0          coda_0.19-4         
-## [52] evaluate_0.21        polyclip_1.10-4      pillar_1.9.0        
-## [55] ggpubr_0.6.0         carData_3.0-5        DT_0.28             
-## [58] generics_0.1.3       vroom_1.6.3          rprojroot_2.0.3     
-## [61] hms_1.1.3            munsell_0.5.0        scales_1.2.1        
-## [64] xtable_1.8-4         leaps_3.1            glue_1.6.2          
-## [67] emmeans_1.8.7        scatterplot3d_0.3-44 tools_4.3.1         
-## [70] dendextend_1.17.1    ggsignif_0.6.4       mvtnorm_1.2-2       
-## [73] grid_4.3.1           shinyBS_0.61.1       colorspace_2.1-0    
-## [76] repr_1.1.6           ggforce_0.4.1        cli_3.6.1           
-## [79] fansi_1.0.4          viridisLite_0.4.2    gtable_0.3.4        
-## [82] rstatix_0.7.2        sass_0.4.7           digest_0.6.33       
-## [85] ggrepel_0.9.3        FactoMineR_2.8       htmlwidgets_1.6.2   
-## [88] skimr_2.1.5          farver_2.1.1         htmltools_0.5.6     
-## [91] factoextra_1.0.7     lifecycle_1.0.3      multcompView_0.1-9  
-## [94] mime_0.12            bit64_4.0.5          MASS_7.3-60
+##  [1] tidyselect_1.2.0     viridisLite_0.4.2    farver_2.1.1        
+##  [4] viridis_0.6.4        fastmap_1.1.1        tweenr_2.0.2        
+##  [7] promises_1.2.1       digest_0.6.33        mime_0.12           
+## [10] estimability_1.4.1   timechange_0.2.0     lifecycle_1.0.3     
+## [13] factoextra_1.0.7     cluster_2.1.4        ellipsis_0.3.2      
+## [16] multcompView_0.1-9   magrittr_2.0.3       compiler_4.3.1      
+## [19] rlang_1.1.1          tools_4.3.1          utf8_1.2.3          
+## [22] yaml_2.3.7           knitr_1.43           ggsignif_0.6.4      
+## [25] skimr_2.1.5          labeling_0.4.3       htmlwidgets_1.6.2   
+## [28] bit_4.0.5            scatterplot3d_0.3-44 shinyAce_0.4.2      
+## [31] plyr_1.8.8           repr_1.1.6           abind_1.4-5         
+## [34] miniUI_0.1.1.1       withr_2.5.0          polyclip_1.10-4     
+## [37] grid_4.3.1           fansi_1.0.4          ggpubr_0.6.0        
+## [40] xtable_1.8-4         colorspace_2.1-0     emmeans_1.8.7       
+## [43] scales_1.2.1         MASS_7.3-60          flashClust_1.01-2   
+## [46] cli_3.6.1            mvtnorm_1.2-2        rmarkdown_2.23      
+## [49] crayon_1.5.2         generics_0.1.3       rstudioapi_0.15.0   
+## [52] tzdb_0.4.0           ggforce_0.4.1        ggedit_0.3.1        
+## [55] parallel_4.3.1       base64enc_0.1-3      vctrs_0.6.3         
+## [58] jsonlite_1.8.7       carData_3.0-5        bookdown_0.37       
+## [61] car_3.1-2            hms_1.1.3            bit64_4.0.5         
+## [64] ggrepel_0.9.3        rstatix_0.7.2        FactoMineR_2.8      
+## [67] dendextend_1.17.1    shinyBS_0.61.1       glue_1.6.2          
+## [70] DT_0.28              stringi_1.7.12       gtable_0.3.4        
+## [73] later_1.3.1          munsell_0.5.0        pillar_1.9.0        
+## [76] htmltools_0.5.6      R6_2.5.1             rprojroot_2.0.3     
+## [79] shiny_1.7.5          vroom_1.6.3          evaluate_0.21       
+## [82] lattice_0.21-8       highr_0.10           backports_1.4.1     
+## [85] leaps_3.1            broom_1.0.5          httpuv_1.6.11       
+## [88] Rcpp_1.0.11          coda_0.19-4          gridExtra_2.3       
+## [91] xfun_0.39            pkgconfig_2.0.3
 ```

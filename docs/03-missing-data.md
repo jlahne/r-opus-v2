@@ -36,32 +36,57 @@ skim(missing_data_example) %>%
 ```
 
 
-
-|skim_type |skim_variable   | n_missing| complete_rate| character.min| character.max| character.empty| character.n_unique| character.whitespace| numeric.mean| numeric.sd| numeric.p0| numeric.p25| numeric.p50| numeric.p75| numeric.p100|numeric.hist |
-|:---------|:---------------|---------:|-------------:|-------------:|-------------:|---------------:|------------------:|--------------------:|------------:|----------:|----------:|-----------:|-----------:|-----------:|------------:|:------------|
-|character |ProductName     |         0|     1.0000000|             7|            11|               0|                  8|                    0|           NA|         NA|         NA|          NA|          NA|          NA|           NA|NA           |
-|numeric   |NJ              |         0|     1.0000000|            NA|            NA|              NA|                 NA|                   NA| 1403.3571429| 20.8589537|       1331|    1402.000|     1408.50|    1414.000|       1417.0|▁▁▁▁▇        |
-|numeric   |NR              |         0|     1.0000000|            NA|            NA|              NA|                 NA|                   NA|    8.0000000|  0.8177143|          7|       7.000|        8.00|       9.000|          9.0|▇▁▇▁▇        |
-|numeric   |Red_berry       |        11|     0.9672619|            NA|            NA|              NA|                 NA|                   NA|    2.8473846|  2.5294746|          0|       0.500|        2.30|       4.800|          9.2|▇▅▂▂▁        |
-|numeric   |Dark_berry      |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    3.0953988|  2.7778038|          0|       0.500|        2.30|       5.075|          9.9|▇▃▃▂▂        |
-|numeric   |Jam             |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.8773006|  2.4022502|          0|       0.200|        0.70|       2.700|         10.0|▇▂▁▁▁        |
-|numeric   |Dried_fruit     |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.8104294|  2.1395934|          0|       0.200|        0.70|       3.275|         10.0|▇▂▂▁▁        |
-|numeric   |Artificial_frui |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.1996933|  1.9710598|          0|       0.100|        0.30|       1.200|          9.7|▇▁▁▁▁        |
-|numeric   |Chocolate       |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.2131902|  1.7648302|          0|       0.100|        0.40|       1.675|         10.0|▇▁▁▁▁        |
-|numeric   |Vanilla         |        11|     0.9672619|            NA|            NA|              NA|                 NA|                   NA|    1.6673846|  1.9758529|          0|       0.200|        0.90|       2.600|          9.3|▇▂▁▁▁        |
-|numeric   |Oak             |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    2.3024540|  1.9957632|          0|       0.500|        1.70|       3.900|          9.0|▇▃▃▁▁        |
-|numeric   |Burned          |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.5070552|  2.0622868|          0|       0.100|        0.40|       2.375|          9.7|▇▂▁▁▁        |
-|numeric   |Leather         |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.4659509|  2.0566530|          0|       0.100|        0.40|       2.400|          9.9|▇▂▁▁▁        |
-|numeric   |Earthy          |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.0929448|  1.5826888|          0|       0.100|        0.40|       1.375|          8.0|▇▁▁▁▁        |
-|numeric   |Spicy           |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.2015337|  1.6742477|          0|       0.100|        0.40|       1.800|          8.9|▇▂▁▁▁        |
-|numeric   |Pepper          |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.5165644|  2.0514989|          0|       0.200|        0.50|       2.300|         10.0|▇▁▁▁▁        |
-|numeric   |Grassy          |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    0.9361963|  1.4584638|          0|       0.100|        0.30|       1.100|          9.8|▇▁▁▁▁        |
-|numeric   |Medicinal       |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.4276074|  2.0269504|          0|       0.100|        0.40|       2.000|          9.6|▇▁▁▁▁        |
-|numeric   |Band-aid        |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    1.2061350|  2.0478189|          0|       0.100|        0.30|       1.075|          9.8|▇▁▁▁▁        |
-|numeric   |Sour            |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    4.6199387|  2.9908889|          0|       1.625|        4.85|       7.100|         10.0|▇▅▇▆▅        |
-|numeric   |Bitter          |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    3.4236196|  2.7514405|          0|       1.000|        3.00|       5.200|         10.0|▇▅▃▂▂        |
-|numeric   |Alcohol         |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    3.6058282|  2.4028950|          0|       1.200|        4.05|       5.200|          9.5|▇▃▇▃▁        |
-|numeric   |Astringent      |        10|     0.9702381|            NA|            NA|              NA|                 NA|                   NA|    4.6358896|  2.6451989|          0|       2.500|        4.70|       6.400|         10.0|▆▆▇▅▃        |
+\begin{tabular}{l|l|r|r|r|r|r|r|r|r|r|r|r|r|r|r|l}
+\hline
+skim\_type & skim\_variable & n\_missing & complete\_rate & character.min & character.max & character.empty & character.n\_unique & character.whitespace & numeric.mean & numeric.sd & numeric.p0 & numeric.p25 & numeric.p50 & numeric.p75 & numeric.p100 & numeric.hist\\
+\hline
+character & ProductName & 0 & 1.0000000 & 7 & 11 & 0 & 8 & 0 & NA & NA & NA & NA & NA & NA & NA & NA\\
+\hline
+numeric & NJ & 0 & 1.0000000 & NA & NA & NA & NA & NA & 1403.3571429 & 20.8589537 & 1331 & 1402.000 & 1408.50 & 1414.000 & 1417.0 & ▁▁▁▁▇\\
+\hline
+numeric & NR & 0 & 1.0000000 & NA & NA & NA & NA & NA & 8.0000000 & 0.8177143 & 7 & 7.000 & 8.00 & 9.000 & 9.0 & ▇▁▇▁▇\\
+\hline
+numeric & Red\_berry & 11 & 0.9672619 & NA & NA & NA & NA & NA & 2.8473846 & 2.5294746 & 0 & 0.500 & 2.30 & 4.800 & 9.2 & ▇▅▂▂▁\\
+\hline
+numeric & Dark\_berry & 10 & 0.9702381 & NA & NA & NA & NA & NA & 3.0953988 & 2.7778038 & 0 & 0.500 & 2.30 & 5.075 & 9.9 & ▇▃▃▂▂\\
+\hline
+numeric & Jam & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.8773006 & 2.4022502 & 0 & 0.200 & 0.70 & 2.700 & 10.0 & ▇▂▁▁▁\\
+\hline
+numeric & Dried\_fruit & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.8104294 & 2.1395934 & 0 & 0.200 & 0.70 & 3.275 & 10.0 & ▇▂▂▁▁\\
+\hline
+numeric & Artificial\_frui & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.1996933 & 1.9710598 & 0 & 0.100 & 0.30 & 1.200 & 9.7 & ▇▁▁▁▁\\
+\hline
+numeric & Chocolate & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.2131902 & 1.7648302 & 0 & 0.100 & 0.40 & 1.675 & 10.0 & ▇▁▁▁▁\\
+\hline
+numeric & Vanilla & 11 & 0.9672619 & NA & NA & NA & NA & NA & 1.6673846 & 1.9758529 & 0 & 0.200 & 0.90 & 2.600 & 9.3 & ▇▂▁▁▁\\
+\hline
+numeric & Oak & 10 & 0.9702381 & NA & NA & NA & NA & NA & 2.3024540 & 1.9957632 & 0 & 0.500 & 1.70 & 3.900 & 9.0 & ▇▃▃▁▁\\
+\hline
+numeric & Burned & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.5070552 & 2.0622868 & 0 & 0.100 & 0.40 & 2.375 & 9.7 & ▇▂▁▁▁\\
+\hline
+numeric & Leather & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.4659509 & 2.0566530 & 0 & 0.100 & 0.40 & 2.400 & 9.9 & ▇▂▁▁▁\\
+\hline
+numeric & Earthy & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.0929448 & 1.5826888 & 0 & 0.100 & 0.40 & 1.375 & 8.0 & ▇▁▁▁▁\\
+\hline
+numeric & Spicy & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.2015337 & 1.6742477 & 0 & 0.100 & 0.40 & 1.800 & 8.9 & ▇▂▁▁▁\\
+\hline
+numeric & Pepper & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.5165644 & 2.0514989 & 0 & 0.200 & 0.50 & 2.300 & 10.0 & ▇▁▁▁▁\\
+\hline
+numeric & Grassy & 10 & 0.9702381 & NA & NA & NA & NA & NA & 0.9361963 & 1.4584638 & 0 & 0.100 & 0.30 & 1.100 & 9.8 & ▇▁▁▁▁\\
+\hline
+numeric & Medicinal & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.4276074 & 2.0269504 & 0 & 0.100 & 0.40 & 2.000 & 9.6 & ▇▁▁▁▁\\
+\hline
+numeric & Band-aid & 10 & 0.9702381 & NA & NA & NA & NA & NA & 1.2061350 & 2.0478189 & 0 & 0.100 & 0.30 & 1.075 & 9.8 & ▇▁▁▁▁\\
+\hline
+numeric & Sour & 10 & 0.9702381 & NA & NA & NA & NA & NA & 4.6199387 & 2.9908889 & 0 & 1.625 & 4.85 & 7.100 & 10.0 & ▇▅▇▆▅\\
+\hline
+numeric & Bitter & 10 & 0.9702381 & NA & NA & NA & NA & NA & 3.4236196 & 2.7514405 & 0 & 1.000 & 3.00 & 5.200 & 10.0 & ▇▅▃▂▂\\
+\hline
+numeric & Alcohol & 10 & 0.9702381 & NA & NA & NA & NA & NA & 3.6058282 & 2.4028950 & 0 & 1.200 & 4.05 & 5.200 & 9.5 & ▇▃▇▃▁\\
+\hline
+numeric & Astringent & 10 & 0.9702381 & NA & NA & NA & NA & NA & 4.6358896 & 2.6451989 & 0 & 2.500 & 4.70 & 6.400 & 10.0 & ▆▆▇▅▃\\
+\hline
+\end{tabular}
 
 This shows us that we have (induced) missingness in all of our outcome variables (the sensory descriptors), but our predictors (`ProductName`, `NJ`, and `NR`) have no missingness, which is good.  It also shows us that we need to `mutate()` the latter two of those 3 variables into factors, as right now `R` will treat them as numeric predictors.
 
@@ -86,7 +111,7 @@ missing_data_example %>%
   vis_miss()
 ```
 
-<img src="03-missing-data_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+![](03-missing-data_files/figure-latex/unnamed-chunk-5-1.pdf)<!-- --> 
 
 ```r
 # We see above that HGH just replaced some rows with NAs.  In this case, the
@@ -97,7 +122,7 @@ missing_data_example %>%
 ```
 
 ```
-## # A tibble: 1 × 4
+## # A tibble: 1 x 4
 ##   statistic    df  p.value missing.patterns
 ##       <dbl> <dbl>    <dbl>            <int>
 ## 1      57.7    24 0.000133                3
@@ -113,7 +138,7 @@ missing_data_example %>%
 ```
 
 ```
-## # A tibble: 11 × 3
+## # A tibble: 11 x 3
 ##     case n_miss pct_miss
 ##    <int>  <int>    <dbl>
 ##  1     6     20    87.0 
@@ -150,7 +175,7 @@ estim_ncpFAMD(missing_data_example, verbose = FALSE)
 ## 
 ## $criterion
 ##          0          1          2          3          4          5 
-## 0.07078424 0.05823393 0.05189168 0.04860049 0.04636652 0.04513273
+## 0.07008772 0.05759964 0.05118433 0.04795663 0.04574107 0.04444935
 ```
 
 ```r
@@ -165,7 +190,7 @@ missing_data_imputed$completeObs %>%
 ```
 
 ```
-## # A tibble: 336 × 23
+## # A tibble: 336 x 23
 ##    NJ    ProductName NR    Red_berry Dark_berry   Jam Dried_fruit
 ##    <fct> <fct>       <fct>     <dbl>      <dbl> <dbl>       <dbl>
 ##  1 1331  C_MERLOT    7          4.71       5.8   2.1         4.7 
@@ -178,8 +203,8 @@ missing_data_imputed$completeObs %>%
 ##  8 1331  I_REFOSCO   7          3.2        6     4           0.7 
 ##  9 1400  C_MERLOT    7          0.1        0.1   0.2         2.9 
 ## 10 1400  C_SYRAH     7          1.6        0.7   0           6.4 
-## # ℹ 326 more rows
-## # ℹ 16 more variables: Artificial_frui <dbl>, Chocolate <dbl>, Vanilla <dbl>,
+## # i 326 more rows
+## # i 16 more variables: Artificial_frui <dbl>, Chocolate <dbl>, Vanilla <dbl>,
 ## #   Oak <dbl>, Burned <dbl>, Leather <dbl>, Earthy <dbl>, Spicy <dbl>,
 ## #   Pepper <dbl>, Grassy <dbl>, Medicinal <dbl>, `Band-aid` <dbl>, Sour <dbl>,
 ## #   Bitter <dbl>, Alcohol <dbl>, Astringent <dbl>
@@ -193,7 +218,7 @@ descriptive_data
 ```
 
 ```
-## # A tibble: 336 × 23
+## # A tibble: 336 x 23
 ##    NJ    ProductName NR    Red_berry Dark_berry   Jam Dried_fruit
 ##    <fct> <fct>       <fct>     <dbl>      <dbl> <dbl>       <dbl>
 ##  1 1331  C_MERLOT    7           5.1        5.8   2.1         4.7
@@ -206,8 +231,8 @@ descriptive_data
 ##  8 1331  I_REFOSCO   7           3.2        6     4           0.7
 ##  9 1400  C_MERLOT    7           0.1        0.1   0.2         2.9
 ## 10 1400  C_SYRAH     7           1.6        0.7   0           6.4
-## # ℹ 326 more rows
-## # ℹ 16 more variables: Artificial_frui <dbl>, Chocolate <dbl>, Vanilla <dbl>,
+## # i 326 more rows
+## # i 16 more variables: Artificial_frui <dbl>, Chocolate <dbl>, Vanilla <dbl>,
 ## #   Oak <dbl>, Burned <dbl>, Leather <dbl>, Earthy <dbl>, Spicy <dbl>,
 ## #   Pepper <dbl>, Grassy <dbl>, Medicinal <dbl>, `Band-aid` <dbl>, Sour <dbl>,
 ## #   Bitter <dbl>, Alcohol <dbl>, Astringent <dbl>
@@ -349,35 +374,34 @@ sessionInfo()
 ## [13] tibble_3.2.1      ggplot2_3.4.3     tidyverse_2.0.0  
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] rlang_1.1.1          magrittr_2.0.3       compiler_4.3.1      
-##  [4] vctrs_0.6.3          pkgconfig_2.0.3      shape_1.4.6         
-##  [7] crayon_1.5.2         fastmap_1.1.1        backports_1.4.1     
-## [10] labeling_0.4.3       utf8_1.2.3           rmarkdown_2.23      
-## [13] tzdb_0.4.0           nloptr_2.0.3         visdat_0.6.0        
-## [16] bit_4.0.5            xfun_0.39            glmnet_4.1-8        
-## [19] jomo_2.7-6           cachem_1.0.8         jsonlite_1.8.7      
-## [22] flashClust_1.01-2    highr_0.10           pan_1.9             
-## [25] broom_1.0.5          parallel_4.3.1       cluster_2.1.4       
-## [28] R6_2.5.1             bslib_0.5.1          stringi_1.7.12      
-## [31] boot_1.3-28.1        rpart_4.1.19         jquerylib_0.1.4     
-## [34] estimability_1.4.1   Rcpp_1.0.11          bookdown_0.37       
-## [37] iterators_1.0.14     knitr_1.43           base64enc_0.1-3     
-## [40] Matrix_1.6-0         splines_4.3.1        nnet_7.3-19         
-## [43] timechange_0.2.0     tidyselect_1.2.0     rstudioapi_0.15.0   
-## [46] yaml_2.3.7           doParallel_1.0.17    codetools_0.2-19    
-## [49] lattice_0.21-8       withr_2.5.0          coda_0.19-4         
-## [52] evaluate_0.21        survival_3.5-5       norm_1.0-11.1       
-## [55] pillar_1.9.0         mice_3.16.0          DT_0.28             
-## [58] foreach_1.5.2        generics_0.1.3       vroom_1.6.3         
-## [61] rprojroot_2.0.3      hms_1.1.3            munsell_0.5.0       
-## [64] scales_1.2.1         minqa_1.2.5          xtable_1.8-4        
-## [67] leaps_3.1            glue_1.6.2           emmeans_1.8.7       
-## [70] scatterplot3d_0.3-44 tools_4.3.1          lme4_1.1-34         
-## [73] gower_1.0.1          mvtnorm_1.2-2        grid_4.3.1          
-## [76] colorspace_2.1-0     nlme_3.1-162         repr_1.1.6          
-## [79] cli_3.6.1            fansi_1.0.4          gtable_0.3.4        
-## [82] sass_0.4.7           digest_0.6.33        ggrepel_0.9.3       
-## [85] FactoMineR_2.8       htmlwidgets_1.6.2    farver_2.1.1        
-## [88] htmltools_0.5.6      lifecycle_1.0.3      multcompView_0.1-9  
-## [91] mitml_0.4-5          bit64_4.0.5          MASS_7.3-60
+##  [1] tidyselect_1.2.0     farver_2.1.1         fastmap_1.1.1       
+##  [4] digest_0.6.33        rpart_4.1.19         timechange_0.2.0    
+##  [7] estimability_1.4.1   lifecycle_1.0.3      cluster_2.1.4       
+## [10] multcompView_0.1-9   survival_3.5-5       magrittr_2.0.3      
+## [13] compiler_4.3.1       rlang_1.1.1          tools_4.3.1         
+## [16] utf8_1.2.3           yaml_2.3.7           knitr_1.43          
+## [19] labeling_0.4.3       htmlwidgets_1.6.2    bit_4.0.5           
+## [22] scatterplot3d_0.3-44 repr_1.1.6           norm_1.0-11.1       
+## [25] withr_2.5.0          nnet_7.3-19          grid_4.3.1          
+## [28] fansi_1.0.4          jomo_2.7-6           xtable_1.8-4        
+## [31] colorspace_2.1-0     mice_3.16.0          emmeans_1.8.7       
+## [34] scales_1.2.1         iterators_1.0.14     MASS_7.3-60         
+## [37] flashClust_1.01-2    cli_3.6.1            mvtnorm_1.2-2       
+## [40] rmarkdown_2.23       crayon_1.5.2         generics_0.1.3      
+## [43] rstudioapi_0.15.0    tzdb_0.4.0           minqa_1.2.5         
+## [46] splines_4.3.1        parallel_4.3.1       base64enc_0.1-3     
+## [49] vctrs_0.6.3          boot_1.3-28.1        Matrix_1.6-0        
+## [52] glmnet_4.1-8         jsonlite_1.8.7       bookdown_0.37       
+## [55] hms_1.1.3            mitml_0.4-5          bit64_4.0.5         
+## [58] visdat_0.6.0         ggrepel_0.9.3        FactoMineR_2.8      
+## [61] foreach_1.5.2        gower_1.0.1          glue_1.6.2          
+## [64] pan_1.9              nloptr_2.0.3         codetools_0.2-19    
+## [67] DT_0.28              shape_1.4.6          stringi_1.7.12      
+## [70] gtable_0.3.4         lme4_1.1-34          munsell_0.5.0       
+## [73] pillar_1.9.0         htmltools_0.5.6      R6_2.5.1            
+## [76] doParallel_1.0.17    rprojroot_2.0.3      vroom_1.6.3         
+## [79] evaluate_0.21        lattice_0.21-8       highr_0.10          
+## [82] backports_1.4.1      leaps_3.1            broom_1.0.5         
+## [85] Rcpp_1.0.11          nlme_3.1-162         coda_0.19-4         
+## [88] xfun_0.39            pkgconfig_2.0.3
 ```

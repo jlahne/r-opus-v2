@@ -110,7 +110,7 @@ p_metric <-
 ```
 ## Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if
 ## `.name_repair` is omitted as of tibble 2.0.0.
-## ℹ Using compatibility `.name_repair`.
+## i Using compatibility `.name_repair`.
 ## This warning is displayed once every 8 hours.
 ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 ## generated.
@@ -120,7 +120,7 @@ p_metric <-
 p_metric
 ```
 
-<img src="08-MDS_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+![](08-MDS_files/figure-latex/unnamed-chunk-4-1.pdf)<!-- --> 
 
 We can also examine a scree-plot of the eigenvalues to get a (qualitative) view of this solution.
 
@@ -138,7 +138,7 @@ metric_mds$eig %>%
        title = "Scree plot for metric MDS")
 ```
 
-<img src="08-MDS_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+![](08-MDS_files/figure-latex/unnamed-chunk-5-1.pdf)<!-- --> 
 
 We can see that, arguably, a 2-dimensional solution is not great for capturing the distances among these samples.  See that bend *after* the 3rd dimension?  That's where we'd often want to put a cut.  But this is a little academic - in practice we often only look at the first dimensions.  
 
@@ -284,7 +284,7 @@ tidy_descriptive_distances %>%
 ```
 
 ```
-## # A tibble: 2 × 2
+## # A tibble: 2 x 2
 ##   match     n
 ##   <lgl> <int>
 ## 1 FALSE    21
@@ -306,7 +306,7 @@ tidy_descriptive_distances %>%
 ```
 
 ```
-## # A tibble: 28 × 3
+## # A tibble: 28 x 3
 ##    item1       item2       distance
 ##    <fct>       <fct>          <dbl>
 ##  1 C_MERLOT    C_ZINFANDEL     3.91
@@ -319,7 +319,7 @@ tidy_descriptive_distances %>%
 ##  8 C_REFOSCO   C_SYRAH         5.47
 ##  9 C_ZINFANDEL I_PRIMITIVO     5.54
 ## 10 I_PRIMITIVO I_SYRAH         5.75
-## # ℹ 18 more rows
+## # i 18 more rows
 ```
 The closest samples are `C_MERLOT` and `C_ZINFANDEL`, and the second closest are `I_MERLOT` and `I_REFOSCO`.  If our distances are merely ordinations, we can only say that--we can't compare the actual "differences of distances" as we could if these were metric.  In the metric case, we could subtract the distance between `C_MERLOT` and `C_ZINFANDEL` and `I_MERLOT` and `I_REFOSCO` ($\approx4.5-3.9\approx0.6$) and say that the difference between those distances is larger than that between the second and third smallest distances (`I_MERLOT` and `I_REFOSCO` vs `C_MERLOT` and `I_MERLOT`, which is $\approx4.5-4.45\approx0$).  So we could say something like "the difference between the two closest pairs of samples is quite large, but the difference between the next two closest is approximately the same".  We can't do that with an ordination, because we only know the relative ranks:
 
@@ -332,7 +332,7 @@ tidy_descriptive_distances %>%
 ```
 
 ```
-## # A tibble: 28 × 3
+## # A tibble: 28 x 3
 ##    item1       item2       distance_rank
 ##    <fct>       <fct>               <int>
 ##  1 C_MERLOT    C_ZINFANDEL             1
@@ -345,7 +345,7 @@ tidy_descriptive_distances %>%
 ##  8 C_REFOSCO   C_SYRAH                 8
 ##  9 C_ZINFANDEL I_PRIMITIVO             9
 ## 10 I_PRIMITIVO I_SYRAH                10
-## # ℹ 18 more rows
+## # i 18 more rows
 ```
 
 We can no longer know if the difference between 1st and 2nd place (so to speak, of `distance_rank`) is the same as the difference between 2nd and 3rd place, and so on.  We only know that `C_MERLOT` and `C_ZINFANDEL` are closer than `I_MERLOT` and `I_REFOSCO`, and so on.
@@ -388,7 +388,7 @@ p_nonmetric <-
 p_nonmetric
 ```
 
-<img src="08-MDS_files/figure-html/unnamed-chunk-13-1.png" width="672" />
+![](08-MDS_files/figure-latex/unnamed-chunk-13-1.pdf)<!-- --> 
 
 I'd like to compare our metric and non-metric configurations.  To do so we can use the `patchwork` package, as we have before.
 
@@ -399,7 +399,7 @@ library(patchwork)
 p_metric + p_nonmetric
 ```
 
-<img src="08-MDS_files/figure-html/unnamed-chunk-14-1.png" width="768" />
+![](08-MDS_files/figure-latex/unnamed-chunk-14-1.pdf)<!-- --> 
 
 Note that the configurations are quite similar, but with some notable sifts (e.g., the positioning of `I_MERLOT` pops out).  This makes sense: if you read the `?isoMDS` documentation, you'll see that the initial configuration for the non-metric MDS *is* the metric MDS solution, so this approach starts with our metric MDS configuration and improves on it.
 
@@ -436,7 +436,7 @@ tidy_descriptive_distances %>%
 ```
 
 ```
-## # A tibble: 2 × 2
+## # A tibble: 2 x 2
 ##   match     n
 ##   <lgl> <int>
 ## 1 FALSE    25
@@ -451,7 +451,7 @@ To be fair, saying "Yikes!" is probably a little overblown.  If we examined the 
 
 
 ```
-## # A tibble: 28 × 4
+## # A tibble: 28 x 4
 ##    observed_rank                distance_rank mds_rank                     match
 ##    <chr>                                <int> <chr>                        <lgl>
 ##  1 C_MERLOT <--> C_ZINFANDEL                1 C_MERLOT <--> C_ZINFANDEL    TRUE 
@@ -464,7 +464,7 @@ To be fair, saying "Yikes!" is probably a little overblown.  If we examined the 
 ##  8 C_REFOSCO <--> C_SYRAH                   8 C_SYRAH <--> I_MERLOT        FALSE
 ##  9 C_ZINFANDEL <--> I_PRIMITIVO             9 C_REFOSCO <--> I_MERLOT      FALSE
 ## 10 I_PRIMITIVO <--> I_SYRAH                10 C_REFOSCO <--> C_ZINFANDEL   FALSE
-## # ℹ 18 more rows
+## # i 18 more rows
 ```
 
 As we can see, while indeed there are rank reversals, they are relatively minor: it isn't like samples that are close in the actual distance matrix are ending up being very far in the non-metric MDS 2-dimensional solution.
@@ -501,19 +501,17 @@ sessionInfo()
 ## [13] ggplot2_3.4.3   tidyverse_2.0.0
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] sass_0.4.7        utf8_1.2.3        generics_0.1.3    lattice_0.21-8   
-##  [5] stringi_1.7.12    hms_1.1.3         digest_0.6.33     magrittr_2.0.3   
-##  [9] evaluate_0.21     grid_4.3.1        timechange_0.2.0  bookdown_0.37    
-## [13] fastmap_1.1.1     plyr_1.8.8        Matrix_1.6-0      rprojroot_2.0.3  
-## [17] jsonlite_1.8.7    ggrepel_0.9.3     backports_1.4.1   fansi_1.0.4      
-## [21] scales_1.2.1      jquerylib_0.1.4   cli_3.6.1         rlang_1.1.1      
-## [25] crayon_1.5.2      bit64_4.0.5       munsell_0.5.0     withr_2.5.0      
-## [29] cachem_1.0.8      yaml_2.3.7        tools_4.3.1       parallel_4.3.1   
-## [33] reshape2_1.4.4    tzdb_0.4.0        colorspace_2.1-0  broom_1.0.5      
-## [37] vctrs_0.6.3       R6_2.5.1          lifecycle_1.0.3   bit_4.0.5        
-## [41] vroom_1.6.3       pkgconfig_2.0.3   pillar_1.9.0      bslib_0.5.1      
-## [45] gtable_0.3.4      Rcpp_1.0.11       glue_1.6.2        highr_0.10       
-## [49] xfun_0.39         tidyselect_1.2.0  rstudioapi_0.15.0 knitr_1.43       
-## [53] farver_2.1.1      htmltools_0.5.6   labeling_0.4.3    rmarkdown_2.23   
-## [57] compiler_4.3.1
+##  [1] utf8_1.2.3        generics_0.1.3    lattice_0.21-8    stringi_1.7.12   
+##  [5] hms_1.1.3         digest_0.6.33     magrittr_2.0.3    evaluate_0.21    
+##  [9] grid_4.3.1        timechange_0.2.0  bookdown_0.37     fastmap_1.1.1    
+## [13] plyr_1.8.8        Matrix_1.6-0      rprojroot_2.0.3   ggrepel_0.9.3    
+## [17] backports_1.4.1   fansi_1.0.4       scales_1.2.1      cli_3.6.1        
+## [21] rlang_1.1.1       crayon_1.5.2      bit64_4.0.5       munsell_0.5.0    
+## [25] withr_2.5.0       yaml_2.3.7        tools_4.3.1       parallel_4.3.1   
+## [29] reshape2_1.4.4    tzdb_0.4.0        colorspace_2.1-0  broom_1.0.5      
+## [33] vctrs_0.6.3       R6_2.5.1          lifecycle_1.0.3   bit_4.0.5        
+## [37] vroom_1.6.3       pkgconfig_2.0.3   pillar_1.9.0      gtable_0.3.4     
+## [41] glue_1.6.2        Rcpp_1.0.11       highr_0.10        xfun_0.39        
+## [45] tidyselect_1.2.0  rstudioapi_0.15.0 knitr_1.43        farver_2.1.1     
+## [49] htmltools_0.5.6   labeling_0.4.3    rmarkdown_2.23    compiler_4.3.1
 ```

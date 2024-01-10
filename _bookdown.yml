@@ -1,4 +1,5 @@
 new_session: yes
+book_filename: "R-opus-v2.Rmd"
 delete_merged_file: true
 language:
   ui:

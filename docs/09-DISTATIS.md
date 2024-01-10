@@ -36,18 +36,18 @@ sorting_data
 ```
 
 ```
-## # A tibble: 8 × 16
+## # A tibble: 8 x 16
 ##   wine      `263` `1331` `1400` `1401` `1402` `1404` `1405` `1408` `1409` `1412`
 ##   <chr>     <chr> <chr>  <chr>  <chr>  <chr>  <chr>  <chr>  <chr>  <chr>  <chr> 
 ## 1 I_REFOSCO G6    G3     G5     G4     G5     G4     G2     G2     G1     G1    
 ## 2 I_MERLOT  G1    G3     G4     G3     G2     G3     G4     G3     G1     G2    
 ## 3 I_SYRAH   G5    G4     G2     G1     G1     G2     G1     G4     G1     G2    
-## 4 I_PRIMIT… G2    G1     G3     G1     G4     G5     G3     G4     G3     G2    
+## 4 I_PRIMIT~ G2    G1     G3     G1     G4     G5     G3     G4     G3     G2    
 ## 5 C_SYRAH   G3    G2     G4     G4     G5     G6     G1     G3     G2     G4    
 ## 6 C_REFOSCO G4    G3     G1     G2     G5     G5     G2     G1     G2     G3    
 ## 7 C_MERLOT  G1    G2     G3     G3     G3     G1     G4     G3     G2     G2    
-## 8 C_ZINFAN… G1    G5     G3     G3     G2     G1     G1     G3     G1     G2    
-## # ℹ 5 more variables: `1413` <chr>, `1414` <chr>, `1415` <chr>, `1416` <chr>,
+## 8 C_ZINFAN~ G1    G5     G3     G3     G2     G1     G1     G3     G1     G2    
+## # i 5 more variables: `1413` <chr>, `1414` <chr>, `1415` <chr>, `1416` <chr>,
 ## #   `1417` <chr>
 ```
 
@@ -159,7 +159,7 @@ distatis_boots %>% str
 ```
 
 ```
-##  num [1:8, 1:3, 1:1000] -0.2977 0.3056 -0.1425 -0.2006 0.0163 ...
+##  num [1:8, 1:3, 1:1000] -0.3729 0.3443 -0.0877 -0.283 0.0734 ...
 ##  - attr(*, "dimnames")=List of 3
 ##   ..$ : chr [1:8] "I_REFOSCO" "I_MERLOT" "I_SYRAH" "I_PRIMITIVO" ...
 ##   ..$ : chr [1:3] "Factor 1" "Factor 2" "Factor 3"
@@ -171,15 +171,15 @@ distatis_boots[, , 1]
 ```
 
 ```
-##                Factor 1     Factor 2    Factor 3
-## I_REFOSCO   -0.29770527 -0.226722252  0.32144205
-## I_MERLOT     0.30557584 -0.021761829  0.11218988
-## I_SYRAH     -0.14252528  0.389636274 -0.11405814
-## I_PRIMITIVO -0.20056334  0.383101360 -0.08491339
-## C_SYRAH      0.01633474 -0.386653708 -0.17660434
-## C_REFOSCO   -0.34770483 -0.220891918 -0.07295109
-## C_MERLOT     0.31371989  0.003792725 -0.10295863
-## C_ZINFANDEL  0.35286826  0.079499348  0.11785367
+##                Factor 1    Factor 2    Factor 3
+## I_REFOSCO   -0.37290008 -0.18993078  0.53541992
+## I_MERLOT     0.34434618 -0.03381469  0.19121393
+## I_SYRAH     -0.08767685  0.36744534 -0.20347707
+## I_PRIMITIVO -0.28296349  0.39322921 -0.06458306
+## C_SYRAH      0.07342328 -0.34201698 -0.41756383
+## C_REFOSCO   -0.41454335 -0.25278523 -0.02365847
+## C_MERLOT     0.38346274 -0.04243239 -0.12752523
+## C_ZINFANDEL  0.35685156  0.10030552  0.11017381
 ```
 
 The `BootFromCompromise()` function gives us another array: in this case a set of factor scores for the samples on the first 3 factors/components, over 1000 (the default) bootstrapped iterations.  Each slice is a single bootstrapped iteration.
@@ -201,13 +201,13 @@ distatis_results$res4Splus$tau %>%
 
 ```
 ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-## ℹ Please use `linewidth` instead.
+## i Please use `linewidth` instead.
 ## This warning is displayed once every 8 hours.
 ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 ## generated.
 ```
 
-<img src="09-DISTATIS_files/figure-html/unnamed-chunk-6-1.png" width="672" />
+![](09-DISTATIS_files/figure-latex/unnamed-chunk-6-1.pdf)<!-- --> 
 
 These results look the same as HGH's (good news!), and we can see our first two dimensions explain about 41% of the total variation in the sorts; this is fairly common for sorting, in which getting very high explanation in 2 dimensions is unlikely.
 
@@ -230,7 +230,7 @@ p_splus <-
 p_splus
 ```
 
-<img src="09-DISTATIS_files/figure-html/unnamed-chunk-7-1.png" width="672" />
+![](09-DISTATIS_files/figure-latex/unnamed-chunk-7-1.pdf)<!-- --> 
 
 These results are the same as HGH's, again, which is good news.  
 
@@ -265,7 +265,7 @@ p_splus_augmented +
        subtitle = "Individual subjects are projected as hollow diamonds")
 ```
 
-<img src="09-DISTATIS_files/figure-html/unnamed-chunk-8-1.png" width="672" />
+![](09-DISTATIS_files/figure-latex/unnamed-chunk-8-1.pdf)<!-- --> 
 
 We can see how each wine's position is actually the (weighted) barycenter of all the subject's judgments about where that wine should be grouped.  We could make this more easily readable by doing some work with colors and shapes, but I rarely find this kind of plot useful or informative.  I leave this to the reader!
 
@@ -309,7 +309,7 @@ p_splus_boots <-
 p_splus_boots
 ```
 
-<img src="09-DISTATIS_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+![](09-DISTATIS_files/figure-latex/unnamed-chunk-9-1.pdf)<!-- --> 
 
 With bootstrapping, we can see that there are 4 distinct groups of samples that don't appear to overlap even when we perturb the original data.
 
@@ -377,7 +377,7 @@ p_cmat <-
 p_cmat
 ```
 
-<img src="09-DISTATIS_files/figure-html/unnamed-chunk-11-1.png" width="672" />
+![](09-DISTATIS_files/figure-latex/unnamed-chunk-11-1.pdf)<!-- --> 
 
 Subjects' positions on the x-axis here are proportional to the weight their sorts receive in the final consensus plot--we can see that overall subjects largely agree, with weights between just less than `0.5` up to about `0.85`.  On the second dimension we do see a fair amount of spread, so it is obvious that there is some disagreement among subjects.  However, without some grouping variable (like level of experience in winemaking), we can't interpret whether this disagreement is systematic.
 
@@ -431,7 +431,7 @@ library(patchwork)
 p_mds_simple + p_mds_daisy
 ```
 
-<img src="09-DISTATIS_files/figure-html/unnamed-chunk-12-1.png" width="768" />
+![](09-DISTATIS_files/figure-latex/unnamed-chunk-12-1.pdf)<!-- --> 
 
 We can see that the dissimilarities produced from `daisy()` and from our simple sum of dissimilarities are the same except for a scale constant.
 
@@ -442,7 +442,7 @@ Finally, we can compare this alignment to that from DISTATIS:
 p_splus + p_mds_simple
 ```
 
-<img src="09-DISTATIS_files/figure-html/unnamed-chunk-13-1.png" width="768" />
+![](09-DISTATIS_files/figure-latex/unnamed-chunk-13-1.pdf)<!-- --> 
 
 We can see that overall our results are extremely similar, although there are some changes (the incerased spread between the Merlot wines in the DISTATIS plot, and the decreased spread between the Refosco wines).  
 
@@ -478,21 +478,20 @@ sessionInfo()
 ## [13] tidyverse_2.0.0
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] gtable_0.3.4       xfun_0.39          bslib_0.5.1        ggrepel_0.9.3     
-##  [5] lattice_0.21-8     tzdb_0.4.0         vctrs_0.6.3        tools_4.3.1       
-##  [9] generics_0.1.3     parallel_4.3.1     fansi_1.0.4        cluster_2.1.4     
-## [13] highr_0.10         janeaustenr_1.0.0  pkgconfig_2.0.3    prettyGraphs_2.1.6
-## [17] tokenizers_0.3.0   Matrix_1.6-0       readxl_1.4.3       lifecycle_1.0.3   
-## [21] compiler_4.3.1     farver_2.1.1       munsell_0.5.0      carData_3.0-5     
-## [25] htmltools_0.5.6    SnowballC_0.7.1    sass_0.4.7         yaml_2.3.7        
-## [29] tidytext_0.4.1     pillar_1.9.0       car_3.1-2          crayon_1.5.2      
-## [33] jquerylib_0.1.4    MASS_7.3-60        cachem_1.0.8       abind_1.4-5       
-## [37] tidyselect_1.2.0   digest_0.6.33      stringi_1.7.12     bookdown_0.37     
-## [41] labeling_0.4.3     rprojroot_2.0.3    fastmap_1.1.1      grid_4.3.1        
-## [45] colorspace_2.1-0   cli_3.6.1          magrittr_2.0.3     utf8_1.2.3        
-## [49] withr_2.5.0        scales_1.2.1       bit64_4.0.5        timechange_0.2.0  
-## [53] rmarkdown_2.23     bit_4.0.5          cellranger_1.1.0   hms_1.1.3         
-## [57] evaluate_0.21      knitr_1.43         viridisLite_0.4.2  rlang_1.1.1       
-## [61] Rcpp_1.0.11        glue_1.6.2         rstudioapi_0.15.0  vroom_1.6.3       
-## [65] jsonlite_1.8.7     R6_2.5.1
+##  [1] gtable_0.3.4       xfun_0.39          ggrepel_0.9.3      lattice_0.21-8    
+##  [5] tzdb_0.4.0         vctrs_0.6.3        tools_4.3.1        generics_0.1.3    
+##  [9] parallel_4.3.1     fansi_1.0.4        cluster_2.1.4      highr_0.10        
+## [13] janeaustenr_1.0.0  pkgconfig_2.0.3    prettyGraphs_2.1.6 tokenizers_0.3.0  
+## [17] Matrix_1.6-0       readxl_1.4.3       lifecycle_1.0.3    compiler_4.3.1    
+## [21] farver_2.1.1       munsell_0.5.0      carData_3.0-5      htmltools_0.5.6   
+## [25] SnowballC_0.7.1    yaml_2.3.7         tidytext_0.4.1     pillar_1.9.0      
+## [29] car_3.1-2          crayon_1.5.2       MASS_7.3-60        abind_1.4-5       
+## [33] tidyselect_1.2.0   digest_0.6.33      stringi_1.7.12     bookdown_0.37     
+## [37] labeling_0.4.3     rprojroot_2.0.3    fastmap_1.1.1      grid_4.3.1        
+## [41] colorspace_2.1-0   cli_3.6.1          magrittr_2.0.3     utf8_1.2.3        
+## [45] withr_2.5.0        scales_1.2.1       bit64_4.0.5        timechange_0.2.0  
+## [49] rmarkdown_2.23     bit_4.0.5          cellranger_1.1.0   hms_1.1.3         
+## [53] evaluate_0.21      knitr_1.43         viridisLite_0.4.2  rlang_1.1.1       
+## [57] Rcpp_1.0.11        glue_1.6.2         rstudioapi_0.15.0  vroom_1.6.3       
+## [61] R6_2.5.1
 ```

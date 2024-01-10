@@ -133,7 +133,7 @@ p_ward <-
 p_ward
 ```
 
-<img src="07-HCA_files/figure-html/unnamed-chunk-6-1.png" width="672" />
+![](07-HCA_files/figure-latex/unnamed-chunk-6-1.pdf)<!-- --> 
 
 Notice that we had to *tell* the program (in this case `fviz_dend()`) how many groups we wanted to label separately (`k = 3`).  We're following HGH here.  In general, while there are methods for attempting to determine the "right" number of groups from HCA, this involves "researcher degrees of freedom" (i.e., "good judgment").
 
@@ -162,7 +162,7 @@ p_single <-
 p_single
 ```
 
-<img src="07-HCA_files/figure-html/unnamed-chunk-8-1.png" width="672" />
+![](07-HCA_files/figure-latex/unnamed-chunk-8-1.pdf)<!-- --> 
 
 Notice the "greediness": large single group keeps adding a single new observation at each step of the algorithm, resulting in this characteristic "step" pattern.  For most situations, single linkage is a not a recommended approach for clustering.
 
@@ -186,7 +186,7 @@ p_complete <-
 p_complete
 ```
 
-<img src="07-HCA_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+![](07-HCA_files/figure-latex/unnamed-chunk-9-1.pdf)<!-- --> 
 
 Intuitively, complete linkage avoids the "greediness" problem of single linkage.  It is the default method used in `hclust()`: see `?hclust`.
 
@@ -210,7 +210,7 @@ p_average <-
 p_average
 ```
 
-<img src="07-HCA_files/figure-html/unnamed-chunk-10-1.png" width="672" />
+![](07-HCA_files/figure-latex/unnamed-chunk-10-1.pdf)<!-- --> 
 
 ### Comparing methods
 
@@ -223,7 +223,7 @@ library(patchwork)
 (p_ward + p_single) / (p_complete + p_average)
 ```
 
-<img src="07-HCA_files/figure-html/unnamed-chunk-11-1.png" width="864" />
+![](07-HCA_files/figure-latex/unnamed-chunk-11-1.pdf)<!-- --> 
 
 Only single linkage gives us very different results; the others are a matter of scaling.  This could be quite different if we had a larger number of more dissimilar objects - recall our distance matrix:
 
@@ -281,7 +281,7 @@ p <- clusters_individual %>%
 p
 ```
 
-<img src="07-HCA_files/figure-html/unnamed-chunk-13-1.png" width="672" />
+![](07-HCA_files/figure-latex/unnamed-chunk-13-1.pdf)<!-- --> 
 
 We tried looking for 8 clusters (since there are 8 wines) and giving each label (the individual row observation representing a single judge rating a single wine sample) the color of the rated wine.  It is obvious that the wines don't cluster together based on their sample ID.
 
@@ -314,30 +314,30 @@ glimpse(descriptive_data)
 ```
 ## Rows: 336
 ## Columns: 24
-## $ NJ              <fct> 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1400, …
-## $ ProductName     <chr> "C_MERLOT", "C_SYRAH", "C_ZINFANDEL", "C_REFOSCO", "I_…
-## $ NR              <fct> 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, …
-## $ Red_berry       <dbl> 5.1, 5.6, 4.9, 5.0, 3.3, 5.7, 2.9, 3.2, 0.1, 1.6, 4.5,…
-## $ Dark_berry      <dbl> 5.8, 1.9, 2.6, 1.9, 7.2, 3.6, 5.1, 6.0, 0.1, 0.7, 2.9,…
-## $ Jam             <dbl> 2.1, 3.9, 1.4, 7.8, 0.5, 8.7, 8.7, 4.0, 0.2, 0.0, 0.3,…
-## $ Dried_fruit     <dbl> 4.7, 1.2, 5.9, 0.6, 5.8, 1.9, 0.4, 0.7, 2.9, 6.4, 2.4,…
-## $ Artificial_frui <dbl> 1.0, 7.9, 0.8, 6.6, 0.7, 7.4, 6.2, 4.1, 0.1, 0.1, 0.1,…
-## $ Chocolate       <dbl> 2.9, 1.0, 2.0, 6.4, 2.1, 3.3, 3.4, 3.6, 0.2, 1.0, 0.2,…
-## $ Vanilla         <dbl> 5.0, 8.3, 2.7, 5.5, 1.3, 6.9, 8.1, 4.8, 2.0, 0.8, 1.9,…
-## $ Oak             <dbl> 5.0, 2.3, 5.6, 3.6, 2.1, 1.5, 1.8, 2.6, 3.0, 5.4, 6.1,…
-## $ Burned          <dbl> 1.4, 1.8, 1.9, 3.2, 5.6, 0.2, 0.4, 4.7, 7.5, 5.1, 0.3,…
-## $ Leather         <dbl> 2.3, 3.5, 4.3, 0.3, 6.5, 1.5, 4.1, 6.5, 0.7, 0.8, 0.2,…
-## $ Earthy          <dbl> 0.6, 1.0, 0.6, 0.2, 4.7, 0.3, 0.5, 1.9, 0.7, 3.0, 1.3,…
-## $ Spicy           <dbl> 3.2, 0.7, 1.4, 2.9, 0.7, 3.1, 0.7, 1.4, 0.3, 3.2, 3.1,…
-## $ Pepper          <dbl> 5.4, 3.0, 4.1, 0.9, 2.8, 1.6, 3.6, 4.5, 0.1, 2.0, 0.9,…
-## $ Grassy          <dbl> 2.1, 0.6, 3.6, 1.8, 3.8, 0.9, 2.3, 0.8, 0.1, 1.3, 0.4,…
-## $ Medicinal       <dbl> 0.4, 2.2, 1.7, 0.2, 2.6, 0.5, 0.2, 3.8, 0.1, 2.1, 0.1,…
-## $ `Band-aid`      <dbl> 0.4, 0.4, 0.1, 0.2, 5.1, 1.2, 0.2, 6.2, 0.1, 1.1, 0.1,…
-## $ Sour            <dbl> 5.0, 9.7, 7.8, 8.3, 7.6, 7.2, 5.9, 6.3, 5.7, 6.4, 5.4,…
-## $ Bitter          <dbl> 5.9, 5.2, 3.5, 3.0, 1.9, 9.8, 2.9, 0.2, 0.6, 2.9, 0.1,…
-## $ Alcohol         <dbl> 9.0, 7.2, 4.7, 8.9, 2.8, 8.7, 1.6, 7.0, 1.6, 5.4, 4.9,…
-## $ Astringent      <dbl> 8.7, 8.3, 5.0, 7.8, 5.9, 8.0, 2.6, 4.2, 5.5, 5.1, 5.9,…
-## $ ward_group      <fct> 1, 1, 1, 1, 2, 3, 3, 2, 1, 1, 1, 1, 2, 3, 3, 2, 1, 1, …
+## $ NJ              <fct> 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1400, ~
+## $ ProductName     <chr> "C_MERLOT", "C_SYRAH", "C_ZINFANDEL", "C_REFOSCO", "I_~
+## $ NR              <fct> 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, ~
+## $ Red_berry       <dbl> 5.1, 5.6, 4.9, 5.0, 3.3, 5.7, 2.9, 3.2, 0.1, 1.6, 4.5,~
+## $ Dark_berry      <dbl> 5.8, 1.9, 2.6, 1.9, 7.2, 3.6, 5.1, 6.0, 0.1, 0.7, 2.9,~
+## $ Jam             <dbl> 2.1, 3.9, 1.4, 7.8, 0.5, 8.7, 8.7, 4.0, 0.2, 0.0, 0.3,~
+## $ Dried_fruit     <dbl> 4.7, 1.2, 5.9, 0.6, 5.8, 1.9, 0.4, 0.7, 2.9, 6.4, 2.4,~
+## $ Artificial_frui <dbl> 1.0, 7.9, 0.8, 6.6, 0.7, 7.4, 6.2, 4.1, 0.1, 0.1, 0.1,~
+## $ Chocolate       <dbl> 2.9, 1.0, 2.0, 6.4, 2.1, 3.3, 3.4, 3.6, 0.2, 1.0, 0.2,~
+## $ Vanilla         <dbl> 5.0, 8.3, 2.7, 5.5, 1.3, 6.9, 8.1, 4.8, 2.0, 0.8, 1.9,~
+## $ Oak             <dbl> 5.0, 2.3, 5.6, 3.6, 2.1, 1.5, 1.8, 2.6, 3.0, 5.4, 6.1,~
+## $ Burned          <dbl> 1.4, 1.8, 1.9, 3.2, 5.6, 0.2, 0.4, 4.7, 7.5, 5.1, 0.3,~
+## $ Leather         <dbl> 2.3, 3.5, 4.3, 0.3, 6.5, 1.5, 4.1, 6.5, 0.7, 0.8, 0.2,~
+## $ Earthy          <dbl> 0.6, 1.0, 0.6, 0.2, 4.7, 0.3, 0.5, 1.9, 0.7, 3.0, 1.3,~
+## $ Spicy           <dbl> 3.2, 0.7, 1.4, 2.9, 0.7, 3.1, 0.7, 1.4, 0.3, 3.2, 3.1,~
+## $ Pepper          <dbl> 5.4, 3.0, 4.1, 0.9, 2.8, 1.6, 3.6, 4.5, 0.1, 2.0, 0.9,~
+## $ Grassy          <dbl> 2.1, 0.6, 3.6, 1.8, 3.8, 0.9, 2.3, 0.8, 0.1, 1.3, 0.4,~
+## $ Medicinal       <dbl> 0.4, 2.2, 1.7, 0.2, 2.6, 0.5, 0.2, 3.8, 0.1, 2.1, 0.1,~
+## $ `Band-aid`      <dbl> 0.4, 0.4, 0.1, 0.2, 5.1, 1.2, 0.2, 6.2, 0.1, 1.1, 0.1,~
+## $ Sour            <dbl> 5.0, 9.7, 7.8, 8.3, 7.6, 7.2, 5.9, 6.3, 5.7, 6.4, 5.4,~
+## $ Bitter          <dbl> 5.9, 5.2, 3.5, 3.0, 1.9, 9.8, 2.9, 0.2, 0.6, 2.9, 0.1,~
+## $ Alcohol         <dbl> 9.0, 7.2, 4.7, 8.9, 2.8, 8.7, 1.6, 7.0, 1.6, 5.4, 4.9,~
+## $ Astringent      <dbl> 8.7, 8.3, 5.0, 7.8, 5.9, 8.0, 2.6, 4.2, 5.5, 5.1, 5.9,~
+## $ ward_group      <fct> 1, 1, 1, 1, 2, 3, 3, 2, 1, 1, 1, 1, 2, 3, 3, 2, 1, 1, ~
 ```
 
 Now we have a `factor` identifying which cluster (from an HCA with Ward's Method and 3 groups) each wine belongs to.  We can use this structure as a new possible input for M/ANOVA, like we did in [MANOVA (Multivariate Analysis of Variance)].
@@ -386,7 +386,7 @@ descriptive_data %>%
 ```
 
 ```
-## # A tibble: 13 × 7
+## # A tibble: 13 x 7
 ##    descriptor      term          df sumsq meansq statistic p.value
 ##    <chr>           <chr>      <dbl> <dbl>  <dbl>     <dbl>   <dbl>
 ##  1 Red_berry       ward_group     2  49.7  24.9       3.97   0.02 
@@ -428,9 +428,9 @@ clusters_kmeans$cluster
 
 ```
 ##    C_MERLOT   C_REFOSCO     C_SYRAH C_ZINFANDEL    I_MERLOT I_PRIMITIVO 
-##           3           3           3           3           2           1 
+##           1           1           1           1           2           3 
 ##   I_REFOSCO     I_SYRAH 
-##           2           1
+##           2           3
 ```
 
 ```r
@@ -439,13 +439,13 @@ clusters_kmeans$centers %>%
 ```
 
 ```
-## # A tibble: 3 × 21
+## # A tibble: 3 x 21
 ##   cluster Red_berry Dark_berry    Jam Dried_fruit Artificial_frui Chocolate
 ##   <chr>       <dbl>      <dbl>  <dbl>       <dbl>           <dbl>     <dbl>
-## 1 1           1.34       1.29   1.49       0.0234           1.58      0.179
+## 1 1          -0.456     -0.328 -0.379     -0.139           -0.515     0.444
 ## 2 2          -0.423     -0.629 -0.729      0.255           -0.544    -1.07 
-## 3 3          -0.456     -0.328 -0.379     -0.139           -0.515     0.444
-## # ℹ 14 more variables: Vanilla <dbl>, Oak <dbl>, Burned <dbl>, Leather <dbl>,
+## 3 3           1.34       1.29   1.49       0.0234           1.58      0.179
+## # i 14 more variables: Vanilla <dbl>, Oak <dbl>, Burned <dbl>, Leather <dbl>,
 ## #   Earthy <dbl>, Spicy <dbl>, Pepper <dbl>, Grassy <dbl>, Medicinal <dbl>,
 ## #   `Band-aid` <dbl>, Sour <dbl>, Bitter <dbl>, Alcohol <dbl>, Astringent <dbl>
 ```
@@ -483,7 +483,7 @@ p1 <-
 p1
 ```
 
-<img src="07-HCA_files/figure-html/unnamed-chunk-17-1.png" width="672" />
+![](07-HCA_files/figure-latex/unnamed-chunk-17-1.pdf)<!-- --> 
 
 Looks like those California wines end up grouped together even though there is a fair bit of spread.  I looked into the PC3 to see if that explained it, but they are even more spread there (not shown--see if you can make the small code tweak to do so).  I think this is a case where arguably 3 clusters is not a good solution.  We might consider examining some measures of cluster fit, perhaps through something like the `NbClust` package, to determine if we should consider other solutions.
 
@@ -524,26 +524,25 @@ sessionInfo()
 ##  [7] digest_0.6.33        timechange_0.2.0     estimability_1.4.1  
 ## [10] lifecycle_1.0.3      cluster_2.1.4        multcompView_0.1-9  
 ## [13] magrittr_2.0.3       compiler_4.3.1       rlang_1.1.1         
-## [16] sass_0.4.7           tools_4.3.1          utf8_1.2.3          
-## [19] yaml_2.3.7           knitr_1.43           ggsignif_0.6.4      
-## [22] labeling_0.4.3       htmlwidgets_1.6.2    bit_4.0.5           
-## [25] scatterplot3d_0.3-44 abind_1.4-5          withr_2.5.0         
-## [28] grid_4.3.1           polyclip_1.10-4      fansi_1.0.4         
-## [31] ggpubr_0.6.0         xtable_1.8-4         colorspace_2.1-0    
-## [34] emmeans_1.8.7        scales_1.2.1         MASS_7.3-60         
-## [37] flashClust_1.01-2    cli_3.6.1            mvtnorm_1.2-2       
-## [40] rmarkdown_2.23       crayon_1.5.2         generics_0.1.3      
-## [43] rstudioapi_0.15.0    tzdb_0.4.0           cachem_1.0.8        
-## [46] ggforce_0.4.1        parallel_4.3.1       vctrs_0.6.3         
-## [49] jsonlite_1.8.7       carData_3.0-5        bookdown_0.37       
-## [52] car_3.1-2            hms_1.1.3            bit64_4.0.5         
-## [55] rstatix_0.7.2        ggrepel_0.9.3        FactoMineR_2.8      
-## [58] dendextend_1.17.1    jquerylib_0.1.4      glue_1.6.2          
-## [61] DT_0.28              stringi_1.7.12       gtable_0.3.4        
-## [64] munsell_0.5.0        pillar_1.9.0         htmltools_0.5.6     
-## [67] R6_2.5.1             rprojroot_2.0.3      vroom_1.6.3         
-## [70] evaluate_0.21        lattice_0.21-8       highr_0.10          
-## [73] backports_1.4.1      leaps_3.1            broom_1.0.5         
-## [76] bslib_0.5.1          Rcpp_1.0.11          coda_0.19-4         
-## [79] gridExtra_2.3        xfun_0.39            pkgconfig_2.0.3
+## [16] tools_4.3.1          utf8_1.2.3           yaml_2.3.7          
+## [19] knitr_1.43           ggsignif_0.6.4       labeling_0.4.3      
+## [22] htmlwidgets_1.6.2    bit_4.0.5            scatterplot3d_0.3-44
+## [25] abind_1.4-5          withr_2.5.0          grid_4.3.1          
+## [28] polyclip_1.10-4      fansi_1.0.4          ggpubr_0.6.0        
+## [31] xtable_1.8-4         colorspace_2.1-0     emmeans_1.8.7       
+## [34] scales_1.2.1         MASS_7.3-60          flashClust_1.01-2   
+## [37] cli_3.6.1            mvtnorm_1.2-2        rmarkdown_2.23      
+## [40] crayon_1.5.2         generics_0.1.3       rstudioapi_0.15.0   
+## [43] tzdb_0.4.0           ggforce_0.4.1        parallel_4.3.1      
+## [46] vctrs_0.6.3          carData_3.0-5        bookdown_0.37       
+## [49] car_3.1-2            hms_1.1.3            bit64_4.0.5         
+## [52] rstatix_0.7.2        ggrepel_0.9.3        FactoMineR_2.8      
+## [55] dendextend_1.17.1    glue_1.6.2           DT_0.28             
+## [58] stringi_1.7.12       gtable_0.3.4         munsell_0.5.0       
+## [61] pillar_1.9.0         htmltools_0.5.6      R6_2.5.1            
+## [64] rprojroot_2.0.3      vroom_1.6.3          evaluate_0.21       
+## [67] lattice_0.21-8       highr_0.10           backports_1.4.1     
+## [70] leaps_3.1            broom_1.0.5          Rcpp_1.0.11         
+## [73] coda_0.19-4          gridExtra_2.3        xfun_0.39           
+## [76] pkgconfig_2.0.3
 ```

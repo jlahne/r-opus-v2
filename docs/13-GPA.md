@@ -67,7 +67,7 @@ Typically we haven't even wanted to *look* at base-`R` plots, but it is worthwhi
 plot(preference_gpa)
 ```
 
-<img src="13-GPA_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+![](13-GPA_files/figure-latex/unnamed-chunk-3-1.pdf)<!-- --> 
 
 We know how to do better, though!
 
@@ -94,7 +94,7 @@ p_gpa_base <-
 ```
 ## Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if
 ## `.name_repair` is omitted as of tibble 2.0.0.
-## ℹ Using compatibility `.name_repair`.
+## i Using compatibility `.name_repair`.
 ## This warning is displayed once every 8 hours.
 ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 ## generated.
@@ -104,7 +104,7 @@ p_gpa_base <-
 p_gpa_base
 ```
 
-<img src="13-GPA_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+![](13-GPA_files/figure-latex/unnamed-chunk-4-1.pdf)<!-- --> 
 
 We can then add layers showing the projected position of our two original tables:
 
@@ -153,7 +153,7 @@ p_gpa_partials <-
 p_gpa_partials
 ```
 
-<img src="13-GPA_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+![](13-GPA_files/figure-latex/unnamed-chunk-5-1.pdf)<!-- --> 
 
 
 We can compare this to our MFA map for reference (and to see the similarity between the methods.)
@@ -170,7 +170,7 @@ library(patchwork)
   theme(legend.position = "none")
 ```
 
-<img src="13-GPA_files/figure-html/unnamed-chunk-6-1.png" width="768" />
+![](13-GPA_files/figure-latex/unnamed-chunk-6-1.pdf)<!-- --> 
 
 We can see that we get close but not exactly similar configurations!
 
@@ -235,27 +235,25 @@ sessionInfo()
 ## [13] ggplot2_3.4.3   tidyverse_2.0.0
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] gtable_0.3.4         xfun_0.39            bslib_0.5.1         
-##  [4] htmlwidgets_1.6.2    ggrepel_0.9.3        lattice_0.21-8      
-##  [7] tzdb_0.4.0           vctrs_0.6.3          tools_4.3.1         
-## [10] generics_0.1.3       parallel_4.3.1       fansi_1.0.4         
-## [13] highr_0.10           cluster_2.1.4        pkgconfig_2.0.3     
-## [16] scatterplot3d_0.3-44 lifecycle_1.0.3      farver_2.1.1        
-## [19] compiler_4.3.1       munsell_0.5.0        leaps_3.1           
-## [22] htmltools_0.5.6      sass_0.4.7           yaml_2.3.7          
-## [25] pillar_1.9.0         crayon_1.5.2         jquerylib_0.1.4     
-## [28] MASS_7.3-60          flashClust_1.01-2    DT_0.28             
-## [31] cachem_1.0.8         tidyselect_1.2.0     digest_0.6.33       
-## [34] mvtnorm_1.2-2        stringi_1.7.12       rematch2_2.1.2      
-## [37] bookdown_0.37        labeling_0.4.3       rprojroot_2.0.3     
-## [40] fastmap_1.1.1        grid_4.3.1           colorspace_2.1-0    
-## [43] cli_3.6.1            magrittr_2.0.3       utf8_1.2.3          
-## [46] withr_2.5.0          scales_1.2.1         bit64_4.0.5         
-## [49] estimability_1.4.1   timechange_0.2.0     rmarkdown_2.23      
-## [52] emmeans_1.8.7        bit_4.0.5            hms_1.1.3           
-## [55] coda_0.19-4          evaluate_0.21        knitr_1.43          
-## [58] rlang_1.1.1          Rcpp_1.0.11          xtable_1.8-4        
-## [61] glue_1.6.2           rstudioapi_0.15.0    vroom_1.6.3         
-## [64] jsonlite_1.8.7       R6_2.5.1             prismatic_1.1.1     
-## [67] multcompView_0.1-9
+##  [1] gtable_0.3.4         xfun_0.39            htmlwidgets_1.6.2   
+##  [4] ggrepel_0.9.3        lattice_0.21-8       tzdb_0.4.0          
+##  [7] vctrs_0.6.3          tools_4.3.1          generics_0.1.3      
+## [10] parallel_4.3.1       fansi_1.0.4          highr_0.10          
+## [13] cluster_2.1.4        pkgconfig_2.0.3      scatterplot3d_0.3-44
+## [16] lifecycle_1.0.3      farver_2.1.1         compiler_4.3.1      
+## [19] munsell_0.5.0        leaps_3.1            htmltools_0.5.6     
+## [22] yaml_2.3.7           pillar_1.9.0         crayon_1.5.2        
+## [25] MASS_7.3-60          flashClust_1.01-2    DT_0.28             
+## [28] tidyselect_1.2.0     digest_0.6.33        mvtnorm_1.2-2       
+## [31] stringi_1.7.12       rematch2_2.1.2       bookdown_0.37       
+## [34] labeling_0.4.3       rprojroot_2.0.3      fastmap_1.1.1       
+## [37] grid_4.3.1           colorspace_2.1-0     cli_3.6.1           
+## [40] magrittr_2.0.3       utf8_1.2.3           withr_2.5.0         
+## [43] scales_1.2.1         bit64_4.0.5          estimability_1.4.1  
+## [46] timechange_0.2.0     rmarkdown_2.23       emmeans_1.8.7       
+## [49] bit_4.0.5            hms_1.1.3            coda_0.19-4         
+## [52] evaluate_0.21        knitr_1.43           rlang_1.1.1         
+## [55] Rcpp_1.0.11          xtable_1.8-4         glue_1.6.2          
+## [58] rstudioapi_0.15.0    vroom_1.6.3          R6_2.5.1            
+## [61] prismatic_1.1.1      multcompView_0.1-9
 ```

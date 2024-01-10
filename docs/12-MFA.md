@@ -69,7 +69,7 @@ glimpse(descriptive_very_wide_data)
 ```
 ## Rows: 8
 ## Columns: 841
-## $ ProductName            <fct> C_MERLOT, C_SYRAH, C_ZINFANDEL, C_REFOSCO, I_ME…
+## $ ProductName            <fct> C_MERLOT, C_SYRAH, C_ZINFANDEL, C_REFOSCO, I_ME~
 ## $ Red_berry.1331.7       <dbl> 5.1, 5.6, 4.9, 5.0, 3.3, 5.7, 2.9, 3.2
 ## $ Dark_berry.1331.7      <dbl> 5.8, 1.9, 2.6, 1.9, 7.2, 3.6, 5.1, 6.0
 ## $ Jam.1331.7             <dbl> 2.1, 3.9, 1.4, 7.8, 0.5, 8.7, 8.7, 4.0
@@ -213,7 +213,7 @@ p_descriptive_pca + p_descriptive_mfa +
   plot_annotation(caption = "Note that axes have been scaled to be approximately comparable")
 ```
 
-<img src="12-MFA_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+![](12-MFA_files/figure-latex/unnamed-chunk-5-1.pdf)<!-- --> 
 
 We can see some major differences (as well as some similarities!) between these analyses:
 
@@ -271,7 +271,7 @@ descriptive_mfa$global.pca$var$cor %>%
        y = paste0("Dimension 2, ", round(descriptive_mfa$eig[2, 2], 1), "% of variance"))
 ```
 
-<img src="12-MFA_files/figure-html/unnamed-chunk-6-1.png" width="672" />
+![](12-MFA_files/figure-latex/unnamed-chunk-6-1.pdf)<!-- --> 
 
 From this plot, we can tell that there is reasonable consensus among judges for some attributes--like `Leather`, `Jam`, `Chocolate`, and `Sour`, and very little for some other attributes, like `Red_berry`, `Oak`, `Alcohol`, and `Dried_fruit`.  For some of these, it is quite possible that these two dimensions do not correlate well with the attributes at all--notably `Alcohol` and `Astringent` and possibly `Chocolate`.  Again, this gives us the ability, over PCA, to look at some of the ways in which the group coheres around or departs from the consensus.
 
@@ -308,7 +308,7 @@ descriptive_mfa$group$contrib %>%
   theme(legend.position = "none")
 ```
 
-<img src="12-MFA_files/figure-html/unnamed-chunk-7-1.png" width="672" />
+![](12-MFA_files/figure-latex/unnamed-chunk-7-1.pdf)<!-- --> 
 
 We could do the same thing for per-table variables and observations.  The dotted red lines represent the average (expected) contribution, and so points in the lower left quadrant are contributing less than expected to both dimensions.  I colored this by subject so that I could see if there were any patterns for subjects who did not ever contribute to the solution, but I don't see anything that obvious.  Closer inspection might show some patterns.
 
@@ -421,7 +421,7 @@ p_preference_scores <-
 p_preference_scores
 ```
 
-<img src="12-MFA_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+![](12-MFA_files/figure-latex/unnamed-chunk-9-1.pdf)<!-- --> 
 
 Once again, we find ourselves in slight disagreement with HGH's results for the original **R Opus**: the overall configuration is similar but not identical.  As [with PLS-R][External preference mapping], I wonder if this might have to do with the dropped subject \#1?  I re-ran the MFA and the plot with that subject dropped (the reader can do this as an exercise: just use `select(-`1`)` in the appropriate part of the workflow above, and make sure to adjust the group indices for the `MFA()` call), and I got results that were almost identical to HGH, but with slightly different projected points.  I am not sure if this is an adjustment to MFA plotting (the `FactoMineR` package has changes signficantly since 2015) or if there is something else I am missing.
 
@@ -496,13 +496,13 @@ preference_mfa$quanti.var$cor %>%
 
 ```
 ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-## ℹ Please use `linewidth` instead.
+## i Please use `linewidth` instead.
 ## This warning is displayed once every 8 hours.
 ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 ## generated.
 ```
 
-<img src="12-MFA_files/figure-html/unnamed-chunk-11-1.png" width="672" />
+![](12-MFA_files/figure-latex/unnamed-chunk-11-1.pdf)<!-- --> 
 
 By some careful inspection, we can see that two of the consumer clusters are reasonably well-aligned with some directions in the DA correlation plot: cluster 1 (blue) is aligned with attributes stemming from barrel aging: `Burned`, `Oak`, `Chocolate`, and somewhat with `Vanilla`.  Cluster 2 (orange) is aligned more with fruit-related attributes: `Jam`, `Red_berry`, `Dark_berry`, and `Artificial_frui` (sic).  Cluster 3, however, does not have any clear alignment with the DA scores.  Compare these results to the preference-mapping results from the previous section!
 
@@ -532,7 +532,7 @@ preference_mfa$group$contrib %>%
        subtitle = "Contribution of different datasets to MFA dimensions")
 ```
 
-<img src="12-MFA_files/figure-html/unnamed-chunk-12-1.png" width="672" />
+![](12-MFA_files/figure-latex/unnamed-chunk-12-1.pdf)<!-- --> 
 
 We can see from this that the first dimension has more contribution by the DA data, and the second dimension is dominated by the consumer data; all dimensions must of course add up to 100%.
 
@@ -572,28 +572,26 @@ sessionInfo()
 ## [13] ggplot2_3.4.3   tidyverse_2.0.0
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] gtable_0.3.4         xfun_0.39            bslib_0.5.1         
-##  [4] htmlwidgets_1.6.2    ggrepel_0.9.3        lattice_0.21-8      
-##  [7] tzdb_0.4.0           vctrs_0.6.3          tools_4.3.1         
-## [10] generics_0.1.3       parallel_4.3.1       fansi_1.0.4         
-## [13] highr_0.10           cluster_2.1.4        pkgconfig_2.0.3     
-## [16] scatterplot3d_0.3-44 lifecycle_1.0.3      farver_2.1.1        
-## [19] compiler_4.3.1       munsell_0.5.0        ggforce_0.4.1       
-## [22] leaps_3.1            htmltools_0.5.6      sass_0.4.7          
-## [25] yaml_2.3.7           pillar_1.9.0         crayon_1.5.2        
-## [28] jquerylib_0.1.4      MASS_7.3-60          flashClust_1.01-2   
-## [31] DT_0.28              cachem_1.0.8         tidyselect_1.2.0    
-## [34] digest_0.6.33        mvtnorm_1.2-2        stringi_1.7.12      
-## [37] rematch2_2.1.2       bookdown_0.37        labeling_0.4.3      
-## [40] polyclip_1.10-4      rprojroot_2.0.3      fastmap_1.1.1       
-## [43] grid_4.3.1           colorspace_2.1-0     cli_3.6.1           
-## [46] magrittr_2.0.3       utf8_1.2.3           withr_2.5.0         
-## [49] scales_1.2.1         bit64_4.0.5          estimability_1.4.1  
-## [52] timechange_0.2.0     rmarkdown_2.23       emmeans_1.8.7       
-## [55] bit_4.0.5            hms_1.1.3            coda_0.19-4         
-## [58] evaluate_0.21        knitr_1.43           rlang_1.1.1         
-## [61] Rcpp_1.0.11          xtable_1.8-4         glue_1.6.2          
-## [64] tweenr_2.0.2         rstudioapi_0.15.0    vroom_1.6.3         
-## [67] jsonlite_1.8.7       R6_2.5.1             prismatic_1.1.1     
-## [70] multcompView_0.1-9
+##  [1] gtable_0.3.4         xfun_0.39            htmlwidgets_1.6.2   
+##  [4] ggrepel_0.9.3        lattice_0.21-8       tzdb_0.4.0          
+##  [7] vctrs_0.6.3          tools_4.3.1          generics_0.1.3      
+## [10] parallel_4.3.1       fansi_1.0.4          highr_0.10          
+## [13] cluster_2.1.4        pkgconfig_2.0.3      scatterplot3d_0.3-44
+## [16] lifecycle_1.0.3      farver_2.1.1         compiler_4.3.1      
+## [19] munsell_0.5.0        ggforce_0.4.1        leaps_3.1           
+## [22] htmltools_0.5.6      yaml_2.3.7           pillar_1.9.0        
+## [25] crayon_1.5.2         MASS_7.3-60          flashClust_1.01-2   
+## [28] DT_0.28              tidyselect_1.2.0     digest_0.6.33       
+## [31] mvtnorm_1.2-2        stringi_1.7.12       rematch2_2.1.2      
+## [34] bookdown_0.37        labeling_0.4.3       polyclip_1.10-4     
+## [37] rprojroot_2.0.3      fastmap_1.1.1        grid_4.3.1          
+## [40] colorspace_2.1-0     cli_3.6.1            magrittr_2.0.3      
+## [43] utf8_1.2.3           withr_2.5.0          scales_1.2.1        
+## [46] bit64_4.0.5          estimability_1.4.1   timechange_0.2.0    
+## [49] rmarkdown_2.23       emmeans_1.8.7        bit_4.0.5           
+## [52] hms_1.1.3            coda_0.19-4          evaluate_0.21       
+## [55] knitr_1.43           rlang_1.1.1          Rcpp_1.0.11         
+## [58] xtable_1.8-4         glue_1.6.2           tweenr_2.0.2        
+## [61] rstudioapi_0.15.0    vroom_1.6.3          R6_2.5.1            
+## [64] prismatic_1.1.1      multcompView_0.1-9
 ```

@@ -72,7 +72,7 @@ descriptive_data[, 4:23] %>%
   heatmap(revC = TRUE)
 ```
 
-<img src="04-MANOVA_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+![](04-MANOVA_files/figure-latex/unnamed-chunk-4-1.pdf)<!-- --> 
 
 Without getting too outside our remit in the **R Opus**, MANOVA attemps to explain the variation of individual observations from their *group mean-vectors*.  A "mean-vector" is just the mean of all dependent variables for a particular set of classifying categorical predictors.  So, for our data, the dependent variables are all the sensory variables.  We (generally) are interested in the variation around the **wine** mean-vectors.  We can see these easily using the split-apply-combine approach:
 
@@ -88,7 +88,7 @@ wine_mean_vectors
 ```
 
 ```
-## # A tibble: 8 × 21
+## # A tibble: 8 x 21
 ##   ProductName Red_berry Dark_berry   Jam Dried_fruit Artificial_frui Chocolate
 ##   <fct>           <dbl>      <dbl> <dbl>       <dbl>           <dbl>     <dbl>
 ## 1 C_MERLOT         2.46       3.05 1.37         1.86           0.776     1.19 
@@ -99,7 +99,7 @@ wine_mean_vectors
 ## 6 I_PRIMITIVO      3.85       3.38 3.61         1.44           2.19      1.38 
 ## 7 I_REFOSCO        2.48       3.01 1.54         1.87           1.11      0.810
 ## 8 I_SYRAH          3.17       4.48 3.10         2.16           2.43      1.20 
-## # ℹ 14 more variables: Vanilla <dbl>, Oak <dbl>, Burned <dbl>, Leather <dbl>,
+## # i 14 more variables: Vanilla <dbl>, Oak <dbl>, Burned <dbl>, Leather <dbl>,
 ## #   Earthy <dbl>, Spicy <dbl>, Pepper <dbl>, Grassy <dbl>, Medicinal <dbl>,
 ## #   `Band-aid` <dbl>, Sour <dbl>, Bitter <dbl>, Alcohol <dbl>, Astringent <dbl>
 ```
@@ -130,7 +130,7 @@ descriptive_data %>%
   facet_wrap(~ProductName)
 ```
 
-<img src="04-MANOVA_files/figure-html/unnamed-chunk-6-1.png" width="672" />
+![](04-MANOVA_files/figure-latex/unnamed-chunk-6-1.pdf)<!-- --> 
 
 In this plot, we're able to see how far each individual row (observation) is, in a standardized, multivariate space, from the group mean (the dashed line) and the grand mean (the solid line).  We can see that our groups are not necessarily well-defined: often, the grand mean seems to do a better job of describing our samples than the group mean for the specific wine.  This might be a sign of our panelists needing further training, but recall that this (simple) visualization doesn't account for variance stemming from replicate and individual judge scaling behavior, nuisance factors that we actually included in the real MANOVA we ran above.  When we include these, we find that in fact group membership (the type of wine) is important for predicting the sample mean vector.
 
@@ -153,7 +153,7 @@ descriptive_data %>%
   facet_wrap(~NR)
 ```
 
-<img src="04-MANOVA_files/figure-html/unnamed-chunk-7-1.png" width="672" />
+![](04-MANOVA_files/figure-latex/unnamed-chunk-7-1.pdf)<!-- --> 
 
 Here we can see that the distribution is almost identical, meaning that knowing what replication (`NR`) the observation comes from gives us almost no new information.  This is good news, because we don't *want* the replication to predict anything about the sensory quality of our wines!  
 
@@ -170,23 +170,23 @@ descriptive_data %>%
 ```
 
 ```
-## # A tibble: 14 × 4
+## # A tibble: 14 x 4
 ##    NJ    data            covariance_matrix determinant
 ##    <fct> <list>          <list>                  <dbl>
-##  1 1331  <dbl [24 × 20]> <dbl [20 × 20]>      5.21e+ 2
-##  2 1400  <dbl [24 × 20]> <dbl [20 × 20]>      1.86e- 6
-##  3 1401  <dbl [24 × 20]> <dbl [20 × 20]>      1.57e-10
-##  4 1402  <dbl [24 × 20]> <dbl [20 × 20]>      1.56e-16
-##  5 1404  <dbl [24 × 20]> <dbl [20 × 20]>      0       
-##  6 1405  <dbl [24 × 20]> <dbl [20 × 20]>      5.16e- 1
-##  7 1408  <dbl [24 × 20]> <dbl [20 × 20]>      2.73e-21
-##  8 1409  <dbl [24 × 20]> <dbl [20 × 20]>      5.75e-13
-##  9 1412  <dbl [24 × 20]> <dbl [20 × 20]>      3.09e- 3
-## 10 1413  <dbl [24 × 20]> <dbl [20 × 20]>      0       
-## 11 1414  <dbl [24 × 20]> <dbl [20 × 20]>      1.68e- 8
-## 12 1415  <dbl [24 × 20]> <dbl [20 × 20]>      5.55e+ 5
-## 13 1416  <dbl [24 × 20]> <dbl [20 × 20]>      7.86e+ 1
-## 14 1417  <dbl [24 × 20]> <dbl [20 × 20]>      1.31e- 4
+##  1 1331  <dbl [24 x 20]> <dbl [20 x 20]>      5.21e+ 2
+##  2 1400  <dbl [24 x 20]> <dbl [20 x 20]>      1.86e- 6
+##  3 1401  <dbl [24 x 20]> <dbl [20 x 20]>      1.57e-10
+##  4 1402  <dbl [24 x 20]> <dbl [20 x 20]>      1.56e-16
+##  5 1404  <dbl [24 x 20]> <dbl [20 x 20]>      0       
+##  6 1405  <dbl [24 x 20]> <dbl [20 x 20]>      5.16e- 1
+##  7 1408  <dbl [24 x 20]> <dbl [20 x 20]>      2.73e-21
+##  8 1409  <dbl [24 x 20]> <dbl [20 x 20]>      5.75e-13
+##  9 1412  <dbl [24 x 20]> <dbl [20 x 20]>      3.09e- 3
+## 10 1413  <dbl [24 x 20]> <dbl [20 x 20]>      0       
+## 11 1414  <dbl [24 x 20]> <dbl [20 x 20]>      1.68e- 8
+## 12 1415  <dbl [24 x 20]> <dbl [20 x 20]>      5.55e+ 5
+## 13 1416  <dbl [24 x 20]> <dbl [20 x 20]>      7.86e+ 1
+## 14 1417  <dbl [24 x 20]> <dbl [20 x 20]>      1.31e- 4
 ```
 
 Let's take a quick look at subject 1404's ratings:
@@ -198,7 +198,7 @@ descriptive_data %>%
 ```
 
 ```
-## # A tibble: 24 × 23
+## # A tibble: 24 x 23
 ##    NJ    ProductName NR    Red_berry Dark_berry   Jam Dried_fruit
 ##    <fct> <fct>       <fct>     <dbl>      <dbl> <dbl>       <dbl>
 ##  1 1404  C_MERLOT    7           4          5.6   0           0  
@@ -211,8 +211,8 @@ descriptive_data %>%
 ##  8 1404  I_REFOSCO   7           3.7        4.8   3.8         3.9
 ##  9 1404  C_MERLOT    8           3.4        8.3   3.5         4.6
 ## 10 1404  C_SYRAH     8           3          8.8   3           4.3
-## # ℹ 14 more rows
-## # ℹ 16 more variables: Artificial_frui <dbl>, Chocolate <dbl>, Vanilla <dbl>,
+## # i 14 more rows
+## # i 16 more variables: Artificial_frui <dbl>, Chocolate <dbl>, Vanilla <dbl>,
 ## #   Oak <dbl>, Burned <dbl>, Leather <dbl>, Earthy <dbl>, Spicy <dbl>,
 ## #   Pepper <dbl>, Grassy <dbl>, Medicinal <dbl>, `Band-aid` <dbl>, Sour <dbl>,
 ## #   Bitter <dbl>, Alcohol <dbl>, Astringent <dbl>
@@ -312,14 +312,14 @@ descriptive_data %>%
 ```
 
 ```
-## # A tibble: 20 × 21
+## # A tibble: 20 x 21
 ##    term       Red_berry Dark_berry     Jam Dried_fruit Artificial_frui Chocolate
 ##    <chr>          <dbl>      <dbl>   <dbl>       <dbl>           <dbl>     <dbl>
 ##  1 Red_berry    NA          0.339   0.286        0.231          0.169     0.143 
 ##  2 Dark_berry    0.339     NA       0.420        0.294          0.111     0.359 
 ##  3 Jam           0.286      0.420  NA            0.247          0.438     0.385 
-##  4 Dried_fru…    0.231      0.294   0.247       NA              0.145     0.256 
-##  5 Artificia…    0.169      0.111   0.438        0.145         NA         0.285 
+##  4 Dried_fru~    0.231      0.294   0.247       NA              0.145     0.256 
+##  5 Artificia~    0.169      0.111   0.438        0.145         NA         0.285 
 ##  6 Chocolate     0.143      0.359   0.385        0.256          0.285    NA     
 ##  7 Vanilla       0.122      0.206   0.404        0.119          0.399     0.455 
 ##  8 Oak           0.113      0.183   0.0261       0.320          0.0649    0.201 
@@ -335,7 +335,7 @@ descriptive_data %>%
 ## 18 Bitter        0.0727     0.115   0.116        0.119          0.0968    0.0363
 ## 19 Alcohol       0.0960     0.210   0.160        0.221          0.160     0.162 
 ## 20 Astringent    0.143      0.236   0.145        0.196          0.185     0.102 
-## # ℹ 14 more variables: Vanilla <dbl>, Oak <dbl>, Burned <dbl>, Leather <dbl>,
+## # i 14 more variables: Vanilla <dbl>, Oak <dbl>, Burned <dbl>, Leather <dbl>,
 ## #   Earthy <dbl>, Spicy <dbl>, Pepper <dbl>, Grassy <dbl>, Medicinal <dbl>,
 ## #   `Band-aid` <dbl>, Sour <dbl>, Bitter <dbl>, Alcohol <dbl>, Astringent <dbl>
 ```
@@ -454,7 +454,7 @@ draws %>%
   theme_classic()
 ```
 
-<img src="04-MANOVA_files/figure-html/unnamed-chunk-16-1.png" width="672" />
+![](04-MANOVA_files/figure-latex/unnamed-chunk-16-1.pdf)<!-- --> 
 
 We can see that the standard deviation is pretty large, which makes sense with the approach we've chosen, because the individual standard deviation in different subgroups of observations (within descriptors, within subjects, and within reps) is quite large (for example, with the descriptors):
 
@@ -468,7 +468,7 @@ descriptive_data_tidy %>%
   theme_bw()
 ```
 
-<img src="04-MANOVA_files/figure-html/unnamed-chunk-17-1.png" width="672" />
+![](04-MANOVA_files/figure-latex/unnamed-chunk-17-1.pdf)<!-- --> 
 
 Some of our descriptors have observed standard deviations less than 1.5, and some are almost 3!  That's a pretty big spread.  [There are ways to model variance heterogeneously](https://bookdown.org/content/3686/metric-predicted-variable-with-multiple-nominal-predictors.html#heterogeneous-variances-and-robustness-against-outliers-1), and this would be a better approach in this situation, but since this is mostly exploration on my part, and it already took ~1 hour to run this model, I am not going to run a more intensive model.  Check out that link if you want to learn more.
 
@@ -516,13 +516,13 @@ f %>%
 
 ```
 ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-## ℹ Please use `linewidth` instead.
+## i Please use `linewidth` instead.
 ## This warning is displayed once every 8 hours.
 ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 ## generated.
 ```
 
-<img src="04-MANOVA_files/figure-html/unnamed-chunk-18-1.png" width="672" />
+![](04-MANOVA_files/figure-latex/unnamed-chunk-18-1.pdf)<!-- --> 
 
 Whether this is a reasonable consequence depends on our assumptions about the data.  I think there might be something to this approach for helping to combat heterogeneity in rating approaches among subjects, but I am not really enough of an expert in this area to determine if that really makes sense.
 
@@ -550,7 +550,7 @@ f <-
 ```
 ## Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if
 ## `.name_repair` is omitted as of tibble 2.0.0.
-## ℹ Using compatibility `.name_repair`.
+## i Using compatibility `.name_repair`.
 ## This warning is displayed once every 8 hours.
 ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 ## generated.
@@ -561,7 +561,7 @@ head(f)
 ```
 
 ```
-## # A tibble: 6 × 160
+## # A tibble: 6 x 160
 ##   `C_MERLOT:Red_berry` `C_MERLOT:Dark_berry` `C_MERLOT:Jam`
 ##                  <dbl>                 <dbl>          <dbl>
 ## 1                 2.54                  3.36           2.26
@@ -570,13 +570,13 @@ head(f)
 ## 4                 3.07                  3.78           1.75
 ## 5                 2.90                  3.85           2.04
 ## 6                 3.05                  3.91           1.74
-## # ℹ 157 more variables: `C_MERLOT:Dried_fruit` <dbl>,
+## # i 157 more variables: `C_MERLOT:Dried_fruit` <dbl>,
 ## #   `C_MERLOT:Artificial_frui` <dbl>, `C_MERLOT:Chocolate` <dbl>,
 ## #   `C_MERLOT:Vanilla` <dbl>, `C_MERLOT:Oak` <dbl>, `C_MERLOT:Burned` <dbl>,
 ## #   `C_MERLOT:Leather` <dbl>, `C_MERLOT:Earthy` <dbl>, `C_MERLOT:Spicy` <dbl>,
 ## #   `C_MERLOT:Pepper` <dbl>, `C_MERLOT:Grassy` <dbl>,
 ## #   `C_MERLOT:Medicinal` <dbl>, `C_MERLOT:Band-aid` <dbl>,
-## #   `C_MERLOT:Sour` <dbl>, `C_MERLOT:Bitter` <dbl>, `C_MERLOT:Alcohol` <dbl>, …
+## #   `C_MERLOT:Sour` <dbl>, `C_MERLOT:Bitter` <dbl>, ...
 ```
 
 This gets us a rather large table of the estimates for each descriptor at each wine.  These are the estimated mean parameters for the "simple effects" that can let us examine contrasts.  This full data table is too large to be wieldy, so we can trim it down for individual inquiries.  For example, let's examine `Vanilla` and `Chocolate`, since they are often confusable, and see if there is a difference in the way `rating` changes for them in across two different wines... let's say `C_MERLOT` and `I_MERLOT`.
@@ -594,8 +594,8 @@ head(interactions)
 ```
 
 ```
-## # A tibble: 6 × 3
-##   `C_MERLOT - I_MERLOT @ Vanilla` C_MERLOT - I_MERLOT @…¹ C_MERLOT v. I_MERLOT…²
+## # A tibble: 6 x 3
+##   `C_MERLOT - I_MERLOT @ Vanilla` C_MERLOT - I_MERLOT @~1 C_MERLOT v. I_MERLOT~2
 ##                             <dbl>                   <dbl>                  <dbl>
 ## 1                         -0.0537                   0.626                 -0.679
 ## 2                          0.816                    0.285                  0.531
@@ -603,8 +603,8 @@ head(interactions)
 ## 4                          0.442                    0.612                 -0.170
 ## 5                          0.259                    0.413                 -0.154
 ## 6                          0.542                    0.162                  0.380
-## # ℹ abbreviated names: ¹​`C_MERLOT - I_MERLOT @ Chocolate`,
-## #   ²​`C_MERLOT v. I_MERLOT\n(x)\nVanilla v. Chocolate`
+## # i abbreviated names: 1: `C_MERLOT - I_MERLOT @ Chocolate`,
+## #   2: `C_MERLOT v. I_MERLOT\n(x)\nVanilla v. Chocolate`
 ```
 
 Now we can plot this, with just a little bit more wrangling:
@@ -628,7 +628,7 @@ interactions %>%
   theme_classic()
 ```
 
-<img src="04-MANOVA_files/figure-html/unnamed-chunk-21-1.png" width="672" />
+![](04-MANOVA_files/figure-latex/unnamed-chunk-21-1.pdf)<!-- --> 
 
 In retrospect, this isn't a very interesting comparison: it turns out both the simple effects and (unsurprisingly, given the former statement) contrast effect both have HDIs that firmly include a ROPE around 0.  Again, this was more of an exercise in exploring this tool than something I was expecting to find necessarily immediately useful.
 
@@ -673,32 +673,30 @@ sessionInfo()
 ##  [19] utf8_1.2.3           threejs_0.3.3        promises_1.2.1      
 ##  [22] rmarkdown_2.23       markdown_1.8         tzdb_0.4.0          
 ##  [25] ps_1.7.5             bit_4.0.5            xfun_0.39           
-##  [28] cachem_1.0.8         jsonlite_1.8.7       highr_0.10          
-##  [31] later_1.3.1          prettyunits_1.1.1    parallel_4.3.1      
-##  [34] R6_2.5.1             dygraphs_1.1.1.6     StanHeaders_2.26.27 
-##  [37] bslib_0.5.1          stringi_1.7.12       estimability_1.4.1  
-##  [40] jquerylib_0.1.4      rstan_2.21.8         bookdown_0.37       
-##  [43] knitr_1.43           zoo_1.8-12           base64enc_0.1-3     
-##  [46] bayesplot_1.10.0     httpuv_1.6.11        Matrix_1.6-0        
-##  [49] igraph_1.5.0.1       timechange_0.2.0     tidyselect_1.2.0    
-##  [52] rstudioapi_0.15.0    abind_1.4-5          yaml_2.3.7          
-##  [55] codetools_0.2-19     miniUI_0.1.1.1       processx_3.8.2      
-##  [58] pkgbuild_1.4.2       lattice_0.21-8       plyr_1.8.8          
-##  [61] shiny_1.7.5          withr_2.5.0          bridgesampling_1.1-2
-##  [64] posterior_1.4.1      coda_0.19-4          evaluate_0.21       
-##  [67] RcppParallel_5.1.7   ggdist_3.3.0         xts_0.13.1          
-##  [70] pillar_1.9.0         tensorA_0.36.2       stats4_4.3.1        
-##  [73] checkmate_2.2.0      DT_0.28              shinyjs_2.1.0       
-##  [76] distributional_0.3.2 generics_0.1.3       vroom_1.6.3         
-##  [79] rprojroot_2.0.3      hms_1.1.3            rstantools_2.3.1.1  
-##  [82] munsell_0.5.0        scales_1.2.1         gtools_3.9.4        
-##  [85] xtable_1.8-4         glue_1.6.2           emmeans_1.8.7       
-##  [88] tools_4.3.1          shinystan_2.6.0      colourpicker_1.3.0  
-##  [91] mvtnorm_1.2-2        grid_4.3.1           crosstalk_1.2.0     
-##  [94] colorspace_2.1-0     nlme_3.1-162         cli_3.6.1           
-##  [97] svUnit_1.0.6         fansi_1.0.4          Brobdingnag_1.2-9   
-## [100] gtable_0.3.4         sass_0.4.7           digest_0.6.33       
-## [103] htmlwidgets_1.6.2    farver_2.1.1         htmltools_0.5.6     
-## [106] lifecycle_1.0.3      mime_0.12            bit64_4.0.5         
-## [109] shinythemes_1.2.0
+##  [28] highr_0.10           later_1.3.1          prettyunits_1.1.1   
+##  [31] parallel_4.3.1       R6_2.5.1             dygraphs_1.1.1.6    
+##  [34] StanHeaders_2.26.27  stringi_1.7.12       estimability_1.4.1  
+##  [37] bookdown_0.37        rstan_2.21.8         knitr_1.43          
+##  [40] zoo_1.8-12           base64enc_0.1-3      bayesplot_1.10.0    
+##  [43] httpuv_1.6.11        Matrix_1.6-0         igraph_1.5.0.1      
+##  [46] timechange_0.2.0     tidyselect_1.2.0     rstudioapi_0.15.0   
+##  [49] abind_1.4-5          yaml_2.3.7           codetools_0.2-19    
+##  [52] miniUI_0.1.1.1       processx_3.8.2       pkgbuild_1.4.2      
+##  [55] lattice_0.21-8       plyr_1.8.8           shiny_1.7.5         
+##  [58] withr_2.5.0          bridgesampling_1.1-2 posterior_1.4.1     
+##  [61] coda_0.19-4          evaluate_0.21        RcppParallel_5.1.7  
+##  [64] ggdist_3.3.0         xts_0.13.1           pillar_1.9.0        
+##  [67] tensorA_0.36.2       checkmate_2.2.0      DT_0.28             
+##  [70] stats4_4.3.1         shinyjs_2.1.0        distributional_0.3.2
+##  [73] generics_0.1.3       vroom_1.6.3          rprojroot_2.0.3     
+##  [76] hms_1.1.3            rstantools_2.3.1.1   munsell_0.5.0       
+##  [79] scales_1.2.1         gtools_3.9.4         xtable_1.8-4        
+##  [82] glue_1.6.2           emmeans_1.8.7        tools_4.3.1         
+##  [85] shinystan_2.6.0      colourpicker_1.3.0   mvtnorm_1.2-2       
+##  [88] grid_4.3.1           crosstalk_1.2.0      colorspace_2.1-0    
+##  [91] nlme_3.1-162         cli_3.6.1            svUnit_1.0.6        
+##  [94] fansi_1.0.4          Brobdingnag_1.2-9    gtable_0.3.4        
+##  [97] digest_0.6.33        htmlwidgets_1.6.2    farver_2.1.1        
+## [100] htmltools_0.5.6      lifecycle_1.0.3      mime_0.12           
+## [103] bit64_4.0.5          shinythemes_1.2.0
 ```
