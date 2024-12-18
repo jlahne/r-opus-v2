@@ -17,7 +17,7 @@ consumer_data <- read_csv(here("data/torriconsFinal.csv"))
 
 ## Univariate analysis with the linear model
 
-In the original **R Opus**, HGH made sure that the classifying variables in the `descriptive_data` were set to the `factor` data type.  [There is a *looong* history of factors in `R`](https://notstatschat.tumblr.com/post/124987394001/stringsasfactors-sigh), and you can get a better crash course than I am going to give in some introductory course like [Stat545](https://stat545.com/factors-boss.html).  Suffice it to say here that the `factor` data type is a labeled integer, and that it ~~is~~ used to be the default way that `R` imports strings.  It has some desirable characteristics, but it can often be non-intuitive for those learning `R`.  Much of base `R` has now evolved to silently handle `character` data as `factor` when necessary, so unless you're a hardcore `R` user you probably don't need to worry about this too much.
+In the original **R Opus**, HGH made sure that the classifying variables in the `descriptive_data` were set to the `factor` data type.  [There is a *looong* history of factors in `R`](https://notstatschat.tumblr.com/post/124987394001/stringsasfactors-sigh), and you can get a better crash course than I am going to give in some introductory course like [Stat545](https://stat545.com/factors-boss.html).  Suffice it to say here that the `factor` data type is a labeled integer, and that it ~~is~~ _used to be_ the default way that `R` imports strings.  It has some desirable characteristics, but it can often be non-intuitive for those learning `R`.  Much of base `R` has now evolved to silently handle `character` data as `factor` when necessary, so unless you're a hardcore `R` user you probably don't need to worry about this too much.
 
 *That being said*, let's take the opportunity to follow along with HGH's intentions in order to learn some more data wrangling.  In this case, HGH says that the `NJ`, `NR`, and `ProductName` variables in `descriptive_data` should be `factor` data type, so let's make it so (this is definitely a good idea for `NJ` and `NR`, which are stored as numerals, as otherwise `R` will treat them as continuous numeric variables).
 
@@ -33,7 +33,32 @@ glimpse(descriptive_data)
 
 Great.  We got it.  Now, when we do something like regression (with `lm()`) or ANOVA (with `aov()`) using those variables as predictors, `R` will treat them as discrete, unordered levels rather than the numbers that they are encoded as.
 
-The other trick that HGH does in her original **R Opus** is to run linear models on a matrix of outcomes.  We're going to take a slightly different approach using the "split-apply-combine" approach that the `nest()` function gives us access to in `dplyr`.  
+The other trick that HGH does in her original **R Opus** is to run linear models on a matrix of outcomes.  This allows for running the same model (specified in `R` as `<LHS> ~ <RHS>`, where `<LHS>` is whatever we are predicting and `<RHS>` is one or more predictors) on multiple `<LHS>` variables without copying and pasting.  This approach looks like this:
+
+```{r}
+lhs <- 
+  descriptive_data %>%
+  
+  # remove the predictor variables
+  
+  select(-c(NJ, ProductName, NR)) %>%
+
+  # coerce into the appropriate format
+  
+  as.matrix()
+
+# Run the same model on every column of the lhs matrix, pulling our <RHS>
+# variables from the descriptive_data tibble
+aov(lhs ~ (NR + NJ + ProductName)^2, data = descriptive_data)
+```
+
+We get a nested list of `aov` results, one for each column of `lhs`, which we can then inspect using a combination of the `summary()` function and subsetting.  This is an extremely functional approach and one that I have used in a number of publications.  However, it is not "tidy", and it does rely on positional matching: if we reorder `lhs` or `descriptive_data`, we will break the entire analysis.  This is fragile, difficult to read, and requires some tinkering with `R` core indexing to make work further.
+
+```{r, include = FALSE}
+rm(lhs)
+```
+
+Therefore, we're going to take a slightly different approach using the "split-apply-combine" approach that the `nest()` function gives us access to in `dplyr`.  
 
 ```{r}
 # First, we will retidy our data
@@ -68,7 +93,7 @@ If we dig into this structure, we can see that we're creating, in parallel, a bu
 nested_AOV_res$anova_res[[1]]
 ```
 
-We can continue to use `map()` to get summaries from these models.  We use the broom::tidy() function in order to get the same results as the typical `summary()` function, but in a manipulable `tibble`/`data.frame` object instead of in a `summary` object.
+We can continue to use `map()` to get summaries from these models.  We use the `broom::tidy()` function in order to get the same results as the typical `summary()` function, but in a manipulable `tibble`/`data.frame` object instead of in a `summary` object.
 
 ```{r}
 da_aov_res <-
@@ -118,12 +143,18 @@ How are we going to do this?  With some good, old-fashioned functional programmi
 ```{r}
 get_pseudomixed_results <- function(aov_res){
   
+  # our function will take a single table of aov() results that have been
+  # processed by tidy::broom() to get a tibble.  This is a custom function, so
+  # we are hard-coding the names of the predictor variables (NJ, ProductName,
+  # NR).  In another project, we would have to change these, or write our
+  # function so that it accepts variable names as well as the aov_res data.
+  
   # The relevant ANOVA results for NJ:ProductName are in the 4th row
-  product_by_judge <- aov_res[4, ]
+  product_by_judge <- aov_res %>% filter(term == "NJ:ProductName")
   # The relevant ANOVA results for ProductName:NR are in the 6th row
-  product_by_rep <- aov_res[6, ]
+  product_by_rep <- aov_res %>% filter(term == "ProductName:NR")
   # The relevant main effect for ProductName
-  product_effect <- aov_res[2, ]
+  product_effect <- aov_res %>% filter(term == "ProductName")
   
   # If neither of the interactions is significant, 
   if(product_by_judge$p.value > 0.05 & product_by_rep$p.value > 0.05){
@@ -132,12 +163,14 @@ get_pseudomixed_results <- function(aov_res){
                   df_error = aov_res$df[7],
                   p_val = product_effect$p.value))
   }
+  # if the product-by-judge interaction is larger
   if(product_by_judge$p.value < product_by_rep$p.value){
     return(tibble(sig_effect = product_by_judge$term,
                   f_stat = product_effect$meansq / product_by_judge$meansq,
                   df_error = product_by_judge$df,
                   p_val = 1 - pf(q = f_stat, df1 = product_effect$df, df2 = df_error)))
-  }else{
+  } else{
+  # if the product by rep interaction is larger
     return(tibble(sig_effect = product_by_rep$term,
                   f_stat = product_effect$meansq / product_by_rep$meansq,
                   df_error = product_by_rep$df,
@@ -154,16 +187,20 @@ This function will take a `tibble` of 3-way ANOVA results from our analysis, loo
 
 In the case of `Red_berry` above, the `NJ:ProductName` interaction is the most significant, and results in a non-significant pseudomixed test.
 
-**NB:** Because I used numeric indexing (e.g., `aov_res[6, ]`) to write this function "quick and dirty", it would need to be modified if I had a different linear model defined for my ANOVA (the model specified as `rating ~ (NJ + ProductName + NR)^2` in my `aov()` call above), or even if I reordered the terms in *that* model.
+**NB:** Because I used a combination of hard-coded variable names (e.g., `term == "ProductName"`) and numeric indexing (e.g., `aov_res[6, ]`) to write this function "quick and dirty", it would need to be modified if I had a different linear model defined for my ANOVA (the model specified as `rating ~ (NJ + ProductName + NR)^2` in my `aov()` call above), or even if I reordered the terms in *that* model.
 
 We use the same split-apply-combine workflow with `nest()` and `map()` to first make subtables for each of our descriptors' original ANOVA results, and then run our new function on them.
 
 ```{r}
 
 da_aov_res %>%
+  # We re-nest our data in the same way to use map() with our new custom
+  # function
   nest(data = -descriptor) %>%
   mutate(pseudomixed_res = map(data, ~get_pseudomixed_results(.x))) %>%
   unnest(pseudomixed_res) %>%
+  # And here we filter out any results for which our pseudomixed ANOVA is now
+  # nonsignificant, i.e., > 0.05
   filter(p_val < 0.05)
 
 ```
@@ -172,7 +209,7 @@ From these results, we see that almost all of our products have significant inte
 
 ## Mean comparison (post-hoc testing)
 
-In the original **R Opus**, HGH demonstrates how to calculate Fisher's Least Significant Difference (Fisher's LSD), but I discourage the use of this test, even though it is arguable that the significant ANOVA result means that there is some protection against familywise error @rencherMethods2002  The Tukey's Honestly Significant Difference (HSD) is probably preferable, and as a reviewer I push authors to use this test.
+In the original **R Opus**, HGH demonstrates how to calculate Fisher's Least Significant Difference (Fisher's LSD), but I discourage the use of this test, even though it is arguable that the significant ANOVA result means that there is some protection against familywise error [@rencherMethods2002]  The Tukey's Honestly Significant Difference (HSD) is probably preferable, and as a reviewer I push authors to use this test.
 
 We're going to go back to our `nested_AOV_res` object because we don't need the sum-of-squares/ANOVA table output, we need the actual model fit results.  HGH uses the `agricolae` package's `HSD.test()` function, and we're going to wrap that up in a convenience function to let us easily capture the results and drop them into a `tibble` for easy access and plotting.
 
