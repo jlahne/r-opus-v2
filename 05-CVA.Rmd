@@ -6,7 +6,7 @@ output: html_document
 
 In the analysis of sensory data, many of the steps are concerned with "dimensionality reduction": finding optimal, low-dimensional representations of sensory data, which is typically highly multivariate.  The definition of "optimal" will vary, depending on the particular method chosen.  In this section, we're going to focus on **Canonical Variate Analysis (CVA)**, which HGH tends to prefer for sensory data over the more common Principal Components Analysis (we'll get to that, too!).
 
-First, we'll start with loading our data and the relevant libraries.  Note that here we will be loading a new library: `candisc`.  This is the library that HGH uses in the original **R Opus**, and as far as I can tell it remains the best way to conduct CVA.  A good alternative would be Beaton & Abdi's `MExPosition`, but that package appears to be defunct as of the time of this writing (late 2022), and uses a closely related approach called Barycentric Discriminant Analysis instead of the typical CVA.
+First, we'll start with loading our data and the relevant libraries.  Note that here we will be loading a new library: `candisc`.  This is the library that HGH uses in the original **R Opus**, and as far as I can tell it remains the best way to conduct CVA.  A good alternative would be Beaton & Abdi's `MExPosition`, but that package appears to be defunct as of the time of this writing (late 2024), and uses a closely related approach called Barycentric Discriminant Analysis instead of the typical CVA.
 
 ```{r, message = FALSE}
 # Attempted fix for the rgl error documented here: https://stackoverflow.com/a/66127391/2554330
@@ -26,7 +26,7 @@ descriptive_data <- read_csv(here("data/torriDAFinal.csv")) %>%
 
 Canonical Variate Analysis is also often called (Linear) Discriminant Analysis.  It is closely related to Canonical Correlation Analysis, and is even sometimes called Fisher's Linear Descriminant Analysis (phew).  The basic goal of this analysis is to find linear combinations of variables that best separate groups of observations.  In this way, we could say that CVA/LDA is a "supervised" learning method, in that we need to provide a vector of group IDs for the observations (rows) in order to allow the algorithm to find a combinaton of variables to separate them.   
 
-CVA builds on the same matrix-math calculations that underly MANOVA, and so, according to Rencher **CITE Rencher 2012**, we can think of CVA as the multivariate equivalent of univariate post-hoc testing, like Tukey's HSD.  In post-hoc testing, we calculate various intervals around group means in order to see if we can separate observations from multiple groups according to their group IDs.  We do much the same with CVA, except that we use group mean *vectors*.  
+CVA builds on the same matrix-math calculations that underly MANOVA, and so, according to @rencherMethods2002, we can think of CVA as the multivariate equivalent of univariate post-hoc testing, like Tukey's HSD.  In post-hoc testing, we calculate various intervals around group means in order to see if we can separate observations from multiple groups according to their group IDs.  We do much the same with CVA, except that we use group mean *vectors*.  
 
 Recall that we had a significant 3-way MANOVA for our data:
 
@@ -151,7 +151,7 @@ cva_res_oneway$structure %>%
 
 We can see from this plot that the first canonical variate has large positive contributions from "Burned" characteristics and smaller contributions from "Oak", and strong negative contributions from fruit-related terms like "Jam", "Artificial_frui [sic]", etc.  The second canonical variate has large positive contributions from both "Vanilla" and "Chocolate", and negative contributions from flaw/complex terms like "Medicinal", "Band-aid", etc.
 
-If we examine the results from the multiway MANOVA we'll see similar results, with the exception of a reversed x-axis (first canonical variate).
+If we examine the results from the multiway MANOVA we'll see similar results, with the exception of a reversed x-axis (first canonical variate).  The main differences seem to be better separation among the fruit-like contributors, with "Artificial_frui" and "Jam" being better separated, and an implication that the "Red_berry" and "Dark_berry" attributes are probably contributing more to a higher dimension.
 
 ```{r}
 cva_res$structure %>%
@@ -198,7 +198,7 @@ ggsave(filename = "~/my_new_plot.png",
 
 ## Plotting uncertainty in CVA
 
-One of the advantages of CVA is that it is based on raw data, which PCA is *typically* not [an exception is so-called Tucker-1 PCA; @dettmarPrincipal2020].  So far we've only visualized the *group* means for the wines in our CVA plots, but we can investigate the `$scores` data frame in the CVA results to see the raw observation scores, and use them to plot confidence ellipses.
+One of the advantages of CVA is that it is based on raw data, which PCA is *typically* not [an exception is so-called Tucker-1 PCA, @dettmarPrincipal2020].  So far we've only visualized the *group* means for the wines in our CVA plots, but we can investigate the `$scores` data frame in the CVA results to see the raw observation scores, and use them to plot confidence ellipses.
 
 ```{r}
 cva_res_oneway$scores %>% 
@@ -316,7 +316,7 @@ scores_p_1 +
   theme(legend.position = "none")
 ```
 
-While this requires a bit of computation time (around 5 seconds on my 2017 iMac, writing in 2022), this is still pretty tractable.  It would take about 1 minute to do a "publishable" bootstrap of 1000 samples, which is still fine.  As we'll see, this resampling approach will generalize easily to other needs.
+While this requires a bit of computation time (around 5 seconds on my M2 Mac Mini, writing in 2024), this is still pretty tractable.  It would take about 1 minute to do a "publishable" bootstrap of 1000 samples, which is still fine.  As we'll see, this resampling approach will generalize easily to other needs.
 
 This is a more conservative result than that given by the bivariate normal ellipses in the original **R Opus**, although the actual conclusions of pairwise sample discrimination are identical.
 
