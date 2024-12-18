@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 documentclass: book
 bibliography: [bib/references.bib, bib/packages.bib]
-# url: your book url like https://bookdown.org/yihui/bookdown
+url: https://jlahne.github.io/r-opus-v2/
 cover-image: img/r-opus-cover.jpg
 description: |
   This bookdown is a complete update of Hildegarde Heymann's "R Opus"
@@ -95,15 +95,19 @@ I will not be going over the basics of `R` coding and programming.  You can pick
 
 I'm an [associate professor of Food Science & Technology at Virginia Tech](https://www.fst.vt.edu/aboutus/faculty/jlahne.html).  I teach about sensory evaluation and about applied data analysis for food and ag scientists.  I am not a statistician, but I interact with and consume a lot of statistics.
 
+---
 
-As you work, you may start a local server to live preview this HTML book. This preview will update as you edit the book when you save individual .Rmd files. You can start the server in a work session by using the RStudio add-in "Preview book", or from the R console:
+## Changelog
 
-```{r include=FALSE}
-# automatically create a bib database for R packages
-knitr::write_bib(
-  c(.packages(), packages, 'bookdown', 'knitr', 'rmarkdown'), 
-  file = 'bib/packages.bib')
-```
+### v0.2 (December 2024)
+
+Update to fix typos, inconsistencies, and for use as "textbook" for FST 5984 (Spring 2025).
+
+### v0.1 (December 2023)
+
+Initial commit.  Everything works.  There are typos and sections that need to be expanded (hi, Preference Mapping!).  
+
+---
 
 ## Session Info {-}
 
