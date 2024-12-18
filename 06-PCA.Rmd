@@ -13,8 +13,10 @@ library(tidyverse)
 library(FactoMineR) # this is new
 library(here)
 
-descriptive_data <- read_csv(here("data/torriDAFinal.csv")) %>%
-  mutate_at(.vars = vars(1:3), ~as.factor(.))
+descriptive_data <- 
+  read_csv(here("data/torriDAFinal.csv")) %>%
+  # note the use of across() to mutate multiple columns
+  mutate(across(.cols = 1:3, ~as.factor(.)))
 ```
 
 ## What does PCA do?
@@ -41,7 +43,8 @@ descriptive_means <-
   # What defines the group for which we want means?
   group_by(ProductName) %>%
   # Then we take the group means for every numeric variable (ignore NR, NJ)
-  summarize_if(is.numeric, ~mean(.))
+  # Note the use of where() with across() to use a "predicate" function
+  summarize(across(where(is.numeric), ~mean(.)))
 
 descriptive_means
 ```
@@ -87,8 +90,8 @@ p_loadings <-
   means_pca$var$coord %>%
   as_tibble(rownames = "descriptor") %>%
   ggplot(aes(x = Dim.1, y = Dim.2)) + 
-  geom_hline(yintercept = 0, linetype = "dashed", size = 1/4) +
-  geom_vline(xintercept = 0, linetype = "dashed", size = 1/4) +
+  geom_hline(yintercept = 0, linetype = "dashed", linewidth = 1/4) +
+  geom_vline(xintercept = 0, linetype = "dashed", linewidth = 1/4) +
   geom_segment(aes(xend = 0, yend = 0), 
                arrow = arrow(length = unit(0.1, "in"), ends = "first")) +
   ggrepel::geom_text_repel(aes(label = descriptor)) + 
@@ -121,8 +124,8 @@ means_pca$svd$V %>%
   bind_cols(descriptor = row.names(means_pca$var$coord)) %>%
   rename(Dim.1 = V1, Dim.2 = V2) %>%
   ggplot(aes(x = Dim.1, y = Dim.2)) + 
-  geom_hline(yintercept = 0, linetype = "dashed", size = 1/4) +
-  geom_vline(xintercept = 0, linetype = "dashed", size = 1/4) +
+  geom_hline(yintercept = 0, linetype = "dashed", linewidth = 1/4) +
+  geom_vline(xintercept = 0, linetype = "dashed", linewidth = 1/4) +
   geom_segment(aes(xend = 0, yend = 0), 
                arrow = arrow(length = unit(0.1, "in"), ends = "first")) +
   ggrepel::geom_text_repel(aes(label = descriptor)) + 
@@ -141,8 +144,8 @@ p_scores <-
   means_pca$ind$coord %>%
   as_tibble(rownames = "product") %>%
   ggplot(aes(x = Dim.1, y = Dim.2)) + 
-  geom_hline(yintercept = 0, linetype = "dashed", size = 1/4) +
-  geom_vline(xintercept = 0, linetype = "dashed", size = 1/4) +
+  geom_hline(yintercept = 0, linetype = "dashed", linewidth = 1/4) +
+  geom_vline(xintercept = 0, linetype = "dashed", linewidth = 1/4) +
   geom_point() +
   ggrepel::geom_text_repel(aes(label = product)) + 
   theme_bw() +
@@ -167,7 +170,9 @@ By looking at these plots together, we can see that the first dimension, which w
 
 ## In-depth interpretation
 
-There are several ways that we can get more information about the  structure of the PCA solution.  First, we will follow HGH and investigate the *correlations* between the variables and each of the first two components.  HGH used the `FactoMineR::dimdesc()` function, but I find this prints out too much to look good here.  We can access the correlations directly using `$var$cor` in the output of the `PCA()` function.  I'll turn it into a tibble to make display easier.
+There are several ways that we can get more information about the  structure of the PCA solution.  First, we will follow HGH and investigate the *correlations* between the variables and each of the first two components.  HGH used the `FactoMineR::dimdesc()` function, but we're going to do that later.
+
+We can access the correlations directly using `$var$cor` in the output of the `PCA()` function.  I'll turn it into a tibble to make display easier.
 
 ```{r}
 # The most highly correlated variables with Dimension 1
@@ -262,7 +267,8 @@ means_pca$var$contrib %>%
   tidytext::scale_x_reordered(NULL) + 
   coord_flip() + 
   theme_bw() + 
-  facet_wrap(~name, scales = "free")
+  facet_wrap(~name, scales = "free") +
+  labs(x = "Contribution (in %)")
 ```
 
 We can see that for PC1, contributions seem to be coming from a lot of fruity flavors, as well as some influence from complex flavors that I would attribute to possible Brettanomyces influence in some of the wines.  In PC2, there appears to be instead more influence of oak ("Chocolate" and "Vanilla") as well as the same Brettanomyces flavors.  Note that contributions, as squared measurements, are always positive - these are *absolute* measures of influence on the dimensions.
@@ -271,7 +277,7 @@ HGH says in the original **R Opus** that
 
 > Communality is the sum of the squared loadings for the number of dimensions that you would like to keep.
 
-I am not sure I quite follow what she did, as she then goes on to examine the contributions, which as we've described are the squared loadings divided by the eigenvalues so that they sum to 1.  In @abdiPrincipal2010 they don't discuss *communality*, and if I remember properly the concept is more frequently applied to Factor Analysis @rencherMethods2002, so we'll leave it for now.  I think that this is a great example of how closely overlapping concepts can get confusing in the world of components-based methods, since to my understanding Factor Analysis, in some of its simpler forms, can be derived directly from PCA but with different assumptions mapped onto the steps. 
+I am not sure I quite follow what she did, as she then goes on to examine the contributions, which as we've described are the squared loadings divided by the eigenvalues so that they sum to 1.  In @abdiPrincipal2010 they don't discuss *communality*, and if I remember properly the concept is more frequently applied to Factor Analysis [@rencherMethods2002], so we'll leave it for now.  I think that this is a great example of how closely overlapping concepts can get confusing in the world of components-based methods, since to my understanding Factor Analysis, in some of its simpler forms, can be derived directly from PCA but with different assumptions mapped onto the steps. 
 
 ## PCA with resampling for confidence intervals
 
@@ -293,7 +299,7 @@ panellipse_res$graph$plotIndEll
 
 The confidence ellipses are definitely being drawn around 95% of the resampled results from the bootstrapping procedure, but I'm not sure if this is a bootstrap based on, for example, the "partial bootstrap" or the "truncated bootstrap".  We will us a naive approach to producing a partial bootstrap in order to do some resampling and compare it.
 
-It is also worth noting that the plot produced here is different than that produced in the original **R Opus**, so eithere there is simulation variability (probably) or the underlying program has changed between 2015 and now (also possible).  The overall conclusions are not greatly different but the overlapping areas can vary quite dramatically.
+It is also worth noting that the plot produced here is different than that produced in the original **R Opus**, so either there is simulation variability (probably) or the underlying program has changed between 2015 and now (also possible).  The overall conclusions are not greatly different but the overlapping areas can vary quite dramatically.
 
 The basic approach (which we saw back in the CVA section of the **R Opus**) is to draw a new set of bootstrapped observations for each product: we need 42 observations per product to calculate a new mean.  We then can use the projection function from our original PCA solution to project these results into our space; in a nod to the truncated bootstrap approach [@cadoretConstruction2013] we will use only the first 2 dimensions of the projection function to get the results so as not to overfit.  Finally, we'll draw ellipses around our results to represent variability.
 
@@ -329,7 +335,8 @@ pca_boots <-
 p_scores +
   geom_point(data = pca_boots, 
              inherit.aes = FALSE,
-             aes(x = pc1, y = pc2, color = ProductName), shape = ".") +
+             aes(x = pc1, y = pc2, color = ProductName), 
+             alpha = 1/2, size = 1/2) +
   stat_ellipse(data = pca_boots, inherit.aes = FALSE,
                aes(x = pc1, y = pc2, color = ProductName))
 ```
@@ -384,7 +391,7 @@ panellipse_res$hotelling %>%
         panel.grid = element_blank())
 ```
 
-Notice the `ggplot2` syntax above is kind of complicated, but that's because I did it all at once, and I wanted to do a lot of minor things like remove axis ticks, so as to replicate the plot from  the `panellipse()` function closely.  Notice that I don't think the degrees of freedom for the Hotelling's $T^2$ plot.
+Notice the `ggplot2` syntax above is kind of complicated, but that's because I did it all at once, and I wanted to do a lot of minor things like remove axis ticks, so as to replicate the plot from  the `panellipse()` function closely.
 
 As a bonus, we will quickly look into how to conduct Hotelling's $T^2$ tests ourselves, and then leave the world of PCA (for now) to turn to methods for cluster analysis.
 
@@ -402,6 +409,8 @@ DescTools::HotellingsT2Test(formula = as.matrix(hotelling_demo_data[, -1]) ~ Pro
 ```
 
 These results are not the same as those given in the `panellipse()` output; I suspect after reading `?panellipse` that this is because internally that function is running a Hotelling's $T^2$ test on the PCA results, rather than on the raw data, but I am not sure and I am not willing to try to interpret the under-the-hood code.  If you know, please reach out and let me know!
+
+In general, it seems like using something like CVA and investigating the separability of means there instead of using pairwise Hotelling's $T^2$ tests would be safer in terms of familywise error inflation.
 
 ## Packages used in this chapter
 
