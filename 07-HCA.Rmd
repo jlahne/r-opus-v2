@@ -33,7 +33,7 @@ In the **R Opus**, HGH *scales* the mean data to have zero-means and unit-varian
 ```{r}
 descriptive_means_scaled <- 
   descriptive_means %>%
-  # This line is desnse - notice the "lambda" ("~") function that uses multiple
+  # This line is dense - notice the "lambda" ("~") function that uses multiple
   # references to the same column: we are subtracting the column mean and
   # dividing by the column sd for each column.
   mutate(across(where(is.numeric), ~ (. - mean(.)) / sd(.)))
@@ -59,7 +59,7 @@ Technically, all (mathematical) distances must fulfill 4 properties:
 
 1. For any object, $dist(a,a) = 0$ (the distance of an object to itself is always 0)
 1. For all pairs of objects, $dist(a,b) ≥ 0$ (all distances are positive or 0)
-1. For any pair of objects, $dist(a,b) = dist(b,a)$ (distane is symmetric)
+1. For any pair of objects, $dist(a,b) = dist(b,a)$ (distance is symmetric)
 2. For any three objects, $dist(a,b) + dist(b,c) ≥ dist(a,c)$ (the triangle inequality - I like the [Wikipedia description](https://en.wikipedia.org/wiki/Distance#Mathematical_formalization) as "intermediate objects can't speed you up")
 
 Enough about distance!  Let's get on with it.  We can see that our distance matrix is all positive entries that give us some idea of "how close" each pair of objects is. Smaller numbers indicate proximity.  
@@ -103,7 +103,8 @@ p_ward <-
   expand_limits(y = -6) + 
   # Clean up the messiness
   labs(title = "Clustering with Ward's method", y = NULL) +
-  scale_color_viridis_d()
+  scale_color_viridis_d() + 
+  scale_y_continuous(breaks = c(0, 5, 10))
 
 p_ward
 ```
@@ -126,9 +127,10 @@ We can use the same number of groups (`k = 3`) so we can have a consistent compa
 p_single <- 
   cluster_single %>%
   fviz_dend(k = 3, cex = 2/3) + 
-  expand_limits(y = -6) + 
+  expand_limits(y = -3) + 
   scale_color_viridis_d() +
-  labs(y = NULL, title = "Clustering with Single Linkage")
+  labs(y = NULL, title = "Clustering with Single Linkage") + 
+  scale_y_continuous(breaks = c(0, 5, 10))
 
 p_single
 ```
@@ -147,9 +149,10 @@ cluster_complete <-
 p_complete <-
   cluster_complete %>%
   fviz_dend(k = 3, cex = 2/3) + 
-  expand_limits(y = -6) + 
+  expand_limits(y = -3) + 
   labs(y = NULL, title = "Clustering with Complete Linkage") +
-  scale_color_viridis_d()
+  scale_color_viridis_d() +
+  scale_y_continuous(breaks = c(0, 5, 10))
 
 p_complete
 ```
@@ -168,9 +171,10 @@ cluster_average <-
 p_average <- 
   cluster_average %>%
   fviz_dend(k = 3, cex = 2/3) +
-  expand_limits(y = -6) + 
+  expand_limits(y = -3) + 
   labs(title = "Clustering with Average Linkage", y = NULL) + 
-  scale_color_viridis_d()
+  scale_color_viridis_d() + 
+  scale_y_continuous(breaks = c(0, 5, 10))
 
 p_average
 ```

@@ -341,7 +341,7 @@ p_scores +
                aes(x = pc1, y = pc2, color = ProductName))
 ```
 
-Our results are pretty close, but not exactly the same.  It seems like our method of generating bootstrapped scores (via resampling followed by projection via the $\mathbf Q$ matrix from SVD) is potentially more liberal in product separation than that from the `panellipse()` function.  Perhaps `panellipse()` is using the "truncated bootstrap" approach [@cadoretConstruction2013], which solves a full PCA with the resampled data, then aligns it with the original observed space via Generalized Procrustes Analysis, then repeats that process a large number (e.g., 1000) times.. 
+Our results are pretty close, but not exactly the same.  It seems like our method of generating bootstrapped scores (via resampling followed by projection via the $\mathbf Q$ matrix from SVD) is potentially more liberal in product separation than that from the `panellipse()` function.  Perhaps `panellipse()` is using the "truncated bootstrap" approach [@cadoretConstruction2013], which solves a full PCA with the resampled data, then aligns it with the original observed space via [Generalized Procrustes Analysis], then repeats that process a large number (e.g., 1000) times.. 
 
 ## Comparison of products with PCA
 
