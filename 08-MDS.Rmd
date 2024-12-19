@@ -140,6 +140,8 @@ tidy_descriptive_distances <-
   pairwise_dist(item = ProductName, feature = descriptor, value = rating,
                 upper = FALSE, method = "euclidean")
 
+head(tidy_descriptive_distances)
+
 # We'll do the same thing with our MDS results
 tidy_mds_distances <- 
   metric_mds$points %>%
@@ -149,29 +151,34 @@ tidy_mds_distances <-
   pairwise_dist(item = product, feature = name, value = value,
                 upper = FALSE, method = "euclidean")
 
+head(tidy_mds_distances)
 ```
 
 We can now look at the ranks of pairwise distances and see how many are misaligned.
 
 ```{r}
 # We will rank the pairwise distances from the original data
-tidy_descriptive_distances %>%
+distance_rankings <-
+  tidy_descriptive_distances %>%
   unite(item1, item2, col = "items", sep = " <--> ") %>%
-  transmute(observed_rank = items,
-            distance_rank = dense_rank(distance)) %>%
-  arrange(distance_rank) %>%
+  transmute(items,
+            desc_distance_rank = dense_rank(distance)) %>%
+  arrange(items) %>%
   # And now we'll line this up with the MDS results
   left_join(
     tidy_mds_distances %>%
       unite(item1, item2, col = "items", sep = " <--> ") %>%
-      transmute(mds_rank = items,
-                distance_rank = dense_rank(distance)) %>%
-      arrange(distance_rank),
+      transmute(items,
+                mds_distance_rank = dense_rank(distance)) %>%
+      arrange(items),
     # This is the line that lines them up (`by = `)
-    by = "distance_rank"
-  ) %>%
+    by = "items")
+
+distance_rankings
+
   # And finally we'll check which are the same
-  mutate(match = observed_rank == mds_rank) %>%
+distance_rankings %>%
+  mutate(match = desc_distance_rank == mds_distance_rank) %>%
   count(match)
 ```
 
@@ -234,7 +241,7 @@ library(patchwork)
 p_metric + p_nonmetric
 ```
 
-Note that the configurations are quite similar, but with some notable sifts (e.g., the positioning of `I_MERLOT` pops out).  This makes sense: if you read the `?isoMDS` documentation, you'll see that the initial configuration for the non-metric MDS *is* the metric MDS solution, so this approach starts with our metric MDS configuration and improves on it.
+Note that the configurations are quite similar, but with some notable shifts (e.g., the positioning of `I_MERLOT` pops out).  This makes sense: if you read the `?isoMDS` documentation, you'll see that the initial configuration for the non-metric MDS *is* the metric MDS solution, so this approach starts with our metric MDS configuration and improves on it.
 
 Let's see if we've improved the representation of our relative ranks for distances:
 
