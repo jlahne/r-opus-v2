@@ -4,7 +4,7 @@ output: html_document
 
 # Correspondence Analysis (CA)
 
-Correspondence Analysis (CA) is a close relative of PCA that can be applied to count data.  While PCA is appropriate for application when all observations are interval or ratio data, CA is built for the case when cell counts are positive integers.  CA in its modern was developed for application to survey data by French quantitative sociologists, and the most comprehensive introduction to it is probably Michael Greenacre's *Correspondence Analysis in Practice* [@greenacre2017correspondence].  In sensory evaluation, we often apply CA to check-all-that-apply (CATA) data or to data derived from free-comment/text analysis, because these data involve positive counts.  Sometimes these data meet the theoretical requirements for CA, and sometimes they do not.  We won't dig into those details here, but I also recommend checking out [Abdi and Bera's more succinct articles](https://personal.utdallas.edu/~herve/abdi-AB2014_CA.pdf) on the topic [@abdiCorrespondence].
+Correspondence Analysis (CA) is a close relative of PCA that can be applied to count data.  While PCA is appropriate for application when all observations are interval or ratio data, CA is built for the case when cell counts are positive integers.  CA in its modern form was developed for application to survey data by French quantitative sociologists, and the most comprehensive introduction to it is probably Michael Greenacre's *Correspondence Analysis in Practice* [-@greenacre2017correspondence].  In sensory evaluation, we often apply CA to check-all-that-apply (CATA) data or to data derived from free-comment/text analysis, because these data involve positive counts.  Sometimes these data meet the theoretical requirements for CA, and sometimes they do not.  We won't dig into those details here, but I also recommend checking out [Abdi and Bera's more succinct articles](https://personal.utdallas.edu/~herve/abdi-AB2014_CA.pdf) on the topic [-@abdiCorrespondence].
 
 None of the data we've been using for is exactly suited for CA (although *Multiple* Correspondence Analysis can be effectively used to analyze sorting data), so HGH used the `author` dataset that is included in the `ca` package (i.e., `ca::author`) to demonstrate the approach.  We'll follow suit.
 
@@ -230,7 +230,8 @@ author_ctrs %>%
 We can see that "y" contributes disproportionately to Dimension 2, and that "d", "w", and "h" are the largest contributors to Dimension 1.  We can take this information to help build a potentially more useful visualization:
 
 ```{r}
-# Neat functionality: remove a layer from a compiled ggplot2 to avoid more work.  You can see what layers are in a `gg` object by using [object]$layers
+# Neat functionality: remove a layer from a compiled ggplot2 to avoid more work.
+# You can see what layers are in a `gg` object by using [object]$layers
 ggedit::remove_geom(p_symmetric, geom = "point") +
   geom_point(data = . %>% 
                filter(point_type == "letter") %>%
