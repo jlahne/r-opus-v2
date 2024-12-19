@@ -8,7 +8,7 @@ DISTATIS is the "discriminant sorting" version of STATIS, which according to @ab
 
 > "Structuration des Tableaux à Trois Indices de la Statistique" (which can, approximately, be translated as "structuring three way statistical tables").
 
-Whereas STATIS is a methodology that is closely related to Multiple Factor Analysis [MFA: @abdiMultiple2013], DISTATIS is a slght elaboration of the method primarily for analyzing the results of **sorting tasks**.  In a sorting task, subjects receive a set of samples all at the same time (simultaneous sample presentation) and are asked to sort them into groups.  Typically, subjects are not given specific criteria for sorting, although variations of the method do exist that specify this.  Also typically, with $n$ samples, subjects are told to make between $2$ and $n-1$ groups (i.e., they cannot say all samples are identical or all samples are different).  With this simple set of instructions, a set of 15-25 subjects can evaluate a set of samples in a relatively efficient fashion.  The results are often not as well-defined or discriminating as traditional profiling methods (Descriptive Analysis, for the most part), but as a "first look" into the structure of a sample set, sorting tasks are often quite useful.
+Whereas STATIS is a methodology that is closely related to Multiple Factor Analysis [MFA: @abdiMultiple2013], DISTATIS is an elaboration of the method primarily for analyzing the results of **sorting tasks**.  In a sorting task, subjects receive a set of samples all at the same time (simultaneous sample presentation) and are asked to sort them into groups.  Typically, subjects are not given specific criteria for sorting, although variations of the method do exist that specify this.  Also typically, with $n$ samples, subjects are told to make between $2$ and $n-1$ groups (i.e., they cannot say all samples are identical or all samples are different).  With this simple set of instructions, a set of 15-25 subjects can evaluate a set of samples in a relatively efficient fashion.  The results are often not as well-defined or discriminating as traditional profiling methods (Descriptive Analysis, for the most part), but as a "first look" into the structure of a sample set, sorting tasks are often quite useful.
 
 Two further points are worth mentioning: 
 
@@ -103,7 +103,7 @@ distatis_results$res4Splus$tau %>%
   as_tibble(rownames = "dim") %>%
   mutate(dim = str_c("Dimension ", dim)) %>%
   ggplot(aes(x = dim, y = value)) + 
-  geom_col(fill = "grey", color = "black", size = 1/2) + 
+  geom_col(fill = "grey", color = "black", linewidth = 1/2) + 
   theme_classic() + 
   labs(x = NULL, y = "% variance explained")
 ```
@@ -292,7 +292,7 @@ Finally, we can compare this alignment to that from DISTATIS:
 p_splus + p_mds_simple
 ```
 
-We can see that overall our results are extremely similar, although there are some changes (the incerased spread between the Merlot wines in the DISTATIS plot, and the decreased spread between the Refosco wines).  
+We can see that overall our results are extremely similar, although there are some changes (the increased spread between the Merlot wines in the DISTATIS plot, and the decreased spread between the Refosco wines).  
 
 ## Packages used in this chapter
 
