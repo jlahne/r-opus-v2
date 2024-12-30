@@ -224,7 +224,7 @@ We've already encountered $RV$, but to be honest I am not entirely sure what the
 
 $$s(X,Y)=\frac{trace(\mathbf{X^TYH})}{\sqrt{trace(\mathbf{X^TX})}\sqrt{trace(\mathbf{Y^TY})}}$$
 
-This is clearly very close to the definition of the $RV$ coefficient, differing mainly in that the numerator is the Procrustes rotation that adjusts $\mathbf{Y}$ to $\mathbf{X}$, whereas for $RV$ the numerator instead represents the two double-centered cross-product matrices.  I am not sure what the Procrustes similarity emphasizes over the $RV$, but I believe it is more evenly influenced by dimensions in the data beyond the first principal component based on discussion in @tomicComparison2015].  So which should we pay attention to?  I don't have a good answer to that--it probably depends on the situation.
+This is clearly very close to the definition of the $RV$ coefficient, differing mainly in that the numerator is the Procrustes rotation that adjusts $\mathbf{Y}$ to $\mathbf{X}$, whereas for $RV$ the numerator instead represents the two double-centered cross-product matrices.  I am not sure what the Procrustes similarity emphasizes over the $RV$, but I believe it is more evenly influenced by dimensions in the data beyond the first principal component based on discussion in @tomicComparison2015.  So which should we pay attention to?  I don't have a good answer to that--it probably depends on the situation.
 
 ## Packages used in this chapter
 
