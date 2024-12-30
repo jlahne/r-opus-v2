@@ -102,9 +102,11 @@ Let's take a look at what we got.
 
 ```{r}
 internal_coordinates <- 
+  # we use a tibble of tibbles to easily combine our row and column coords
   tibble(point_type = c("subject", "product"),
          data = list(internal_map$var$coord,
                      internal_map$ind$coord)) %>%
+  # and as_tibble() will turn our matrices into legible tables
   mutate(data = map(data, as_tibble, rownames = "label")) %>%
   unnest(everything())
 
@@ -150,7 +152,7 @@ p_internal_consumers <-
   ggrepel::geom_text_repel(aes(label = label), size = 3) + 
   coord_equal() + 
   axis_labels + 
-  labs(subtitle = "Consumers, plotted in wine-linking space") + 
+  labs(subtitle = "Consumers, plotted as loadings in the\nconsumer-liking space") + 
   theme_bw()
 
 library(patchwork)
@@ -223,7 +225,7 @@ p_internal_consumers + p_internal_products
 
 We can see that the purple and teal-ish groups are well-separated in this space, whereas the bright green group is not.  I suspect (and leave it as an exercise to find out) that this group would be better separated in a third dimension.
 
-We can then use the clusteres identified here to ask questions about, for example, consumer demographic groups.  A quick way to do per-group summaries of (often qualitative) variables is using the `skimr::skim()` function with `group_by()`.
+We can then use the clusters identified here to ask questions about, for example, consumer demographic groups.  A quick way to do per-group summaries of (often qualitative) variables is using the `skimr::skim()` function with `group_by()`.
 
 ```{r}
 consumer_demo %>%
@@ -238,7 +240,7 @@ We can see some interesting (if minor!) differences in these groups.  Group 1, f
 
 ## External preference mapping
 
-As I mentioned above, the range of possible approaches to external preference mapping is quite large [@yenketCOMPARISON2011], and I have little interest in exploring all of them.  In particular, I find both the interface and the documentation for `SensoMineR` a little hard to grasp, so I am going to avoid its use in favor of approaches that will yield largely the same answers but with more transparencyt (for me).  
+As I mentioned above, the range of possible approaches to external preference mapping is quite large [@yenketCOMPARISON2011], and I have little interest in exploring all of them.  In particular, I find both the interface and the documentation for `SensoMineR` a little hard to grasp, so I am going to avoid its use in favor of approaches that will yield largely the same answers but with more transparency (for me).  
 
 ### Partial Least Squares Regression
 
@@ -295,7 +297,7 @@ pls_val$validation$PRESS[1, ]
 
 We can see that $PRESS$ is lowest with only a single component.
 
-...but, I am lazy and more interested in showing *how* to do things than making the multiple plots and analyses we'd need for 3 dimensions.  I leave investigating the 3rd component as an exercise for the reader.
+...but, I am lazy and more interested in showing *how* to do things, and in replicating the original **R Opus** workflow, so we will stick with a 2-component solution.
 
 Following our typical practice, we will see how to extract elements of the output of `plsr()` to produce nicer looking plots in `ggplot2`.  This will take a little digging because the `pls` package makes use of a lot of (what I consider) tricky and obtuse indexing and object formats.  Bear with me.
 
