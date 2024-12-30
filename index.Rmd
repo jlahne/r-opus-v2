@@ -13,6 +13,7 @@ description: |
   walkthroughs on common multivariate analyses in `R` for sensory-evaluation data.
 link-citations: yes
 github-repo: jlahne/r-opus-v2
+monofont: "Fira Code"
 ---
 
 ```{r setup-0, include=FALSE}
