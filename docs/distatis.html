@@ -8,11 +8,11 @@
   <meta name="description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
 walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
-  <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.39 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 9 DISTATIS | The R Opus v2" />
   <meta property="og:type" content="book" />
-  <meta property="og:image" content="/img/r-opus-cover.jpg" />
+  <meta property="og:image" content="https://jlahne.github.io/r-opus-v2/img/r-opus-cover.jpg" />
   <meta property="og:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
 walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
@@ -24,12 +24,12 @@ walkthroughs on common multivariate analyses in <code>R</code> for sensory-evalu
   <meta name="twitter:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
 walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
-  <meta name="twitter:image" content="/img/r-opus-cover.jpg" />
+  <meta name="twitter:image" content="https://jlahne.github.io/r-opus-v2/img/r-opus-cover.jpg" />
 
 <meta name="author" content="Jacob Lahne" />
 
 
-<meta name="date" content="2024-01-10" />
+<meta name="date" content="2025-01-02" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -61,8 +61,9 @@ walkthroughs on common multivariate analyses in <code>R</code> for sensory-evalu
 
 
 <style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -175,6 +176,11 @@ div.csl-indent {
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#r-setup"><i class="fa fa-check"></i><code>R</code> Setup</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#what-this-is-not"><i class="fa fa-check"></i>What this is not</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#about-me"><i class="fa fa-check"></i>About me</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#changelog"><i class="fa fa-check"></i>Changelog</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#v0.2-december-2024"><i class="fa fa-check"></i>v0.2 (December 2024)</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#v0.1-december-2023"><i class="fa fa-check"></i>v0.1 (December 2023)</a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#session-info"><i class="fa fa-check"></i>Session Info</a></li>
 </ul></li>
 <li class="chapter" data-level="1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html"><i class="fa fa-check"></i><b>1</b> Data import and set up</a>
@@ -320,7 +326,7 @@ div.csl-indent {
 <blockquote>
 <p>“Structuration des Tableaux à Trois Indices de la Statistique” (which can, approximately, be translated as “structuring three way statistical tables”).</p>
 </blockquote>
-<p>Whereas STATIS is a methodology that is closely related to Multiple Factor Analysis <span class="citation">(MFA: <a href="#ref-abdiMultiple2013">Hervé Abdi, Williams, and Valentin 2013</a>)</span>, DISTATIS is a slght elaboration of the method primarily for analyzing the results of <strong>sorting tasks</strong>. In a sorting task, subjects receive a set of samples all at the same time (simultaneous sample presentation) and are asked to sort them into groups. Typically, subjects are not given specific criteria for sorting, although variations of the method do exist that specify this. Also typically, with <span class="math inline">\(n\)</span> samples, subjects are told to make between <span class="math inline">\(2\)</span> and <span class="math inline">\(n-1\)</span> groups (i.e., they cannot say all samples are identical or all samples are different). With this simple set of instructions, a set of 15-25 subjects can evaluate a set of samples in a relatively efficient fashion. The results are often not as well-defined or discriminating as traditional profiling methods (Descriptive Analysis, for the most part), but as a “first look” into the structure of a sample set, sorting tasks are often quite useful.</p>
+<p>Whereas STATIS is a methodology that is closely related to Multiple Factor Analysis <span class="citation">(MFA: <a href="#ref-abdiMultiple2013">Hervé Abdi, Williams, and Valentin 2013</a>)</span>, DISTATIS is an elaboration of the method primarily for analyzing the results of <strong>sorting tasks</strong>. In a sorting task, subjects receive a set of samples all at the same time (simultaneous sample presentation) and are asked to sort them into groups. Typically, subjects are not given specific criteria for sorting, although variations of the method do exist that specify this. Also typically, with <span class="math inline">\(n\)</span> samples, subjects are told to make between <span class="math inline">\(2\)</span> and <span class="math inline">\(n-1\)</span> groups (i.e., they cannot say all samples are identical or all samples are different). With this simple set of instructions, a set of 15-25 subjects can evaluate a set of samples in a relatively efficient fashion. The results are often not as well-defined or discriminating as traditional profiling methods (Descriptive Analysis, for the most part), but as a “first look” into the structure of a sample set, sorting tasks are often quite useful.</p>
 <p>Two further points are worth mentioning:</p>
 <ol style="list-style-type: decimal">
 <li>DISTATIS can be used on any dissimilarity data, not just that from sorting tasks. It also does not require that the dissimilarity data be <em>binary</em> (as it is in a sorting task: in a group or not in a group). For example, DISTATIS can be used with the results of hierarchical or multiple sorting <span class="citation">(<a href="#ref-courcouxFree2023">Courcoux, Faye, and Qannari 2023</a>)</span>. Recently, “free linking” tasks, in which pairwise-similarity is judged among a set of samples (as opposed to group-wise similarity), have also been analyzed successfully with DISTATIS: these results are also non-binary similarities.</li>
@@ -334,12 +340,12 @@ div.csl-indent {
 <p>color data that came from sorting the wines into similarly colored groups.</p>
 </blockquote>
 <p>Thus, the data pertain to the same wine, but is sorted into groups <em>by appearance</em> by 15 panelists.</p>
-<div class="sourceCode" id="cb288"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb288-1"><a href="distatis.html#cb288-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb288-2"><a href="distatis.html#cb288-2" tabindex="-1"></a><span class="fu">library</span>(here)</span>
-<span id="cb288-3"><a href="distatis.html#cb288-3" tabindex="-1"></a></span>
-<span id="cb288-4"><a href="distatis.html#cb288-4" tabindex="-1"></a>sorting_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/sorting_r1.csv&quot;</span>))</span>
-<span id="cb288-5"><a href="distatis.html#cb288-5" tabindex="-1"></a></span>
-<span id="cb288-6"><a href="distatis.html#cb288-6" tabindex="-1"></a>sorting_data</span></code></pre></div>
+<div class="sourceCode" id="cb295"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb295-1"><a href="distatis.html#cb295-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb295-2"><a href="distatis.html#cb295-2" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb295-3"><a href="distatis.html#cb295-3" tabindex="-1"></a></span>
+<span id="cb295-4"><a href="distatis.html#cb295-4" tabindex="-1"></a>sorting_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/sorting_r1.csv&quot;</span>))</span>
+<span id="cb295-5"><a href="distatis.html#cb295-5" tabindex="-1"></a></span>
+<span id="cb295-6"><a href="distatis.html#cb295-6" tabindex="-1"></a>sorting_data</span></code></pre></div>
 <pre><code>## # A tibble: 8 × 16
 ##   wine      `263` `1331` `1400` `1401` `1402` `1404` `1405` `1408` `1409` `1412`
 ##   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; 
@@ -355,23 +361,23 @@ div.csl-indent {
 ## #   `1417` &lt;chr&gt;</code></pre>
 <p>It looks like the data are presented as follows: each row corresponds to 1 of the 8 wine samples we’ve been dealing with so far, and each column represents a panelist (coded numerically), with the cells showing which group they assigned the wine to. So, for example, panelist <code>263</code> assigned <code>I_REFOSCO</code> to group <code>G6</code>, whereas panelist <code>1331</code> assigned the same wine to group <code>G3</code>. You’ll notice, of course, that the problem with these data are that group numbers are dependent on panelist: it doesn’t matter what actual number is assigned, but rather <em>what other wines each panelist thinks are in the same group</em>. We need some way to show this data: this is exactly transforming groups into dissimilarities.</p>
 <p>We are going to use the <code>DistatisR</code> package for much of the analysis in this section. It has a utility function, <code>DistanceFromSort()</code>, that will transform this kind of grouping information into dissimilarities: symmetrical matrices for each panelist that show dissimilarity. Let’s check it out:</p>
-<div class="sourceCode" id="cb290"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb290-1"><a href="distatis.html#cb290-1" tabindex="-1"></a><span class="fu">library</span>(DistatisR)</span>
-<span id="cb290-2"><a href="distatis.html#cb290-2" tabindex="-1"></a></span>
-<span id="cb290-3"><a href="distatis.html#cb290-3" tabindex="-1"></a>sorting_dissimilarities <span class="ot">&lt;-</span> </span>
-<span id="cb290-4"><a href="distatis.html#cb290-4" tabindex="-1"></a>  sorting_data <span class="sc">%&gt;%</span></span>
-<span id="cb290-5"><a href="distatis.html#cb290-5" tabindex="-1"></a>  <span class="co"># As is often the case, we need to move our ID column to `rownames`</span></span>
-<span id="cb290-6"><a href="distatis.html#cb290-6" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb290-7"><a href="distatis.html#cb290-7" tabindex="-1"></a>  <span class="fu">DistanceFromSort</span>()</span>
-<span id="cb290-8"><a href="distatis.html#cb290-8" tabindex="-1"></a></span>
-<span id="cb290-9"><a href="distatis.html#cb290-9" tabindex="-1"></a><span class="co"># Let&#39;s take a look at what we have now</span></span>
-<span id="cb290-10"><a href="distatis.html#cb290-10" tabindex="-1"></a><span class="fu">str</span>(sorting_dissimilarities)</span></code></pre></div>
+<div class="sourceCode" id="cb297"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb297-1"><a href="distatis.html#cb297-1" tabindex="-1"></a><span class="fu">library</span>(DistatisR)</span>
+<span id="cb297-2"><a href="distatis.html#cb297-2" tabindex="-1"></a></span>
+<span id="cb297-3"><a href="distatis.html#cb297-3" tabindex="-1"></a>sorting_dissimilarities <span class="ot">&lt;-</span> </span>
+<span id="cb297-4"><a href="distatis.html#cb297-4" tabindex="-1"></a>  sorting_data <span class="sc">%&gt;%</span></span>
+<span id="cb297-5"><a href="distatis.html#cb297-5" tabindex="-1"></a>  <span class="co"># As is often the case, we need to move our ID column to `rownames`</span></span>
+<span id="cb297-6"><a href="distatis.html#cb297-6" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb297-7"><a href="distatis.html#cb297-7" tabindex="-1"></a>  <span class="fu">DistanceFromSort</span>()</span>
+<span id="cb297-8"><a href="distatis.html#cb297-8" tabindex="-1"></a></span>
+<span id="cb297-9"><a href="distatis.html#cb297-9" tabindex="-1"></a><span class="co"># Let&#39;s take a look at what we have now</span></span>
+<span id="cb297-10"><a href="distatis.html#cb297-10" tabindex="-1"></a><span class="fu">str</span>(sorting_dissimilarities)</span></code></pre></div>
 <pre><code>##  num [1:8, 1:8, 1:15] 0 1 1 1 1 1 1 1 1 0 ...
 ##  - attr(*, &quot;dimnames&quot;)=List of 3
 ##   ..$ : chr [1:8] &quot;I_REFOSCO&quot; &quot;I_MERLOT&quot; &quot;I_SYRAH&quot; &quot;I_PRIMITIVO&quot; ...
 ##   ..$ : chr [1:8] &quot;I_REFOSCO&quot; &quot;I_MERLOT&quot; &quot;I_SYRAH&quot; &quot;I_PRIMITIVO&quot; ...
 ##   ..$ : chr [1:15] &quot;263&quot; &quot;1331&quot; &quot;1400&quot; &quot;1401&quot; ...</code></pre>
-<div class="sourceCode" id="cb292"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb292-1"><a href="distatis.html#cb292-1" tabindex="-1"></a><span class="co"># And here is a &quot;slice&quot; of the sorting &quot;brick&quot; (3D array or tensor)</span></span>
-<span id="cb292-2"><a href="distatis.html#cb292-2" tabindex="-1"></a>sorting_dissimilarities[, , <span class="dv">1</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb299"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb299-1"><a href="distatis.html#cb299-1" tabindex="-1"></a><span class="co"># And here is a &quot;slice&quot; of the sorting &quot;brick&quot; (3D array or tensor)</span></span>
+<span id="cb299-2"><a href="distatis.html#cb299-2" tabindex="-1"></a>sorting_dissimilarities[, , <span class="dv">1</span>]</span></code></pre></div>
 <pre><code>##             I_REFOSCO I_MERLOT I_SYRAH I_PRIMITIVO C_SYRAH C_REFOSCO C_MERLOT
 ## I_REFOSCO           0        1       1           1       1         1        1
 ## I_MERLOT            1        0       1           1       1         1        0
@@ -400,15 +406,15 @@ div.csl-indent {
 <p>I am not going to go into all of the steps of DISTATIS <span class="citation">(see instead <a href="#ref-abdiAnalyzing2007">H. Abdi et al. 2007</a>)</span>, but briefly: DISTATIS first uses multivariate statistics to evaluate how similar all the subjects’ sorts are to each other, then weights each subject by their similarity to the overall consensus, uses these weights to sum up the individual results into a consensus dissimilarity, and finally uses an eigendecomposition on the weighted sum to produce a map of (dis)similarities (this final step is the MDS-like part).</p>
 <p>This multistep approach means that not only do we have the consensus results, but we have access to results that tell us how much consensus there actually is, as well as the ability to generate bootstrapped confidence intervals based on individuals.</p>
 <p>Luckily, the <code>DistatisR</code> package makes it quite easy to run DISTATIS.</p>
-<div class="sourceCode" id="cb294"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb294-1"><a href="distatis.html#cb294-1" tabindex="-1"></a>distatis_results <span class="ot">&lt;-</span> <span class="fu">distatis</span>(sorting_dissimilarities)</span>
-<span id="cb294-2"><a href="distatis.html#cb294-2" tabindex="-1"></a></span>
-<span id="cb294-3"><a href="distatis.html#cb294-3" tabindex="-1"></a><span class="co"># We will also generate some bootstrapped results while we&#39;re at it so as to be</span></span>
-<span id="cb294-4"><a href="distatis.html#cb294-4" tabindex="-1"></a><span class="co"># able to plot confidence ellipses.</span></span>
-<span id="cb294-5"><a href="distatis.html#cb294-5" tabindex="-1"></a>distatis_boots <span class="ot">&lt;-</span> <span class="fu">BootFromCompromise</span>(sorting_dissimilarities)</span></code></pre></div>
+<div class="sourceCode" id="cb301"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb301-1"><a href="distatis.html#cb301-1" tabindex="-1"></a>distatis_results <span class="ot">&lt;-</span> <span class="fu">distatis</span>(sorting_dissimilarities)</span>
+<span id="cb301-2"><a href="distatis.html#cb301-2" tabindex="-1"></a></span>
+<span id="cb301-3"><a href="distatis.html#cb301-3" tabindex="-1"></a><span class="co"># We will also generate some bootstrapped results while we&#39;re at it so as to be</span></span>
+<span id="cb301-4"><a href="distatis.html#cb301-4" tabindex="-1"></a><span class="co"># able to plot confidence ellipses.</span></span>
+<span id="cb301-5"><a href="distatis.html#cb301-5" tabindex="-1"></a>distatis_boots <span class="ot">&lt;-</span> <span class="fu">BootFromCompromise</span>(sorting_dissimilarities)</span></code></pre></div>
 <pre><code>## [1] Starting Full Bootstrap. Iterations #: 
 ## [2] 1000</code></pre>
 <p>Before we proceed, let’s look at what we’ve done:</p>
-<div class="sourceCode" id="cb296"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb296-1"><a href="distatis.html#cb296-1" tabindex="-1"></a>distatis_results</span></code></pre></div>
+<div class="sourceCode" id="cb303"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb303-1"><a href="distatis.html#cb303-1" tabindex="-1"></a>distatis_results</span></code></pre></div>
 <pre><code>## **Results for DiSTATIS**
 ## The analysis was performed on  15 individuals, on 8 sorted items.
 ## *The results are available in the following objects:
@@ -418,123 +424,122 @@ div.csl-indent {
 ## 2 &quot;$res4Splus&quot; &quot;Results from the S+ matrix (see notation)&quot;
 ## 3 &quot;$compact&quot;   &quot;a boolean. TRUE if compact results used.&quot;</code></pre>
 <p>You’ll notice that the output from <code>distatis()</code> is a complex list object that is reasonably well-annotated (similar to what can be found in the <code>FactoMineR</code> package outputs). We’ll dig into this in a minute.</p>
-<div class="sourceCode" id="cb298"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb298-1"><a href="distatis.html#cb298-1" tabindex="-1"></a>distatis_boots <span class="sc">%&gt;%</span> str</span></code></pre></div>
-<pre><code>##  num [1:8, 1:3, 1:1000] -0.2205 0.2561 -0.0913 -0.1927 -0.0269 ...
+<div class="sourceCode" id="cb305"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb305-1"><a href="distatis.html#cb305-1" tabindex="-1"></a>distatis_boots <span class="sc">%&gt;%</span> str</span></code></pre></div>
+<pre><code>##  num [1:8, 1:3, 1:1000] -0.2469 0.2392 -0.1084 -0.1646 0.0568 ...
 ##  - attr(*, &quot;dimnames&quot;)=List of 3
 ##   ..$ : chr [1:8] &quot;I_REFOSCO&quot; &quot;I_MERLOT&quot; &quot;I_SYRAH&quot; &quot;I_PRIMITIVO&quot; ...
 ##   ..$ : chr [1:3] &quot;Factor 1&quot; &quot;Factor 2&quot; &quot;Factor 3&quot;
 ##   ..$ : NULL</code></pre>
-<div class="sourceCode" id="cb300"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb300-1"><a href="distatis.html#cb300-1" tabindex="-1"></a>distatis_boots[, , <span class="dv">1</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb307"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb307-1"><a href="distatis.html#cb307-1" tabindex="-1"></a>distatis_boots[, , <span class="dv">1</span>]</span></code></pre></div>
 <pre><code>##                Factor 1     Factor 2    Factor 3
-## I_REFOSCO   -0.22046599 -0.138447259  0.28907136
-## I_MERLOT     0.25613942 -0.007426252  0.20183675
-## I_SYRAH     -0.09126630  0.336701383 -0.01696798
-## I_PRIMITIVO -0.19272791  0.343620468 -0.09786424
-## C_SYRAH     -0.02694503 -0.369542754 -0.24483459
-## C_REFOSCO   -0.29432417 -0.261298297 -0.13724902
-## C_MERLOT     0.25083238 -0.033836745 -0.17247863
-## C_ZINFANDEL  0.31875760  0.130229456  0.17848635</code></pre>
+## I_REFOSCO   -0.24689320 -0.203595258  0.41774060
+## I_MERLOT     0.23919803 -0.114083210  0.15687835
+## I_SYRAH     -0.10840538  0.324320534 -0.14542732
+## I_PRIMITIVO -0.16458773  0.403411522 -0.12803903
+## C_SYRAH      0.05683556 -0.320344955 -0.26957044
+## C_REFOSCO   -0.30454928 -0.217636031 -0.02050031
+## C_MERLOT     0.25816183  0.001054459 -0.16859783
+## C_ZINFANDEL  0.27024017  0.126872940  0.15751598</code></pre>
 <p>The <code>BootFromCompromise()</code> function gives us another array: in this case a set of factor scores for the samples on the first 3 factors/components, over 1000 (the default) bootstrapped iterations. Each slice is a single bootstrapped iteration.</p>
 <p>Finally, let’s examine our results. The output from <code>distatis()</code> stores results about the <em>samples</em> in the <code>$res4Splus</code> list, and results about the judges in the <code>$res4Cmat</code> list. These are named after the matrices defined in <span class="citation">H. Abdi et al. (<a href="#ref-abdiAnalyzing2007">2007</a>)</span>: the <span class="math inline">\(\mathbf{C}\)</span> matrix is the matrix of <span class="math inline">\(RV\)</span> coefficients between judges (a measure of multidimensional similarity), and the <span class="math inline">\(\mathbf{S_+}\)</span> matrix contains the compromise matrix of dissimilarities (after double-centering, weighting as I described above, and summing).</p>
 <p>Let’s follow along in the order that HGH did in her workflow. She starts by examining first the overall explained variances. These are found in the <code>distatis_results$res4Splus$tau</code> vector.</p>
-<div class="sourceCode" id="cb302"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb302-1"><a href="distatis.html#cb302-1" tabindex="-1"></a>distatis_results<span class="sc">$</span>res4Splus<span class="sc">$</span>tau <span class="sc">%&gt;%</span></span>
-<span id="cb302-2"><a href="distatis.html#cb302-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;dim&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb302-3"><a href="distatis.html#cb302-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dim =</span> <span class="fu">str_c</span>(<span class="st">&quot;Dimension &quot;</span>, dim)) <span class="sc">%&gt;%</span></span>
-<span id="cb302-4"><a href="distatis.html#cb302-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> dim, <span class="at">y =</span> value)) <span class="sc">+</span> </span>
-<span id="cb302-5"><a href="distatis.html#cb302-5" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">&quot;grey&quot;</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">size =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>) <span class="sc">+</span> </span>
-<span id="cb302-6"><a href="distatis.html#cb302-6" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
-<span id="cb302-7"><a href="distatis.html#cb302-7" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">&quot;% variance explained&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb309"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb309-1"><a href="distatis.html#cb309-1" tabindex="-1"></a>distatis_results<span class="sc">$</span>res4Splus<span class="sc">$</span>tau <span class="sc">%&gt;%</span></span>
+<span id="cb309-2"><a href="distatis.html#cb309-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;dim&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb309-3"><a href="distatis.html#cb309-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dim =</span> <span class="fu">str_c</span>(<span class="st">&quot;Dimension &quot;</span>, dim)) <span class="sc">%&gt;%</span></span>
+<span id="cb309-4"><a href="distatis.html#cb309-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> dim, <span class="at">y =</span> value)) <span class="sc">+</span> </span>
+<span id="cb309-5"><a href="distatis.html#cb309-5" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">&quot;grey&quot;</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb309-6"><a href="distatis.html#cb309-6" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
+<span id="cb309-7"><a href="distatis.html#cb309-7" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">&quot;% variance explained&quot;</span>)</span></code></pre></div>
+<p><img src="09-DISTATIS_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>These results look the same as HGH’s (good news!), and we can see our first two dimensions explain about 41% of the total variation in the sorts; this is fairly common for sorting, in which getting very high explanation in 2 dimensions is unlikely.</p>
+<p>Let’s look at how the products project into those first 2 dimensions.</p>
+<div class="sourceCode" id="cb310"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb310-1"><a href="distatis.html#cb310-1" tabindex="-1"></a>p_splus <span class="ot">&lt;-</span> </span>
+<span id="cb310-2"><a href="distatis.html#cb310-2" tabindex="-1"></a>  distatis_results<span class="sc">$</span>res4Splus<span class="sc">$</span>F <span class="sc">%&gt;%</span></span>
+<span id="cb310-3"><a href="distatis.html#cb310-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb310-4"><a href="distatis.html#cb310-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">Factor 1</span><span class="st">`</span>, <span class="at">y =</span> <span class="st">`</span><span class="at">Factor 2</span><span class="st">`</span>)) <span class="sc">+</span> </span>
+<span id="cb310-5"><a href="distatis.html#cb310-5" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">&quot;darkgrey&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb310-6"><a href="distatis.html#cb310-6" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">&quot;darkgrey&quot;</span>) <span class="sc">+</span></span>
+<span id="cb310-7"><a href="distatis.html#cb310-7" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb310-8"><a href="distatis.html#cb310-8" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> sample)) <span class="sc">+</span></span>
+<span id="cb310-9"><a href="distatis.html#cb310-9" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> </span>
+<span id="cb310-10"><a href="distatis.html#cb310-10" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb310-11"><a href="distatis.html#cb310-11" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;DISTATIS plot for compromise dissimilarities&quot;</span>)</span>
+<span id="cb310-12"><a href="distatis.html#cb310-12" tabindex="-1"></a></span>
+<span id="cb310-13"><a href="distatis.html#cb310-13" tabindex="-1"></a>p_splus</span></code></pre></div>
+<p><img src="09-DISTATIS_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>These results are the same as HGH’s, again, which is good news.</p>
+<p>HGH plotted the individual subjects as projected into this space. It’s a little annoying to do, and I do not think it is typically particularly illuminating, but we’ll do it here for practice.</p>
+<div class="sourceCode" id="cb311"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb311-1"><a href="distatis.html#cb311-1" tabindex="-1"></a>p_splus_augmented <span class="ot">&lt;-</span> p_splus</span>
+<span id="cb311-2"><a href="distatis.html#cb311-2" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">dim</span>(distatis_results<span class="sc">$</span>res4Splus<span class="sc">$</span>PartialF)[<span class="dv">3</span>]){</span>
+<span id="cb311-3"><a href="distatis.html#cb311-3" tabindex="-1"></a>  augmented_data <span class="ot">&lt;-</span> </span>
+<span id="cb311-4"><a href="distatis.html#cb311-4" tabindex="-1"></a>    distatis_results<span class="sc">$</span>res4Splus<span class="sc">$</span>PartialF[, , i] <span class="sc">%&gt;%</span></span>
+<span id="cb311-5"><a href="distatis.html#cb311-5" tabindex="-1"></a>    <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb311-6"><a href="distatis.html#cb311-6" tabindex="-1"></a>    <span class="co"># and then add the compromise barycenters so we can draw lines to them</span></span>
+<span id="cb311-7"><a href="distatis.html#cb311-7" tabindex="-1"></a>    <span class="fu">bind_cols</span>(</span>
+<span id="cb311-8"><a href="distatis.html#cb311-8" tabindex="-1"></a>      distatis_results<span class="sc">$</span>res4Splus<span class="sc">$</span>F <span class="sc">%&gt;%</span></span>
+<span id="cb311-9"><a href="distatis.html#cb311-9" tabindex="-1"></a>        <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb311-10"><a href="distatis.html#cb311-10" tabindex="-1"></a>        <span class="fu">rename</span>(<span class="at">xend =</span> <span class="dv">1</span>, <span class="at">yend =</span> <span class="dv">2</span>)</span>
+<span id="cb311-11"><a href="distatis.html#cb311-11" tabindex="-1"></a>    )</span>
+<span id="cb311-12"><a href="distatis.html#cb311-12" tabindex="-1"></a>  </span>
+<span id="cb311-13"><a href="distatis.html#cb311-13" tabindex="-1"></a>  p_splus_augmented <span class="ot">&lt;-</span> </span>
+<span id="cb311-14"><a href="distatis.html#cb311-14" tabindex="-1"></a>    p_splus_augmented <span class="sc">+</span></span>
+<span id="cb311-15"><a href="distatis.html#cb311-15" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">data =</span> augmented_data, </span>
+<span id="cb311-16"><a href="distatis.html#cb311-16" tabindex="-1"></a>               <span class="at">shape =</span> <span class="dv">23</span>) <span class="sc">+</span> </span>
+<span id="cb311-17"><a href="distatis.html#cb311-17" tabindex="-1"></a>    <span class="fu">geom_segment</span>(<span class="at">data =</span> augmented_data,</span>
+<span id="cb311-18"><a href="distatis.html#cb311-18" tabindex="-1"></a>                 <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">Factor 1</span><span class="st">`</span>, <span class="at">y =</span> <span class="st">`</span><span class="at">Factor 2</span><span class="st">`</span>,</span>
+<span id="cb311-19"><a href="distatis.html#cb311-19" tabindex="-1"></a>                     <span class="at">xend =</span> xend, <span class="at">yend =</span> yend),</span>
+<span id="cb311-20"><a href="distatis.html#cb311-20" tabindex="-1"></a>                 <span class="at">size =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>)</span>
+<span id="cb311-21"><a href="distatis.html#cb311-21" tabindex="-1"></a>}</span></code></pre></div>
 <pre><code>## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
 ## ℹ Please use `linewidth` instead.
 ## This warning is displayed once every 8 hours.
 ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 ## generated.</code></pre>
-<p><img src="09-DISTATIS_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<p>These results look the same as HGH’s (good news!), and we can see our first two dimensions explain about 41% of the total variation in the sorts; this is fairly common for sorting, in which getting very high explanation in 2 dimensions is unlikely.</p>
-<p>Let’s look at how the products project into those first 2 dimensions.</p>
-<div class="sourceCode" id="cb304"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb304-1"><a href="distatis.html#cb304-1" tabindex="-1"></a>p_splus <span class="ot">&lt;-</span> </span>
-<span id="cb304-2"><a href="distatis.html#cb304-2" tabindex="-1"></a>  distatis_results<span class="sc">$</span>res4Splus<span class="sc">$</span>F <span class="sc">%&gt;%</span></span>
-<span id="cb304-3"><a href="distatis.html#cb304-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb304-4"><a href="distatis.html#cb304-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">Factor 1</span><span class="st">`</span>, <span class="at">y =</span> <span class="st">`</span><span class="at">Factor 2</span><span class="st">`</span>)) <span class="sc">+</span> </span>
-<span id="cb304-5"><a href="distatis.html#cb304-5" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">&quot;darkgrey&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb304-6"><a href="distatis.html#cb304-6" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">&quot;darkgrey&quot;</span>) <span class="sc">+</span></span>
-<span id="cb304-7"><a href="distatis.html#cb304-7" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb304-8"><a href="distatis.html#cb304-8" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> sample)) <span class="sc">+</span></span>
-<span id="cb304-9"><a href="distatis.html#cb304-9" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> </span>
-<span id="cb304-10"><a href="distatis.html#cb304-10" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
-<span id="cb304-11"><a href="distatis.html#cb304-11" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;DISTATIS plot for compromise dissimilarities&quot;</span>)</span>
-<span id="cb304-12"><a href="distatis.html#cb304-12" tabindex="-1"></a></span>
-<span id="cb304-13"><a href="distatis.html#cb304-13" tabindex="-1"></a>p_splus</span></code></pre></div>
-<p><img src="09-DISTATIS_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-<p>These results are the same as HGH’s, again, which is good news.</p>
-<p>HGH plotted the individual subjects as projected into this space. It’s a little annoying to do, and I do not think it is typically particularly illuminating, but we’ll do it here for practice.</p>
-<div class="sourceCode" id="cb305"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb305-1"><a href="distatis.html#cb305-1" tabindex="-1"></a>p_splus_augmented <span class="ot">&lt;-</span> p_splus</span>
-<span id="cb305-2"><a href="distatis.html#cb305-2" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">dim</span>(distatis_results<span class="sc">$</span>res4Splus<span class="sc">$</span>PartialF)[<span class="dv">3</span>]){</span>
-<span id="cb305-3"><a href="distatis.html#cb305-3" tabindex="-1"></a>  augmented_data <span class="ot">&lt;-</span> </span>
-<span id="cb305-4"><a href="distatis.html#cb305-4" tabindex="-1"></a>    distatis_results<span class="sc">$</span>res4Splus<span class="sc">$</span>PartialF[, , i] <span class="sc">%&gt;%</span></span>
-<span id="cb305-5"><a href="distatis.html#cb305-5" tabindex="-1"></a>    <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb305-6"><a href="distatis.html#cb305-6" tabindex="-1"></a>    <span class="co"># and then add the compromise barycenters so we can draw lines to them</span></span>
-<span id="cb305-7"><a href="distatis.html#cb305-7" tabindex="-1"></a>    <span class="fu">bind_cols</span>(</span>
-<span id="cb305-8"><a href="distatis.html#cb305-8" tabindex="-1"></a>      distatis_results<span class="sc">$</span>res4Splus<span class="sc">$</span>F <span class="sc">%&gt;%</span></span>
-<span id="cb305-9"><a href="distatis.html#cb305-9" tabindex="-1"></a>        <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb305-10"><a href="distatis.html#cb305-10" tabindex="-1"></a>        <span class="fu">rename</span>(<span class="at">xend =</span> <span class="dv">1</span>, <span class="at">yend =</span> <span class="dv">2</span>)</span>
-<span id="cb305-11"><a href="distatis.html#cb305-11" tabindex="-1"></a>    )</span>
-<span id="cb305-12"><a href="distatis.html#cb305-12" tabindex="-1"></a>  </span>
-<span id="cb305-13"><a href="distatis.html#cb305-13" tabindex="-1"></a>  p_splus_augmented <span class="ot">&lt;-</span> </span>
-<span id="cb305-14"><a href="distatis.html#cb305-14" tabindex="-1"></a>    p_splus_augmented <span class="sc">+</span></span>
-<span id="cb305-15"><a href="distatis.html#cb305-15" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">data =</span> augmented_data, </span>
-<span id="cb305-16"><a href="distatis.html#cb305-16" tabindex="-1"></a>               <span class="at">shape =</span> <span class="dv">23</span>) <span class="sc">+</span> </span>
-<span id="cb305-17"><a href="distatis.html#cb305-17" tabindex="-1"></a>    <span class="fu">geom_segment</span>(<span class="at">data =</span> augmented_data,</span>
-<span id="cb305-18"><a href="distatis.html#cb305-18" tabindex="-1"></a>                 <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">Factor 1</span><span class="st">`</span>, <span class="at">y =</span> <span class="st">`</span><span class="at">Factor 2</span><span class="st">`</span>,</span>
-<span id="cb305-19"><a href="distatis.html#cb305-19" tabindex="-1"></a>                     <span class="at">xend =</span> xend, <span class="at">yend =</span> yend),</span>
-<span id="cb305-20"><a href="distatis.html#cb305-20" tabindex="-1"></a>                 <span class="at">size =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>)</span>
-<span id="cb305-21"><a href="distatis.html#cb305-21" tabindex="-1"></a>}</span>
-<span id="cb305-22"><a href="distatis.html#cb305-22" tabindex="-1"></a></span>
-<span id="cb305-23"><a href="distatis.html#cb305-23" tabindex="-1"></a>p_splus_augmented <span class="sc">+</span> </span>
-<span id="cb305-24"><a href="distatis.html#cb305-24" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;DISTATIS compromise plot&quot;</span>,</span>
-<span id="cb305-25"><a href="distatis.html#cb305-25" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;Individual subjects are projected as hollow diamonds&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb313"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb313-1"><a href="distatis.html#cb313-1" tabindex="-1"></a>p_splus_augmented <span class="sc">+</span> </span>
+<span id="cb313-2"><a href="distatis.html#cb313-2" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;DISTATIS compromise plot&quot;</span>,</span>
+<span id="cb313-3"><a href="distatis.html#cb313-3" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;Individual subjects are projected as hollow diamonds&quot;</span>)</span></code></pre></div>
 <p><img src="09-DISTATIS_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>We can see how each wine’s position is actually the (weighted) barycenter of all the subject’s judgments about where that wine should be grouped. We could make this more easily readable by doing some work with colors and shapes, but I rarely find this kind of plot useful or informative. I leave this to the reader!</p>
 <p>Before we move on to examining the subjects and comparing to MDS, let’s take a look at the bootstrapped confidence ellipses we generated.</p>
-<div class="sourceCode" id="cb306"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb306-1"><a href="distatis.html#cb306-1" tabindex="-1"></a><span class="co"># We will need to reshape these arrays into a tibble that we can more easily</span></span>
-<span id="cb306-2"><a href="distatis.html#cb306-2" tabindex="-1"></a><span class="co"># feed into `stat_ellipse()`</span></span>
-<span id="cb306-3"><a href="distatis.html#cb306-3" tabindex="-1"></a></span>
-<span id="cb306-4"><a href="distatis.html#cb306-4" tabindex="-1"></a><span class="co"># I hate converting arrays to tibbles - if anyone has a better way than a loop,</span></span>
-<span id="cb306-5"><a href="distatis.html#cb306-5" tabindex="-1"></a><span class="co"># let me know</span></span>
-<span id="cb306-6"><a href="distatis.html#cb306-6" tabindex="-1"></a>boot_tbl <span class="ot">&lt;-</span> <span class="fu">tibble</span>()</span>
-<span id="cb306-7"><a href="distatis.html#cb306-7" tabindex="-1"></a></span>
-<span id="cb306-8"><a href="distatis.html#cb306-8" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>){</span>
-<span id="cb306-9"><a href="distatis.html#cb306-9" tabindex="-1"></a>  boot_tbl <span class="ot">&lt;-</span> </span>
-<span id="cb306-10"><a href="distatis.html#cb306-10" tabindex="-1"></a>    <span class="fu">bind_rows</span>(boot_tbl,</span>
-<span id="cb306-11"><a href="distatis.html#cb306-11" tabindex="-1"></a>              distatis_boots[, , i] <span class="sc">%&gt;%</span></span>
-<span id="cb306-12"><a href="distatis.html#cb306-12" tabindex="-1"></a>                <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;sample&quot;</span>))</span>
-<span id="cb306-13"><a href="distatis.html#cb306-13" tabindex="-1"></a>}</span>
-<span id="cb306-14"><a href="distatis.html#cb306-14" tabindex="-1"></a></span>
-<span id="cb306-15"><a href="distatis.html#cb306-15" tabindex="-1"></a>p_splus_boots <span class="ot">&lt;-</span> </span>
-<span id="cb306-16"><a href="distatis.html#cb306-16" tabindex="-1"></a>  distatis_results<span class="sc">$</span>res4Splus<span class="sc">$</span>F <span class="sc">%&gt;%</span></span>
-<span id="cb306-17"><a href="distatis.html#cb306-17" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb306-18"><a href="distatis.html#cb306-18" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">Factor 1</span><span class="st">`</span>, <span class="at">y =</span> <span class="st">`</span><span class="at">Factor 2</span><span class="st">`</span>)) <span class="sc">+</span> </span>
-<span id="cb306-19"><a href="distatis.html#cb306-19" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">&quot;darkgrey&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb306-20"><a href="distatis.html#cb306-20" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">&quot;darkgrey&quot;</span>) <span class="sc">+</span></span>
-<span id="cb306-21"><a href="distatis.html#cb306-21" tabindex="-1"></a>  <span class="fu">stat_ellipse</span>(<span class="at">data =</span> boot_tbl,</span>
-<span id="cb306-22"><a href="distatis.html#cb306-22" tabindex="-1"></a>               <span class="fu">aes</span>(<span class="at">fill =</span> sample), </span>
-<span id="cb306-23"><a href="distatis.html#cb306-23" tabindex="-1"></a>               <span class="at">show.legend =</span> <span class="cn">FALSE</span>, </span>
-<span id="cb306-24"><a href="distatis.html#cb306-24" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">&quot;polygon&quot;</span>,</span>
-<span id="cb306-25"><a href="distatis.html#cb306-25" tabindex="-1"></a>               <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>) <span class="sc">+</span></span>
-<span id="cb306-26"><a href="distatis.html#cb306-26" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> sample), <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
-<span id="cb306-27"><a href="distatis.html#cb306-27" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> sample)) <span class="sc">+</span></span>
-<span id="cb306-28"><a href="distatis.html#cb306-28" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> </span>
-<span id="cb306-29"><a href="distatis.html#cb306-29" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
-<span id="cb306-30"><a href="distatis.html#cb306-30" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;DISTATIS compromise plot with bootstrapped ellipses&quot;</span>) <span class="sc">+</span></span>
-<span id="cb306-31"><a href="distatis.html#cb306-31" tabindex="-1"></a>  <span class="fu">scale_color_viridis_d</span>() <span class="sc">+</span> </span>
-<span id="cb306-32"><a href="distatis.html#cb306-32" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>()</span>
-<span id="cb306-33"><a href="distatis.html#cb306-33" tabindex="-1"></a></span>
-<span id="cb306-34"><a href="distatis.html#cb306-34" tabindex="-1"></a>p_splus_boots</span></code></pre></div>
+<div class="sourceCode" id="cb314"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb314-1"><a href="distatis.html#cb314-1" tabindex="-1"></a><span class="co"># We will need to reshape these arrays into a tibble that we can more easily</span></span>
+<span id="cb314-2"><a href="distatis.html#cb314-2" tabindex="-1"></a><span class="co"># feed into `stat_ellipse()`</span></span>
+<span id="cb314-3"><a href="distatis.html#cb314-3" tabindex="-1"></a></span>
+<span id="cb314-4"><a href="distatis.html#cb314-4" tabindex="-1"></a><span class="co"># I hate converting arrays to tibbles - if anyone has a better way than a loop,</span></span>
+<span id="cb314-5"><a href="distatis.html#cb314-5" tabindex="-1"></a><span class="co"># let me know</span></span>
+<span id="cb314-6"><a href="distatis.html#cb314-6" tabindex="-1"></a>boot_tbl <span class="ot">&lt;-</span> <span class="fu">tibble</span>()</span>
+<span id="cb314-7"><a href="distatis.html#cb314-7" tabindex="-1"></a></span>
+<span id="cb314-8"><a href="distatis.html#cb314-8" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>){</span>
+<span id="cb314-9"><a href="distatis.html#cb314-9" tabindex="-1"></a>  boot_tbl <span class="ot">&lt;-</span> </span>
+<span id="cb314-10"><a href="distatis.html#cb314-10" tabindex="-1"></a>    <span class="fu">bind_rows</span>(boot_tbl,</span>
+<span id="cb314-11"><a href="distatis.html#cb314-11" tabindex="-1"></a>              distatis_boots[, , i] <span class="sc">%&gt;%</span></span>
+<span id="cb314-12"><a href="distatis.html#cb314-12" tabindex="-1"></a>                <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;sample&quot;</span>))</span>
+<span id="cb314-13"><a href="distatis.html#cb314-13" tabindex="-1"></a>}</span>
+<span id="cb314-14"><a href="distatis.html#cb314-14" tabindex="-1"></a></span>
+<span id="cb314-15"><a href="distatis.html#cb314-15" tabindex="-1"></a>p_splus_boots <span class="ot">&lt;-</span> </span>
+<span id="cb314-16"><a href="distatis.html#cb314-16" tabindex="-1"></a>  distatis_results<span class="sc">$</span>res4Splus<span class="sc">$</span>F <span class="sc">%&gt;%</span></span>
+<span id="cb314-17"><a href="distatis.html#cb314-17" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb314-18"><a href="distatis.html#cb314-18" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">Factor 1</span><span class="st">`</span>, <span class="at">y =</span> <span class="st">`</span><span class="at">Factor 2</span><span class="st">`</span>)) <span class="sc">+</span> </span>
+<span id="cb314-19"><a href="distatis.html#cb314-19" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">&quot;darkgrey&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb314-20"><a href="distatis.html#cb314-20" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">&quot;darkgrey&quot;</span>) <span class="sc">+</span></span>
+<span id="cb314-21"><a href="distatis.html#cb314-21" tabindex="-1"></a>  <span class="fu">stat_ellipse</span>(<span class="at">data =</span> boot_tbl,</span>
+<span id="cb314-22"><a href="distatis.html#cb314-22" tabindex="-1"></a>               <span class="fu">aes</span>(<span class="at">fill =</span> sample), </span>
+<span id="cb314-23"><a href="distatis.html#cb314-23" tabindex="-1"></a>               <span class="at">show.legend =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb314-24"><a href="distatis.html#cb314-24" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">&quot;polygon&quot;</span>,</span>
+<span id="cb314-25"><a href="distatis.html#cb314-25" tabindex="-1"></a>               <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb314-26"><a href="distatis.html#cb314-26" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> sample), <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb314-27"><a href="distatis.html#cb314-27" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> sample)) <span class="sc">+</span></span>
+<span id="cb314-28"><a href="distatis.html#cb314-28" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> </span>
+<span id="cb314-29"><a href="distatis.html#cb314-29" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb314-30"><a href="distatis.html#cb314-30" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;DISTATIS compromise plot with bootstrapped ellipses&quot;</span>) <span class="sc">+</span></span>
+<span id="cb314-31"><a href="distatis.html#cb314-31" tabindex="-1"></a>  <span class="fu">scale_color_viridis_d</span>() <span class="sc">+</span> </span>
+<span id="cb314-32"><a href="distatis.html#cb314-32" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>()</span>
+<span id="cb314-33"><a href="distatis.html#cb314-33" tabindex="-1"></a></span>
+<span id="cb314-34"><a href="distatis.html#cb314-34" tabindex="-1"></a>p_splus_boots</span></code></pre></div>
 <p><img src="09-DISTATIS_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p>With bootstrapping, we can see that there are 4 distinct groups of samples that don’t appear to overlap even when we perturb the original data.</p>
 <p>We can now turn our consideration to the subjects: how much did they agree? We use the <span class="math inline">\(RV\)</span> matrix to examine this.</p>
-<div class="sourceCode" id="cb307"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb307-1"><a href="distatis.html#cb307-1" tabindex="-1"></a>distatis_results<span class="sc">$</span>res4Cmat<span class="sc">$</span>C <span class="sc">%&gt;%</span></span>
-<span id="cb307-2"><a href="distatis.html#cb307-2" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb315"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb315-1"><a href="distatis.html#cb315-1" tabindex="-1"></a>distatis_results<span class="sc">$</span>res4Cmat<span class="sc">$</span>C <span class="sc">%&gt;%</span></span>
+<span id="cb315-2"><a href="distatis.html#cb315-2" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">3</span>)</span></code></pre></div>
 <pre><code>##        263  1331  1400  1401  1402  1404  1405  1408  1409  1412  1413  1414
 ## 263  1.000 0.461 0.564 0.855 0.718 0.778 0.568 0.730 0.333 0.651 0.569 0.614
 ## 1331 0.461 1.000 0.452 0.333 0.476 0.533 0.511 0.464 0.419 0.322 0.214 0.710
@@ -569,84 +574,84 @@ div.csl-indent {
 ## 1417 0.378 0.626 1.000</code></pre>
 <p><span class="math inline">\(RV\)</span> is a generalization of the concept of (Pearson) correlation to multivariate data. <span class="math inline">\(RV\)</span> coefficients between two matrices can only be positive, and is constrained to the <span class="math inline">\([0,1]\)</span> interval, with higher values indicating more agreement.</p>
 <p>If we use eigendecomposition on the <span class="math inline">\(RV\)</span> matrix, the coordinates of each subject on the first dimension indicate their maximum agreement. We can use the first 2 dimensions to examine whether there are groups of subjects, as well as how well they agree in general:</p>
-<div class="sourceCode" id="cb309"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb309-1"><a href="distatis.html#cb309-1" tabindex="-1"></a>p_cmat <span class="ot">&lt;-</span></span>
-<span id="cb309-2"><a href="distatis.html#cb309-2" tabindex="-1"></a>  distatis_results<span class="sc">$</span>res4Cmat<span class="sc">$</span>G <span class="sc">%&gt;%</span></span>
-<span id="cb309-3"><a href="distatis.html#cb309-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;subject&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb309-4"><a href="distatis.html#cb309-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">dim 1</span><span class="st">`</span>, <span class="at">y =</span> <span class="st">`</span><span class="at">dim 2</span><span class="st">`</span>)) <span class="sc">+</span> </span>
-<span id="cb309-5"><a href="distatis.html#cb309-5" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">&quot;darkgrey&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb309-6"><a href="distatis.html#cb309-6" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">&quot;darkgrey&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb309-7"><a href="distatis.html#cb309-7" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb309-8"><a href="distatis.html#cb309-8" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> subject)) <span class="sc">+</span> </span>
-<span id="cb309-9"><a href="distatis.html#cb309-9" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span></span>
-<span id="cb309-10"><a href="distatis.html#cb309-10" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb309-11"><a href="distatis.html#cb309-11" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;DISTATIS subjects plot&quot;</span>)</span>
-<span id="cb309-12"><a href="distatis.html#cb309-12" tabindex="-1"></a>  </span>
-<span id="cb309-13"><a href="distatis.html#cb309-13" tabindex="-1"></a>p_cmat</span></code></pre></div>
+<div class="sourceCode" id="cb317"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb317-1"><a href="distatis.html#cb317-1" tabindex="-1"></a>p_cmat <span class="ot">&lt;-</span></span>
+<span id="cb317-2"><a href="distatis.html#cb317-2" tabindex="-1"></a>  distatis_results<span class="sc">$</span>res4Cmat<span class="sc">$</span>G <span class="sc">%&gt;%</span></span>
+<span id="cb317-3"><a href="distatis.html#cb317-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;subject&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb317-4"><a href="distatis.html#cb317-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">dim 1</span><span class="st">`</span>, <span class="at">y =</span> <span class="st">`</span><span class="at">dim 2</span><span class="st">`</span>)) <span class="sc">+</span> </span>
+<span id="cb317-5"><a href="distatis.html#cb317-5" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">&quot;darkgrey&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb317-6"><a href="distatis.html#cb317-6" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">&quot;darkgrey&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb317-7"><a href="distatis.html#cb317-7" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb317-8"><a href="distatis.html#cb317-8" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> subject)) <span class="sc">+</span> </span>
+<span id="cb317-9"><a href="distatis.html#cb317-9" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span></span>
+<span id="cb317-10"><a href="distatis.html#cb317-10" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb317-11"><a href="distatis.html#cb317-11" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;DISTATIS subjects plot&quot;</span>)</span>
+<span id="cb317-12"><a href="distatis.html#cb317-12" tabindex="-1"></a>  </span>
+<span id="cb317-13"><a href="distatis.html#cb317-13" tabindex="-1"></a>p_cmat</span></code></pre></div>
 <p><img src="09-DISTATIS_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p>Subjects’ positions on the x-axis here are proportional to the weight their sorts receive in the final consensus plot–we can see that overall subjects largely agree, with weights between just less than <code>0.5</code> up to about <code>0.85</code>. On the second dimension we do see a fair amount of spread, so it is obvious that there is some disagreement among subjects. However, without some grouping variable (like level of experience in winemaking), we can’t interpret whether this disagreement is systematic.</p>
 </div>
 <div id="comparison-to-mds" class="section level2 hasAnchor" number="9.3">
 <h2><span class="header-section-number">9.3</span> Comparison to MDS<a href="distatis.html#comparison-to-mds" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>HGH goes on to also analyze these data via metric and non-metric MDS. We will use metric MDS for convenience. Because MDS requires a distance matrix, we have to convert our original sorting data into some kind of consensus. HGH used the <code>cluster::daisy()</code> function. Reading the <code>?daisy</code> file, it appears that this is a general dissimilarity tool. We’ll compare it to simply summing up the observed groups.</p>
-<div class="sourceCode" id="cb310"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb310-1"><a href="distatis.html#cb310-1" tabindex="-1"></a>daisy_data <span class="ot">&lt;-</span> </span>
-<span id="cb310-2"><a href="distatis.html#cb310-2" tabindex="-1"></a>  sorting_data <span class="sc">%&gt;%</span> </span>
-<span id="cb310-3"><a href="distatis.html#cb310-3" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb310-4"><a href="distatis.html#cb310-4" tabindex="-1"></a>  <span class="co"># `daisy()` does not seem to accept string data</span></span>
-<span id="cb310-5"><a href="distatis.html#cb310-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span><span class="fu">as.factor</span>(.))) <span class="sc">%&gt;%</span></span>
-<span id="cb310-6"><a href="distatis.html#cb310-6" tabindex="-1"></a>  cluster<span class="sc">::</span><span class="fu">daisy</span>()</span>
-<span id="cb310-7"><a href="distatis.html#cb310-7" tabindex="-1"></a></span>
-<span id="cb310-8"><a href="distatis.html#cb310-8" tabindex="-1"></a>simple_data <span class="ot">&lt;-</span> </span>
-<span id="cb310-9"><a href="distatis.html#cb310-9" tabindex="-1"></a>  sorting_data <span class="sc">%&gt;%</span></span>
-<span id="cb310-10"><a href="distatis.html#cb310-10" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb310-11"><a href="distatis.html#cb310-11" tabindex="-1"></a>  <span class="fu">DistanceFromSort</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb310-12"><a href="distatis.html#cb310-12" tabindex="-1"></a>  <span class="co"># Here we summ across the 3rd dimension of the array, &quot;squishing&quot; it </span></span>
-<span id="cb310-13"><a href="distatis.html#cb310-13" tabindex="-1"></a>  <span class="fu">apply</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), sum) <span class="sc">%&gt;%</span></span>
-<span id="cb310-14"><a href="distatis.html#cb310-14" tabindex="-1"></a>  <span class="fu">dist</span>(<span class="at">method =</span> <span class="st">&quot;max&quot;</span>)</span>
-<span id="cb310-15"><a href="distatis.html#cb310-15" tabindex="-1"></a></span>
-<span id="cb310-16"><a href="distatis.html#cb310-16" tabindex="-1"></a>p_mds_daisy <span class="ot">&lt;-</span> </span>
-<span id="cb310-17"><a href="distatis.html#cb310-17" tabindex="-1"></a>  daisy_data <span class="sc">%&gt;%</span></span>
-<span id="cb310-18"><a href="distatis.html#cb310-18" tabindex="-1"></a>  <span class="fu">cmdscale</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb310-19"><a href="distatis.html#cb310-19" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb310-20"><a href="distatis.html#cb310-20" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> V1, <span class="at">y =</span> V2)) <span class="sc">+</span> </span>
-<span id="cb310-21"><a href="distatis.html#cb310-21" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb310-22"><a href="distatis.html#cb310-22" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> wine)) <span class="sc">+</span> </span>
-<span id="cb310-23"><a href="distatis.html#cb310-23" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span> </span>
-<span id="cb310-24"><a href="distatis.html#cb310-24" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Dimension 1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dimension 2&quot;</span>,</span>
-<span id="cb310-25"><a href="distatis.html#cb310-25" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;MDS with dissimilarities derived from Gower&#39;s distance&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb310-26"><a href="distatis.html#cb310-26" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
-<span id="cb310-27"><a href="distatis.html#cb310-27" tabindex="-1"></a></span>
-<span id="cb310-28"><a href="distatis.html#cb310-28" tabindex="-1"></a>p_mds_simple <span class="ot">&lt;-</span> </span>
-<span id="cb310-29"><a href="distatis.html#cb310-29" tabindex="-1"></a>  simple_data <span class="sc">%&gt;%</span></span>
-<span id="cb310-30"><a href="distatis.html#cb310-30" tabindex="-1"></a>  <span class="fu">cmdscale</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb310-31"><a href="distatis.html#cb310-31" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb310-32"><a href="distatis.html#cb310-32" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> V1, <span class="at">y =</span> V2)) <span class="sc">+</span> </span>
-<span id="cb310-33"><a href="distatis.html#cb310-33" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb310-34"><a href="distatis.html#cb310-34" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> wine)) <span class="sc">+</span> </span>
-<span id="cb310-35"><a href="distatis.html#cb310-35" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span> </span>
-<span id="cb310-36"><a href="distatis.html#cb310-36" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Dimension 1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dimension 2&quot;</span>,</span>
-<span id="cb310-37"><a href="distatis.html#cb310-37" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;MDS with dissimilarities from simply summing sorts&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb310-38"><a href="distatis.html#cb310-38" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
-<span id="cb310-39"><a href="distatis.html#cb310-39" tabindex="-1"></a></span>
-<span id="cb310-40"><a href="distatis.html#cb310-40" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb310-41"><a href="distatis.html#cb310-41" tabindex="-1"></a></span>
-<span id="cb310-42"><a href="distatis.html#cb310-42" tabindex="-1"></a>p_mds_simple <span class="sc">+</span> p_mds_daisy</span></code></pre></div>
+<div class="sourceCode" id="cb318"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb318-1"><a href="distatis.html#cb318-1" tabindex="-1"></a>daisy_data <span class="ot">&lt;-</span> </span>
+<span id="cb318-2"><a href="distatis.html#cb318-2" tabindex="-1"></a>  sorting_data <span class="sc">%&gt;%</span> </span>
+<span id="cb318-3"><a href="distatis.html#cb318-3" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb318-4"><a href="distatis.html#cb318-4" tabindex="-1"></a>  <span class="co"># `daisy()` does not seem to accept string data</span></span>
+<span id="cb318-5"><a href="distatis.html#cb318-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span><span class="fu">as.factor</span>(.))) <span class="sc">%&gt;%</span></span>
+<span id="cb318-6"><a href="distatis.html#cb318-6" tabindex="-1"></a>  cluster<span class="sc">::</span><span class="fu">daisy</span>()</span>
+<span id="cb318-7"><a href="distatis.html#cb318-7" tabindex="-1"></a></span>
+<span id="cb318-8"><a href="distatis.html#cb318-8" tabindex="-1"></a>simple_data <span class="ot">&lt;-</span> </span>
+<span id="cb318-9"><a href="distatis.html#cb318-9" tabindex="-1"></a>  sorting_data <span class="sc">%&gt;%</span></span>
+<span id="cb318-10"><a href="distatis.html#cb318-10" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb318-11"><a href="distatis.html#cb318-11" tabindex="-1"></a>  <span class="fu">DistanceFromSort</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb318-12"><a href="distatis.html#cb318-12" tabindex="-1"></a>  <span class="co"># Here we summ across the 3rd dimension of the array, &quot;squishing&quot; it </span></span>
+<span id="cb318-13"><a href="distatis.html#cb318-13" tabindex="-1"></a>  <span class="fu">apply</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), sum) <span class="sc">%&gt;%</span></span>
+<span id="cb318-14"><a href="distatis.html#cb318-14" tabindex="-1"></a>  <span class="fu">dist</span>(<span class="at">method =</span> <span class="st">&quot;max&quot;</span>)</span>
+<span id="cb318-15"><a href="distatis.html#cb318-15" tabindex="-1"></a></span>
+<span id="cb318-16"><a href="distatis.html#cb318-16" tabindex="-1"></a>p_mds_daisy <span class="ot">&lt;-</span> </span>
+<span id="cb318-17"><a href="distatis.html#cb318-17" tabindex="-1"></a>  daisy_data <span class="sc">%&gt;%</span></span>
+<span id="cb318-18"><a href="distatis.html#cb318-18" tabindex="-1"></a>  <span class="fu">cmdscale</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb318-19"><a href="distatis.html#cb318-19" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb318-20"><a href="distatis.html#cb318-20" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> V1, <span class="at">y =</span> V2)) <span class="sc">+</span> </span>
+<span id="cb318-21"><a href="distatis.html#cb318-21" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb318-22"><a href="distatis.html#cb318-22" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> wine)) <span class="sc">+</span> </span>
+<span id="cb318-23"><a href="distatis.html#cb318-23" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span> </span>
+<span id="cb318-24"><a href="distatis.html#cb318-24" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Dimension 1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dimension 2&quot;</span>,</span>
+<span id="cb318-25"><a href="distatis.html#cb318-25" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;MDS with dissimilarities derived from Gower&#39;s distance&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb318-26"><a href="distatis.html#cb318-26" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb318-27"><a href="distatis.html#cb318-27" tabindex="-1"></a></span>
+<span id="cb318-28"><a href="distatis.html#cb318-28" tabindex="-1"></a>p_mds_simple <span class="ot">&lt;-</span> </span>
+<span id="cb318-29"><a href="distatis.html#cb318-29" tabindex="-1"></a>  simple_data <span class="sc">%&gt;%</span></span>
+<span id="cb318-30"><a href="distatis.html#cb318-30" tabindex="-1"></a>  <span class="fu">cmdscale</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb318-31"><a href="distatis.html#cb318-31" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb318-32"><a href="distatis.html#cb318-32" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> V1, <span class="at">y =</span> V2)) <span class="sc">+</span> </span>
+<span id="cb318-33"><a href="distatis.html#cb318-33" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb318-34"><a href="distatis.html#cb318-34" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> wine)) <span class="sc">+</span> </span>
+<span id="cb318-35"><a href="distatis.html#cb318-35" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span> </span>
+<span id="cb318-36"><a href="distatis.html#cb318-36" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Dimension 1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dimension 2&quot;</span>,</span>
+<span id="cb318-37"><a href="distatis.html#cb318-37" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;MDS with dissimilarities from simply summing sorts&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb318-38"><a href="distatis.html#cb318-38" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb318-39"><a href="distatis.html#cb318-39" tabindex="-1"></a></span>
+<span id="cb318-40"><a href="distatis.html#cb318-40" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb318-41"><a href="distatis.html#cb318-41" tabindex="-1"></a></span>
+<span id="cb318-42"><a href="distatis.html#cb318-42" tabindex="-1"></a>p_mds_simple <span class="sc">+</span> p_mds_daisy</span></code></pre></div>
 <p><img src="09-DISTATIS_files/figure-html/unnamed-chunk-12-1.png" width="768" /></p>
 <p>We can see that the dissimilarities produced from <code>daisy()</code> and from our simple sum of dissimilarities are the same except for a scale constant.</p>
 <p>Finally, we can compare this alignment to that from DISTATIS:</p>
-<div class="sourceCode" id="cb311"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb311-1"><a href="distatis.html#cb311-1" tabindex="-1"></a>p_splus <span class="sc">+</span> p_mds_simple</span></code></pre></div>
+<div class="sourceCode" id="cb319"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb319-1"><a href="distatis.html#cb319-1" tabindex="-1"></a>p_splus <span class="sc">+</span> p_mds_simple</span></code></pre></div>
 <p><img src="09-DISTATIS_files/figure-html/unnamed-chunk-13-1.png" width="768" /></p>
-<p>We can see that overall our results are extremely similar, although there are some changes (the incerased spread between the Merlot wines in the DISTATIS plot, and the decreased spread between the Refosco wines).</p>
+<p>We can see that overall our results are extremely similar, although there are some changes (the increased spread between the Merlot wines in the DISTATIS plot, and the decreased spread between the Refosco wines).</p>
 </div>
 <div id="packages-used-in-this-chapter-8" class="section level2 hasAnchor" number="9.4">
 <h2><span class="header-section-number">9.4</span> Packages used in this chapter<a href="distatis.html#packages-used-in-this-chapter-8" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb312"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb312-1"><a href="distatis.html#cb312-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
-<pre><code>## R version 4.3.1 (2023-06-16)
-## Platform: aarch64-apple-darwin20 (64-bit)
-## Running under: macOS Ventura 13.6.1
+<div class="sourceCode" id="cb320"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb320-1"><a href="distatis.html#cb320-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.4.1 (2024-06-14)
+## Platform: x86_64-apple-darwin20
+## Running under: macOS 15.2
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -655,32 +660,32 @@ div.csl-indent {
 ## tzcode source: internal
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] stats     graphics  grDevices datasets  utils     methods   base     
 ## 
 ## other attached packages:
-##  [1] patchwork_1.1.2 DistatisR_1.1.1 here_1.0.1      lubridate_1.9.2
-##  [5] forcats_1.0.0   stringr_1.5.0   dplyr_1.1.2     purrr_1.0.1    
-##  [9] readr_2.1.4     tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.3  
+##  [1] patchwork_1.2.0 DistatisR_1.1.1 here_1.0.1      lubridate_1.9.3
+##  [5] forcats_1.0.0   stringr_1.5.1   dplyr_1.1.4     purrr_1.0.2    
+##  [9] readr_2.1.5     tidyr_1.3.1     tibble_3.2.1    ggplot2_3.5.1  
 ## [13] tidyverse_2.0.0
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] gtable_0.3.4       xfun_0.39          bslib_0.5.1        ggrepel_0.9.3     
-##  [5] lattice_0.21-8     tzdb_0.4.0         vctrs_0.6.3        tools_4.3.1       
-##  [9] generics_0.1.3     parallel_4.3.1     fansi_1.0.4        cluster_2.1.4     
+##  [1] gtable_0.3.5       xfun_0.49          bslib_0.7.0        ggrepel_0.9.5     
+##  [5] lattice_0.22-6     tzdb_0.4.0         vctrs_0.6.5        tools_4.4.1       
+##  [9] generics_0.1.3     parallel_4.4.1     fansi_1.0.6        cluster_2.1.6     
 ## [13] highr_0.10         janeaustenr_1.0.0  pkgconfig_2.0.3    prettyGraphs_2.1.6
-## [17] tokenizers_0.3.0   Matrix_1.6-0       readxl_1.4.3       lifecycle_1.0.3   
-## [21] compiler_4.3.1     farver_2.1.1       munsell_0.5.0      carData_3.0-5     
-## [25] htmltools_0.5.6    SnowballC_0.7.1    sass_0.4.7         yaml_2.3.7        
-## [29] tidytext_0.4.1     pillar_1.9.0       car_3.1-2          crayon_1.5.2      
-## [33] jquerylib_0.1.4    MASS_7.3-60        cachem_1.0.8       abind_1.4-5       
-## [37] tidyselect_1.2.0   digest_0.6.33      stringi_1.7.12     bookdown_0.37     
-## [41] labeling_0.4.3     rprojroot_2.0.3    fastmap_1.1.1      grid_4.3.1        
-## [45] colorspace_2.1-0   cli_3.6.1          magrittr_2.0.3     utf8_1.2.3        
-## [49] withr_2.5.0        scales_1.2.1       bit64_4.0.5        timechange_0.2.0  
-## [53] rmarkdown_2.23     bit_4.0.5          cellranger_1.1.0   hms_1.1.3         
-## [57] evaluate_0.21      knitr_1.43         viridisLite_0.4.2  rlang_1.1.1       
-## [61] Rcpp_1.0.11        glue_1.6.2         rstudioapi_0.15.0  vroom_1.6.3       
-## [65] jsonlite_1.8.7     R6_2.5.1</code></pre>
+## [17] tokenizers_0.3.0   Matrix_1.7-0       readxl_1.4.3       lifecycle_1.0.4   
+## [21] farver_2.1.2       compiler_4.4.1     munsell_0.5.1      carData_3.0-5     
+## [25] htmltools_0.5.8.1  SnowballC_0.7.1    sass_0.4.9         yaml_2.3.8        
+## [29] tidytext_0.4.2     pillar_1.9.0       car_3.1-2          crayon_1.5.2      
+## [33] jquerylib_0.1.4    MASS_7.3-60.2      cachem_1.1.0       abind_1.4-5       
+## [37] tidyselect_1.2.1   digest_0.6.37      stringi_1.8.4      bookdown_0.39     
+## [41] labeling_0.4.3     rprojroot_2.0.4    fastmap_1.2.0      grid_4.4.1        
+## [45] colorspace_2.1-0   cli_3.6.3          magrittr_2.0.3     utf8_1.2.4        
+## [49] withr_3.0.0        scales_1.3.0       bit64_4.0.5        timechange_0.3.0  
+## [53] rmarkdown_2.27     bit_4.0.5          cellranger_1.1.0   hms_1.1.3         
+## [57] evaluate_0.23      knitr_1.46         viridisLite_0.4.2  rlang_1.1.4       
+## [61] Rcpp_1.0.13        glue_1.7.0         renv_1.0.9         rstudioapi_0.16.0 
+## [65] vroom_1.6.5        jsonlite_1.8.8     R6_2.5.1</code></pre>
 
 </div>
 </div>

@@ -13,7 +13,7 @@ However, the same authors point out several advantages of GPA, and so it is wort
 
 
 
-```r
+``` r
 library(tidyverse)
 library(here)
 library(FactoMineR)
@@ -41,7 +41,7 @@ consumer_data <-
 We then follow steps that will seem very familiar from MFA:
 
 
-```r
+``` r
 preference_gpa <- 
   descriptive_data %>%
   group_by(ProductName) %>%
@@ -63,7 +63,7 @@ I believe that the GPA alignment is followed by a PCA on the consensus positions
 Typically we haven't even wanted to *look* at base-`R` plots, but it is worthwhile to note that we can tell `GPA()` is less loved, because the function still outputs these, instead of the `factoextra`-flavored plots that other `FactoMineR` functions like `MFA()` and `PCA()` give us:
 
 
-```r
+``` r
 plot(preference_gpa)
 ```
 
@@ -72,7 +72,7 @@ plot(preference_gpa)
 We know how to do better, though!
 
 
-```r
+``` r
 # The `$consensus` table gives us the center points
 p_gpa_base <- 
   preference_gpa$consensus %>%
@@ -100,7 +100,7 @@ p_gpa_base <-
 ## generated.
 ```
 
-```r
+``` r
 p_gpa_base
 ```
 
@@ -109,7 +109,7 @@ p_gpa_base
 We can then add layers showing the projected position of our two original tables:
 
 
-```r
+``` r
 p_gpa_partials <-
   tibble(type = c("consensus", "DA", "consumer"),
        coord = list(preference_gpa$consensus,
@@ -161,7 +161,7 @@ We can compare this to our MFA map for reference (and to see the similarity betw
 
 
 
-```r
+``` r
 library(patchwork)
 
 (p_gpa_partials + p_mfa) & 
@@ -177,7 +177,7 @@ We can see that we get close but not exactly similar configurations!
 Returning to our GPA solution, we can inspect how close our configurations are, using both $RV$ and Procrustean similarity coefficients:
 
 
-```r
+``` r
 preference_gpa$RV
 ```
 
@@ -187,7 +187,7 @@ preference_gpa$RV
 ## group.2 0.6674211 1.0000000
 ```
 
-```r
+``` r
 preference_gpa$simi
 ```
 
@@ -201,23 +201,23 @@ We've already encountered $RV$, but to be honest I am not entirely sure what the
 
 $$s(X,Y)=\frac{trace(\mathbf{X^TYH})}{\sqrt{trace(\mathbf{X^TX})}\sqrt{trace(\mathbf{Y^TY})}}$$
 
-This is clearly very close to the definition of the $RV$ coefficient, differing mainly in that the numerator is the Procrustes rotation that adjusts $\mathbf{Y}$ to $\mathbf{X}$, whereas for $RV$ the numerator instead represents the two double-centered cross-product matrices.  I am not sure what the Procrustes similarity emphasizes over the $RV$, but I believe it is more evenly influenced by dimensions in the data beyond the first principal component based on discussion in @tomicComparison2015].  So which should we pay attention to?  I don't have a good answer to that--it probably depends on the situation.
+This is clearly very close to the definition of the $RV$ coefficient, differing mainly in that the numerator is the Procrustes rotation that adjusts $\mathbf{Y}$ to $\mathbf{X}$, whereas for $RV$ the numerator instead represents the two double-centered cross-product matrices.  I am not sure what the Procrustes similarity emphasizes over the $RV$, but I believe it is more evenly influenced by dimensions in the data beyond the first principal component based on discussion in @tomicComparison2015.  So which should we pay attention to?  I don't have a good answer to that--it probably depends on the situation.
 
 ## Packages used in this chapter
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: aarch64-apple-darwin20 (64-bit)
-## Running under: macOS Ventura 13.6.1
+## R version 4.4.1 (2024-06-14)
+## Platform: x86_64-apple-darwin20
+## Running under: macOS 15.2
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -226,34 +226,34 @@ sessionInfo()
 ## tzcode source: internal
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] stats     graphics  grDevices datasets  utils     methods   base     
 ## 
 ## other attached packages:
-##  [1] patchwork_1.1.2 paletteer_1.5.0 FactoMineR_2.8  here_1.0.1     
-##  [5] lubridate_1.9.2 forcats_1.0.0   stringr_1.5.0   dplyr_1.1.2    
-##  [9] purrr_1.0.1     readr_2.1.4     tidyr_1.3.0     tibble_3.2.1   
-## [13] ggplot2_3.4.3   tidyverse_2.0.0
+##  [1] patchwork_1.2.0 paletteer_1.6.0 FactoMineR_2.11 here_1.0.1     
+##  [5] lubridate_1.9.3 forcats_1.0.0   stringr_1.5.1   dplyr_1.1.4    
+##  [9] purrr_1.0.2     readr_2.1.5     tidyr_1.3.1     tibble_3.2.1   
+## [13] ggplot2_3.5.1   tidyverse_2.0.0
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] gtable_0.3.4         xfun_0.39            htmlwidgets_1.6.2   
-##  [4] ggrepel_0.9.3        lattice_0.21-8       tzdb_0.4.0          
-##  [7] vctrs_0.6.3          tools_4.3.1          generics_0.1.3      
-## [10] parallel_4.3.1       fansi_1.0.4          highr_0.10          
-## [13] cluster_2.1.4        pkgconfig_2.0.3      scatterplot3d_0.3-44
-## [16] lifecycle_1.0.3      farver_2.1.1         compiler_4.3.1      
-## [19] munsell_0.5.0        leaps_3.1            htmltools_0.5.6     
-## [22] yaml_2.3.7           pillar_1.9.0         crayon_1.5.2        
-## [25] MASS_7.3-60          flashClust_1.01-2    DT_0.28             
-## [28] tidyselect_1.2.0     digest_0.6.33        mvtnorm_1.2-2       
-## [31] stringi_1.7.12       rematch2_2.1.2       bookdown_0.37       
-## [34] labeling_0.4.3       rprojroot_2.0.3      fastmap_1.1.1       
-## [37] grid_4.3.1           colorspace_2.1-0     cli_3.6.1           
-## [40] magrittr_2.0.3       utf8_1.2.3           withr_2.5.0         
-## [43] scales_1.2.1         bit64_4.0.5          estimability_1.4.1  
-## [46] timechange_0.2.0     rmarkdown_2.23       emmeans_1.8.7       
-## [49] bit_4.0.5            hms_1.1.3            coda_0.19-4         
-## [52] evaluate_0.21        knitr_1.43           rlang_1.1.1         
-## [55] Rcpp_1.0.11          xtable_1.8-4         glue_1.6.2          
-## [58] rstudioapi_0.15.0    vroom_1.6.3          R6_2.5.1            
-## [61] prismatic_1.1.1      multcompView_0.1-9
+##  [1] gtable_0.3.5         xfun_0.49            htmlwidgets_1.6.4   
+##  [4] ggrepel_0.9.5        lattice_0.22-6       tzdb_0.4.0          
+##  [7] vctrs_0.6.5          tools_4.4.1          generics_0.1.3      
+## [10] parallel_4.4.1       fansi_1.0.6          highr_0.10          
+## [13] cluster_2.1.6        pkgconfig_2.0.3      scatterplot3d_0.3-44
+## [16] lifecycle_1.0.4      farver_2.1.2         compiler_4.4.1      
+## [19] munsell_0.5.1        leaps_3.1            htmltools_0.5.8.1   
+## [22] yaml_2.3.8           pillar_1.9.0         crayon_1.5.2        
+## [25] MASS_7.3-60.2        flashClust_1.01-2    DT_0.33             
+## [28] tidyselect_1.2.1     digest_0.6.37        mvtnorm_1.2-5       
+## [31] stringi_1.8.4        rematch2_2.1.2       bookdown_0.39       
+## [34] labeling_0.4.3       rprojroot_2.0.4      fastmap_1.2.0       
+## [37] grid_4.4.1           colorspace_2.1-0     cli_3.6.3           
+## [40] magrittr_2.0.3       utf8_1.2.4           withr_3.0.0         
+## [43] scales_1.3.0         bit64_4.0.5          estimability_1.5.1  
+## [46] timechange_0.3.0     rmarkdown_2.27       emmeans_1.10.2      
+## [49] bit_4.0.5            hms_1.1.3            coda_0.19-4.1       
+## [52] evaluate_0.23        knitr_1.46           rlang_1.1.4         
+## [55] Rcpp_1.0.13          xtable_1.8-4         glue_1.7.0          
+## [58] renv_1.0.9           rstudioapi_0.16.0    vroom_1.6.5         
+## [61] R6_2.5.1             prismatic_1.1.2      multcompView_0.1-10
 ```

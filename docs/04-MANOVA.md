@@ -9,7 +9,7 @@ In this extremely brief section we'll apply a multivariate ANOVA (MANOVA) to our
 First, let's reload our packages and data:
 
 
-```r
+``` r
 library(tidyverse)
 library(here)
 
@@ -27,7 +27,7 @@ The syntax for MANOVA in `R` is very similar to that for ANOVA.  However, as far
 Instead, we have to supply the multivariate outcomes as a (named) matrix *in the same (case or wide) order* as the categorical predictors.  Since we don't really need this for anything else, we'll use nested function calls.  
 
 
-```r
+``` r
 manova_res <- 
   manova(as.matrix(descriptive_data[, 4:23]) ~ (ProductName + NJ + NR)^2, 
          data = descriptive_data)
@@ -36,7 +36,7 @@ manova_res <-
 We can get a summary MANOVA table using the typical `summary()` function.  
 
 
-```r
+``` r
 summary(manova_res, test = "W")
 ```
 
@@ -66,7 +66,7 @@ In typical ANOVA, we are interested in whether knowing the categorical predictor
 What are we measuring in MANOVA?  Well, if we treat our data in the wide, case-based way, we are asking whether the categorical predictor variables tell us anything about *all of the expected values, simultaneously*.  This makes a lot of sense for our particular case: we might expect correlations among variables, and so rather than investigating variables one-by-one, as we did when we ran ANOVA, we want to take advantage of this *correlation structure*.
 
 
-```r
+``` r
 descriptive_data[, 4:23] %>%
   cor() %>% 
   heatmap(revC = TRUE)
@@ -77,7 +77,7 @@ descriptive_data[, 4:23] %>%
 Without getting too outside our remit in the **R Opus**, MANOVA attemps to explain the variation of individual observations from their *group mean-vectors*.  A "mean-vector" is just the mean of all dependent variables for a particular set of classifying categorical predictors.  So, for our data, the dependent variables are all the sensory variables.  We (generally) are interested in the variation around the **wine** mean-vectors.  We can see these easily using the split-apply-combine approach:
 
 
-```r
+``` r
 wine_mean_vectors <- 
   descriptive_data %>%
   group_by(ProductName) %>%
@@ -107,7 +107,7 @@ wine_mean_vectors
 We want to know whether an observation from a particular wine is significantly "closer" to that wine's mean-vector than it is to other wine's mean-vectors.  We test this using the [Mahalanobis Distance](https://en.wikipedia.org/wiki/Mahalanobis_distance), which is a generalization of the normalized distance (or *z*-score) from univariate statistics.  Intuitively, we ask about the (multi-dimensional) distance of an observation from a mean-vector, divided by the covariance of the observations (the multivariate equivalent of standard deviation).  Without getting into mathematics, we can ask about this distance using the `mahalanobis()` function.
 
 
-```r
+``` r
 distance_from_grand_mean <- 
   descriptive_data[, -(1:3)] %>%
   as.matrix() %>%
@@ -135,7 +135,7 @@ descriptive_data %>%
 In this plot, we're able to see how far each individual row (observation) is, in a standardized, multivariate space, from the group mean (the dashed line) and the grand mean (the solid line).  We can see that our groups are not necessarily well-defined: often, the grand mean seems to do a better job of describing our samples than the group mean for the specific wine.  This might be a sign of our panelists needing further training, but recall that this (simple) visualization doesn't account for variance stemming from replicate and individual judge scaling behavior, nuisance factors that we actually included in the real MANOVA we ran above.  When we include these, we find that in fact group membership (the type of wine) is important for predicting the sample mean vector.
 
 
-```r
+``` r
 descriptive_data %>%
   select(-ProductName, -NJ) %>%
   nest(data = -NR) %>%
@@ -160,7 +160,7 @@ Here we can see that the distribution is almost identical, meaning that knowing 
 We would display the same plot for our judges (`NJ`), but some of our judges are TOO repeatable: they have singular covariance matrices (we can tell because the determinant of their covariance matrices is 0), which indicates that the rank of their covariance matrix is less than the number of attributes.  This in turn leads to a situation in which their product descriptions are lower-dimensional than the data.
 
 
-```r
+``` r
 descriptive_data %>%
   select(-ProductName, -NR) %>%
   nest(data = -NJ) %>%
@@ -192,7 +192,7 @@ descriptive_data %>%
 Let's take a quick look at subject 1404's ratings:
 
 
-```r
+``` r
 descriptive_data %>%
   filter(NJ == "1404")
 ```
@@ -221,7 +221,7 @@ descriptive_data %>%
 Because this subject never used "Chocolate" or "Band-aid" descriptors, they end up with a rank-deficient covariance matrix:
 
 
-```r
+``` r
 descriptive_data %>%
   filter(NJ == "1404") %>%
   select(-(1:3)) %>%
@@ -287,9 +287,9 @@ descriptive_data %>%
 ## Spicy             0.04      0.11        0  0.35   0.32   -0.07      -0.01
 ## Pepper           -0.02     -0.56        0  0.06  -0.02    0.31       0.07
 ## Grassy            0.02     -0.06        0  0.03   0.03   -0.02      -0.05
-## Medicinal        -0.06      6.46        0  1.82   0.41   -0.66       0.04
+## Medicinal        -0.06      6.46        0  1.81   0.41   -0.66       0.04
 ## Band-aid          0.00      0.00        0  0.00   0.00    0.00       0.00
-## Sour              0.03      1.82        0  1.64   0.41   -0.27       0.17
+## Sour              0.03      1.81        0  1.64   0.41   -0.27       0.17
 ## Bitter            0.03      0.41        0  0.41   0.76    0.01       0.05
 ## Alcohol          -0.02     -0.66        0 -0.27   0.01    0.59       0.21
 ## Astringent       -0.05      0.04        0  0.17   0.05    0.21       0.52
@@ -302,7 +302,7 @@ The rows (columns) for "Chocolate" and "Band-aid" are exact scaled multiples of 
 In the section on [ANOVA][Analysis of Variance], we explored applying an ANOVA-like model to our rating data.  But we really have a set of correlated dependent variables:
 
 
-```r
+``` r
 # For correlation tibbles
 library(corrr)
 
@@ -343,7 +343,7 @@ descriptive_data %>%
 I wonder if we can use a Bayesian hierarchical approach to simultaneously model all of the descriptor ratings.  We can do this by treating `descriptor` as a factor in an ANOVA-like model:
 
 
-```r
+``` r
 rating ~ 1 + (1 | descriptor) + (1 | ProductName) + (1 | NJ) + (1 | NR) + 
   (1 | ProductName:NJ) + (1 | ProductName:descriptor) + (1 | NJ:descriptor)
 ```
@@ -351,7 +351,7 @@ rating ~ 1 + (1 | descriptor) + (1 | ProductName) + (1 | NJ) + (1 | NR) +
 This is only kind of theoretically justified.  We are implying that all descriptors have some hierarchical source of variation.  In one way, this makes no sense, but in another it isn't entirely crazy.  Let's see if this model if fittable.
 
 
-```r
+``` r
 # First, get the data into the right shape:
 
 descriptive_data_tidy <- 
@@ -380,7 +380,7 @@ b_all <-
 We can inspect the overall model fit, although plotting posterior draws for all parameters would take up so much space that we are not going to do so.  Let's look at the overall model summary:
 
 
-```r
+``` r
 b_all
 ```
 
@@ -398,7 +398,7 @@ b_all
 ##   Draws: 4 chains, each with iter = 4000; warmup = 1000; thin = 1;
 ##          total post-warmup draws = 12000
 ## 
-## Group-Level Effects: 
+## Multilevel Hyperparameters:
 ## ~descriptor (Number of levels: 20) 
 ##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
 ## sd(Intercept)     1.21      0.23     0.84     1.75 1.00     2099     3868
@@ -427,11 +427,11 @@ b_all
 ##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
 ## sd(Intercept)     0.13      0.04     0.04     0.20 1.00     2299     1574
 ## 
-## Population-Level Effects: 
+## Regression Coefficients:
 ##           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
 ## Intercept     2.09      0.44     1.21     2.96 1.00     1434     2814
 ## 
-## Family Specific Parameters: 
+## Further Distributional Parameters:
 ##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
 ## sigma     1.64      0.01     1.61     1.67 1.00    10759     9035
 ## 
@@ -443,7 +443,7 @@ b_all
 I am genuinely surprised that we were able to fit a model with only 2 divergent transitions.  Looking at $\hat{R}$ and $ESS$, it appears that we don't have huge problems with the estimation part of the task.  The question is whether this approach makes any sense.  Let's take a look at the overall estimated standard deviation, $\sigma_{rating}$, which is held constant across all groups:
 
 
-```r
+``` r
 draws <- as_draws_df(b_all)
 
 draws %>% 
@@ -459,7 +459,7 @@ draws %>%
 We can see that the standard deviation is pretty large, which makes sense with the approach we've chosen, because the individual standard deviation in different subgroups of observations (within descriptors, within subjects, and within reps) is quite large (for example, with the descriptors):
 
 
-```r
+``` r
 descriptive_data_tidy %>%
   group_by(descriptor) %>%
   summarize(sd = sd(rating)) %>%
@@ -475,7 +475,7 @@ Some of our descriptors have observed standard deviations less than 1.5, and som
 We can see that a consequence of this hierarchical model is that the overall mean rating tendency influences the estimates for subgroups.  For example, our more extreme mean ratings get more shrunk back towards the grand mean for all ratings:
 
 
-```r
+``` r
 # First, we'll reformulate our model to look at the main effect of descriptors
 
 # We need to tell the `fitted()` function that we are requesting posterior draws
@@ -498,7 +498,7 @@ f <-
 ## Joining with `by = join_by(descriptor)`
 ```
 
-```r
+``` r
 f %>%
   ggplot(aes(y = descriptor)) +
   geom_vline(xintercept = fixef(b_all)[, 1], 
@@ -529,7 +529,7 @@ Whether this is a reasonable consequence depends on our assumptions about the da
 What we can do with the current model is use it investigate useful contrasts.  We take the same approach as above to get the marginalized posterior across the descriptors and the wines.
 
 
-```r
+``` r
 nd <-
   descriptive_data_tidy %>%
   distinct(descriptor, ProductName) %>%
@@ -556,7 +556,7 @@ f <-
 ## generated.
 ```
 
-```r
+``` r
 head(f)
 ```
 
@@ -582,7 +582,7 @@ head(f)
 This gets us a rather large table of the estimates for each descriptor at each wine.  These are the estimated mean parameters for the "simple effects" that can let us examine contrasts.  This full data table is too large to be wieldy, so we can trim it down for individual inquiries.  For example, let's examine `Vanilla` and `Chocolate`, since they are often confusable, and see if there is a difference in the way `rating` changes for them in across two different wines... let's say `C_MERLOT` and `I_MERLOT`.
 
 
-```r
+``` r
 interactions <- 
   f %>%
   transmute(`C_MERLOT - I_MERLOT @ Vanilla` = `C_MERLOT:Vanilla` - `I_MERLOT:Vanilla`,
@@ -610,7 +610,7 @@ head(interactions)
 Now we can plot this, with just a little bit more wrangling:
 
 
-```r
+``` r
 levels <- colnames(interactions)
 
 interactions %>%
@@ -635,18 +635,18 @@ In retrospect, this isn't a very interesting comparison: it turns out both the s
 ## Packages used in this chapter
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: aarch64-apple-darwin20 (64-bit)
-## Running under: macOS Ventura 13.6.1
+## R version 4.4.1 (2024-06-14)
+## Platform: x86_64-apple-darwin20
+## Running under: macOS 15.2
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -655,48 +655,40 @@ sessionInfo()
 ## tzcode source: internal
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] stats     graphics  grDevices datasets  utils     methods   base     
 ## 
 ## other attached packages:
-##  [1] tidybayes_3.0.6 brms_2.20.1     Rcpp_1.0.11     corrr_0.4.4    
-##  [5] here_1.0.1      lubridate_1.9.2 forcats_1.0.0   stringr_1.5.0  
-##  [9] dplyr_1.1.2     purrr_1.0.1     readr_2.1.4     tidyr_1.3.0    
-## [13] tibble_3.2.1    ggplot2_3.4.3   tidyverse_2.0.0
+##  [1] tidybayes_3.0.6 brms_2.21.0     Rcpp_1.0.13     corrr_0.4.4    
+##  [5] here_1.0.1      lubridate_1.9.3 forcats_1.0.0   stringr_1.5.1  
+##  [9] dplyr_1.1.4     purrr_1.0.2     readr_2.1.5     tidyr_1.3.1    
+## [13] tibble_3.2.1    ggplot2_3.5.1   tidyverse_2.0.0
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] gridExtra_2.3        inline_0.3.19        rlang_1.1.1         
-##   [4] magrittr_2.0.3       matrixStats_1.0.0    compiler_4.3.1      
-##   [7] loo_2.6.0            callr_3.7.3          vctrs_0.6.3         
-##  [10] reshape2_1.4.4       quadprog_1.5-8       arrayhelpers_1.1-0  
-##  [13] pkgconfig_2.0.3      crayon_1.5.2         fastmap_1.1.1       
-##  [16] backports_1.4.1      ellipsis_0.3.2       labeling_0.4.3      
-##  [19] utf8_1.2.3           threejs_0.3.3        promises_1.2.1      
-##  [22] rmarkdown_2.23       markdown_1.8         tzdb_0.4.0          
-##  [25] ps_1.7.5             bit_4.0.5            xfun_0.39           
-##  [28] highr_0.10           later_1.3.1          prettyunits_1.1.1   
-##  [31] parallel_4.3.1       R6_2.5.1             dygraphs_1.1.1.6    
-##  [34] StanHeaders_2.26.27  stringi_1.7.12       estimability_1.4.1  
-##  [37] bookdown_0.37        rstan_2.21.8         knitr_1.43          
-##  [40] zoo_1.8-12           base64enc_0.1-3      bayesplot_1.10.0    
-##  [43] httpuv_1.6.11        Matrix_1.6-0         igraph_1.5.0.1      
-##  [46] timechange_0.2.0     tidyselect_1.2.0     rstudioapi_0.15.0   
-##  [49] abind_1.4-5          yaml_2.3.7           codetools_0.2-19    
-##  [52] miniUI_0.1.1.1       processx_3.8.2       pkgbuild_1.4.2      
-##  [55] lattice_0.21-8       plyr_1.8.8           shiny_1.7.5         
-##  [58] withr_2.5.0          bridgesampling_1.1-2 posterior_1.4.1     
-##  [61] coda_0.19-4          evaluate_0.21        RcppParallel_5.1.7  
-##  [64] ggdist_3.3.0         xts_0.13.1           pillar_1.9.0        
-##  [67] tensorA_0.36.2       checkmate_2.2.0      DT_0.28             
-##  [70] stats4_4.3.1         shinyjs_2.1.0        distributional_0.3.2
-##  [73] generics_0.1.3       vroom_1.6.3          rprojroot_2.0.3     
-##  [76] hms_1.1.3            rstantools_2.3.1.1   munsell_0.5.0       
-##  [79] scales_1.2.1         gtools_3.9.4         xtable_1.8-4        
-##  [82] glue_1.6.2           emmeans_1.8.7        tools_4.3.1         
-##  [85] shinystan_2.6.0      colourpicker_1.3.0   mvtnorm_1.2-2       
-##  [88] grid_4.3.1           crosstalk_1.2.0      colorspace_2.1-0    
-##  [91] nlme_3.1-162         cli_3.6.1            svUnit_1.0.6        
-##  [94] fansi_1.0.4          Brobdingnag_1.2-9    gtable_0.3.4        
-##  [97] digest_0.6.33        htmlwidgets_1.6.2    farver_2.1.1        
-## [100] htmltools_0.5.6      lifecycle_1.0.3      mime_0.12           
-## [103] bit64_4.0.5          shinythemes_1.2.0
+##  [1] svUnit_1.0.6         tidyselect_1.2.1     farver_2.1.2        
+##  [4] loo_2.7.0            fastmap_1.2.0        tensorA_0.36.2.1    
+##  [7] digest_0.6.37        timechange_0.3.0     estimability_1.5.1  
+## [10] lifecycle_1.0.4      StanHeaders_2.32.9   magrittr_2.0.3      
+## [13] posterior_1.5.0      compiler_4.4.1       rlang_1.1.4         
+## [16] tools_4.4.1          utf8_1.2.4           yaml_2.3.8          
+## [19] knitr_1.46           labeling_0.4.3       bridgesampling_1.1-2
+## [22] bit_4.0.5            pkgbuild_1.4.4       plyr_1.8.9          
+## [25] abind_1.4-5          withr_3.0.0          grid_4.4.1          
+## [28] stats4_4.4.1         fansi_1.0.6          xtable_1.8-4        
+## [31] colorspace_2.1-0     inline_0.3.19        emmeans_1.10.2      
+## [34] scales_1.3.0         cli_3.6.3            mvtnorm_1.2-5       
+## [37] rmarkdown_2.27       crayon_1.5.2         generics_0.1.3      
+## [40] RcppParallel_5.1.7   rstudioapi_0.16.0    reshape2_1.4.4      
+## [43] tzdb_0.4.0           rstan_2.32.6         bayesplot_1.11.1    
+## [46] parallel_4.4.1       matrixStats_1.3.0    vctrs_0.6.5         
+## [49] Matrix_1.7-0         bookdown_0.39        hms_1.1.3           
+## [52] arrayhelpers_1.1-0   bit64_4.0.5          ggdist_3.3.2        
+## [55] glue_1.7.0           codetools_0.2-20     distributional_0.4.0
+## [58] stringi_1.8.4        gtable_0.3.5         QuickJSR_1.2.0      
+## [61] quadprog_1.5-8       munsell_0.5.1        pillar_1.9.0        
+## [64] htmltools_0.5.8.1    Brobdingnag_1.2-9    R6_2.5.1            
+## [67] rprojroot_2.0.4      vroom_1.6.5          evaluate_0.23       
+## [70] lattice_0.22-6       highr_0.10           backports_1.5.0     
+## [73] renv_1.0.9           rstantools_2.4.0     coda_0.19-4.1       
+## [76] gridExtra_2.3        nlme_3.1-164         checkmate_2.3.1     
+## [79] xfun_0.49            pkgconfig_2.0.3
 ```

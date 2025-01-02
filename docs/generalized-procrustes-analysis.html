@@ -8,11 +8,11 @@
   <meta name="description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
 walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
-  <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.39 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 13 Generalized Procrustes Analysis | The R Opus v2" />
   <meta property="og:type" content="book" />
-  <meta property="og:image" content="/img/r-opus-cover.jpg" />
+  <meta property="og:image" content="https://jlahne.github.io/r-opus-v2/img/r-opus-cover.jpg" />
   <meta property="og:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
 walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
@@ -24,12 +24,12 @@ walkthroughs on common multivariate analyses in <code>R</code> for sensory-evalu
   <meta name="twitter:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
 walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
-  <meta name="twitter:image" content="/img/r-opus-cover.jpg" />
+  <meta name="twitter:image" content="https://jlahne.github.io/r-opus-v2/img/r-opus-cover.jpg" />
 
 <meta name="author" content="Jacob Lahne" />
 
 
-<meta name="date" content="2024-01-10" />
+<meta name="date" content="2025-01-02" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -61,8 +61,9 @@ walkthroughs on common multivariate analyses in <code>R</code> for sensory-evalu
 
 
 <style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -175,6 +176,11 @@ div.csl-indent {
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#r-setup"><i class="fa fa-check"></i><code>R</code> Setup</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#what-this-is-not"><i class="fa fa-check"></i>What this is not</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#about-me"><i class="fa fa-check"></i>About me</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#changelog"><i class="fa fa-check"></i>Changelog</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#v0.2-december-2024"><i class="fa fa-check"></i>v0.2 (December 2024)</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#v0.1-december-2023"><i class="fa fa-check"></i>v0.1 (December 2023)</a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#session-info"><i class="fa fa-check"></i>Session Info</a></li>
 </ul></li>
 <li class="chapter" data-level="1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html"><i class="fa fa-check"></i><b>1</b> Data import and set up</a>
@@ -319,145 +325,145 @@ div.csl-indent {
 <p>Generalized Procrustes Analysis (GPA) is the second-to-last topic HGH tackles in the original <strong>R Opus</strong>. As a spoiler, this will be our last (substantive) topic: the coverage that HGH gave to Conjoint Analysis was cursory, and I believe that analysis of these data has moved very far forward since the original <strong>R Opus</strong>. I don’t ever use Conjoint Analysis (I leave that to my consumer-economist friends), and so I will not be including this chapter.</p>
 <p>GPA is a “multi-table” method like MFA or DISTATIS. GPA involves a set of (I believe) linear transformations of each data table through translation, rotation, and isotropic scaling, with the goal to minimize the difference between the original tables and the consensus table. GPA was an early and popular method of aligning data from multiple subjects on the same sets of samples when those subjects are not trained. Based on my understanding, it has fallen somewhat out of favor as MFA anecdotally and actually can provide very similar results <span class="citation">(<a href="#ref-tomicComparison2015">Tomic, Berget, and Næs 2015</a>)</span>. This can be seen in the less-updated GPA function in the <code>FactoMineR</code> function, and by the fact that HGH does not bother to give it much time or interpretation. GPA tends to be applied to (Ultra) Flash Profiling and Napping/Projective Mapping results, and it seems to me that those methods are less popular than they once were.</p>
 <p>However, the same authors point out several advantages of GPA, and so it is worth digging into it a little bit! We’re going to be using the same two-table dataset: DA and consumer data.</p>
-<div class="sourceCode" id="cb407"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb407-1"><a href="generalized-procrustes-analysis.html#cb407-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb407-2"><a href="generalized-procrustes-analysis.html#cb407-2" tabindex="-1"></a><span class="fu">library</span>(here)</span>
-<span id="cb407-3"><a href="generalized-procrustes-analysis.html#cb407-3" tabindex="-1"></a><span class="fu">library</span>(FactoMineR)</span>
-<span id="cb407-4"><a href="generalized-procrustes-analysis.html#cb407-4" tabindex="-1"></a><span class="fu">library</span>(paletteer)</span>
-<span id="cb407-5"><a href="generalized-procrustes-analysis.html#cb407-5" tabindex="-1"></a></span>
-<span id="cb407-6"><a href="generalized-procrustes-analysis.html#cb407-6" tabindex="-1"></a><span class="co"># This is all just standard set up</span></span>
-<span id="cb407-7"><a href="generalized-procrustes-analysis.html#cb407-7" tabindex="-1"></a></span>
-<span id="cb407-8"><a href="generalized-procrustes-analysis.html#cb407-8" tabindex="-1"></a>descriptive_data <span class="ot">&lt;-</span> </span>
-<span id="cb407-9"><a href="generalized-procrustes-analysis.html#cb407-9" tabindex="-1"></a>  <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriDAFinal.csv&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb407-10"><a href="generalized-procrustes-analysis.html#cb407-10" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="sc">~</span><span class="fu">as.factor</span>(.)))</span>
-<span id="cb407-11"><a href="generalized-procrustes-analysis.html#cb407-11" tabindex="-1"></a></span>
-<span id="cb407-12"><a href="generalized-procrustes-analysis.html#cb407-12" tabindex="-1"></a>consumer_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriconsFinal.csv&quot;</span>))</span>
-<span id="cb407-13"><a href="generalized-procrustes-analysis.html#cb407-13" tabindex="-1"></a></span>
-<span id="cb407-14"><a href="generalized-procrustes-analysis.html#cb407-14" tabindex="-1"></a>consumer_demo <span class="ot">&lt;-</span> </span>
-<span id="cb407-15"><a href="generalized-procrustes-analysis.html#cb407-15" tabindex="-1"></a>  consumer_data <span class="sc">%&gt;%</span></span>
-<span id="cb407-16"><a href="generalized-procrustes-analysis.html#cb407-16" tabindex="-1"></a>  <span class="fu">select</span>(Judge<span class="sc">:</span>Age) <span class="sc">%&gt;%</span></span>
-<span id="cb407-17"><a href="generalized-procrustes-analysis.html#cb407-17" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(Judge<span class="sc">:</span>Age, <span class="sc">~</span><span class="fu">as.factor</span>(.)))</span>
-<span id="cb407-18"><a href="generalized-procrustes-analysis.html#cb407-18" tabindex="-1"></a></span>
-<span id="cb407-19"><a href="generalized-procrustes-analysis.html#cb407-19" tabindex="-1"></a>consumer_data <span class="ot">&lt;-</span> </span>
-<span id="cb407-20"><a href="generalized-procrustes-analysis.html#cb407-20" tabindex="-1"></a>  consumer_data <span class="sc">%&gt;%</span></span>
-<span id="cb407-21"><a href="generalized-procrustes-analysis.html#cb407-21" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>(<span class="st">`</span><span class="at">Wine Frequency</span><span class="st">`</span><span class="sc">:</span>Age)) <span class="sc">%&gt;%</span></span>
-<span id="cb407-22"><a href="generalized-procrustes-analysis.html#cb407-22" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Judge =</span> <span class="fu">as.factor</span>(Judge))</span></code></pre></div>
+<div class="sourceCode" id="cb415"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb415-1"><a href="generalized-procrustes-analysis.html#cb415-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb415-2"><a href="generalized-procrustes-analysis.html#cb415-2" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb415-3"><a href="generalized-procrustes-analysis.html#cb415-3" tabindex="-1"></a><span class="fu">library</span>(FactoMineR)</span>
+<span id="cb415-4"><a href="generalized-procrustes-analysis.html#cb415-4" tabindex="-1"></a><span class="fu">library</span>(paletteer)</span>
+<span id="cb415-5"><a href="generalized-procrustes-analysis.html#cb415-5" tabindex="-1"></a></span>
+<span id="cb415-6"><a href="generalized-procrustes-analysis.html#cb415-6" tabindex="-1"></a><span class="co"># This is all just standard set up</span></span>
+<span id="cb415-7"><a href="generalized-procrustes-analysis.html#cb415-7" tabindex="-1"></a></span>
+<span id="cb415-8"><a href="generalized-procrustes-analysis.html#cb415-8" tabindex="-1"></a>descriptive_data <span class="ot">&lt;-</span> </span>
+<span id="cb415-9"><a href="generalized-procrustes-analysis.html#cb415-9" tabindex="-1"></a>  <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriDAFinal.csv&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb415-10"><a href="generalized-procrustes-analysis.html#cb415-10" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="sc">~</span><span class="fu">as.factor</span>(.)))</span>
+<span id="cb415-11"><a href="generalized-procrustes-analysis.html#cb415-11" tabindex="-1"></a></span>
+<span id="cb415-12"><a href="generalized-procrustes-analysis.html#cb415-12" tabindex="-1"></a>consumer_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriconsFinal.csv&quot;</span>))</span>
+<span id="cb415-13"><a href="generalized-procrustes-analysis.html#cb415-13" tabindex="-1"></a></span>
+<span id="cb415-14"><a href="generalized-procrustes-analysis.html#cb415-14" tabindex="-1"></a>consumer_demo <span class="ot">&lt;-</span> </span>
+<span id="cb415-15"><a href="generalized-procrustes-analysis.html#cb415-15" tabindex="-1"></a>  consumer_data <span class="sc">%&gt;%</span></span>
+<span id="cb415-16"><a href="generalized-procrustes-analysis.html#cb415-16" tabindex="-1"></a>  <span class="fu">select</span>(Judge<span class="sc">:</span>Age) <span class="sc">%&gt;%</span></span>
+<span id="cb415-17"><a href="generalized-procrustes-analysis.html#cb415-17" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(Judge<span class="sc">:</span>Age, <span class="sc">~</span><span class="fu">as.factor</span>(.)))</span>
+<span id="cb415-18"><a href="generalized-procrustes-analysis.html#cb415-18" tabindex="-1"></a></span>
+<span id="cb415-19"><a href="generalized-procrustes-analysis.html#cb415-19" tabindex="-1"></a>consumer_data <span class="ot">&lt;-</span> </span>
+<span id="cb415-20"><a href="generalized-procrustes-analysis.html#cb415-20" tabindex="-1"></a>  consumer_data <span class="sc">%&gt;%</span></span>
+<span id="cb415-21"><a href="generalized-procrustes-analysis.html#cb415-21" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>(<span class="st">`</span><span class="at">Wine Frequency</span><span class="st">`</span><span class="sc">:</span>Age)) <span class="sc">%&gt;%</span></span>
+<span id="cb415-22"><a href="generalized-procrustes-analysis.html#cb415-22" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Judge =</span> <span class="fu">as.factor</span>(Judge))</span></code></pre></div>
 <p>We then follow steps that will seem very familiar from MFA:</p>
-<div class="sourceCode" id="cb408"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb408-1"><a href="generalized-procrustes-analysis.html#cb408-1" tabindex="-1"></a>preference_gpa <span class="ot">&lt;-</span> </span>
-<span id="cb408-2"><a href="generalized-procrustes-analysis.html#cb408-2" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
-<span id="cb408-3"><a href="generalized-procrustes-analysis.html#cb408-3" tabindex="-1"></a>  <span class="fu">group_by</span>(ProductName) <span class="sc">%&gt;%</span></span>
-<span id="cb408-4"><a href="generalized-procrustes-analysis.html#cb408-4" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), mean)) <span class="sc">%&gt;%</span></span>
-<span id="cb408-5"><a href="generalized-procrustes-analysis.html#cb408-5" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
-<span id="cb408-6"><a href="generalized-procrustes-analysis.html#cb408-6" tabindex="-1"></a>    consumer_data <span class="sc">%&gt;%</span></span>
-<span id="cb408-7"><a href="generalized-procrustes-analysis.html#cb408-7" tabindex="-1"></a>      <span class="fu">pivot_longer</span>(<span class="sc">-</span>Judge, <span class="at">names_to =</span> <span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb408-8"><a href="generalized-procrustes-analysis.html#cb408-8" tabindex="-1"></a>      <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Judge, <span class="at">values_from =</span> value),</span>
-<span id="cb408-9"><a href="generalized-procrustes-analysis.html#cb408-9" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;ProductName&quot;</span> <span class="ot">=</span> <span class="st">&quot;wine&quot;</span>)</span>
-<span id="cb408-10"><a href="generalized-procrustes-analysis.html#cb408-10" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb408-11"><a href="generalized-procrustes-analysis.html#cb408-11" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;ProductName&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb408-12"><a href="generalized-procrustes-analysis.html#cb408-12" tabindex="-1"></a>  <span class="fu">GPA</span>(<span class="at">group =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">106</span>), <span class="at">graph =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb416"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb416-1"><a href="generalized-procrustes-analysis.html#cb416-1" tabindex="-1"></a>preference_gpa <span class="ot">&lt;-</span> </span>
+<span id="cb416-2"><a href="generalized-procrustes-analysis.html#cb416-2" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb416-3"><a href="generalized-procrustes-analysis.html#cb416-3" tabindex="-1"></a>  <span class="fu">group_by</span>(ProductName) <span class="sc">%&gt;%</span></span>
+<span id="cb416-4"><a href="generalized-procrustes-analysis.html#cb416-4" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), mean)) <span class="sc">%&gt;%</span></span>
+<span id="cb416-5"><a href="generalized-procrustes-analysis.html#cb416-5" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb416-6"><a href="generalized-procrustes-analysis.html#cb416-6" tabindex="-1"></a>    consumer_data <span class="sc">%&gt;%</span></span>
+<span id="cb416-7"><a href="generalized-procrustes-analysis.html#cb416-7" tabindex="-1"></a>      <span class="fu">pivot_longer</span>(<span class="sc">-</span>Judge, <span class="at">names_to =</span> <span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb416-8"><a href="generalized-procrustes-analysis.html#cb416-8" tabindex="-1"></a>      <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Judge, <span class="at">values_from =</span> value),</span>
+<span id="cb416-9"><a href="generalized-procrustes-analysis.html#cb416-9" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;ProductName&quot;</span> <span class="ot">=</span> <span class="st">&quot;wine&quot;</span>)</span>
+<span id="cb416-10"><a href="generalized-procrustes-analysis.html#cb416-10" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb416-11"><a href="generalized-procrustes-analysis.html#cb416-11" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;ProductName&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb416-12"><a href="generalized-procrustes-analysis.html#cb416-12" tabindex="-1"></a>  <span class="fu">GPA</span>(<span class="at">group =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">106</span>), <span class="at">graph =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <p>I initially was confused about how it is possible to run GPA with two tables with such different number of measurements: in methods like STATIS we get around the difficulty by in fact analyzing the <span class="math inline">\(\mathbf{X_iX_i^T}\)</span>, which will have the same dimensionality because each <span class="math inline">\(\mathbf{X_i}\)</span> has the same number of rows, even if the number of colums is different. According to <span class="citation">Gower (<a href="#ref-gowerGeneralized1975">1975</a>)</span>, GPA solves this problem by instead just adding null columns to the column-wise smaller <span class="math inline">\(\mathbf{X_i}\)</span>.</p>
 <p>I believe that the GPA alignment is followed by a PCA on the consensus positions, since our points are still in 8-dimensional space (<span class="math inline">\(min(n, k_1, k_2) = 8\)</span> for our data with <span class="math inline">\(n=8\)</span> wines and <span class="math inline">\(k_1=20\)</span> wines and <span class="math inline">\(k_2=106\)</span> consumers), but this isn’t explicitly clarified by the <code>?GPA</code> documentation–let’s assume so!</p>
 <p>Typically we haven’t even wanted to <em>look</em> at base-<code>R</code> plots, but it is worthwhile to note that we can tell <code>GPA()</code> is less loved, because the function still outputs these, instead of the <code>factoextra</code>-flavored plots that other <code>FactoMineR</code> functions like <code>MFA()</code> and <code>PCA()</code> give us:</p>
-<div class="sourceCode" id="cb409"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb409-1"><a href="generalized-procrustes-analysis.html#cb409-1" tabindex="-1"></a><span class="fu">plot</span>(preference_gpa)</span></code></pre></div>
+<div class="sourceCode" id="cb417"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb417-1"><a href="generalized-procrustes-analysis.html#cb417-1" tabindex="-1"></a><span class="fu">plot</span>(preference_gpa)</span></code></pre></div>
 <p><img src="13-GPA_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>We know how to do better, though!</p>
-<div class="sourceCode" id="cb410"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb410-1"><a href="generalized-procrustes-analysis.html#cb410-1" tabindex="-1"></a><span class="co"># The `$consensus` table gives us the center points</span></span>
-<span id="cb410-2"><a href="generalized-procrustes-analysis.html#cb410-2" tabindex="-1"></a>p_gpa_base <span class="ot">&lt;-</span> </span>
-<span id="cb410-3"><a href="generalized-procrustes-analysis.html#cb410-3" tabindex="-1"></a>  preference_gpa<span class="sc">$</span>consensus <span class="sc">%&gt;%</span></span>
-<span id="cb410-4"><a href="generalized-procrustes-analysis.html#cb410-4" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb410-5"><a href="generalized-procrustes-analysis.html#cb410-5" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> V1, <span class="at">y =</span> V2)) <span class="sc">+</span> </span>
-<span id="cb410-6"><a href="generalized-procrustes-analysis.html#cb410-6" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
-<span id="cb410-7"><a href="generalized-procrustes-analysis.html#cb410-7" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
-<span id="cb410-8"><a href="generalized-procrustes-analysis.html#cb410-8" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> wine)) <span class="sc">+</span> </span>
-<span id="cb410-9"><a href="generalized-procrustes-analysis.html#cb410-9" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> wine, <span class="at">color =</span> wine)) <span class="sc">+</span> </span>
-<span id="cb410-10"><a href="generalized-procrustes-analysis.html#cb410-10" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> </span>
-<span id="cb410-11"><a href="generalized-procrustes-analysis.html#cb410-11" tabindex="-1"></a>  <span class="fu">scale_color_paletteer_d</span>(<span class="st">&quot;RSkittleBrewer::smarties&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb410-12"><a href="generalized-procrustes-analysis.html#cb410-12" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
-<span id="cb410-13"><a href="generalized-procrustes-analysis.html#cb410-13" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="sc">+</span></span>
-<span id="cb410-14"><a href="generalized-procrustes-analysis.html#cb410-14" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;GPA consensus for DA and consumer data&quot;</span>,</span>
-<span id="cb410-15"><a href="generalized-procrustes-analysis.html#cb410-15" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Dimension 1&quot;</span>,</span>
-<span id="cb410-16"><a href="generalized-procrustes-analysis.html#cb410-16" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Dimension 2&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb418"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb418-1"><a href="generalized-procrustes-analysis.html#cb418-1" tabindex="-1"></a><span class="co"># The `$consensus` table gives us the center points</span></span>
+<span id="cb418-2"><a href="generalized-procrustes-analysis.html#cb418-2" tabindex="-1"></a>p_gpa_base <span class="ot">&lt;-</span> </span>
+<span id="cb418-3"><a href="generalized-procrustes-analysis.html#cb418-3" tabindex="-1"></a>  preference_gpa<span class="sc">$</span>consensus <span class="sc">%&gt;%</span></span>
+<span id="cb418-4"><a href="generalized-procrustes-analysis.html#cb418-4" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb418-5"><a href="generalized-procrustes-analysis.html#cb418-5" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> V1, <span class="at">y =</span> V2)) <span class="sc">+</span> </span>
+<span id="cb418-6"><a href="generalized-procrustes-analysis.html#cb418-6" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb418-7"><a href="generalized-procrustes-analysis.html#cb418-7" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb418-8"><a href="generalized-procrustes-analysis.html#cb418-8" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> wine)) <span class="sc">+</span> </span>
+<span id="cb418-9"><a href="generalized-procrustes-analysis.html#cb418-9" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> wine, <span class="at">color =</span> wine)) <span class="sc">+</span> </span>
+<span id="cb418-10"><a href="generalized-procrustes-analysis.html#cb418-10" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> </span>
+<span id="cb418-11"><a href="generalized-procrustes-analysis.html#cb418-11" tabindex="-1"></a>  <span class="fu">scale_color_paletteer_d</span>(<span class="st">&quot;RSkittleBrewer::smarties&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb418-12"><a href="generalized-procrustes-analysis.html#cb418-12" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb418-13"><a href="generalized-procrustes-analysis.html#cb418-13" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="sc">+</span></span>
+<span id="cb418-14"><a href="generalized-procrustes-analysis.html#cb418-14" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;GPA consensus for DA and consumer data&quot;</span>,</span>
+<span id="cb418-15"><a href="generalized-procrustes-analysis.html#cb418-15" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Dimension 1&quot;</span>,</span>
+<span id="cb418-16"><a href="generalized-procrustes-analysis.html#cb418-16" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Dimension 2&quot;</span>)</span></code></pre></div>
 <pre><code>## Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if
 ## `.name_repair` is omitted as of tibble 2.0.0.
 ## ℹ Using compatibility `.name_repair`.
 ## This warning is displayed once every 8 hours.
 ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 ## generated.</code></pre>
-<div class="sourceCode" id="cb412"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb412-1"><a href="generalized-procrustes-analysis.html#cb412-1" tabindex="-1"></a>p_gpa_base</span></code></pre></div>
+<div class="sourceCode" id="cb420"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb420-1"><a href="generalized-procrustes-analysis.html#cb420-1" tabindex="-1"></a>p_gpa_base</span></code></pre></div>
 <p><img src="13-GPA_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>We can then add layers showing the projected position of our two original tables:</p>
-<div class="sourceCode" id="cb413"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb413-1"><a href="generalized-procrustes-analysis.html#cb413-1" tabindex="-1"></a>p_gpa_partials <span class="ot">&lt;-</span></span>
-<span id="cb413-2"><a href="generalized-procrustes-analysis.html#cb413-2" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">type =</span> <span class="fu">c</span>(<span class="st">&quot;consensus&quot;</span>, <span class="st">&quot;DA&quot;</span>, <span class="st">&quot;consumer&quot;</span>),</span>
-<span id="cb413-3"><a href="generalized-procrustes-analysis.html#cb413-3" tabindex="-1"></a>       <span class="at">coord =</span> <span class="fu">list</span>(preference_gpa<span class="sc">$</span>consensus,</span>
-<span id="cb413-4"><a href="generalized-procrustes-analysis.html#cb413-4" tabindex="-1"></a>                    preference_gpa<span class="sc">$</span>Xfin[, , <span class="dv">1</span>],</span>
-<span id="cb413-5"><a href="generalized-procrustes-analysis.html#cb413-5" tabindex="-1"></a>                    preference_gpa<span class="sc">$</span>Xfin[, , <span class="dv">2</span>])) <span class="sc">%&gt;%</span></span>
-<span id="cb413-6"><a href="generalized-procrustes-analysis.html#cb413-6" tabindex="-1"></a>  <span class="co"># Get everything into a tibble</span></span>
-<span id="cb413-7"><a href="generalized-procrustes-analysis.html#cb413-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">coord =</span> <span class="fu">map</span>(coord, as_tibble, <span class="at">rownames =</span> <span class="st">&quot;wine&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb413-8"><a href="generalized-procrustes-analysis.html#cb413-8" tabindex="-1"></a>  <span class="co"># Give every dimension the same name, since `GPA()` doesn&#39;t do this right</span></span>
-<span id="cb413-9"><a href="generalized-procrustes-analysis.html#cb413-9" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">coord =</span> <span class="fu">map</span>(coord, set_names, <span class="fu">c</span>(<span class="st">&quot;wine&quot;</span>, <span class="fu">paste0</span>(<span class="st">&quot;dim_&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>)))) <span class="sc">%&gt;%</span></span>
-<span id="cb413-10"><a href="generalized-procrustes-analysis.html#cb413-10" tabindex="-1"></a>  <span class="fu">unnest</span>(<span class="fu">everything</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb413-11"><a href="generalized-procrustes-analysis.html#cb413-11" tabindex="-1"></a>  <span class="co"># We&#39;re just going to do the first 2 dimensions here</span></span>
-<span id="cb413-12"><a href="generalized-procrustes-analysis.html#cb413-12" tabindex="-1"></a>  <span class="fu">select</span>(type<span class="sc">:</span>dim_2) <span class="sc">%&gt;%</span></span>
-<span id="cb413-13"><a href="generalized-procrustes-analysis.html#cb413-13" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(dim_1<span class="sc">:</span>dim_2) <span class="sc">%&gt;%</span></span>
-<span id="cb413-14"><a href="generalized-procrustes-analysis.html#cb413-14" tabindex="-1"></a>  <span class="fu">unite</span>(type, name, <span class="at">col =</span> <span class="st">&quot;dim&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb413-15"><a href="generalized-procrustes-analysis.html#cb413-15" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> dim, <span class="at">values_from =</span> value) <span class="sc">%&gt;%</span></span>
-<span id="cb413-16"><a href="generalized-procrustes-analysis.html#cb413-16" tabindex="-1"></a>  <span class="co"># Plot!</span></span>
-<span id="cb413-17"><a href="generalized-procrustes-analysis.html#cb413-17" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> consensus_dim_1, <span class="at">y =</span> consensus_dim_2)) <span class="sc">+</span> </span>
-<span id="cb413-18"><a href="generalized-procrustes-analysis.html#cb413-18" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
-<span id="cb413-19"><a href="generalized-procrustes-analysis.html#cb413-19" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
-<span id="cb413-20"><a href="generalized-procrustes-analysis.html#cb413-20" tabindex="-1"></a>  <span class="co"># The projected DA data</span></span>
-<span id="cb413-21"><a href="generalized-procrustes-analysis.html#cb413-21" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> DA_dim_1, <span class="at">y =</span> DA_dim_2),</span>
-<span id="cb413-22"><a href="generalized-procrustes-analysis.html#cb413-22" tabindex="-1"></a>             <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">&quot;darkgreen&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb413-23"><a href="generalized-procrustes-analysis.html#cb413-23" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> DA_dim_1, <span class="at">y =</span> DA_dim_2, <span class="at">xend =</span> consensus_dim_1, <span class="at">yend =</span> consensus_dim_2),</span>
-<span id="cb413-24"><a href="generalized-procrustes-analysis.html#cb413-24" tabindex="-1"></a>               <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">&quot;darkgreen&quot;</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
-<span id="cb413-25"><a href="generalized-procrustes-analysis.html#cb413-25" tabindex="-1"></a>  <span class="co"># The projected consumer data</span></span>
-<span id="cb413-26"><a href="generalized-procrustes-analysis.html#cb413-26" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> consumer_dim_1, <span class="at">y =</span> consumer_dim_2),</span>
-<span id="cb413-27"><a href="generalized-procrustes-analysis.html#cb413-27" tabindex="-1"></a>             <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">&quot;tan&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb413-28"><a href="generalized-procrustes-analysis.html#cb413-28" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> consumer_dim_1, <span class="at">y =</span> consumer_dim_2, <span class="at">xend =</span> consensus_dim_1, <span class="at">yend =</span> consensus_dim_2),</span>
-<span id="cb413-29"><a href="generalized-procrustes-analysis.html#cb413-29" tabindex="-1"></a>               <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">&quot;tan&quot;</span>, <span class="at">linetype =</span> <span class="dv">3</span>) <span class="sc">+</span> </span>
-<span id="cb413-30"><a href="generalized-procrustes-analysis.html#cb413-30" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> wine), <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb413-31"><a href="generalized-procrustes-analysis.html#cb413-31" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> wine, <span class="at">color =</span> wine)) <span class="sc">+</span> </span>
-<span id="cb413-32"><a href="generalized-procrustes-analysis.html#cb413-32" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> </span>
-<span id="cb413-33"><a href="generalized-procrustes-analysis.html#cb413-33" tabindex="-1"></a>  <span class="fu">scale_color_paletteer_d</span>(<span class="st">&quot;RSkittleBrewer::smarties&quot;</span>) <span class="sc">+</span></span>
-<span id="cb413-34"><a href="generalized-procrustes-analysis.html#cb413-34" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
-<span id="cb413-35"><a href="generalized-procrustes-analysis.html#cb413-35" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="sc">+</span></span>
-<span id="cb413-36"><a href="generalized-procrustes-analysis.html#cb413-36" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;GPA consensus for DA and consumer data with</span><span class="sc">\n</span><span class="st">partial configurations&quot;</span>,</span>
-<span id="cb413-37"><a href="generalized-procrustes-analysis.html#cb413-37" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Dimension 1&quot;</span>,</span>
-<span id="cb413-38"><a href="generalized-procrustes-analysis.html#cb413-38" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Dimension 2&quot;</span>,</span>
-<span id="cb413-39"><a href="generalized-procrustes-analysis.html#cb413-39" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">&quot;Green points represent DA data, tan points represent consumer data&quot;</span>)</span>
-<span id="cb413-40"><a href="generalized-procrustes-analysis.html#cb413-40" tabindex="-1"></a></span>
-<span id="cb413-41"><a href="generalized-procrustes-analysis.html#cb413-41" tabindex="-1"></a>p_gpa_partials</span></code></pre></div>
+<div class="sourceCode" id="cb421"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb421-1"><a href="generalized-procrustes-analysis.html#cb421-1" tabindex="-1"></a>p_gpa_partials <span class="ot">&lt;-</span></span>
+<span id="cb421-2"><a href="generalized-procrustes-analysis.html#cb421-2" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">type =</span> <span class="fu">c</span>(<span class="st">&quot;consensus&quot;</span>, <span class="st">&quot;DA&quot;</span>, <span class="st">&quot;consumer&quot;</span>),</span>
+<span id="cb421-3"><a href="generalized-procrustes-analysis.html#cb421-3" tabindex="-1"></a>       <span class="at">coord =</span> <span class="fu">list</span>(preference_gpa<span class="sc">$</span>consensus,</span>
+<span id="cb421-4"><a href="generalized-procrustes-analysis.html#cb421-4" tabindex="-1"></a>                    preference_gpa<span class="sc">$</span>Xfin[, , <span class="dv">1</span>],</span>
+<span id="cb421-5"><a href="generalized-procrustes-analysis.html#cb421-5" tabindex="-1"></a>                    preference_gpa<span class="sc">$</span>Xfin[, , <span class="dv">2</span>])) <span class="sc">%&gt;%</span></span>
+<span id="cb421-6"><a href="generalized-procrustes-analysis.html#cb421-6" tabindex="-1"></a>  <span class="co"># Get everything into a tibble</span></span>
+<span id="cb421-7"><a href="generalized-procrustes-analysis.html#cb421-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">coord =</span> <span class="fu">map</span>(coord, as_tibble, <span class="at">rownames =</span> <span class="st">&quot;wine&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb421-8"><a href="generalized-procrustes-analysis.html#cb421-8" tabindex="-1"></a>  <span class="co"># Give every dimension the same name, since `GPA()` doesn&#39;t do this right</span></span>
+<span id="cb421-9"><a href="generalized-procrustes-analysis.html#cb421-9" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">coord =</span> <span class="fu">map</span>(coord, set_names, <span class="fu">c</span>(<span class="st">&quot;wine&quot;</span>, <span class="fu">paste0</span>(<span class="st">&quot;dim_&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>)))) <span class="sc">%&gt;%</span></span>
+<span id="cb421-10"><a href="generalized-procrustes-analysis.html#cb421-10" tabindex="-1"></a>  <span class="fu">unnest</span>(<span class="fu">everything</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb421-11"><a href="generalized-procrustes-analysis.html#cb421-11" tabindex="-1"></a>  <span class="co"># We&#39;re just going to do the first 2 dimensions here</span></span>
+<span id="cb421-12"><a href="generalized-procrustes-analysis.html#cb421-12" tabindex="-1"></a>  <span class="fu">select</span>(type<span class="sc">:</span>dim_2) <span class="sc">%&gt;%</span></span>
+<span id="cb421-13"><a href="generalized-procrustes-analysis.html#cb421-13" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(dim_1<span class="sc">:</span>dim_2) <span class="sc">%&gt;%</span></span>
+<span id="cb421-14"><a href="generalized-procrustes-analysis.html#cb421-14" tabindex="-1"></a>  <span class="fu">unite</span>(type, name, <span class="at">col =</span> <span class="st">&quot;dim&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb421-15"><a href="generalized-procrustes-analysis.html#cb421-15" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> dim, <span class="at">values_from =</span> value) <span class="sc">%&gt;%</span></span>
+<span id="cb421-16"><a href="generalized-procrustes-analysis.html#cb421-16" tabindex="-1"></a>  <span class="co"># Plot!</span></span>
+<span id="cb421-17"><a href="generalized-procrustes-analysis.html#cb421-17" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> consensus_dim_1, <span class="at">y =</span> consensus_dim_2)) <span class="sc">+</span> </span>
+<span id="cb421-18"><a href="generalized-procrustes-analysis.html#cb421-18" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb421-19"><a href="generalized-procrustes-analysis.html#cb421-19" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb421-20"><a href="generalized-procrustes-analysis.html#cb421-20" tabindex="-1"></a>  <span class="co"># The projected DA data</span></span>
+<span id="cb421-21"><a href="generalized-procrustes-analysis.html#cb421-21" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> DA_dim_1, <span class="at">y =</span> DA_dim_2),</span>
+<span id="cb421-22"><a href="generalized-procrustes-analysis.html#cb421-22" tabindex="-1"></a>             <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">&quot;darkgreen&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb421-23"><a href="generalized-procrustes-analysis.html#cb421-23" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> DA_dim_1, <span class="at">y =</span> DA_dim_2, <span class="at">xend =</span> consensus_dim_1, <span class="at">yend =</span> consensus_dim_2),</span>
+<span id="cb421-24"><a href="generalized-procrustes-analysis.html#cb421-24" tabindex="-1"></a>               <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">&quot;darkgreen&quot;</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb421-25"><a href="generalized-procrustes-analysis.html#cb421-25" tabindex="-1"></a>  <span class="co"># The projected consumer data</span></span>
+<span id="cb421-26"><a href="generalized-procrustes-analysis.html#cb421-26" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> consumer_dim_1, <span class="at">y =</span> consumer_dim_2),</span>
+<span id="cb421-27"><a href="generalized-procrustes-analysis.html#cb421-27" tabindex="-1"></a>             <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">&quot;tan&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb421-28"><a href="generalized-procrustes-analysis.html#cb421-28" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> consumer_dim_1, <span class="at">y =</span> consumer_dim_2, <span class="at">xend =</span> consensus_dim_1, <span class="at">yend =</span> consensus_dim_2),</span>
+<span id="cb421-29"><a href="generalized-procrustes-analysis.html#cb421-29" tabindex="-1"></a>               <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">&quot;tan&quot;</span>, <span class="at">linetype =</span> <span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb421-30"><a href="generalized-procrustes-analysis.html#cb421-30" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> wine), <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb421-31"><a href="generalized-procrustes-analysis.html#cb421-31" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> wine, <span class="at">color =</span> wine)) <span class="sc">+</span> </span>
+<span id="cb421-32"><a href="generalized-procrustes-analysis.html#cb421-32" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> </span>
+<span id="cb421-33"><a href="generalized-procrustes-analysis.html#cb421-33" tabindex="-1"></a>  <span class="fu">scale_color_paletteer_d</span>(<span class="st">&quot;RSkittleBrewer::smarties&quot;</span>) <span class="sc">+</span></span>
+<span id="cb421-34"><a href="generalized-procrustes-analysis.html#cb421-34" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb421-35"><a href="generalized-procrustes-analysis.html#cb421-35" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="sc">+</span></span>
+<span id="cb421-36"><a href="generalized-procrustes-analysis.html#cb421-36" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;GPA consensus for DA and consumer data with</span><span class="sc">\n</span><span class="st">partial configurations&quot;</span>,</span>
+<span id="cb421-37"><a href="generalized-procrustes-analysis.html#cb421-37" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Dimension 1&quot;</span>,</span>
+<span id="cb421-38"><a href="generalized-procrustes-analysis.html#cb421-38" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Dimension 2&quot;</span>,</span>
+<span id="cb421-39"><a href="generalized-procrustes-analysis.html#cb421-39" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">&quot;Green points represent DA data, tan points represent consumer data&quot;</span>)</span>
+<span id="cb421-40"><a href="generalized-procrustes-analysis.html#cb421-40" tabindex="-1"></a></span>
+<span id="cb421-41"><a href="generalized-procrustes-analysis.html#cb421-41" tabindex="-1"></a>p_gpa_partials</span></code></pre></div>
 <p><img src="13-GPA_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>We can compare this to our MFA map for reference (and to see the similarity between the methods.)</p>
-<div class="sourceCode" id="cb414"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb414-1"><a href="generalized-procrustes-analysis.html#cb414-1" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb414-2"><a href="generalized-procrustes-analysis.html#cb414-2" tabindex="-1"></a></span>
-<span id="cb414-3"><a href="generalized-procrustes-analysis.html#cb414-3" tabindex="-1"></a>(p_gpa_partials <span class="sc">+</span> p_mfa) <span class="sc">&amp;</span> </span>
-<span id="cb414-4"><a href="generalized-procrustes-analysis.html#cb414-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">caption =</span> <span class="cn">NULL</span>) <span class="sc">&amp;</span></span>
-<span id="cb414-5"><a href="generalized-procrustes-analysis.html#cb414-5" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">&amp;</span></span>
-<span id="cb414-6"><a href="generalized-procrustes-analysis.html#cb414-6" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb422"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb422-1"><a href="generalized-procrustes-analysis.html#cb422-1" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb422-2"><a href="generalized-procrustes-analysis.html#cb422-2" tabindex="-1"></a></span>
+<span id="cb422-3"><a href="generalized-procrustes-analysis.html#cb422-3" tabindex="-1"></a>(p_gpa_partials <span class="sc">+</span> p_mfa) <span class="sc">&amp;</span> </span>
+<span id="cb422-4"><a href="generalized-procrustes-analysis.html#cb422-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">caption =</span> <span class="cn">NULL</span>) <span class="sc">&amp;</span></span>
+<span id="cb422-5"><a href="generalized-procrustes-analysis.html#cb422-5" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">&amp;</span></span>
+<span id="cb422-6"><a href="generalized-procrustes-analysis.html#cb422-6" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span></code></pre></div>
 <p><img src="13-GPA_files/figure-html/unnamed-chunk-6-1.png" width="768" /></p>
 <p>We can see that we get close but not exactly similar configurations!</p>
 <p>Returning to our GPA solution, we can inspect how close our configurations are, using both <span class="math inline">\(RV\)</span> and Procrustean similarity coefficients:</p>
-<div class="sourceCode" id="cb415"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb415-1"><a href="generalized-procrustes-analysis.html#cb415-1" tabindex="-1"></a>preference_gpa<span class="sc">$</span>RV</span></code></pre></div>
+<div class="sourceCode" id="cb423"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb423-1"><a href="generalized-procrustes-analysis.html#cb423-1" tabindex="-1"></a>preference_gpa<span class="sc">$</span>RV</span></code></pre></div>
 <pre><code>##           group.1   group.2
 ## group.1 1.0000000 0.6674211
 ## group.2 0.6674211 1.0000000</code></pre>
-<div class="sourceCode" id="cb417"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb417-1"><a href="generalized-procrustes-analysis.html#cb417-1" tabindex="-1"></a>preference_gpa<span class="sc">$</span>simi</span></code></pre></div>
+<div class="sourceCode" id="cb425"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb425-1"><a href="generalized-procrustes-analysis.html#cb425-1" tabindex="-1"></a>preference_gpa<span class="sc">$</span>simi</span></code></pre></div>
 <pre><code>##           group.1   group.2
 ## group.1 1.0000000 0.8712266
 ## group.2 0.8712266 1.0000000</code></pre>
 <p>We’ve already encountered <span class="math inline">\(RV\)</span>, but to be honest I am not entirely sure what the definition of Procrustes similarity is. A quick search doesn’t really get me much more detail, nor does reviewing <span class="citation">Gower (<a href="#ref-gowerGeneralized1975">1975</a>)</span>. However, from <span class="citation">Qannari, MacFie, and Courcoux (<a href="#ref-qannariPerformance1998">1998</a>)</span> I was able to find that Procrustes similarity is defined as</p>
 <p><span class="math display">\[s(X,Y)=\frac{trace(\mathbf{X^TYH})}{\sqrt{trace(\mathbf{X^TX})}\sqrt{trace(\mathbf{Y^TY})}}\]</span></p>
-<p>This is clearly very close to the definition of the <span class="math inline">\(RV\)</span> coefficient, differing mainly in that the numerator is the Procrustes rotation that adjusts <span class="math inline">\(\mathbf{Y}\)</span> to <span class="math inline">\(\mathbf{X}\)</span>, whereas for <span class="math inline">\(RV\)</span> the numerator instead represents the two double-centered cross-product matrices. I am not sure what the Procrustes similarity emphasizes over the <span class="math inline">\(RV\)</span>, but I believe it is more evenly influenced by dimensions in the data beyond the first principal component based on discussion in <span class="citation">Tomic, Berget, and Næs (<a href="#ref-tomicComparison2015">2015</a>)</span>]. So which should we pay attention to? I don’t have a good answer to that–it probably depends on the situation.</p>
+<p>This is clearly very close to the definition of the <span class="math inline">\(RV\)</span> coefficient, differing mainly in that the numerator is the Procrustes rotation that adjusts <span class="math inline">\(\mathbf{Y}\)</span> to <span class="math inline">\(\mathbf{X}\)</span>, whereas for <span class="math inline">\(RV\)</span> the numerator instead represents the two double-centered cross-product matrices. I am not sure what the Procrustes similarity emphasizes over the <span class="math inline">\(RV\)</span>, but I believe it is more evenly influenced by dimensions in the data beyond the first principal component based on discussion in <span class="citation">Tomic, Berget, and Næs (<a href="#ref-tomicComparison2015">2015</a>)</span>. So which should we pay attention to? I don’t have a good answer to that–it probably depends on the situation.</p>
 <div id="packages-used-in-this-chapter-12" class="section level2 hasAnchor" number="13.1">
 <h2><span class="header-section-number">13.1</span> Packages used in this chapter<a href="generalized-procrustes-analysis.html#packages-used-in-this-chapter-12" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb419"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb419-1"><a href="generalized-procrustes-analysis.html#cb419-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
-<pre><code>## R version 4.3.1 (2023-06-16)
-## Platform: aarch64-apple-darwin20 (64-bit)
-## Running under: macOS Ventura 13.6.1
+<div class="sourceCode" id="cb427"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb427-1"><a href="generalized-procrustes-analysis.html#cb427-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.4.1 (2024-06-14)
+## Platform: x86_64-apple-darwin20
+## Running under: macOS 15.2
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -466,38 +472,38 @@ div.csl-indent {
 ## tzcode source: internal
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] stats     graphics  grDevices datasets  utils     methods   base     
 ## 
 ## other attached packages:
-##  [1] patchwork_1.1.2 paletteer_1.5.0 FactoMineR_2.8  here_1.0.1     
-##  [5] lubridate_1.9.2 forcats_1.0.0   stringr_1.5.0   dplyr_1.1.2    
-##  [9] purrr_1.0.1     readr_2.1.4     tidyr_1.3.0     tibble_3.2.1   
-## [13] ggplot2_3.4.3   tidyverse_2.0.0
+##  [1] patchwork_1.2.0 paletteer_1.6.0 FactoMineR_2.11 here_1.0.1     
+##  [5] lubridate_1.9.3 forcats_1.0.0   stringr_1.5.1   dplyr_1.1.4    
+##  [9] purrr_1.0.2     readr_2.1.5     tidyr_1.3.1     tibble_3.2.1   
+## [13] ggplot2_3.5.1   tidyverse_2.0.0
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] gtable_0.3.4         xfun_0.39            bslib_0.5.1         
-##  [4] htmlwidgets_1.6.2    ggrepel_0.9.3        lattice_0.21-8      
-##  [7] tzdb_0.4.0           vctrs_0.6.3          tools_4.3.1         
-## [10] generics_0.1.3       parallel_4.3.1       fansi_1.0.4         
-## [13] highr_0.10           cluster_2.1.4        pkgconfig_2.0.3     
-## [16] scatterplot3d_0.3-44 lifecycle_1.0.3      farver_2.1.1        
-## [19] compiler_4.3.1       munsell_0.5.0        leaps_3.1           
-## [22] htmltools_0.5.6      sass_0.4.7           yaml_2.3.7          
-## [25] pillar_1.9.0         crayon_1.5.2         jquerylib_0.1.4     
-## [28] MASS_7.3-60          flashClust_1.01-2    DT_0.28             
-## [31] cachem_1.0.8         tidyselect_1.2.0     digest_0.6.33       
-## [34] mvtnorm_1.2-2        stringi_1.7.12       rematch2_2.1.2      
-## [37] bookdown_0.37        labeling_0.4.3       rprojroot_2.0.3     
-## [40] fastmap_1.1.1        grid_4.3.1           colorspace_2.1-0    
-## [43] cli_3.6.1            magrittr_2.0.3       utf8_1.2.3          
-## [46] withr_2.5.0          scales_1.2.1         bit64_4.0.5         
-## [49] estimability_1.4.1   timechange_0.2.0     rmarkdown_2.23      
-## [52] emmeans_1.8.7        bit_4.0.5            hms_1.1.3           
-## [55] coda_0.19-4          evaluate_0.21        knitr_1.43          
-## [58] rlang_1.1.1          Rcpp_1.0.11          xtable_1.8-4        
-## [61] glue_1.6.2           rstudioapi_0.15.0    vroom_1.6.3         
-## [64] jsonlite_1.8.7       R6_2.5.1             prismatic_1.1.1     
-## [67] multcompView_0.1-9</code></pre>
+##  [1] gtable_0.3.5         xfun_0.49            bslib_0.7.0         
+##  [4] htmlwidgets_1.6.4    ggrepel_0.9.5        lattice_0.22-6      
+##  [7] tzdb_0.4.0           vctrs_0.6.5          tools_4.4.1         
+## [10] generics_0.1.3       parallel_4.4.1       fansi_1.0.6         
+## [13] highr_0.10           cluster_2.1.6        pkgconfig_2.0.3     
+## [16] scatterplot3d_0.3-44 lifecycle_1.0.4      farver_2.1.2        
+## [19] compiler_4.4.1       munsell_0.5.1        leaps_3.1           
+## [22] htmltools_0.5.8.1    sass_0.4.9           yaml_2.3.8          
+## [25] crayon_1.5.2         pillar_1.9.0         jquerylib_0.1.4     
+## [28] MASS_7.3-60.2        flashClust_1.01-2    DT_0.33             
+## [31] cachem_1.1.0         tidyselect_1.2.1     digest_0.6.37       
+## [34] mvtnorm_1.2-5        stringi_1.8.4        rematch2_2.1.2      
+## [37] bookdown_0.39        labeling_0.4.3       rprojroot_2.0.4     
+## [40] fastmap_1.2.0        grid_4.4.1           colorspace_2.1-0    
+## [43] cli_3.6.3            magrittr_2.0.3       utf8_1.2.4          
+## [46] withr_3.0.0          scales_1.3.0         bit64_4.0.5         
+## [49] estimability_1.5.1   timechange_0.3.0     rmarkdown_2.27      
+## [52] emmeans_1.10.2       bit_4.0.5            hms_1.1.3           
+## [55] coda_0.19-4.1        evaluate_0.23        knitr_1.46          
+## [58] rlang_1.1.4          Rcpp_1.0.13          xtable_1.8-4        
+## [61] glue_1.7.0           renv_1.0.9           rstudioapi_0.16.0   
+## [64] vroom_1.6.5          jsonlite_1.8.8       R6_2.5.1            
+## [67] prismatic_1.1.2      multcompView_0.1-10</code></pre>
 
 </div>
 </div>

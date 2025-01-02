@@ -9,13 +9,15 @@ While HGH is a strong proponent of Canonical Variate Analysis (CVA), it is hard 
 We'll start with setting up our data as usual.  This time, we'll use the `FactoMineR` package for PCA because of its comprehensive outputs.  You could also use the base `R` function `princomp()`, but it provides fewer sensory-specific options.
 
 
-```r
+``` r
 library(tidyverse)
 library(FactoMineR) # this is new
 library(here)
 
-descriptive_data <- read_csv(here("data/torriDAFinal.csv")) %>%
-  mutate_at(.vars = vars(1:3), ~as.factor(.))
+descriptive_data <- 
+  read_csv(here("data/torriDAFinal.csv")) %>%
+  # note the use of across() to mutate multiple columns
+  mutate(across(.cols = 1:3, ~as.factor(.)))
 ```
 
 ## What does PCA do?
@@ -37,13 +39,14 @@ For more details on PCA, I strongly recommend Hervé Abdi's excellent and detail
 HGH starts the original **R Opus** with a function to take column and group means of the data in `descriptive_data` that she calls `mtable()`, for "means table".  Luckily for us, this functionality is a basic part of the `tidyverse`, and we've already used this approach in previous sections.  So let's generate a means table using `tidyverse`:
 
 
-```r
+``` r
 descriptive_means <-
   descriptive_data %>%
   # What defines the group for which we want means?
   group_by(ProductName) %>%
   # Then we take the group means for every numeric variable (ignore NR, NJ)
-  summarize_if(is.numeric, ~mean(.))
+  # Note the use of where() with across() to use a "predicate" function
+  summarize(across(where(is.numeric), ~mean(.)))
 
 descriptive_means
 ```
@@ -68,7 +71,7 @@ descriptive_means
 The `FactoMineR::PCA()` function is great, but it also tries to do way too much.  One of its annoying habits is a desire to give you a lot of plots you don't want.  So be sure to use the `graph = FALSE` argument so you have more control over plotting.  It also uses an older standard which relies on storing observation IDs in `row.names`--this isn't great programming practice and we have to explicitly do so.  Following HGH, we are going to conduct a covariance PCA by setting `scale.unit = FALSE`.
 
 
-```r
+``` r
 means_pca <- 
   descriptive_means %>%
   column_to_rownames("ProductName") %>%
@@ -103,7 +106,7 @@ means_pca
 The nice thing about `PCA()` is that it gives a well-structured list of results that we can do a lot with.  First off, let's make a quick "scree plot", describing the variance explained by each of the principal components.
 
 
-```r
+``` r
 # Here are the actual numeric results.
 means_pca$eig
 ```
@@ -119,7 +122,7 @@ means_pca$eig
 ## comp 7 0.05591818               1.063609                         100.00000
 ```
 
-```r
+``` r
 # And now we can plot
 means_pca$eig %>%
   # Note that we need to use `rownames=` to capture the rownames from PCA()
@@ -136,7 +139,7 @@ We can see that the "elbow" here occurs at the third or fourth component, but we
 The so-called "loadings" in a PCA are the weights of the linear combination of original variables that make up each component.  We access them in the `$var$coord` table in the results from `PCA()`.
 
 
-```r
+``` r
 means_pca$var$coord
 ```
 
@@ -188,13 +191,13 @@ means_pca$var$coord
 Technically, the number of dimensions we *could* get from a PCA is equal to the $min(n-1, k)$, where $n$ is the number of product means we have and $k$ is the number of measured variables, but in practice we won't typically examine more than 3-4 components/dimensions, as having to examine more for our purposes would indicate that PCA may not be the right tool for dimension reduction.
 
 
-```r
+``` r
 p_loadings <- 
   means_pca$var$coord %>%
   as_tibble(rownames = "descriptor") %>%
   ggplot(aes(x = Dim.1, y = Dim.2)) + 
-  geom_hline(yintercept = 0, linetype = "dashed", size = 1/4) +
-  geom_vline(xintercept = 0, linetype = "dashed", size = 1/4) +
+  geom_hline(yintercept = 0, linetype = "dashed", linewidth = 1/4) +
+  geom_vline(xintercept = 0, linetype = "dashed", linewidth = 1/4) +
   geom_segment(aes(xend = 0, yend = 0), 
                arrow = arrow(length = unit(0.1, "in"), ends = "first")) +
   ggrepel::geom_text_repel(aes(label = descriptor)) + 
@@ -203,17 +206,7 @@ p_loadings <-
   labs(title = "Loadings plot for PCA of product means",
        x = paste0("Dimension 1 (", round(means_pca$eig[1, 2], 2), "%)"),
        y = paste0("Dimension 2 (", round(means_pca$eig[2, 2], 2), "%)")) 
-```
 
-```
-## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-## i Please use `linewidth` instead.
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-## generated.
-```
-
-```r
 p_loadings
 ```
 
@@ -226,7 +219,7 @@ As a side note (because I had to puzzle this out myself), the `$var$coord` matri
 We find scores for our product means by using the linear combinations described by the loadings.  So, we could by hand calculate:
 
 
-```r
+``` r
 means_pca$svd$V
 ```
 
@@ -259,14 +252,14 @@ This tells us that, to get a mean vector $i$'s score on principal component 1 (D
 Before we leave this topic, I want to point out one more thing: if we plot the raw loadings, we'll come to the same conclusions:
 
 
-```r
+``` r
 means_pca$svd$V %>%
   as_tibble() %>%
   bind_cols(descriptor = row.names(means_pca$var$coord)) %>%
   rename(Dim.1 = V1, Dim.2 = V2) %>%
   ggplot(aes(x = Dim.1, y = Dim.2)) + 
-  geom_hline(yintercept = 0, linetype = "dashed", size = 1/4) +
-  geom_vline(xintercept = 0, linetype = "dashed", size = 1/4) +
+  geom_hline(yintercept = 0, linetype = "dashed", linewidth = 1/4) +
+  geom_vline(xintercept = 0, linetype = "dashed", linewidth = 1/4) +
   geom_segment(aes(xend = 0, yend = 0), 
                arrow = arrow(length = unit(0.1, "in"), ends = "first")) +
   ggrepel::geom_text_repel(aes(label = descriptor)) + 
@@ -292,13 +285,13 @@ means_pca$svd$V %>%
 OK, with all that said, if we multiply our means-vector ratings (mean-centered for each column) by the loadings we just spent a while getting, we get the *scores* for our mean vectors in the PCA space.  These are stored in the `$ind$coord` matrix. 
 
 
-```r
+``` r
 p_scores <- 
   means_pca$ind$coord %>%
   as_tibble(rownames = "product") %>%
   ggplot(aes(x = Dim.1, y = Dim.2)) + 
-  geom_hline(yintercept = 0, linetype = "dashed", size = 1/4) +
-  geom_vline(xintercept = 0, linetype = "dashed", size = 1/4) +
+  geom_hline(yintercept = 0, linetype = "dashed", linewidth = 1/4) +
+  geom_vline(xintercept = 0, linetype = "dashed", linewidth = 1/4) +
   geom_point() +
   ggrepel::geom_text_repel(aes(label = product)) + 
   theme_bw() +
@@ -315,7 +308,7 @@ p_scores
 We interpret this plot by noting the spatial separation of sample mean-vectors, as well as noting the proximity to the axes, which we interpret by their loadings from variables.  In order to facilitate this second task, it is often helpful to have the loadings and scores plots side by side.  We can accomplish this using the nifty `patchwork` package, which lets us arrange saved plots however we want.
 
 
-```r
+``` r
 library(patchwork)
 
 p_scores + p_loadings + plot_layout(widths = c(2, 2))
@@ -327,10 +320,12 @@ By looking at these plots together, we can see that the first dimension, which w
 
 ## In-depth interpretation
 
-There are several ways that we can get more information about the  structure of the PCA solution.  First, we will follow HGH and investigate the *correlations* between the variables and each of the first two components.  HGH used the `FactoMineR::dimdesc()` function, but I find this prints out too much to look good here.  We can access the correlations directly using `$var$cor` in the output of the `PCA()` function.  I'll turn it into a tibble to make display easier.
+There are several ways that we can get more information about the  structure of the PCA solution.  First, we will follow HGH and investigate the *correlations* between the variables and each of the first two components.  HGH used the `FactoMineR::dimdesc()` function, but we're going to do that later.
+
+We can access the correlations directly using `$var$cor` in the output of the `PCA()` function.  I'll turn it into a tibble to make display easier.
 
 
-```r
+``` r
 # The most highly correlated variables with Dimension 1
 means_pca$var$cor %>%
   as_tibble(rownames = "descriptor") %>%
@@ -351,7 +346,7 @@ means_pca$var$cor %>%
 ## 6 Earthy          -0.864 0.330
 ```
 
-```r
+``` r
 # The most highly correlated variables with Dimension 2
 means_pca$var$cor %>%
   as_tibble(rownames = "descriptor") %>%
@@ -381,7 +376,7 @@ HGH then calculated the "communalities" for variables on the first and second di
 We know from @abdiPrincipal2010 that the sum of squared loadings (in the sense of *correlations*) for each dimension should sum to 1, so this allows us to speak of "proportion of explained variance" for each variable and each dimension.  But we have to remember the semantic overloadings here, so if we want to see this property we will need to look at the `$svd$V` matrix again.  The `$var$cor` matrix, remember, stores this scaled by the original variables (maybe this is instead storing covariances). We can see this pretty easily:
 
 
-```r
+``` r
 # The "cor" matrix doesn't seem to really be storing what we think of as 
 # correlations.
 means_pca$var$cor %>%
@@ -403,7 +398,7 @@ means_pca$var$cor %>%
 ## 5 Dim.5  1.88
 ```
 
-```r
+``` r
 # Whereas the SVD list behaves as expected.
 means_pca$svd$V %>%
   as_tibble() %>%
@@ -419,9 +414,9 @@ means_pca$svd$V %>%
 ##   <chr> <dbl>
 ## 1 V1     1.00
 ## 2 V2     1   
-## 3 V3     1.00
-## 4 V4     1.00
-## 5 V5     1
+## 3 V3     1   
+## 4 V4     1   
+## 5 V5     1.00
 ```
 
 
@@ -432,7 +427,7 @@ The correlations between the variables and the components are also unfortunately
 We could directly calculate these, but we can make use of the `dimdesc()` convenience function
 
 
-```r
+``` r
 dimdesc(means_pca, axes = c(1, 2))
 ```
 
@@ -475,7 +470,7 @@ and
 While Abdi and Williams are talking about the *contribution* of an observation, since PCA is (largely) agnostic about the role of observation (product) and variable (descriptor), `FactoMineR::PCA()` will return contributions for both products and descriptors, found as usual in the `ind` and `var` sub-lists of the results.  We don't care so much about the products' contributions, in this case, but we do care about the variables'.  We can find and print them:
 
 
-```r
+``` r
 means_pca$var$contrib %>% round(3)
 ```
 
@@ -506,7 +501,7 @@ means_pca$var$contrib %>% round(3)
 Note that `FactoMineR` seems to scale the contributions to a percentage (e.g., multiply by 100), rather than returning contributions in the range $[0,1]$.  Following Abdi & Williams' suggestion above, we can do a little wrangling to see important contributions visually:
 
 
-```r
+``` r
 # First we make a tibble
 means_pca$var$contrib %>%
   as_tibble(rownames = "descriptor") %>%
@@ -525,7 +520,8 @@ means_pca$var$contrib %>%
   tidytext::scale_x_reordered(NULL) + 
   coord_flip() + 
   theme_bw() + 
-  facet_wrap(~name, scales = "free")
+  facet_wrap(~name, scales = "free") +
+  labs(x = "Contribution (in %)")
 ```
 
 ![](06-PCA_files/figure-latex/unnamed-chunk-15-1.pdf)<!-- --> 
@@ -536,14 +532,14 @@ HGH says in the original **R Opus** that
 
 > Communality is the sum of the squared loadings for the number of dimensions that you would like to keep.
 
-I am not sure I quite follow what she did, as she then goes on to examine the contributions, which as we've described are the squared loadings divided by the eigenvalues so that they sum to 1.  In @abdiPrincipal2010 they don't discuss *communality*, and if I remember properly the concept is more frequently applied to Factor Analysis @rencherMethods2002, so we'll leave it for now.  I think that this is a great example of how closely overlapping concepts can get confusing in the world of components-based methods, since to my understanding Factor Analysis, in some of its simpler forms, can be derived directly from PCA but with different assumptions mapped onto the steps. 
+I am not sure I quite follow what she did, as she then goes on to examine the contributions, which as we've described are the squared loadings divided by the eigenvalues so that they sum to 1.  In @abdiPrincipal2010 they don't discuss *communality*, and if I remember properly the concept is more frequently applied to Factor Analysis [@rencherMethods2002], so we'll leave it for now.  I think that this is a great example of how closely overlapping concepts can get confusing in the world of components-based methods, since to my understanding Factor Analysis, in some of its simpler forms, can be derived directly from PCA but with different assumptions mapped onto the steps. 
 
 ## PCA with resampling for confidence intervals
 
 In the original **R Opus**, HGH uses the `SensoMineR::panellipse()` function to generate confidence ellipses for the product mean vectors in PCA.  
 
 
-```r
+``` r
 panellipse_res <- 
   # We have to reimport the data because panellipse() doesn't behave well with
   # tibble() formats.
@@ -556,7 +552,7 @@ panellipse_res <-
 I'm not a huge fan of `panellipse()` because it's pretty opaque.  I can't find the documentation on what it's doing, and there doesn't seem to be an associated journal article.  It doesn't really document how it is resampling or give easily understood descriptions of what the results (both numerical and graphical) it is producing *mean*.  Here is the plot that HGH uses for the original **R Opus**:
 
 
-```r
+``` r
 panellipse_res$graph$plotIndEll
 ```
 
@@ -564,12 +560,12 @@ panellipse_res$graph$plotIndEll
 
 The confidence ellipses are definitely being drawn around 95% of the resampled results from the bootstrapping procedure, but I'm not sure if this is a bootstrap based on, for example, the "partial bootstrap" or the "truncated bootstrap".  We will us a naive approach to producing a partial bootstrap in order to do some resampling and compare it.
 
-It is also worth noting that the plot produced here is different than that produced in the original **R Opus**, so eithere there is simulation variability (probably) or the underlying program has changed between 2015 and now (also possible).  The overall conclusions are not greatly different but the overlapping areas can vary quite dramatically.
+It is also worth noting that the plot produced here is different than that produced in the original **R Opus**, so either there is simulation variability (probably) or the underlying program has changed between 2015 and now (also possible).  The overall conclusions are not greatly different but the overlapping areas can vary quite dramatically.
 
 The basic approach (which we saw back in the CVA section of the **R Opus**) is to draw a new set of bootstrapped observations for each product: we need 42 observations per product to calculate a new mean.  We then can use the projection function from our original PCA solution to project these results into our space; in a nod to the truncated bootstrap approach [@cadoretConstruction2013] we will use only the first 2 dimensions of the projection function to get the results so as not to overfit.  Finally, we'll draw ellipses around our results to represent variability.
 
 
-```r
+``` r
 get_bootstrapped_pca_means <- function(){
   
   descriptive_data %>%
@@ -601,21 +597,22 @@ pca_boots <-
 p_scores +
   geom_point(data = pca_boots, 
              inherit.aes = FALSE,
-             aes(x = pc1, y = pc2, color = ProductName), shape = ".") +
+             aes(x = pc1, y = pc2, color = ProductName), 
+             alpha = 1/2, size = 1/2) +
   stat_ellipse(data = pca_boots, inherit.aes = FALSE,
                aes(x = pc1, y = pc2, color = ProductName))
 ```
 
 ![](06-PCA_files/figure-latex/unnamed-chunk-18-1.pdf)<!-- --> 
 
-Our results are pretty close, but not exactly the same.  It seems like our method of generating bootstrapped scores (via resampling followed by projection via the $\mathbf Q$ matrix from SVD) is potentially more liberal in product separation than that from the `panellipse()` function.  Perhaps `panellipse()` is using the "truncated bootstrap" approach [@cadoretConstruction2013], which solves a full PCA with the resampled data, then aligns it with the original observed space via Generalized Procrustes Analysis, then repeats that process a large number (e.g., 1000) times.. 
+Our results are pretty close, but not exactly the same.  It seems like our method of generating bootstrapped scores (via resampling followed by projection via the $\mathbf Q$ matrix from SVD) is potentially more liberal in product separation than that from the `panellipse()` function.  Perhaps `panellipse()` is using the "truncated bootstrap" approach [@cadoretConstruction2013], which solves a full PCA with the resampled data, then aligns it with the original observed space via [Generalized Procrustes Analysis], then repeats that process a large number (e.g., 1000) times.. 
 
 ## Comparison of products with PCA
 
 HGH then used the `panellipse()` results to get Hotelling's $T^2$ stats for each set of products.  I believe that Hotelling's $T^2$ is a generalization of the $t$-distribution to multivariate data.  These were accessed from the outputs of `panellipse()`, which we stored in `panellipse_res`.  
 
 
-```r
+``` r
 names(panellipse_res)
 ```
 
@@ -626,7 +623,7 @@ names(panellipse_res)
 The `SensoMineR::coltable()` function HGH used is a visualization function for this kind of output, let's take a look.
 
 
-```r
+``` r
 SensoMineR::coltable(panellipse_res$hotelling, main.title = "Hotelling's T2 for all products")
 ```
 
@@ -635,7 +632,7 @@ SensoMineR::coltable(panellipse_res$hotelling, main.title = "Hotelling's T2 for 
 Let's practice how to make a similar table from this kind of data.  The actual `panellipse_res$hotelling` object is just a square matrix.  We can use this as input for something like the `geom_tile()` function with the right kind of wrangling.  
 
 
-```r
+``` r
 # First wrangle
 
 panellipse_res$hotelling %>%
@@ -669,12 +666,12 @@ panellipse_res$hotelling %>%
 
 ![](06-PCA_files/figure-latex/unnamed-chunk-21-1.pdf)<!-- --> 
 
-Notice the `ggplot2` syntax above is kind of complicated, but that's because I did it all at once, and I wanted to do a lot of minor things like remove axis ticks, so as to replicate the plot from  the `panellipse()` function closely.  Notice that I don't think the degrees of freedom for the Hotelling's $T^2$ plot.
+Notice the `ggplot2` syntax above is kind of complicated, but that's because I did it all at once, and I wanted to do a lot of minor things like remove axis ticks, so as to replicate the plot from  the `panellipse()` function closely.
 
 As a bonus, we will quickly look into how to conduct Hotelling's $T^2$ tests ourselves, and then leave the world of PCA (for now) to turn to methods for cluster analysis.
 
 
-```r
+``` r
 # We need pairs of products - if we wanted to make all pairwise comparisons it
 # would be possible to do so using, for example, nested `for()` loops or some
 # kind of list-table structure
@@ -698,21 +695,23 @@ DescTools::HotellingsT2Test(formula = as.matrix(hotelling_demo_data[, -1]) ~ Pro
 
 These results are not the same as those given in the `panellipse()` output; I suspect after reading `?panellipse` that this is because internally that function is running a Hotelling's $T^2$ test on the PCA results, rather than on the raw data, but I am not sure and I am not willing to try to interpret the under-the-hood code.  If you know, please reach out and let me know!
 
+In general, it seems like using something like CVA and investigating the separability of means there instead of using pairwise Hotelling's $T^2$ tests would be safer in terms of familywise error inflation.
+
 ## Packages used in this chapter
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: aarch64-apple-darwin20 (64-bit)
-## Running under: macOS Ventura 13.6.1
+## R version 4.4.1 (2024-06-14)
+## Platform: x86_64-apple-darwin20
+## Running under: macOS 15.2
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -721,42 +720,42 @@ sessionInfo()
 ## tzcode source: internal
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] stats     graphics  grDevices datasets  utils     methods   base     
 ## 
 ## other attached packages:
-##  [1] patchwork_1.1.2 here_1.0.1      FactoMineR_2.8  lubridate_1.9.2
-##  [5] forcats_1.0.0   stringr_1.5.0   dplyr_1.1.2     purrr_1.0.1    
-##  [9] readr_2.1.4     tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.3  
+##  [1] patchwork_1.2.0 here_1.0.1      FactoMineR_2.11 lubridate_1.9.3
+##  [5] forcats_1.0.0   stringr_1.5.1   dplyr_1.1.4     purrr_1.0.2    
+##  [9] readr_2.1.5     tidyr_1.3.1     tibble_3.2.1    ggplot2_3.5.1  
 ## [13] tidyverse_2.0.0
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Exact_3.2            tidyselect_1.2.0     rootSolve_1.8.2.4   
-##  [4] farver_2.1.1         fastmap_1.1.1        janeaustenr_1.0.0   
-##  [7] digest_0.6.33        timechange_0.2.0     estimability_1.4.1  
-## [10] lifecycle_1.0.3      cluster_2.1.4        multcompView_0.1-9  
-## [13] tokenizers_0.3.0     lmom_3.0             magrittr_2.0.3      
-## [16] compiler_4.3.1       rlang_1.1.1          tools_4.3.1         
-## [19] utf8_1.2.3           tidytext_0.4.1       yaml_2.3.7          
-## [22] data.table_1.14.8    knitr_1.43           labeling_0.4.3      
-## [25] htmlwidgets_1.6.2    bit_4.0.5            scatterplot3d_0.3-44
-## [28] plyr_1.8.8           KernSmooth_2.23-21   expm_0.999-7        
-## [31] withr_2.5.0          grid_4.3.1           fansi_1.0.4         
-## [34] SensoMineR_1.26      AlgDesign_1.2.1      xtable_1.8-4        
-## [37] e1071_1.7-13         colorspace_2.1-0     emmeans_1.8.7       
-## [40] scales_1.2.1         gtools_3.9.4         MASS_7.3-60         
-## [43] flashClust_1.01-2    cli_3.6.1            mvtnorm_1.2-2       
-## [46] rmarkdown_2.23       crayon_1.5.2         generics_0.1.3      
-## [49] rstudioapi_0.15.0    httr_1.4.6           reshape2_1.4.4      
+##  [1] Exact_3.3            tidyselect_1.2.1     rootSolve_1.8.2.4   
+##  [4] farver_2.1.2         fastmap_1.2.0        janeaustenr_1.0.0   
+##  [7] digest_0.6.37        timechange_0.3.0     estimability_1.5.1  
+## [10] lifecycle_1.0.4      cluster_2.1.6        multcompView_0.1-10 
+## [13] tokenizers_0.3.0     lmom_3.2             magrittr_2.0.3      
+## [16] compiler_4.4.1       rlang_1.1.4          tools_4.4.1         
+## [19] utf8_1.2.4           yaml_2.3.8           tidytext_0.4.2      
+## [22] data.table_1.15.4    knitr_1.46           labeling_0.4.3      
+## [25] htmlwidgets_1.6.4    bit_4.0.5            scatterplot3d_0.3-44
+## [28] plyr_1.8.9           KernSmooth_2.23-26   expm_1.0-0          
+## [31] withr_3.0.0          grid_4.4.1           fansi_1.0.6         
+## [34] SensoMineR_1.27      AlgDesign_1.2.1      xtable_1.8-4        
+## [37] e1071_1.7-16         colorspace_2.1-0     emmeans_1.10.2      
+## [40] scales_1.3.0         gtools_3.9.5         MASS_7.3-60.2       
+## [43] flashClust_1.01-2    cli_3.6.3            mvtnorm_1.2-5       
+## [46] rmarkdown_2.27       crayon_1.5.2         generics_0.1.3      
+## [49] rstudioapi_0.16.0    httr_1.4.7           reshape2_1.4.4      
 ## [52] tzdb_0.4.0           readxl_1.4.3         gld_2.6.6           
-## [55] proxy_0.4-27         parallel_4.3.1       cellranger_1.1.0    
-## [58] vctrs_0.6.3          boot_1.3-28.1        Matrix_1.6-0        
-## [61] bookdown_0.37        hms_1.1.3            bit64_4.0.5         
-## [64] ggrepel_0.9.3        glue_1.6.2           DT_0.28             
-## [67] stringi_1.7.12       gtable_0.3.4         munsell_0.5.0       
-## [70] pillar_1.9.0         htmltools_0.5.6      R6_2.5.1            
-## [73] rprojroot_2.0.3      vroom_1.6.3          evaluate_0.21       
-## [76] lattice_0.21-8       highr_0.10           SnowballC_0.7.1     
-## [79] leaps_3.1            DescTools_0.99.50    class_7.3-22        
-## [82] Rcpp_1.0.11          coda_0.19-4          xfun_0.39           
-## [85] pkgconfig_2.0.3
+## [55] proxy_0.4-27         parallel_4.4.1       cellranger_1.1.0    
+## [58] vctrs_0.6.5          boot_1.3-30          Matrix_1.7-0        
+## [61] bookdown_0.39        hms_1.1.3            bit64_4.0.5         
+## [64] ggrepel_0.9.5        glue_1.7.0           DT_0.33             
+## [67] stringi_1.8.4        gtable_0.3.5         munsell_0.5.1       
+## [70] pillar_1.9.0         htmltools_0.5.8.1    R6_2.5.1            
+## [73] rprojroot_2.0.4      vroom_1.6.5          evaluate_0.23       
+## [76] lattice_0.22-6       haven_2.5.4          highr_0.10          
+## [79] SnowballC_0.7.1      leaps_3.1            renv_1.0.9          
+## [82] class_7.3-22         DescTools_0.99.58    Rcpp_1.0.13         
+## [85] coda_0.19-4.1        xfun_0.49            pkgconfig_2.0.3
 ```

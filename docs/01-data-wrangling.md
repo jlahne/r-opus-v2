@@ -11,7 +11,7 @@ In the original **R Opus**, HGH presented datasets from actual research conducte
 Most of the **R Opus** concerns 4 datasets.  Let's import them and inspect them.  We're going to use the `tidyverse` set of packages for basic data import and wrangling.
 
 
-```r
+``` r
 library(tidyverse)
 library(here) # easy file navigation
 
@@ -27,7 +27,7 @@ We've now created four data tables (called "tibbles" in the `tidyverse` parlance
 
 
 
-```r
+``` r
 glimpse(descriptive_data)
 ```
 
@@ -64,7 +64,7 @@ The `descriptive_data` file, read from `torriDAFinal.csv`, contains results from
 We can learn a little more about these data before we move on: let's figure out how many samples, how many judges, and how many reps we have:
 
 
-```r
+``` r
 # There are 14 judges, each of whom completed the same number of observations
 descriptive_data %>%
   count(NJ, sort = TRUE)
@@ -90,7 +90,7 @@ descriptive_data %>%
 ## 14  1417    24
 ```
 
-```r
+``` r
 # There are 3 reps (labeled as 7, 8, and 9), balanced
 descriptive_data %>%
   count(NR)
@@ -105,7 +105,7 @@ descriptive_data %>%
 ## 3     9   112
 ```
 
-```r
+``` r
 # There are 8 products, 4 from Italy and 4 from California
 descriptive_data %>%
   count(ProductName)
@@ -128,7 +128,7 @@ descriptive_data %>%
 The `%>%` operator is called **the pipe**, and it takes whatever is on its left side and passes it on to the right side.  You can learn more about the pipe, but you can also just experiment.  When you see it in code, you can read it as "...and then...", so above we'd say something like "take `descriptive_data` **and then** count the number of times each `NJ` value occurs".  The other thing to know about piping, that you will see in some code in the **R Opus**, is the use of the period, `.`, as a "pronoun" for whatever is getting passed from the previous line.  This lets you tell the pipe where in the line you want the output from the previous/left side to end up:
 
 
-```r
+``` r
  # Take the descriptive data
 descriptive_data %>%
 # AND THEN run 1-way ANOVA, with descriptive_data passed to the `data =` argument of aov()
@@ -152,7 +152,7 @@ Turns out that `Jam` attribute might vary by product.  We'll see.
 Let's look at the data in `consumer_data`:
 
 
-```r
+``` r
 glimpse(consumer_data)
 ```
 
@@ -177,7 +177,7 @@ glimpse(consumer_data)
 Here we have consumer acceptance testing data on the same 8 wines from the DA.  The rows look like they represent consumers, identified by the `Judge` column.  Let's check to see if they're all unique:
 
 
-```r
+``` r
 consumer_data %>%
 # The sort = TRUE argument would put anyone with multiple rows at the top
   count(Judge, sort = TRUE)
@@ -207,7 +207,7 @@ Then we have some consumption data (`Wine Frequency` and `IT Frequency`) and som
 The other two data frames we're going to pay less attention to for now.  The first, `missing_data_example`, is the same data frame as `descriptive_data` but with missing data introduced on purpose for didactic purposes.  We can use the `naniar` package to quickly learn a litle bit about the missingness:
 
 
-```r
+``` r
 library(naniar)
 
 naniar::gg_miss_var(x = missing_data_example)
@@ -218,7 +218,7 @@ naniar::gg_miss_var(x = missing_data_example)
 We could also use the useful `skimr` package to give us an informative data summary that would tell us about missingness:
 
 
-```r
+``` r
 library(skimr)
 ```
 
@@ -233,7 +233,7 @@ library(skimr)
 ##     n_complete
 ```
 
-```r
+``` r
 skim(missing_data_example) %>% 
   # This is purely to allow the skimr::skim() to be rendered in PDF, ignore otherwise
   knitr::kable()
@@ -297,7 +297,7 @@ Because the only difference between this data table and the `descriptive_data` t
 The `sorting_data` data frame contains results from a sorting task in which 15 subjects (1 per column) sorted the same wines into disjoint groups according to their own criteria.  If in a column two wines have the same label (say, `G1`), that subject put them in the same group.  We'll get to how to deal with this kind of data later on, so we're not going to go into more depth here.
 
 
-```r
+``` r
 sorting_data
 ```
 
@@ -324,7 +324,7 @@ Whenever we do data analysis, about 90% of the effort is getting the data into t
 The `pivot_longer()` function in `dplyr` is built to take data in the many-observations-per-row format (often called "wide" data) and bring it into a longer, "tidier" representation that is often easier to work with.  For the `descriptive_data`, a natural format that would be easier to work with is one in which all the descriptors are pivoted into two columns: one labeling the descriptor by name, and the other giving the rated value.  We'd do that as follows:
 
 
-```r
+``` r
 descriptive_data_tidy <- 
   descriptive_data %>%
   pivot_longer(cols = -c(NJ, NR, ProductName),
@@ -356,7 +356,7 @@ Now we have kept our 3 ID or classifying variables and created a 4th, `descripto
 To motivate this kind of work, let's quickly talk about the "[split-apply-combine](https://www.jstatsoft.org/article/view/v040i01)" workflow this enables.  Now that we've separated out our classifying variables, we can do work with them much more easily.  For example, let's say we want to generate a means table comparing the wines on the `Jam` variable, which we know from our example above seems to vary per wine.  We can now do this very easily:
 
 
-```r
+``` r
 descriptive_data_tidy %>%
 
 # First we will use filter() to get only Jam observations
@@ -394,7 +394,7 @@ Our use of all of the intermediate steps--filtering, grouping, summarizing--depe
 We can do the same thing with our `consumer_data`.  In this case, we have 5 ID variables, and 8 observations, one for each wine.  Let's do the same thing with pivot_longer:
 
 
-```r
+``` r
 consumer_data_tidy <- 
   consumer_data %>%
   
@@ -427,7 +427,7 @@ consumer_data_tidy
 Again, we've created a new ID/classifying column called `wine` and a new observation column called `rating`.  Now the 6 ID columns uniquely specify an observation.  Let's do something fun with this: is there a relationship between `Gender` and `rating`?
 
 
-```r
+``` r
 consumer_data_tidy %>%
   lm(rating ~ Gender, data = .) %>%
   summary()
@@ -463,18 +463,18 @@ At this point, we've already done quite a bit of work.  We've practiced importin
 ## Packages used in this chapter
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: aarch64-apple-darwin20 (64-bit)
-## Running under: macOS Ventura 13.6.1
+## R version 4.4.1 (2024-06-14)
+## Platform: x86_64-apple-darwin20
+## Running under: macOS 15.2
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -483,25 +483,26 @@ sessionInfo()
 ## tzcode source: internal
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] stats     graphics  grDevices datasets  utils     methods   base     
 ## 
 ## other attached packages:
-##  [1] skimr_2.1.5     naniar_1.0.0    here_1.0.1      lubridate_1.9.2
-##  [5] forcats_1.0.0   stringr_1.5.0   dplyr_1.1.2     purrr_1.0.1    
-##  [9] readr_2.1.4     tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.3  
+##  [1] skimr_2.1.5     naniar_1.1.0    here_1.0.1      lubridate_1.9.3
+##  [5] forcats_1.0.0   stringr_1.5.1   dplyr_1.1.4     purrr_1.0.2    
+##  [9] readr_2.1.5     tidyr_1.3.1     tibble_3.2.1    ggplot2_3.5.1  
 ## [13] tidyverse_2.0.0
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] utf8_1.2.3        generics_0.1.3    stringi_1.7.12    hms_1.1.3        
-##  [5] digest_0.6.33     magrittr_2.0.3    evaluate_0.21     grid_4.3.1       
-##  [9] timechange_0.2.0  bookdown_0.37     fastmap_1.1.1     jsonlite_1.8.7   
-## [13] rprojroot_2.0.3   fansi_1.0.4       scales_1.2.1      cli_3.6.1        
-## [17] rlang_1.1.1       crayon_1.5.2      bit64_4.0.5       munsell_0.5.0    
-## [21] base64enc_0.1-3   repr_1.1.6        withr_2.5.0       yaml_2.3.7       
-## [25] tools_4.3.1       parallel_4.3.1    tzdb_0.4.0        colorspace_2.1-0 
-## [29] vctrs_0.6.3       R6_2.5.1          lifecycle_1.0.3   bit_4.0.5        
-## [33] vroom_1.6.3       pkgconfig_2.0.3   pillar_1.9.0      gtable_0.3.4     
-## [37] glue_1.6.2        visdat_0.6.0      highr_0.10        xfun_0.39        
-## [41] tidyselect_1.2.0  rstudioapi_0.15.0 knitr_1.43        farver_2.1.1     
-## [45] htmltools_0.5.6   labeling_0.4.3    rmarkdown_2.23    compiler_4.3.1
+##  [1] utf8_1.2.4        generics_0.1.3    renv_1.0.9        stringi_1.8.4    
+##  [5] hms_1.1.3         digest_0.6.37     magrittr_2.0.3    evaluate_0.23    
+##  [9] grid_4.4.1        timechange_0.3.0  bookdown_0.39     fastmap_1.2.0    
+## [13] jsonlite_1.8.8    rprojroot_2.0.4   fansi_1.0.6       scales_1.3.0     
+## [17] cli_3.6.3         rlang_1.1.4       crayon_1.5.2      bit64_4.0.5      
+## [21] munsell_0.5.1     base64enc_0.1-3   repr_1.1.7        withr_3.0.0      
+## [25] yaml_2.3.8        tools_4.4.1       parallel_4.4.1    tzdb_0.4.0       
+## [29] colorspace_2.1-0  vctrs_0.6.5       R6_2.5.1          lifecycle_1.0.4  
+## [33] bit_4.0.5         vroom_1.6.5       pkgconfig_2.0.3   pillar_1.9.0     
+## [37] gtable_0.3.5      glue_1.7.0        visdat_0.6.0      highr_0.10       
+## [41] xfun_0.49         tidyselect_1.2.1  rstudioapi_0.16.0 knitr_1.46       
+## [45] farver_2.1.2      htmltools_0.5.8.1 labeling_0.4.3    rmarkdown_2.27   
+## [49] compiler_4.4.1
 ```

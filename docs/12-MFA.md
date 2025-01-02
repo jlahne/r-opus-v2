@@ -15,7 +15,7 @@ In comparison to standard PCA, MFA has several advantages.  The primary advantag
 In the original **R Opus**, HGH analyzed the DA and the consumer data for the wines by MFA.  We will follow this, but we will start by first analyzing only the DA data by MFA in order to gain a feel for the methodology (and to avoid boredom with results that will be quite similar to the results from our Preference Mapping section).  We will use `FactoMineR` for the `MFA()` function.
 
 
-```r
+``` r
 library(tidyverse)
 library(here)
 library(FactoMineR)
@@ -45,7 +45,7 @@ consumer_data <-
 Typically, we have been conducting PCA on a matrix of mean values for each wine and descriptor: we have averaged across judge and across replication.  But we can instead treat these as individual data tables to be analyzed by MFA.  Let's contrast the results.
 
 
-```r
+``` r
 descriptive_pca <- 
   descriptive_data %>%
   group_by(ProductName) %>%
@@ -83,7 +83,7 @@ glimpse(descriptive_very_wide_data)
 We have made an *extremely* wide data frame with a set of 20 columns for each unique combination of `NR` (rep) and `NJ` (judge).  We can now use that information to create an MFA that will give a best compromise among all these measurements.
 
 
-```r
+``` r
 descriptive_mfa <- descriptive_very_wide_data %>%
   column_to_rownames("ProductName") %>%
   # `group = ` specifies the sets of measurements by length.  We have 42 tables
@@ -113,7 +113,7 @@ descriptive_mfa
 We have a structure similar to the output of `PCA()` that we can explore.
 
 
-```r
+``` r
 # Like in PCA, the `$ind$coord matrix stores the compromise factor score for the
 # observations
 descriptive_mfa$ind$coord
@@ -131,7 +131,7 @@ descriptive_mfa$ind$coord
 ## I_REFOSCO    5.8823192  5.793524  2.907029  3.078027  2.4470802
 ```
 
-```r
+``` r
 # UNLIKE in PCA, the `$ind$coord.partiel matrix stores the projected coordinates
 # for each observation in each table.  
 descriptive_mfa$ind$coord.partiel
@@ -164,7 +164,7 @@ descriptive_mfa$ind$coord.partiel
 We can use these projected (partial) coordinates to get some ideas about the consensus (or lack thereof) among our judges.  Let's wrangle.
 
 
-```r
+``` r
 library(patchwork)
 
 p_descriptive_mfa <- 
@@ -230,7 +230,7 @@ We can see some major differences (as well as some similarities!) between these 
 We can take a similar approach to understanding the loadings in the space, but because of the large number of variables to plot and distinguish with aesthetic elements like color, we're going to use `facet_wrap()` to break up the plot into a set, with 1 plot per attribute.
 
 
-```r
+``` r
 # We can see a similar structure for the variables - one per table
 descriptive_mfa$quanti.var$coord
 ```
@@ -249,7 +249,7 @@ descriptive_mfa$quanti.var$coord
 ....
 ```
 
-```r
+``` r
 descriptive_mfa$global.pca$var$cor %>%
   as_tibble(rownames = "descriptor") %>%
   separate(descriptor, 
@@ -284,7 +284,7 @@ From this plot, we can tell that there is reasonable consensus among judges for 
 We could (and would want to!) investigate the contributions of the observations, variables, and sets of variables ("tables") to the consensus solution to understand what is most important.  Here, to save space, we will look primarily at the *tables*: which `NR:NJ` combination is most important for the space?  We will visualize this as a scatterplot, with contributions to the 1st and 2nd dimensions on the axes.
 
 
-```r
+``` r
 # Some nicer labels 
 nice_names <- 
   crossing(subject = descriptive_data$NJ %>% unique, 
@@ -325,7 +325,7 @@ With this slightly simpler example in mind, let's turn to an MFA where we have q
 ## MFA with different measurements
 
 
-```r
+``` r
 preference_mfa <- 
   # Get the means of the product attributes from the DA
   descriptive_data %>%
@@ -375,7 +375,7 @@ We can dive into these results in the same way we did with the DA data, but we a
 However, we also don't have the same variables measured across both tables, so we need to be a little careful with how we interpret the results.  Let's start by looking at the consensus map for the wines, enriched with projections for both how the DA panel and the consumers saw the wines:
 
 
-```r
+``` r
 p_preference_scores <- 
   
   # First we need to get our consensus and partial factor scores into a single
@@ -434,7 +434,7 @@ Once again, we find ourselves in slight disagreement with HGH's results for the 
 One thing that is worth noting is that the disagreement between our two score plots is reasonably small.  We can take a look at the $RV$ coefficient between the two projections to get a better picture of this:
 
 
-```r
+``` r
 preference_mfa$group$RV %>%
   round(3)
 ```
@@ -450,7 +450,7 @@ We can see that with an $RV\approx0.8$ between the two data sets, we are quite c
 Given this high level of agreement, it will be informative to inspect the loadings from both plots together: while MFA is strictly a descriptive method, we can use these loadings to give us some hypotheses about the relationship between descriptive attributes and "vectors of liking" from the consumers.  
 
 
-```r
+``` r
 # For whatever reason, we tend to visualize correlations in MFA. These are the
 # same as loadings up to a scale factor, so our interpretations will be the
 # same.  We can access them in `$quanti.var$cor`.
@@ -517,7 +517,7 @@ I am not sure that there is any real benefit to pulling the other visualizations
 Instead, we will wrap up with a contribution plot to understand which dimensions are being driven by DA and which by consumer data:
 
 
-```r
+``` r
 # Grab the contribution data
 preference_mfa$group$contrib %>%
   as_tibble() %>%
@@ -549,18 +549,18 @@ We have gone into a fair amount of detail into MFA in this chapter.  I think tha
 ## Packages used in this chapter
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: aarch64-apple-darwin20 (64-bit)
-## Running under: macOS Ventura 13.6.1
+## R version 4.4.1 (2024-06-14)
+## Platform: x86_64-apple-darwin20
+## Running under: macOS 15.2
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -569,35 +569,35 @@ sessionInfo()
 ## tzcode source: internal
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] stats     graphics  grDevices datasets  utils     methods   base     
 ## 
 ## other attached packages:
-##  [1] patchwork_1.1.2 paletteer_1.5.0 FactoMineR_2.8  here_1.0.1     
-##  [5] lubridate_1.9.2 forcats_1.0.0   stringr_1.5.0   dplyr_1.1.2    
-##  [9] purrr_1.0.1     readr_2.1.4     tidyr_1.3.0     tibble_3.2.1   
-## [13] ggplot2_3.4.3   tidyverse_2.0.0
+##  [1] patchwork_1.2.0 paletteer_1.6.0 FactoMineR_2.11 here_1.0.1     
+##  [5] lubridate_1.9.3 forcats_1.0.0   stringr_1.5.1   dplyr_1.1.4    
+##  [9] purrr_1.0.2     readr_2.1.5     tidyr_1.3.1     tibble_3.2.1   
+## [13] ggplot2_3.5.1   tidyverse_2.0.0
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] gtable_0.3.4         xfun_0.39            htmlwidgets_1.6.2   
-##  [4] ggrepel_0.9.3        lattice_0.21-8       tzdb_0.4.0          
-##  [7] vctrs_0.6.3          tools_4.3.1          generics_0.1.3      
-## [10] parallel_4.3.1       fansi_1.0.4          highr_0.10          
-## [13] cluster_2.1.4        pkgconfig_2.0.3      scatterplot3d_0.3-44
-## [16] lifecycle_1.0.3      farver_2.1.1         compiler_4.3.1      
-## [19] munsell_0.5.0        ggforce_0.4.1        leaps_3.1           
-## [22] htmltools_0.5.6      yaml_2.3.7           pillar_1.9.0        
-## [25] crayon_1.5.2         MASS_7.3-60          flashClust_1.01-2   
-## [28] DT_0.28              tidyselect_1.2.0     digest_0.6.33       
-## [31] mvtnorm_1.2-2        stringi_1.7.12       rematch2_2.1.2      
-## [34] bookdown_0.37        labeling_0.4.3       polyclip_1.10-4     
-## [37] rprojroot_2.0.3      fastmap_1.1.1        grid_4.3.1          
-## [40] colorspace_2.1-0     cli_3.6.1            magrittr_2.0.3      
-## [43] utf8_1.2.3           withr_2.5.0          scales_1.2.1        
-## [46] bit64_4.0.5          estimability_1.4.1   timechange_0.2.0    
-## [49] rmarkdown_2.23       emmeans_1.8.7        bit_4.0.5           
-## [52] hms_1.1.3            coda_0.19-4          evaluate_0.21       
-## [55] knitr_1.43           rlang_1.1.1          Rcpp_1.0.11         
-## [58] xtable_1.8-4         glue_1.6.2           tweenr_2.0.2        
-## [61] rstudioapi_0.15.0    vroom_1.6.3          R6_2.5.1            
-## [64] prismatic_1.1.1      multcompView_0.1-9
+##  [1] gtable_0.3.5         xfun_0.49            htmlwidgets_1.6.4   
+##  [4] ggrepel_0.9.5        lattice_0.22-6       tzdb_0.4.0          
+##  [7] vctrs_0.6.5          tools_4.4.1          generics_0.1.3      
+## [10] parallel_4.4.1       fansi_1.0.6          highr_0.10          
+## [13] cluster_2.1.6        pkgconfig_2.0.3      scatterplot3d_0.3-44
+## [16] lifecycle_1.0.4      farver_2.1.2         compiler_4.4.1      
+## [19] munsell_0.5.1        ggforce_0.4.2        leaps_3.1           
+## [22] htmltools_0.5.8.1    yaml_2.3.8           pillar_1.9.0        
+## [25] crayon_1.5.2         MASS_7.3-60.2        flashClust_1.01-2   
+## [28] DT_0.33              tidyselect_1.2.1     digest_0.6.37       
+## [31] mvtnorm_1.2-5        stringi_1.8.4        rematch2_2.1.2      
+## [34] bookdown_0.39        labeling_0.4.3       polyclip_1.10-6     
+## [37] rprojroot_2.0.4      fastmap_1.2.0        grid_4.4.1          
+## [40] colorspace_2.1-0     cli_3.6.3            magrittr_2.0.3      
+## [43] utf8_1.2.4           withr_3.0.0          scales_1.3.0        
+## [46] bit64_4.0.5          estimability_1.5.1   timechange_0.3.0    
+## [49] rmarkdown_2.27       emmeans_1.10.2       bit_4.0.5           
+## [52] hms_1.1.3            coda_0.19-4.1        evaluate_0.23       
+## [55] knitr_1.46           rlang_1.1.4          Rcpp_1.0.13         
+## [58] xtable_1.8-4         glue_1.7.0           tweenr_2.0.3        
+## [61] renv_1.0.9           rstudioapi_0.16.0    vroom_1.6.5         
+## [64] R6_2.5.1             prismatic_1.1.2      multcompView_0.1-10
 ```

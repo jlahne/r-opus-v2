@@ -7,7 +7,7 @@ output: html_document
 So far we've imported and inspected our data.  In case that got left behind, let's do it again (as well as setting up the basic packages we're going to use).
 
 
-```r
+``` r
 library(tidyverse)
 library(here)
 
@@ -17,12 +17,12 @@ consumer_data <- read_csv(here("data/torriconsFinal.csv"))
 
 ## Univariate analysis with the linear model
 
-In the original **R Opus**, HGH made sure that the classifying variables in the `descriptive_data` were set to the `factor` data type.  [There is a *looong* history of factors in `R`](https://notstatschat.tumblr.com/post/124987394001/stringsasfactors-sigh), and you can get a better crash course than I am going to give in some introductory course like [Stat545](https://stat545.com/factors-boss.html).  Suffice it to say here that the `factor` data type is a labeled integer, and that it ~~is~~ used to be the default way that `R` imports strings.  It has some desirable characteristics, but it can often be non-intuitive for those learning `R`.  Much of base `R` has now evolved to silently handle `character` data as `factor` when necessary, so unless you're a hardcore `R` user you probably don't need to worry about this too much.
+In the original **R Opus**, HGH made sure that the classifying variables in the `descriptive_data` were set to the `factor` data type.  [There is a *looong* history of factors in `R`](https://notstatschat.tumblr.com/post/124987394001/stringsasfactors-sigh), and you can get a better crash course than I am going to give in some introductory course like [Stat545](https://stat545.com/factors-boss.html).  Suffice it to say here that the `factor` data type is a labeled integer, and that it ~~is~~ _used to be_ the default way that `R` imports strings.  It has some desirable characteristics, but it can often be non-intuitive for those learning `R`.  Much of base `R` has now evolved to silently handle `character` data as `factor` when necessary, so unless you're a hardcore `R` user you probably don't need to worry about this too much.
 
 *That being said*, let's take the opportunity to follow along with HGH's intentions in order to learn some more data wrangling.  In this case, HGH says that the `NJ`, `NR`, and `ProductName` variables in `descriptive_data` should be `factor` data type, so let's make it so (this is definitely a good idea for `NJ` and `NR`, which are stored as numerals, as otherwise `R` will treat them as continuous numeric variables).
 
 
-```r
+``` r
 descriptive_data <- 
   descriptive_data %>%
   mutate(NJ = as.factor(NJ),
@@ -62,10 +62,88 @@ glimpse(descriptive_data)
 
 Great.  We got it.  Now, when we do something like regression (with `lm()`) or ANOVA (with `aov()`) using those variables as predictors, `R` will treat them as discrete, unordered levels rather than the numbers that they are encoded as.
 
-The other trick that HGH does in her original **R Opus** is to run linear models on a matrix of outcomes.  We're going to take a slightly different approach using the "split-apply-combine" approach that the `nest()` function gives us access to in `dplyr`.  
+The other trick that HGH does in her original **R Opus** is to run linear models on a matrix of outcomes.  This allows for running the same model (specified in `R` as `<LHS> ~ <RHS>`, where `<LHS>` is whatever we are predicting and `<RHS>` is one or more predictors) on multiple `<LHS>` variables without copying and pasting.  This approach looks like this:
 
 
-```r
+``` r
+lhs <- 
+  descriptive_data %>%
+  
+  # remove the predictor variables
+  
+  select(-c(NJ, ProductName, NR)) %>%
+
+  # coerce into the appropriate format
+  
+  as.matrix()
+
+# Run the same model on every column of the lhs matrix, pulling our <RHS>
+# variables from the descriptive_data tibble
+aov(lhs ~ (NR + NJ + ProductName)^2, data = descriptive_data)
+```
+
+```
+## Call:
+##    aov(formula = lhs ~ (NR + NJ + ProductName)^2, data = descriptive_data)
+## 
+## Terms:
+##                        NR        NJ ProductName     NR:NJ NR:ProductName
+## Red_berry          2.8577  597.8637     73.1578   97.1707        52.2499
+## Dark_berry        18.9401  812.6404    126.0952  108.5791        29.0428
+## Jam               12.5073  505.1648    280.5556  136.3218        63.9817
+## Dried_fruit       12.7002  516.8881     21.0014   91.5698        57.0546
+## Artificial_frui    4.7326  383.6038    141.4702   54.5666        25.5965
+## Chocolate          1.0329  522.4489     45.9361   31.2088         9.5795
+## Vanilla            0.1504  555.0206     76.2542   44.3896        12.4267
+## Oak                2.2174  586.1113     55.0926   58.0218        14.7293
+## Burned             5.2255  241.0906    285.3146   20.6753        39.7688
+## Leather           14.2459  627.7823     87.4638   37.7399         9.0836
+## Earthy             5.7800  369.3406     29.8980   43.3408         9.1695
+## Spicy              3.8504  410.1523      8.0813   50.9604         8.9196
+## Pepper             5.9883  685.7840     35.7305   39.2401        16.7879
+## Grassy             5.2058  250.0804     21.7152   19.9184        12.0357
+## Medicinal          0.4897  379.6487    145.8900   47.3878        50.3417
+## Band-aid           0.1968  513.5280    119.0043   63.1707        17.9017
+## Sour               0.7951 1692.1101     54.8631  277.3874        61.5568
+## Bitter             7.6041 1322.2954     57.4780  320.2709        41.2968
+## Alcohol           15.7074 1134.5083     64.4232   82.5735        30.3864
+## Astringent        16.7601 1298.4355     37.0612  144.9024        41.2452
+## Deg. of Freedom         2        13           7        26             14
+##                 NJ:ProductName Residuals
+## Red_berry             659.0318  652.8217
+## Dark_berry            703.5073  732.8047
+## Jam                   479.9919  469.8958
+## Dried_fruit           345.8874  448.7554
+## Artificial_frui       368.5035  345.1710
+## Chocolate             207.1139  207.3655
+## Vanilla               333.9108  319.4133
+## Oak                   273.1103  326.1715
+## Burned                543.2137  259.8904
+## Leather               337.5008  270.0705
+## Earthy                169.2204  191.9696
+## Spicy                 231.6254  212.2963
+## Pepper                267.3912  325.5304
+## Grassy                198.2739  187.6002
+## Medicinal             366.2929  353.2141
+## Band-aid              395.3403  288.5774
+## Sour                  390.2082  484.1807
+## Bitter                268.3970  528.7082
+## Alcohol               210.3960  387.9994
+## Astringent            207.1709  552.9790
+## Deg. of Freedom             91       182
+## 
+## Residual standard errors: 1.89392 2.006589 1.606812 1.570251 1.377151 1.067413 1.324771 1.338713 1.194977 1.218156 1.027024 1.080029 1.337396 1.015269 1.393103 1.259202 1.631053 1.704403 1.460091 1.743085
+## Estimated effects may be unbalanced
+```
+
+We get a nested list of `aov` results, one for each column of `lhs`, which we can then inspect using a combination of the `summary()` function and subsetting.  This is an extremely functional approach and one that I have used in a number of publications.  However, it is not "tidy", and it does rely on positional matching: if we reorder `lhs` or `descriptive_data`, we will break the entire analysis.  This is fragile, difficult to read, and requires some tinkering with `R` core indexing to make work further.
+
+
+
+Therefore, we're going to take a slightly different approach using the "split-apply-combine" approach that the `nest()` function gives us access to in `dplyr`.  
+
+
+``` r
 # First, we will retidy our data
 descriptive_data_tidy <- 
   descriptive_data %>%
@@ -89,7 +167,7 @@ This functional programming is rather advanced, so let me walk through what we d
 This whole workflow is based on Hadley Wickham's work, and you can find more details here.  The outcome is a "tibble of tibbles", taking advantage of the fact that `R` lets us store arbitrary data into the cells of a `tibble` object.
 
 
-```r
+``` r
 nested_AOV_res
 ```
 
@@ -121,7 +199,7 @@ nested_AOV_res
 If we dig into this structure, we can see that we're creating, in parallel, a bunch of model fits:
 
 
-```r
+``` r
 # The first fitted model
 nested_AOV_res$anova_res[[1]]
 ```
@@ -142,10 +220,10 @@ nested_AOV_res$anova_res[[1]]
 ## Estimated effects may be unbalanced
 ```
 
-We can continue to use `map()` to get summaries from these models.  We use the broom::tidy() function in order to get the same results as the typical `summary()` function, but in a manipulable `tibble`/`data.frame` object instead of in a `summary` object.
+We can continue to use `map()` to get summaries from these models.  We use the `broom::tidy()` function in order to get the same results as the typical `summary()` function, but in a manipulable `tibble`/`data.frame` object instead of in a `summary` object.
 
 
-```r
+``` r
 da_aov_res <-
   nested_AOV_res %>%
   mutate(aov_summaries = map(.x = anova_res, 
@@ -181,7 +259,7 @@ da_aov_res
 We now have a table of all of the model results for running a 3-way ANOVA with two-way interactions on each of the individual sensory descriptors.  We can use this format to easily look for results that are significant.  For example, let's filter down to only rows where the model `term` represents variation from the wine (e.g., `ProductName`), and there is what is typically described as a signficant *p*-value (i.e., $p<0.05$).
 
 
-```r
+``` r
 naive_significance <- 
   da_aov_res %>%
   filter(term == "ProductName",
@@ -220,7 +298,7 @@ We see that there are 17 descriptors that fit this criteria!  For these descript
 In the original **R Opus**, HGH promotes the use of "pseudo-mixed" ANOVA in order to account for added variability from lack of judge consistency.  Specifically, we will see that several of our models show *significant interaction terms* between wines and judges or wines and replicates.  Let's find these products:
 
 
-```r
+``` r
 da_aov_res %>%
   filter(term %in% c("NJ:ProductName", "ProductName:NR"),
          p.value < 0.05)
@@ -259,15 +337,21 @@ The **pseudo-mixed model** is a conservative approach to accounting for this ext
 How are we going to do this?  With some good, old-fashioned functional programming:
 
 
-```r
+``` r
 get_pseudomixed_results <- function(aov_res){
   
+  # our function will take a single table of aov() results that have been
+  # processed by tidy::broom() to get a tibble.  This is a custom function, so
+  # we are hard-coding the names of the predictor variables (NJ, ProductName,
+  # NR).  In another project, we would have to change these, or write our
+  # function so that it accepts variable names as well as the aov_res data.
+  
   # The relevant ANOVA results for NJ:ProductName are in the 4th row
-  product_by_judge <- aov_res[4, ]
+  product_by_judge <- aov_res %>% filter(term == "NJ:ProductName")
   # The relevant ANOVA results for ProductName:NR are in the 6th row
-  product_by_rep <- aov_res[6, ]
+  product_by_rep <- aov_res %>% filter(term == "ProductName:NR")
   # The relevant main effect for ProductName
-  product_effect <- aov_res[2, ]
+  product_effect <- aov_res %>% filter(term == "ProductName")
   
   # If neither of the interactions is significant, 
   if(product_by_judge$p.value > 0.05 & product_by_rep$p.value > 0.05){
@@ -276,12 +360,14 @@ get_pseudomixed_results <- function(aov_res){
                   df_error = aov_res$df[7],
                   p_val = product_effect$p.value))
   }
+  # if the product-by-judge interaction is larger
   if(product_by_judge$p.value < product_by_rep$p.value){
     return(tibble(sig_effect = product_by_judge$term,
                   f_stat = product_effect$meansq / product_by_judge$meansq,
                   df_error = product_by_judge$df,
                   p_val = 1 - pf(q = f_stat, df1 = product_effect$df, df2 = df_error)))
-  }else{
+  } else{
+  # if the product by rep interaction is larger
     return(tibble(sig_effect = product_by_rep$term,
                   f_stat = product_effect$meansq / product_by_rep$meansq,
                   df_error = product_by_rep$df,
@@ -305,16 +391,20 @@ This function will take a `tibble` of 3-way ANOVA results from our analysis, loo
 
 In the case of `Red_berry` above, the `NJ:ProductName` interaction is the most significant, and results in a non-significant pseudomixed test.
 
-**NB:** Because I used numeric indexing (e.g., `aov_res[6, ]`) to write this function "quick and dirty", it would need to be modified if I had a different linear model defined for my ANOVA (the model specified as `rating ~ (NJ + ProductName + NR)^2` in my `aov()` call above), or even if I reordered the terms in *that* model.
+**NB:** Because I used a combination of hard-coded variable names (e.g., `term == "ProductName"`) and numeric indexing (e.g., `aov_res[6, ]`) to write this function "quick and dirty", it would need to be modified if I had a different linear model defined for my ANOVA (the model specified as `rating ~ (NJ + ProductName + NR)^2` in my `aov()` call above), or even if I reordered the terms in *that* model.
 
 We use the same split-apply-combine workflow with `nest()` and `map()` to first make subtables for each of our descriptors' original ANOVA results, and then run our new function on them.
 
 
-```r
+``` r
 da_aov_res %>%
+  # We re-nest our data in the same way to use map() with our new custom
+  # function
   nest(data = -descriptor) %>%
   mutate(pseudomixed_res = map(data, ~get_pseudomixed_results(.x))) %>%
   unnest(pseudomixed_res) %>%
+  # And here we filter out any results for which our pseudomixed ANOVA is now
+  # nonsignificant, i.e., > 0.05
   filter(p_val < 0.05)
 ```
 
@@ -341,12 +431,12 @@ From these results, we see that almost all of our products have significant inte
 
 ## Mean comparison (post-hoc testing)
 
-In the original **R Opus**, HGH demonstrates how to calculate Fisher's Least Significant Difference (Fisher's LSD), but I discourage the use of this test, even though it is arguable that the significant ANOVA result means that there is some protection against familywise error @rencherMethods2002  The Tukey's Honestly Significant Difference (HSD) is probably preferable, and as a reviewer I push authors to use this test.
+In the original **R Opus**, HGH demonstrates how to calculate Fisher's Least Significant Difference (Fisher's LSD), but I discourage the use of this test, even though it is arguable that the significant ANOVA result means that there is some protection against familywise error [@rencherMethods2002]  The Tukey's Honestly Significant Difference (HSD) is probably preferable, and as a reviewer I push authors to use this test.
 
 We're going to go back to our `nested_AOV_res` object because we don't need the sum-of-squares/ANOVA table output, we need the actual model fit results.  HGH uses the `agricolae` package's `HSD.test()` function, and we're going to wrap that up in a convenience function to let us easily capture the results and drop them into a `tibble` for easy access and plotting.
 
 
-```r
+``` r
 library(agricolae)
 
 tidy_hsd <- function(anova_res, treatment = "ProductName"){
@@ -391,7 +481,7 @@ nested_AOV_res$anova_res[[1]] %>%
 This function returns a nice table of our wines arranged by their group membership in an HSD test.  We can use this to get mean separations for all of our significant attributes with a bit of data wrangling.
 
 
-```r
+``` r
 # First, we'll get a list of significant descriptors from pseudomixed ANOVA
 significant_descriptors <- 
   da_aov_res %>%
@@ -434,7 +524,7 @@ hsd_tbl
 Again, using the same split-apply-combine workflow (but we started with an already nested table), we get a set of results suitable for reporting in a paper or plotting.  Let's take a look at how to make a basic visualization of these results using `ggplot2`.  
 
 
-```r
+``` r
 library(tidytext)
 
 hsd_tbl %>%
@@ -458,7 +548,7 @@ hsd_tbl %>%
   guides(color = guide_legend(title = "HSD group", nrow = 1))
 ```
 
-![](02-ANOVA_files/figure-latex/unnamed-chunk-13-1.pdf)<!-- --> 
+![](02-ANOVA_files/figure-latex/unnamed-chunk-15-1.pdf)<!-- --> 
 
 ## BONUS: Bayesian approaches to ANOVA
 
@@ -478,7 +568,7 @@ There are [many](https://xcelab.net/rm/statistical-rethinking/), [many](https://
 First, we load the extra required packages.
 
 
-```r
+``` r
 library(brms)
 library(tidybayes)
 ```
@@ -488,7 +578,7 @@ Then we're going to use the approach to setting up ANOVA-like models in Stan tha
 We are first going to apply this approach to a single outcome: `Bitter`.  We know that above we found a significant difference between Bitter ratings for the various wines.  Let's let a Bayesian approach explore that result for us.
 
 
-```r
+``` r
 # Let's make a less unwieldy tibble to work with
 
 bayes_data <- 
@@ -514,7 +604,7 @@ bayes_data
 ## # i 326 more rows
 ```
 
-```r
+``` r
 # and we'll store some information about our data so that we can use it in our
 # brm() call later:
 
@@ -525,7 +615,7 @@ sd_y <- sd(bayes_data$rating)
 Finally, we're going to take a function from Kurz that gives parameters for a gamma distribution with a specific mode and standard deviation; to learn about why we're doing this consult Kurz or Kruschke.
 
 
-```r
+``` r
 gamma_a_b_from_omega_sigma <- function(mode, sd) {
   if (mode <= 0) stop("mode must be > 0")
   if (sd   <= 0) stop("sd must be > 0")
@@ -540,7 +630,7 @@ shape_rate <- gamma_a_b_from_omega_sigma(mode = sd_y / 2, sd = sd_y * 2)
 We store all of this information into a `stanvar` object, which lets us send this information to Stan through `brms`.
 
 
-```r
+``` r
 stanvars <- 
   stanvar(mean_y, name = "mean_y") +
   stanvar(sd_y, name = "sd_y") + 
@@ -594,7 +684,7 @@ OK!  As per usual, my attempt to explain (to myself, mostly) what I am doing is 
 We are going to develop a model that is equivalent to the 3-way ANOVA we proposed for each variable: we want to allow 2-way interactions between all main effects, as well.  It will be slightly uglier because we're going to be using syntax that is common for non-linear or repeated-effects modeling in `R`.  To save typing, I am going to omit the interactions between `NR` and the other factors, as (happily) they were never large, and are not of theoretical interest.
 
 
-```r
+``` r
 b_bitter <- 
   brm(data = bayes_data,
       family = gaussian,
@@ -613,7 +703,7 @@ b_bitter <-
 This resulted in at least one diagnostic warning that, after inspection, seems trivial enough to ignore for now (only a few divergent transitions with good $\hat{R}$ and $ESS$ values), as can be seen in the summary and diagnostic plots below:
 
 
-```r
+``` r
 b_bitter
 ```
 
@@ -631,7 +721,7 @@ b_bitter
 ##   Draws: 4 chains, each with iter = 4000; warmup = 2000; thin = 1;
 ##          total post-warmup draws = 8000
 ## 
-## Group-Level Effects: 
+## Multilevel Hyperparameters:
 ## ~NJ (Number of levels: 14) 
 ##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
 ## sd(Intercept)     2.21      0.50     1.49     3.42 1.00     1576     2794
@@ -648,11 +738,11 @@ b_bitter
 ##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
 ## sd(Intercept)     0.42      0.23     0.07     0.97 1.00     2221     2446
 ## 
-## Population-Level Effects: 
+## Regression Coefficients:
 ##           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
 ## Intercept     3.50      0.95     1.79     5.45 1.00     1495     2367
 ## 
-## Family Specific Parameters: 
+## Further Distributional Parameters:
 ##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
 ## sigma     1.92      0.08     1.78     2.09 1.00     8538     5282
 ## 
@@ -661,16 +751,20 @@ b_bitter
 ## scale reduction factor on split chains (at convergence, Rhat = 1).
 ```
 
-```r
+``` r
 plot(b_bitter, N = 6, widths = c(2, 3))
 ```
 
-![](02-ANOVA_files/figure-latex/unnamed-chunk-20-1.pdf)<!-- --> 
+```
+## Warning: Argument 'N' is deprecated. Please use argument 'nvariables' instead.
+```
+
+![](02-ANOVA_files/figure-latex/unnamed-chunk-22-1.pdf)<!-- --> 
 
 We can examine the actual "draws" from the joint posterior using the `as_draws_df()` function and doing some wrangling.
 
 
-```r
+``` r
 draws <- 
   b_bitter %>%
   as_draws_df()
@@ -709,7 +803,7 @@ draws
 You'll note that there are a *lot* of variables.  We are estimating (as I understand it) deflections from the grand mean for all of the levels of all of our main effects.  We can summarize these using the `posterior_summary()` function:
 
 
-```r
+``` r
 posterior_summary(b_bitter) %>%
   as_tibble(rownames = "parameter") %>%
   mutate(across(where(is.numeric), ~round(., 2)))
@@ -735,7 +829,7 @@ posterior_summary(b_bitter) %>%
 For a sanity check, notice that the estimate for our grand mean (`b_Intercept`) is the observed value.
 
 
-```r
+``` r
 mean_y
 ```
 
@@ -744,7 +838,7 @@ mean_y
 ```
 
 
-```r
+``` r
 nd <- 
   bayes_data %>%
   distinct(ProductName)
@@ -771,12 +865,12 @@ f %>%
   labs(caption = "Red line is the model-implied grand mean.")
 ```
 
-![](02-ANOVA_files/figure-latex/unnamed-chunk-24-1.pdf)<!-- --> 
+![](02-ANOVA_files/figure-latex/unnamed-chunk-26-1.pdf)<!-- --> 
 
 It sure looks like these wines are not easy to discriminate.  One advantage of Bayesian approaches is that the paradigm of investigation allows us to investigate the posterior draws to explore things like pairwise comparisons with no need to worry about ideas like "family-wise error" (because we are not in a hypothesis-testing framework).
 
 
-```r
+``` r
 # Let's see if the Italian Syrah is plausibly more bitter than the Californian Merlot:
 
 f %>%
@@ -791,14 +885,14 @@ f %>%
        caption = "Pink area is a [-0.05, 0.05] ROPE around 0 difference.")
 ```
 
-![](02-ANOVA_files/figure-latex/unnamed-chunk-25-1.pdf)<!-- --> 
+![](02-ANOVA_files/figure-latex/unnamed-chunk-27-1.pdf)<!-- --> 
 
 It looks like the posterior differences between the most-bitter and least-bitter wines don't exclude a small "region of plausible equivalence" around 0 from the 95% area of highest posterior density, so even though there is a modal difference of around 0.75 points in bitterness between these wines, we can't entirely dismiss the possibility that there is no difference in bitterness.  That being said, there is at least as much posterior probability density around 1.5 points of bitterness difference, so it seems unreasonable to me to claim that these wines are exactly the same in their level of bitterness--it just probably isn't that large a difference!
 
 We also have the freedom to explore any contrasts that might be of interest.  For example, we might be interested (for either exploratory data analysis based on the HDIs above or because of *a priori* theory) in knowing whether Italian wines are on average more bitter than California wines.  We can do so simply:
 
 
-```r
+``` r
 f %>%
   transmute(diff = (I_SYRAH + I_MERLOT + I_PRIMITIVO + I_REFOSCO) / 4 - 
               (C_MERLOT + C_SYRAH + C_ZINFANDEL + C_REFOSCO) / 4) %>%
@@ -812,14 +906,14 @@ f %>%
        caption = "Pink area is a [-0.05, 0.05] ROPE around 0 difference.")
 ```
 
-![](02-ANOVA_files/figure-latex/unnamed-chunk-26-1.pdf)<!-- --> 
+![](02-ANOVA_files/figure-latex/unnamed-chunk-28-1.pdf)<!-- --> 
 
 Unsurprisingly, given the figures above, we see that there is some possibility of a very small amount of overall bitterness, but we'd be pretty hesitant to make broad statements when a ROPE around 0 is so clearly within the HDI for this contrast.
 
 Finally, for my own interest, I am curious how `brms` would do using defaults in fitting the same ANOVA-like model.  
 
 
-```r
+``` r
 b_bitter_default <-
   brm(data = bayes_data,
       family = gaussian,
@@ -833,7 +927,7 @@ b_bitter_default <-
 Interestingly, this model seemed to take much less time to fit and didn't have the issues with transitions.  Let's look at the chains and the parameter estimates.
 
 
-```r
+``` r
 b_bitter_default
 ```
 
@@ -845,7 +939,7 @@ b_bitter_default
 ##   Draws: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
 ##          total post-warmup draws = 4000
 ## 
-## Group-Level Effects: 
+## Multilevel Hyperparameters:
 ## ~NJ (Number of levels: 14) 
 ##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
 ## sd(Intercept)     2.16      0.48     1.45     3.31 1.01      880     1568
@@ -862,11 +956,11 @@ b_bitter_default
 ##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
 ## sd(Intercept)     0.39      0.22     0.05     0.92 1.00     1321     1441
 ## 
-## Population-Level Effects: 
+## Regression Coefficients:
 ##           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
 ## Intercept     3.45      0.68     2.07     4.74 1.01      914     1456
 ## 
-## Family Specific Parameters: 
+## Further Distributional Parameters:
 ##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
 ## sigma     1.93      0.08     1.78     2.08 1.00     5824     3043
 ## 
@@ -875,16 +969,20 @@ b_bitter_default
 ## scale reduction factor on split chains (at convergence, Rhat = 1).
 ```
 
-```r
+``` r
 plot(b_bitter_default, N = 6, width = c(2, 3))
 ```
 
-![](02-ANOVA_files/figure-latex/unnamed-chunk-29-1.pdf)<!-- --> 
+```
+## Warning: Argument 'N' is deprecated. Please use argument 'nvariables' instead.
+```
+
+![](02-ANOVA_files/figure-latex/unnamed-chunk-31-1.pdf)<!-- --> 
 
 It all looks ok, but it seems like the estimates for some parameters are a bit less precise, probably because we allowed the model to use uninformed priors.  We can see how that was done using the `get_prior()` function on the formula and data, as so:
 
 
-```r
+``` r
 get_prior(formula = rating ~ 1 + (1 | NJ) + (1 | NR) + (1 | ProductName) + (1 | NJ:ProductName),
           data = bayes_data)
 ```
@@ -919,24 +1017,24 @@ get_prior(formula = rating ~ 1 + (1 | NJ) + (1 | NR) + (1 | ProductName) + (1 | 
 It looks like, by default, `brm()` uses very broad Student's $t$ priors for all the parameters; I'm no expert but I think this is what are called "uninformed priors" and so will be almost entirely influenced by the data.  For example, if we compare our original fit following Kurz's example where we use a normal distribution with `mean` and `sd` influenced by our data, we see a distinct difference in parameter estimates for the intercept:
 
 
-```r
+``` r
 # The original model with specified priors
 plot(b_bitter, variable = "b_Intercept")
 ```
 
-![](02-ANOVA_files/figure-latex/unnamed-chunk-31-1.pdf)<!-- --> 
+![](02-ANOVA_files/figure-latex/unnamed-chunk-33-1.pdf)<!-- --> 
 
-```r
+``` r
 # The model with default priors
 plot(b_bitter_default, variable = "b_Intercept")
 ```
 
-![](02-ANOVA_files/figure-latex/unnamed-chunk-31-2.pdf)<!-- --> 
+![](02-ANOVA_files/figure-latex/unnamed-chunk-33-2.pdf)<!-- --> 
 
 So we lose some precision in exchange for speed.  Let's look at how the default model predicts mean separation:
 
 
-```r
+``` r
 nd <- 
   bayes_data %>%
   distinct(ProductName)
@@ -964,12 +1062,12 @@ f %>%
        subtitle = "The HDIs are broader with the `brms` default priors")
 ```
 
-![](02-ANOVA_files/figure-latex/unnamed-chunk-32-1.pdf)<!-- --> 
+![](02-ANOVA_files/figure-latex/unnamed-chunk-34-1.pdf)<!-- --> 
 
 And we can do the same kind of check with the individual differences:
 
 
-```r
+``` r
 # Let's see if the Italian Syrah is plausibly more bitter than the Californian Merlot:
 
 f %>%
@@ -985,7 +1083,7 @@ f %>%
        subtitle = "Our overall conclusions, however, would not change much using the defaults.")
 ```
 
-![](02-ANOVA_files/figure-latex/unnamed-chunk-33-1.pdf)<!-- --> 
+![](02-ANOVA_files/figure-latex/unnamed-chunk-35-1.pdf)<!-- --> 
 
 So in this case, it seems like the speed of using `brms` defaults, at least for exploratory data analysis, may be worthwhile.
 
@@ -994,18 +1092,18 @@ I might try to incorporate some more Bayesian tools as we go along, as I find th
 ## Packages used in this chapter
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: aarch64-apple-darwin20 (64-bit)
-## Running under: macOS Ventura 13.6.1
+## R version 4.4.1 (2024-06-14)
+## Platform: x86_64-apple-darwin20
+## Running under: macOS 15.2
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -1014,52 +1112,42 @@ sessionInfo()
 ## tzcode source: internal
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] stats     graphics  grDevices datasets  utils     methods   base     
 ## 
 ## other attached packages:
-##  [1] tidybayes_3.0.6 brms_2.20.1     Rcpp_1.0.11     tidytext_0.4.1 
-##  [5] agricolae_1.3-6 here_1.0.1      lubridate_1.9.2 forcats_1.0.0  
-##  [9] stringr_1.5.0   dplyr_1.1.2     purrr_1.0.1     readr_2.1.4    
-## [13] tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.3   tidyverse_2.0.0
+##  [1] tidybayes_3.0.6 brms_2.21.0     Rcpp_1.0.13     tidytext_0.4.2 
+##  [5] agricolae_1.3-7 here_1.0.1      lubridate_1.9.3 forcats_1.0.0  
+##  [9] stringr_1.5.1   dplyr_1.1.4     purrr_1.0.2     readr_2.1.5    
+## [13] tidyr_1.3.1     tibble_3.2.1    ggplot2_3.5.1   tidyverse_2.0.0
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] tensorA_0.36.2       rstudioapi_0.15.0    magrittr_2.0.3      
-##   [4] estimability_1.4.1   farver_2.1.1         rmarkdown_2.23      
-##   [7] vctrs_0.6.3          base64enc_0.1-3      htmltools_0.5.6     
-##  [10] distributional_0.3.2 haven_2.5.3          broom_1.0.5         
-##  [13] janeaustenr_1.0.0    StanHeaders_2.26.27  htmlwidgets_1.6.2   
-##  [16] tokenizers_0.3.0     plyr_1.8.8           emmeans_1.8.7       
-##  [19] zoo_1.8-12           igraph_1.5.0.1       mime_0.12           
-##  [22] lifecycle_1.0.3      pkgconfig_2.0.3      colourpicker_1.3.0  
-##  [25] Matrix_1.6-0         R6_2.5.1             fastmap_1.1.1       
-##  [28] shiny_1.7.5          digest_0.6.33        klaR_1.7-2          
-##  [31] colorspace_2.1-0     ps_1.7.5             rprojroot_2.0.3     
-##  [34] crosstalk_1.2.0      SnowballC_0.7.1      labeling_0.4.3      
-##  [37] fansi_1.0.4          timechange_0.2.0     abind_1.4-5         
-##  [40] compiler_4.3.1       bit64_4.0.5          withr_2.5.0         
-##  [43] backports_1.4.1      inline_0.3.19        shinystan_2.6.0     
-##  [46] pkgbuild_1.4.2       highr_0.10           MASS_7.3-60         
-##  [49] gtools_3.9.4         loo_2.6.0            tools_4.3.1         
-##  [52] httpuv_1.6.11        threejs_0.3.3        quadprog_1.5-8      
-##  [55] glue_1.6.2           questionr_0.7.8      callr_3.7.3         
-##  [58] nlme_3.1-162         promises_1.2.1       grid_4.3.1          
-##  [61] checkmate_2.2.0      cluster_2.1.4        reshape2_1.4.4      
-##  [64] generics_0.1.3       gtable_0.3.4         labelled_2.12.0     
-##  [67] tzdb_0.4.0           hms_1.1.3            utf8_1.2.3          
-##  [70] pillar_1.9.0         ggdist_3.3.0         markdown_1.8        
-##  [73] vroom_1.6.3          posterior_1.4.1      later_1.3.1         
-##  [76] lattice_0.21-8       AlgDesign_1.2.1      bit_4.0.5           
-##  [79] tidyselect_1.2.0     miniUI_0.1.1.1       knitr_1.43          
-##  [82] arrayhelpers_1.1-0   gridExtra_2.3        bookdown_0.37       
-##  [85] stats4_4.3.1         xfun_0.39            bridgesampling_1.1-2
-##  [88] matrixStats_1.0.0    DT_0.28              rstan_2.21.8        
-##  [91] stringi_1.7.12       yaml_2.3.7           evaluate_0.21       
-##  [94] codetools_0.2-19     cli_3.6.1            RcppParallel_5.1.7  
-##  [97] shinythemes_1.2.0    xtable_1.8-4         munsell_0.5.0       
-## [100] processx_3.8.2       coda_0.19-4          svUnit_1.0.6        
-## [103] parallel_4.3.1       rstantools_2.3.1.1   ellipsis_0.3.2      
-## [106] prettyunits_1.1.1    dygraphs_1.1.1.6     bayesplot_1.10.0    
-## [109] Brobdingnag_1.2-9    mvtnorm_1.2-2        scales_1.2.1        
-## [112] xts_0.13.1           crayon_1.5.2         combinat_0.0-8      
-## [115] rlang_1.1.1          shinyjs_2.1.0
+##  [1] svUnit_1.0.6         tidyselect_1.2.1     farver_2.1.2        
+##  [4] loo_2.7.0            fastmap_1.2.0        tensorA_0.36.2.1    
+##  [7] janeaustenr_1.0.0    digest_0.6.37        estimability_1.5.1  
+## [10] timechange_0.3.0     lifecycle_1.0.4      cluster_2.1.6       
+## [13] StanHeaders_2.32.9   tokenizers_0.3.0     magrittr_2.0.3      
+## [16] posterior_1.5.0      compiler_4.4.1       rlang_1.1.4         
+## [19] tools_4.4.1          utf8_1.2.4           yaml_2.3.8          
+## [22] knitr_1.46           labeling_0.4.3       bridgesampling_1.1-2
+## [25] bit_4.0.5            pkgbuild_1.4.4       plyr_1.8.9          
+## [28] abind_1.4-5          withr_3.0.0          grid_4.4.1          
+## [31] stats4_4.4.1         fansi_1.0.6          AlgDesign_1.2.1     
+## [34] xtable_1.8-4         colorspace_2.1-0     inline_0.3.19       
+## [37] emmeans_1.10.2       scales_1.3.0         MASS_7.3-60.2       
+## [40] cli_3.6.3            mvtnorm_1.2-5        rmarkdown_2.27      
+## [43] crayon_1.5.2         generics_0.1.3       RcppParallel_5.1.7  
+## [46] rstudioapi_0.16.0    reshape2_1.4.4       tzdb_0.4.0          
+## [49] rstan_2.32.6         bayesplot_1.11.1     parallel_4.4.1      
+## [52] matrixStats_1.3.0    vctrs_0.6.5          Matrix_1.7-0        
+## [55] bookdown_0.39        arrayhelpers_1.1-0   hms_1.1.3           
+## [58] bit64_4.0.5          ggdist_3.3.2         glue_1.7.0          
+## [61] codetools_0.2-20     distributional_0.4.0 stringi_1.8.4       
+## [64] gtable_0.3.5         QuickJSR_1.2.0       quadprog_1.5-8      
+## [67] munsell_0.5.1        pillar_1.9.0         htmltools_0.5.8.1   
+## [70] Brobdingnag_1.2-9    R6_2.5.1             rprojroot_2.0.4     
+## [73] vroom_1.6.5          evaluate_0.23        lattice_0.22-6      
+## [76] highr_0.10           backports_1.5.0      SnowballC_0.7.1     
+## [79] broom_1.0.6          renv_1.0.9           rstantools_2.4.0    
+## [82] gridExtra_2.3        coda_0.19-4.1        nlme_3.1-164        
+## [85] checkmate_2.3.1      xfun_0.49            pkgconfig_2.0.3
 ```

@@ -8,11 +8,11 @@
   <meta name="description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
 walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
-  <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.39 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 12 Multiple Factor(ial) Analysis (MFA) | The R Opus v2" />
   <meta property="og:type" content="book" />
-  <meta property="og:image" content="/img/r-opus-cover.jpg" />
+  <meta property="og:image" content="https://jlahne.github.io/r-opus-v2/img/r-opus-cover.jpg" />
   <meta property="og:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
 walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
@@ -24,12 +24,12 @@ walkthroughs on common multivariate analyses in <code>R</code> for sensory-evalu
   <meta name="twitter:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
 walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
-  <meta name="twitter:image" content="/img/r-opus-cover.jpg" />
+  <meta name="twitter:image" content="https://jlahne.github.io/r-opus-v2/img/r-opus-cover.jpg" />
 
 <meta name="author" content="Jacob Lahne" />
 
 
-<meta name="date" content="2024-01-10" />
+<meta name="date" content="2025-01-02" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -61,8 +61,9 @@ walkthroughs on common multivariate analyses in <code>R</code> for sensory-evalu
 
 
 <style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -175,6 +176,11 @@ div.csl-indent {
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#r-setup"><i class="fa fa-check"></i><code>R</code> Setup</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#what-this-is-not"><i class="fa fa-check"></i>What this is not</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#about-me"><i class="fa fa-check"></i>About me</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#changelog"><i class="fa fa-check"></i>Changelog</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#v0.2-december-2024"><i class="fa fa-check"></i>v0.2 (December 2024)</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#v0.1-december-2023"><i class="fa fa-check"></i>v0.1 (December 2023)</a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#session-info"><i class="fa fa-check"></i>Session Info</a></li>
 </ul></li>
 <li class="chapter" data-level="1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html"><i class="fa fa-check"></i><b>1</b> Data import and set up</a>
@@ -320,49 +326,49 @@ div.csl-indent {
 <p>The basic idea of MFA is very simple: given multiple sets of measurements (sets of columns or variables) collected on the same observations (rows), each set can be “normalized” by its first singular value so that all the sets are “commensurate” for a PCA. To put it another way, MFA consists of a sequence of PCAs: first each set of measurements is analyzed by PCA (really, Singular Value Decompositon) to extract its first singular value; then each element of each set of measurements is divided by its respective singular value; finally, the normalized tables are (row-wise) concatenated into a single table, which is then analyzed by a second PCA (SVD). A more complete and detailed explanation is given in <span class="citation">Hervé Abdi, Williams, and Valentin (<a href="#ref-abdiMultiple2013">2013</a>)</span>.</p>
 <p>In comparison to standard PCA, MFA has several advantages. The primary advantage is that it is possible not only to assess the role of rows (observations or samples) and columns (variables or measurements), but also tables themselves. This allows us to get insight into the agreement and disagreement between different <em>sets</em> of measurements: in sensory evaluation, this is particularly helpful when we have multiple (untrained?) subjects, or subjects using different sets of descriptors to assess products.</p>
 <p>In the original <strong>R Opus</strong>, HGH analyzed the DA and the consumer data for the wines by MFA. We will follow this, but we will start by first analyzing only the DA data by MFA in order to gain a feel for the methodology (and to avoid boredom with results that will be quite similar to the results from our Preference Mapping section). We will use <code>FactoMineR</code> for the <code>MFA()</code> function.</p>
-<div class="sourceCode" id="cb383"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb383-1"><a href="multiple-factorial-analysis-mfa.html#cb383-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb383-2"><a href="multiple-factorial-analysis-mfa.html#cb383-2" tabindex="-1"></a><span class="fu">library</span>(here)</span>
-<span id="cb383-3"><a href="multiple-factorial-analysis-mfa.html#cb383-3" tabindex="-1"></a><span class="fu">library</span>(FactoMineR)</span>
-<span id="cb383-4"><a href="multiple-factorial-analysis-mfa.html#cb383-4" tabindex="-1"></a><span class="fu">library</span>(paletteer)</span>
-<span id="cb383-5"><a href="multiple-factorial-analysis-mfa.html#cb383-5" tabindex="-1"></a></span>
-<span id="cb383-6"><a href="multiple-factorial-analysis-mfa.html#cb383-6" tabindex="-1"></a><span class="co"># This is all just standard set up</span></span>
-<span id="cb383-7"><a href="multiple-factorial-analysis-mfa.html#cb383-7" tabindex="-1"></a></span>
-<span id="cb383-8"><a href="multiple-factorial-analysis-mfa.html#cb383-8" tabindex="-1"></a>descriptive_data <span class="ot">&lt;-</span> </span>
-<span id="cb383-9"><a href="multiple-factorial-analysis-mfa.html#cb383-9" tabindex="-1"></a>  <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriDAFinal.csv&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb383-10"><a href="multiple-factorial-analysis-mfa.html#cb383-10" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="sc">~</span><span class="fu">as.factor</span>(.)))</span>
-<span id="cb383-11"><a href="multiple-factorial-analysis-mfa.html#cb383-11" tabindex="-1"></a></span>
-<span id="cb383-12"><a href="multiple-factorial-analysis-mfa.html#cb383-12" tabindex="-1"></a>consumer_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriconsFinal.csv&quot;</span>))</span>
-<span id="cb383-13"><a href="multiple-factorial-analysis-mfa.html#cb383-13" tabindex="-1"></a></span>
-<span id="cb383-14"><a href="multiple-factorial-analysis-mfa.html#cb383-14" tabindex="-1"></a>consumer_demo <span class="ot">&lt;-</span> </span>
-<span id="cb383-15"><a href="multiple-factorial-analysis-mfa.html#cb383-15" tabindex="-1"></a>  consumer_data <span class="sc">%&gt;%</span></span>
-<span id="cb383-16"><a href="multiple-factorial-analysis-mfa.html#cb383-16" tabindex="-1"></a>  <span class="fu">select</span>(Judge<span class="sc">:</span>Age) <span class="sc">%&gt;%</span></span>
-<span id="cb383-17"><a href="multiple-factorial-analysis-mfa.html#cb383-17" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(Judge<span class="sc">:</span>Age, <span class="sc">~</span><span class="fu">as.factor</span>(.)))</span>
-<span id="cb383-18"><a href="multiple-factorial-analysis-mfa.html#cb383-18" tabindex="-1"></a></span>
-<span id="cb383-19"><a href="multiple-factorial-analysis-mfa.html#cb383-19" tabindex="-1"></a>consumer_data <span class="ot">&lt;-</span> </span>
-<span id="cb383-20"><a href="multiple-factorial-analysis-mfa.html#cb383-20" tabindex="-1"></a>  consumer_data <span class="sc">%&gt;%</span></span>
-<span id="cb383-21"><a href="multiple-factorial-analysis-mfa.html#cb383-21" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>(<span class="st">`</span><span class="at">Wine Frequency</span><span class="st">`</span><span class="sc">:</span>Age)) <span class="sc">%&gt;%</span></span>
-<span id="cb383-22"><a href="multiple-factorial-analysis-mfa.html#cb383-22" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Judge =</span> <span class="fu">as.factor</span>(Judge))</span></code></pre></div>
+<div class="sourceCode" id="cb391"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb391-1"><a href="multiple-factorial-analysis-mfa.html#cb391-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb391-2"><a href="multiple-factorial-analysis-mfa.html#cb391-2" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb391-3"><a href="multiple-factorial-analysis-mfa.html#cb391-3" tabindex="-1"></a><span class="fu">library</span>(FactoMineR)</span>
+<span id="cb391-4"><a href="multiple-factorial-analysis-mfa.html#cb391-4" tabindex="-1"></a><span class="fu">library</span>(paletteer)</span>
+<span id="cb391-5"><a href="multiple-factorial-analysis-mfa.html#cb391-5" tabindex="-1"></a></span>
+<span id="cb391-6"><a href="multiple-factorial-analysis-mfa.html#cb391-6" tabindex="-1"></a><span class="co"># This is all just standard set up</span></span>
+<span id="cb391-7"><a href="multiple-factorial-analysis-mfa.html#cb391-7" tabindex="-1"></a></span>
+<span id="cb391-8"><a href="multiple-factorial-analysis-mfa.html#cb391-8" tabindex="-1"></a>descriptive_data <span class="ot">&lt;-</span> </span>
+<span id="cb391-9"><a href="multiple-factorial-analysis-mfa.html#cb391-9" tabindex="-1"></a>  <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriDAFinal.csv&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb391-10"><a href="multiple-factorial-analysis-mfa.html#cb391-10" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="sc">~</span><span class="fu">as.factor</span>(.)))</span>
+<span id="cb391-11"><a href="multiple-factorial-analysis-mfa.html#cb391-11" tabindex="-1"></a></span>
+<span id="cb391-12"><a href="multiple-factorial-analysis-mfa.html#cb391-12" tabindex="-1"></a>consumer_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriconsFinal.csv&quot;</span>))</span>
+<span id="cb391-13"><a href="multiple-factorial-analysis-mfa.html#cb391-13" tabindex="-1"></a></span>
+<span id="cb391-14"><a href="multiple-factorial-analysis-mfa.html#cb391-14" tabindex="-1"></a>consumer_demo <span class="ot">&lt;-</span> </span>
+<span id="cb391-15"><a href="multiple-factorial-analysis-mfa.html#cb391-15" tabindex="-1"></a>  consumer_data <span class="sc">%&gt;%</span></span>
+<span id="cb391-16"><a href="multiple-factorial-analysis-mfa.html#cb391-16" tabindex="-1"></a>  <span class="fu">select</span>(Judge<span class="sc">:</span>Age) <span class="sc">%&gt;%</span></span>
+<span id="cb391-17"><a href="multiple-factorial-analysis-mfa.html#cb391-17" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(Judge<span class="sc">:</span>Age, <span class="sc">~</span><span class="fu">as.factor</span>(.)))</span>
+<span id="cb391-18"><a href="multiple-factorial-analysis-mfa.html#cb391-18" tabindex="-1"></a></span>
+<span id="cb391-19"><a href="multiple-factorial-analysis-mfa.html#cb391-19" tabindex="-1"></a>consumer_data <span class="ot">&lt;-</span> </span>
+<span id="cb391-20"><a href="multiple-factorial-analysis-mfa.html#cb391-20" tabindex="-1"></a>  consumer_data <span class="sc">%&gt;%</span></span>
+<span id="cb391-21"><a href="multiple-factorial-analysis-mfa.html#cb391-21" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>(<span class="st">`</span><span class="at">Wine Frequency</span><span class="st">`</span><span class="sc">:</span>Age)) <span class="sc">%&gt;%</span></span>
+<span id="cb391-22"><a href="multiple-factorial-analysis-mfa.html#cb391-22" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Judge =</span> <span class="fu">as.factor</span>(Judge))</span></code></pre></div>
 <div id="mfa-vs-pca" class="section level2 hasAnchor" number="12.1">
 <h2><span class="header-section-number">12.1</span> MFA vs PCA<a href="multiple-factorial-analysis-mfa.html#mfa-vs-pca" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Typically, we have been conducting PCA on a matrix of mean values for each wine and descriptor: we have averaged across judge and across replication. But we can instead treat these as individual data tables to be analyzed by MFA. Let’s contrast the results.</p>
-<div class="sourceCode" id="cb384"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb384-1"><a href="multiple-factorial-analysis-mfa.html#cb384-1" tabindex="-1"></a>descriptive_pca <span class="ot">&lt;-</span> </span>
-<span id="cb384-2"><a href="multiple-factorial-analysis-mfa.html#cb384-2" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
-<span id="cb384-3"><a href="multiple-factorial-analysis-mfa.html#cb384-3" tabindex="-1"></a>  <span class="fu">group_by</span>(ProductName) <span class="sc">%&gt;%</span></span>
-<span id="cb384-4"><a href="multiple-factorial-analysis-mfa.html#cb384-4" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span><span class="fu">mean</span>(.))) <span class="sc">%&gt;%</span></span>
-<span id="cb384-5"><a href="multiple-factorial-analysis-mfa.html#cb384-5" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;ProductName&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb384-6"><a href="multiple-factorial-analysis-mfa.html#cb384-6" tabindex="-1"></a>  <span class="co"># Because MFA typically scales all columns to unit variance, we will do so as</span></span>
-<span id="cb384-7"><a href="multiple-factorial-analysis-mfa.html#cb384-7" tabindex="-1"></a>  <span class="co"># well</span></span>
-<span id="cb384-8"><a href="multiple-factorial-analysis-mfa.html#cb384-8" tabindex="-1"></a>  <span class="fu">PCA</span>(<span class="at">scale.unit =</span> <span class="cn">TRUE</span>, <span class="at">graph =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb384-9"><a href="multiple-factorial-analysis-mfa.html#cb384-9" tabindex="-1"></a></span>
-<span id="cb384-10"><a href="multiple-factorial-analysis-mfa.html#cb384-10" tabindex="-1"></a>descriptive_very_wide_data <span class="ot">&lt;-</span> </span>
-<span id="cb384-11"><a href="multiple-factorial-analysis-mfa.html#cb384-11" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
-<span id="cb384-12"><a href="multiple-factorial-analysis-mfa.html#cb384-12" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span><span class="fu">c</span>(NJ, ProductName, NR)) <span class="sc">%&gt;%</span></span>
-<span id="cb384-13"><a href="multiple-factorial-analysis-mfa.html#cb384-13" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> <span class="fu">c</span>(name, NJ, NR), </span>
-<span id="cb384-14"><a href="multiple-factorial-analysis-mfa.html#cb384-14" tabindex="-1"></a>              <span class="at">values_from =</span> value, </span>
-<span id="cb384-15"><a href="multiple-factorial-analysis-mfa.html#cb384-15" tabindex="-1"></a>              <span class="at">names_vary =</span> <span class="st">&quot;fastest&quot;</span>, </span>
-<span id="cb384-16"><a href="multiple-factorial-analysis-mfa.html#cb384-16" tabindex="-1"></a>              <span class="at">names_sep =</span> <span class="st">&quot;.&quot;</span>)</span>
-<span id="cb384-17"><a href="multiple-factorial-analysis-mfa.html#cb384-17" tabindex="-1"></a></span>
-<span id="cb384-18"><a href="multiple-factorial-analysis-mfa.html#cb384-18" tabindex="-1"></a><span class="fu">glimpse</span>(descriptive_very_wide_data)</span></code></pre></div>
+<div class="sourceCode" id="cb392"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb392-1"><a href="multiple-factorial-analysis-mfa.html#cb392-1" tabindex="-1"></a>descriptive_pca <span class="ot">&lt;-</span> </span>
+<span id="cb392-2"><a href="multiple-factorial-analysis-mfa.html#cb392-2" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb392-3"><a href="multiple-factorial-analysis-mfa.html#cb392-3" tabindex="-1"></a>  <span class="fu">group_by</span>(ProductName) <span class="sc">%&gt;%</span></span>
+<span id="cb392-4"><a href="multiple-factorial-analysis-mfa.html#cb392-4" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span><span class="fu">mean</span>(.))) <span class="sc">%&gt;%</span></span>
+<span id="cb392-5"><a href="multiple-factorial-analysis-mfa.html#cb392-5" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;ProductName&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb392-6"><a href="multiple-factorial-analysis-mfa.html#cb392-6" tabindex="-1"></a>  <span class="co"># Because MFA typically scales all columns to unit variance, we will do so as</span></span>
+<span id="cb392-7"><a href="multiple-factorial-analysis-mfa.html#cb392-7" tabindex="-1"></a>  <span class="co"># well</span></span>
+<span id="cb392-8"><a href="multiple-factorial-analysis-mfa.html#cb392-8" tabindex="-1"></a>  <span class="fu">PCA</span>(<span class="at">scale.unit =</span> <span class="cn">TRUE</span>, <span class="at">graph =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb392-9"><a href="multiple-factorial-analysis-mfa.html#cb392-9" tabindex="-1"></a></span>
+<span id="cb392-10"><a href="multiple-factorial-analysis-mfa.html#cb392-10" tabindex="-1"></a>descriptive_very_wide_data <span class="ot">&lt;-</span> </span>
+<span id="cb392-11"><a href="multiple-factorial-analysis-mfa.html#cb392-11" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb392-12"><a href="multiple-factorial-analysis-mfa.html#cb392-12" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span><span class="fu">c</span>(NJ, ProductName, NR)) <span class="sc">%&gt;%</span></span>
+<span id="cb392-13"><a href="multiple-factorial-analysis-mfa.html#cb392-13" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> <span class="fu">c</span>(name, NJ, NR), </span>
+<span id="cb392-14"><a href="multiple-factorial-analysis-mfa.html#cb392-14" tabindex="-1"></a>              <span class="at">values_from =</span> value, </span>
+<span id="cb392-15"><a href="multiple-factorial-analysis-mfa.html#cb392-15" tabindex="-1"></a>              <span class="at">names_vary =</span> <span class="st">&quot;fastest&quot;</span>, </span>
+<span id="cb392-16"><a href="multiple-factorial-analysis-mfa.html#cb392-16" tabindex="-1"></a>              <span class="at">names_sep =</span> <span class="st">&quot;.&quot;</span>)</span>
+<span id="cb392-17"><a href="multiple-factorial-analysis-mfa.html#cb392-17" tabindex="-1"></a></span>
+<span id="cb392-18"><a href="multiple-factorial-analysis-mfa.html#cb392-18" tabindex="-1"></a><span class="fu">glimpse</span>(descriptive_very_wide_data)</span></code></pre></div>
 <pre><code>## Rows: 8
 ## Columns: 841
 ## $ ProductName            &lt;fct&gt; C_MERLOT, C_SYRAH, C_ZINFANDEL, C_REFOSCO, I_ME…
@@ -375,13 +381,13 @@ div.csl-indent {
 ## $ Vanilla.1331.7         &lt;dbl&gt; 5.0, 8.3, 2.7, 5.5, 1.3, 6.9, 8.1, 4.8
 ....</code></pre>
 <p>We have made an <em>extremely</em> wide data frame with a set of 20 columns for each unique combination of <code>NR</code> (rep) and <code>NJ</code> (judge). We can now use that information to create an MFA that will give a best compromise among all these measurements.</p>
-<div class="sourceCode" id="cb386"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb386-1"><a href="multiple-factorial-analysis-mfa.html#cb386-1" tabindex="-1"></a>descriptive_mfa <span class="ot">&lt;-</span> descriptive_very_wide_data <span class="sc">%&gt;%</span></span>
-<span id="cb386-2"><a href="multiple-factorial-analysis-mfa.html#cb386-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;ProductName&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb386-3"><a href="multiple-factorial-analysis-mfa.html#cb386-3" tabindex="-1"></a>  <span class="co"># `group = ` specifies the sets of measurements by length.  We have 42 tables</span></span>
-<span id="cb386-4"><a href="multiple-factorial-analysis-mfa.html#cb386-4" tabindex="-1"></a>  <span class="co"># of 20 descriptors.</span></span>
-<span id="cb386-5"><a href="multiple-factorial-analysis-mfa.html#cb386-5" tabindex="-1"></a>  <span class="fu">MFA</span>(<span class="at">group =</span> <span class="fu">rep</span>(<span class="dv">20</span>, <span class="at">times =</span> <span class="dv">42</span>), <span class="at">graph =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb386-6"><a href="multiple-factorial-analysis-mfa.html#cb386-6" tabindex="-1"></a></span>
-<span id="cb386-7"><a href="multiple-factorial-analysis-mfa.html#cb386-7" tabindex="-1"></a>descriptive_mfa</span></code></pre></div>
+<div class="sourceCode" id="cb394"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb394-1"><a href="multiple-factorial-analysis-mfa.html#cb394-1" tabindex="-1"></a>descriptive_mfa <span class="ot">&lt;-</span> descriptive_very_wide_data <span class="sc">%&gt;%</span></span>
+<span id="cb394-2"><a href="multiple-factorial-analysis-mfa.html#cb394-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;ProductName&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb394-3"><a href="multiple-factorial-analysis-mfa.html#cb394-3" tabindex="-1"></a>  <span class="co"># `group = ` specifies the sets of measurements by length.  We have 42 tables</span></span>
+<span id="cb394-4"><a href="multiple-factorial-analysis-mfa.html#cb394-4" tabindex="-1"></a>  <span class="co"># of 20 descriptors.</span></span>
+<span id="cb394-5"><a href="multiple-factorial-analysis-mfa.html#cb394-5" tabindex="-1"></a>  <span class="fu">MFA</span>(<span class="at">group =</span> <span class="fu">rep</span>(<span class="dv">20</span>, <span class="at">times =</span> <span class="dv">42</span>), <span class="at">graph =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb394-6"><a href="multiple-factorial-analysis-mfa.html#cb394-6" tabindex="-1"></a></span>
+<span id="cb394-7"><a href="multiple-factorial-analysis-mfa.html#cb394-7" tabindex="-1"></a>descriptive_mfa</span></code></pre></div>
 <pre><code>## **Results of the Multiple Factor Analysis (MFA)**
 ## The analysis was performed on 8 individuals, described by 840 variables
 ## *Results are available in the following objects :
@@ -397,9 +403,9 @@ div.csl-indent {
 ## 8 &quot;$summary.quanti&quot;    &quot;summary for the quantitative variables&quot;       
 ## 9 &quot;$global.pca&quot;        &quot;results for the global PCA&quot;</code></pre>
 <p>We have a structure similar to the output of <code>PCA()</code> that we can explore.</p>
-<div class="sourceCode" id="cb388"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb388-1"><a href="multiple-factorial-analysis-mfa.html#cb388-1" tabindex="-1"></a><span class="co"># Like in PCA, the `$ind$coord matrix stores the compromise factor score for the</span></span>
-<span id="cb388-2"><a href="multiple-factorial-analysis-mfa.html#cb388-2" tabindex="-1"></a><span class="co"># observations</span></span>
-<span id="cb388-3"><a href="multiple-factorial-analysis-mfa.html#cb388-3" tabindex="-1"></a>descriptive_mfa<span class="sc">$</span>ind<span class="sc">$</span>coord</span></code></pre></div>
+<div class="sourceCode" id="cb396"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb396-1"><a href="multiple-factorial-analysis-mfa.html#cb396-1" tabindex="-1"></a><span class="co"># Like in PCA, the `$ind$coord matrix stores the compromise factor score for the</span></span>
+<span id="cb396-2"><a href="multiple-factorial-analysis-mfa.html#cb396-2" tabindex="-1"></a><span class="co"># observations</span></span>
+<span id="cb396-3"><a href="multiple-factorial-analysis-mfa.html#cb396-3" tabindex="-1"></a>descriptive_mfa<span class="sc">$</span>ind<span class="sc">$</span>coord</span></code></pre></div>
 <pre><code>##                  Dim.1     Dim.2     Dim.3     Dim.4      Dim.5
 ## C_MERLOT     0.7723305 -4.171193 -2.954031 -5.620380 -0.7324718
 ## C_SYRAH     -1.4562624 -2.849077  9.074701  1.411735 -4.7204734
@@ -409,9 +415,9 @@ div.csl-indent {
 ## I_SYRAH     -6.6389771  3.068949 -2.518430  5.198407  3.8804125
 ## I_PRIMITIVO -8.3061000  3.190520 -1.866387 -2.559056 -4.0406986
 ## I_REFOSCO    5.8823192  5.793524  2.907029  3.078027  2.4470802</code></pre>
-<div class="sourceCode" id="cb390"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb390-1"><a href="multiple-factorial-analysis-mfa.html#cb390-1" tabindex="-1"></a><span class="co"># UNLIKE in PCA, the `$ind$coord.partiel matrix stores the projected coordinates</span></span>
-<span id="cb390-2"><a href="multiple-factorial-analysis-mfa.html#cb390-2" tabindex="-1"></a><span class="co"># for each observation in each table.  </span></span>
-<span id="cb390-3"><a href="multiple-factorial-analysis-mfa.html#cb390-3" tabindex="-1"></a>descriptive_mfa<span class="sc">$</span>ind<span class="sc">$</span>coord.partiel</span></code></pre></div>
+<div class="sourceCode" id="cb398"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb398-1"><a href="multiple-factorial-analysis-mfa.html#cb398-1" tabindex="-1"></a><span class="co"># UNLIKE in PCA, the `$ind$coord.partiel matrix stores the projected coordinates</span></span>
+<span id="cb398-2"><a href="multiple-factorial-analysis-mfa.html#cb398-2" tabindex="-1"></a><span class="co"># for each observation in each table.  </span></span>
+<span id="cb398-3"><a href="multiple-factorial-analysis-mfa.html#cb398-3" tabindex="-1"></a>descriptive_mfa<span class="sc">$</span>ind<span class="sc">$</span>coord.partiel</span></code></pre></div>
 <pre><code>##                         Dim.1         Dim.2        Dim.3        Dim.4
 ## C_MERLOT.Gr1      -0.19053168  -3.629446503  -2.68596672  -4.40043966
 ## C_MERLOT.Gr2      -4.78396619  -4.926014582  -5.51062842  -7.04473809
@@ -434,58 +440,58 @@ div.csl-indent {
 ## C_MERLOT.Gr19     -1.75269487  -1.340179706   1.82418023  -1.58732032
 ....</code></pre>
 <p>We can use these projected (partial) coordinates to get some ideas about the consensus (or lack thereof) among our judges. Let’s wrangle.</p>
-<div class="sourceCode" id="cb392"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb392-1"><a href="multiple-factorial-analysis-mfa.html#cb392-1" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb392-2"><a href="multiple-factorial-analysis-mfa.html#cb392-2" tabindex="-1"></a></span>
-<span id="cb392-3"><a href="multiple-factorial-analysis-mfa.html#cb392-3" tabindex="-1"></a>p_descriptive_mfa <span class="ot">&lt;-</span> </span>
-<span id="cb392-4"><a href="multiple-factorial-analysis-mfa.html#cb392-4" tabindex="-1"></a>  </span>
-<span id="cb392-5"><a href="multiple-factorial-analysis-mfa.html#cb392-5" tabindex="-1"></a>  <span class="co"># First we need to get our data all into one place</span></span>
-<span id="cb392-6"><a href="multiple-factorial-analysis-mfa.html#cb392-6" tabindex="-1"></a>  </span>
-<span id="cb392-7"><a href="multiple-factorial-analysis-mfa.html#cb392-7" tabindex="-1"></a>  descriptive_mfa<span class="sc">$</span>ind<span class="sc">$</span>coord <span class="sc">%&gt;%</span></span>
-<span id="cb392-8"><a href="multiple-factorial-analysis-mfa.html#cb392-8" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb392-9"><a href="multiple-factorial-analysis-mfa.html#cb392-9" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
-<span id="cb392-10"><a href="multiple-factorial-analysis-mfa.html#cb392-10" tabindex="-1"></a>    descriptive_mfa<span class="sc">$</span>ind<span class="sc">$</span>coord.partiel <span class="sc">%&gt;%</span></span>
-<span id="cb392-11"><a href="multiple-factorial-analysis-mfa.html#cb392-11" tabindex="-1"></a>      <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;wine&quot;</span>)</span>
-<span id="cb392-12"><a href="multiple-factorial-analysis-mfa.html#cb392-12" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb392-13"><a href="multiple-factorial-analysis-mfa.html#cb392-13" tabindex="-1"></a>  <span class="fu">separate</span>(wine, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;wine&quot;</span>, <span class="st">&quot;table&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">.&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb392-14"><a href="multiple-factorial-analysis-mfa.html#cb392-14" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">table =</span> <span class="fu">replace_na</span>(table, <span class="st">&quot;compromise&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb392-15"><a href="multiple-factorial-analysis-mfa.html#cb392-15" tabindex="-1"></a>  </span>
-<span id="cb392-16"><a href="multiple-factorial-analysis-mfa.html#cb392-16" tabindex="-1"></a>  <span class="co"># And then we can make a plot!</span></span>
-<span id="cb392-17"><a href="multiple-factorial-analysis-mfa.html#cb392-17" tabindex="-1"></a>  </span>
-<span id="cb392-18"><a href="multiple-factorial-analysis-mfa.html#cb392-18" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">color =</span> wine)) <span class="sc">+</span> </span>
-<span id="cb392-19"><a href="multiple-factorial-analysis-mfa.html#cb392-19" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span></span>
-<span id="cb392-20"><a href="multiple-factorial-analysis-mfa.html#cb392-20" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
-<span id="cb392-21"><a href="multiple-factorial-analysis-mfa.html#cb392-21" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> . <span class="sc">%&gt;%</span> <span class="fu">filter</span>(table <span class="sc">==</span> <span class="st">&quot;compromise&quot;</span>), </span>
-<span id="cb392-22"><a href="multiple-factorial-analysis-mfa.html#cb392-22" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
-<span id="cb392-23"><a href="multiple-factorial-analysis-mfa.html#cb392-23" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> . <span class="sc">%&gt;%</span> <span class="fu">filter</span>(table <span class="sc">!=</span> <span class="st">&quot;compromise&quot;</span>), </span>
-<span id="cb392-24"><a href="multiple-factorial-analysis-mfa.html#cb392-24" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">1</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>) <span class="sc">+</span></span>
-<span id="cb392-25"><a href="multiple-factorial-analysis-mfa.html#cb392-25" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="at">data =</span> . <span class="sc">%&gt;%</span> <span class="fu">filter</span>(table <span class="sc">==</span> <span class="st">&quot;compromise&quot;</span>),</span>
-<span id="cb392-26"><a href="multiple-factorial-analysis-mfa.html#cb392-26" tabindex="-1"></a>                           <span class="fu">aes</span>(<span class="at">label =</span> wine)) <span class="sc">+</span> </span>
-<span id="cb392-27"><a href="multiple-factorial-analysis-mfa.html#cb392-27" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> </span>
-<span id="cb392-28"><a href="multiple-factorial-analysis-mfa.html#cb392-28" tabindex="-1"></a>  <span class="fu">scale_color_paletteer_d</span>(<span class="st">&quot;RSkittleBrewer::smarties&quot;</span>) <span class="sc">+</span></span>
-<span id="cb392-29"><a href="multiple-factorial-analysis-mfa.html#cb392-29" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;MFA compromise plot with projected</span><span class="sc">\n</span><span class="st">individual judge evaluations&quot;</span>,</span>
-<span id="cb392-30"><a href="multiple-factorial-analysis-mfa.html#cb392-30" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 1, &quot;</span>, <span class="fu">round</span>(descriptive_mfa<span class="sc">$</span>eig[<span class="dv">1</span>, <span class="dv">2</span>], <span class="dv">1</span>), <span class="st">&quot;% of variance&quot;</span>),</span>
-<span id="cb392-31"><a href="multiple-factorial-analysis-mfa.html#cb392-31" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 2, &quot;</span>, <span class="fu">round</span>(descriptive_mfa<span class="sc">$</span>eig[<span class="dv">2</span>, <span class="dv">2</span>], <span class="dv">1</span>), <span class="st">&quot;% of variance&quot;</span>)) <span class="sc">+</span></span>
-<span id="cb392-32"><a href="multiple-factorial-analysis-mfa.html#cb392-32" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb392-33"><a href="multiple-factorial-analysis-mfa.html#cb392-33" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span>
-<span id="cb392-34"><a href="multiple-factorial-analysis-mfa.html#cb392-34" tabindex="-1"></a></span>
-<span id="cb392-35"><a href="multiple-factorial-analysis-mfa.html#cb392-35" tabindex="-1"></a>p_descriptive_pca <span class="ot">&lt;-</span> </span>
-<span id="cb392-36"><a href="multiple-factorial-analysis-mfa.html#cb392-36" tabindex="-1"></a>  descriptive_pca<span class="sc">$</span>ind<span class="sc">$</span>coord <span class="sc">%&gt;%</span></span>
-<span id="cb392-37"><a href="multiple-factorial-analysis-mfa.html#cb392-37" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb392-38"><a href="multiple-factorial-analysis-mfa.html#cb392-38" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">color =</span> wine)) <span class="sc">+</span> </span>
-<span id="cb392-39"><a href="multiple-factorial-analysis-mfa.html#cb392-39" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span></span>
-<span id="cb392-40"><a href="multiple-factorial-analysis-mfa.html#cb392-40" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span></span>
-<span id="cb392-41"><a href="multiple-factorial-analysis-mfa.html#cb392-41" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
-<span id="cb392-42"><a href="multiple-factorial-analysis-mfa.html#cb392-42" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> wine)) <span class="sc">+</span> </span>
-<span id="cb392-43"><a href="multiple-factorial-analysis-mfa.html#cb392-43" tabindex="-1"></a>  <span class="fu">coord_equal</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">10</span>, <span class="dv">10</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">10</span>, <span class="dv">10</span>)) <span class="sc">+</span> </span>
-<span id="cb392-44"><a href="multiple-factorial-analysis-mfa.html#cb392-44" tabindex="-1"></a>  <span class="fu">scale_color_paletteer_d</span>(<span class="st">&quot;RSkittleBrewer::smarties&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb392-45"><a href="multiple-factorial-analysis-mfa.html#cb392-45" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;PCA scores plot&quot;</span>,</span>
-<span id="cb392-46"><a href="multiple-factorial-analysis-mfa.html#cb392-46" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 1, &quot;</span>, <span class="fu">round</span>(descriptive_pca<span class="sc">$</span>eig[<span class="dv">1</span>, <span class="dv">2</span>], <span class="dv">1</span>), <span class="st">&quot;% of variance&quot;</span>),</span>
-<span id="cb392-47"><a href="multiple-factorial-analysis-mfa.html#cb392-47" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 2, &quot;</span>, <span class="fu">round</span>(descriptive_pca<span class="sc">$</span>eig[<span class="dv">2</span>, <span class="dv">2</span>], <span class="dv">1</span>), <span class="st">&quot;% of variance&quot;</span>)) <span class="sc">+</span></span>
-<span id="cb392-48"><a href="multiple-factorial-analysis-mfa.html#cb392-48" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb392-49"><a href="multiple-factorial-analysis-mfa.html#cb392-49" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span>
-<span id="cb392-50"><a href="multiple-factorial-analysis-mfa.html#cb392-50" tabindex="-1"></a></span>
-<span id="cb392-51"><a href="multiple-factorial-analysis-mfa.html#cb392-51" tabindex="-1"></a>p_descriptive_pca <span class="sc">+</span> p_descriptive_mfa <span class="sc">+</span></span>
-<span id="cb392-52"><a href="multiple-factorial-analysis-mfa.html#cb392-52" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(<span class="at">caption =</span> <span class="st">&quot;Note that axes have been scaled to be approximately comparable&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb400"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb400-1"><a href="multiple-factorial-analysis-mfa.html#cb400-1" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb400-2"><a href="multiple-factorial-analysis-mfa.html#cb400-2" tabindex="-1"></a></span>
+<span id="cb400-3"><a href="multiple-factorial-analysis-mfa.html#cb400-3" tabindex="-1"></a>p_descriptive_mfa <span class="ot">&lt;-</span> </span>
+<span id="cb400-4"><a href="multiple-factorial-analysis-mfa.html#cb400-4" tabindex="-1"></a>  </span>
+<span id="cb400-5"><a href="multiple-factorial-analysis-mfa.html#cb400-5" tabindex="-1"></a>  <span class="co"># First we need to get our data all into one place</span></span>
+<span id="cb400-6"><a href="multiple-factorial-analysis-mfa.html#cb400-6" tabindex="-1"></a>  </span>
+<span id="cb400-7"><a href="multiple-factorial-analysis-mfa.html#cb400-7" tabindex="-1"></a>  descriptive_mfa<span class="sc">$</span>ind<span class="sc">$</span>coord <span class="sc">%&gt;%</span></span>
+<span id="cb400-8"><a href="multiple-factorial-analysis-mfa.html#cb400-8" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb400-9"><a href="multiple-factorial-analysis-mfa.html#cb400-9" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
+<span id="cb400-10"><a href="multiple-factorial-analysis-mfa.html#cb400-10" tabindex="-1"></a>    descriptive_mfa<span class="sc">$</span>ind<span class="sc">$</span>coord.partiel <span class="sc">%&gt;%</span></span>
+<span id="cb400-11"><a href="multiple-factorial-analysis-mfa.html#cb400-11" tabindex="-1"></a>      <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;wine&quot;</span>)</span>
+<span id="cb400-12"><a href="multiple-factorial-analysis-mfa.html#cb400-12" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb400-13"><a href="multiple-factorial-analysis-mfa.html#cb400-13" tabindex="-1"></a>  <span class="fu">separate</span>(wine, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;wine&quot;</span>, <span class="st">&quot;table&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">.&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb400-14"><a href="multiple-factorial-analysis-mfa.html#cb400-14" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">table =</span> <span class="fu">replace_na</span>(table, <span class="st">&quot;compromise&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb400-15"><a href="multiple-factorial-analysis-mfa.html#cb400-15" tabindex="-1"></a>  </span>
+<span id="cb400-16"><a href="multiple-factorial-analysis-mfa.html#cb400-16" tabindex="-1"></a>  <span class="co"># And then we can make a plot!</span></span>
+<span id="cb400-17"><a href="multiple-factorial-analysis-mfa.html#cb400-17" tabindex="-1"></a>  </span>
+<span id="cb400-18"><a href="multiple-factorial-analysis-mfa.html#cb400-18" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">color =</span> wine)) <span class="sc">+</span> </span>
+<span id="cb400-19"><a href="multiple-factorial-analysis-mfa.html#cb400-19" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span></span>
+<span id="cb400-20"><a href="multiple-factorial-analysis-mfa.html#cb400-20" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb400-21"><a href="multiple-factorial-analysis-mfa.html#cb400-21" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> . <span class="sc">%&gt;%</span> <span class="fu">filter</span>(table <span class="sc">==</span> <span class="st">&quot;compromise&quot;</span>), </span>
+<span id="cb400-22"><a href="multiple-factorial-analysis-mfa.html#cb400-22" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb400-23"><a href="multiple-factorial-analysis-mfa.html#cb400-23" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> . <span class="sc">%&gt;%</span> <span class="fu">filter</span>(table <span class="sc">!=</span> <span class="st">&quot;compromise&quot;</span>), </span>
+<span id="cb400-24"><a href="multiple-factorial-analysis-mfa.html#cb400-24" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">1</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb400-25"><a href="multiple-factorial-analysis-mfa.html#cb400-25" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="at">data =</span> . <span class="sc">%&gt;%</span> <span class="fu">filter</span>(table <span class="sc">==</span> <span class="st">&quot;compromise&quot;</span>),</span>
+<span id="cb400-26"><a href="multiple-factorial-analysis-mfa.html#cb400-26" tabindex="-1"></a>                           <span class="fu">aes</span>(<span class="at">label =</span> wine)) <span class="sc">+</span> </span>
+<span id="cb400-27"><a href="multiple-factorial-analysis-mfa.html#cb400-27" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> </span>
+<span id="cb400-28"><a href="multiple-factorial-analysis-mfa.html#cb400-28" tabindex="-1"></a>  <span class="fu">scale_color_paletteer_d</span>(<span class="st">&quot;RSkittleBrewer::smarties&quot;</span>) <span class="sc">+</span></span>
+<span id="cb400-29"><a href="multiple-factorial-analysis-mfa.html#cb400-29" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;MFA compromise plot with projected</span><span class="sc">\n</span><span class="st">individual judge evaluations&quot;</span>,</span>
+<span id="cb400-30"><a href="multiple-factorial-analysis-mfa.html#cb400-30" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 1, &quot;</span>, <span class="fu">round</span>(descriptive_mfa<span class="sc">$</span>eig[<span class="dv">1</span>, <span class="dv">2</span>], <span class="dv">1</span>), <span class="st">&quot;% of variance&quot;</span>),</span>
+<span id="cb400-31"><a href="multiple-factorial-analysis-mfa.html#cb400-31" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 2, &quot;</span>, <span class="fu">round</span>(descriptive_mfa<span class="sc">$</span>eig[<span class="dv">2</span>, <span class="dv">2</span>], <span class="dv">1</span>), <span class="st">&quot;% of variance&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb400-32"><a href="multiple-factorial-analysis-mfa.html#cb400-32" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb400-33"><a href="multiple-factorial-analysis-mfa.html#cb400-33" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span>
+<span id="cb400-34"><a href="multiple-factorial-analysis-mfa.html#cb400-34" tabindex="-1"></a></span>
+<span id="cb400-35"><a href="multiple-factorial-analysis-mfa.html#cb400-35" tabindex="-1"></a>p_descriptive_pca <span class="ot">&lt;-</span> </span>
+<span id="cb400-36"><a href="multiple-factorial-analysis-mfa.html#cb400-36" tabindex="-1"></a>  descriptive_pca<span class="sc">$</span>ind<span class="sc">$</span>coord <span class="sc">%&gt;%</span></span>
+<span id="cb400-37"><a href="multiple-factorial-analysis-mfa.html#cb400-37" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb400-38"><a href="multiple-factorial-analysis-mfa.html#cb400-38" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">color =</span> wine)) <span class="sc">+</span> </span>
+<span id="cb400-39"><a href="multiple-factorial-analysis-mfa.html#cb400-39" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span></span>
+<span id="cb400-40"><a href="multiple-factorial-analysis-mfa.html#cb400-40" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span></span>
+<span id="cb400-41"><a href="multiple-factorial-analysis-mfa.html#cb400-41" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb400-42"><a href="multiple-factorial-analysis-mfa.html#cb400-42" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> wine)) <span class="sc">+</span> </span>
+<span id="cb400-43"><a href="multiple-factorial-analysis-mfa.html#cb400-43" tabindex="-1"></a>  <span class="fu">coord_equal</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">10</span>, <span class="dv">10</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">10</span>, <span class="dv">10</span>)) <span class="sc">+</span> </span>
+<span id="cb400-44"><a href="multiple-factorial-analysis-mfa.html#cb400-44" tabindex="-1"></a>  <span class="fu">scale_color_paletteer_d</span>(<span class="st">&quot;RSkittleBrewer::smarties&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb400-45"><a href="multiple-factorial-analysis-mfa.html#cb400-45" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;PCA scores plot&quot;</span>,</span>
+<span id="cb400-46"><a href="multiple-factorial-analysis-mfa.html#cb400-46" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 1, &quot;</span>, <span class="fu">round</span>(descriptive_pca<span class="sc">$</span>eig[<span class="dv">1</span>, <span class="dv">2</span>], <span class="dv">1</span>), <span class="st">&quot;% of variance&quot;</span>),</span>
+<span id="cb400-47"><a href="multiple-factorial-analysis-mfa.html#cb400-47" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 2, &quot;</span>, <span class="fu">round</span>(descriptive_pca<span class="sc">$</span>eig[<span class="dv">2</span>, <span class="dv">2</span>], <span class="dv">1</span>), <span class="st">&quot;% of variance&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb400-48"><a href="multiple-factorial-analysis-mfa.html#cb400-48" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb400-49"><a href="multiple-factorial-analysis-mfa.html#cb400-49" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span>
+<span id="cb400-50"><a href="multiple-factorial-analysis-mfa.html#cb400-50" tabindex="-1"></a></span>
+<span id="cb400-51"><a href="multiple-factorial-analysis-mfa.html#cb400-51" tabindex="-1"></a>p_descriptive_pca <span class="sc">+</span> p_descriptive_mfa <span class="sc">+</span></span>
+<span id="cb400-52"><a href="multiple-factorial-analysis-mfa.html#cb400-52" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(<span class="at">caption =</span> <span class="st">&quot;Note that axes have been scaled to be approximately comparable&quot;</span>)</span></code></pre></div>
 <p><img src="12-MFA_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>We can see some major differences (as well as some similarities!) between these analyses:</p>
 <ul>
@@ -494,8 +500,8 @@ div.csl-indent {
 <li>In fact, our spatial configuration is not very different between the two. We see that the separation between the <code>I_PRIMITIVO</code> and <code>I_SYRAH</code> from the PCA seems to not be supported by the MFA, and ditto for the <code>I_REFOSCO</code> and <code>I_MERLOT</code>, but otherwise the overall space looks pretty similar.</li>
 </ul>
 <p>We can take a similar approach to understanding the loadings in the space, but because of the large number of variables to plot and distinguish with aesthetic elements like color, we’re going to use <code>facet_wrap()</code> to break up the plot into a set, with 1 plot per attribute.</p>
-<div class="sourceCode" id="cb393"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb393-1"><a href="multiple-factorial-analysis-mfa.html#cb393-1" tabindex="-1"></a><span class="co"># We can see a similar structure for the variables - one per table</span></span>
-<span id="cb393-2"><a href="multiple-factorial-analysis-mfa.html#cb393-2" tabindex="-1"></a>descriptive_mfa<span class="sc">$</span>quanti.var<span class="sc">$</span>coord</span></code></pre></div>
+<div class="sourceCode" id="cb401"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb401-1"><a href="multiple-factorial-analysis-mfa.html#cb401-1" tabindex="-1"></a><span class="co"># We can see a similar structure for the variables - one per table</span></span>
+<span id="cb401-2"><a href="multiple-factorial-analysis-mfa.html#cb401-2" tabindex="-1"></a>descriptive_mfa<span class="sc">$</span>quanti.var<span class="sc">$</span>coord</span></code></pre></div>
 <pre><code>##                                Dim.1         Dim.2        Dim.3         Dim.4
 ## Red_berry.1331.7       -0.2420588137 -0.6371336481  0.211907444  0.2053230519
 ## Dark_berry.1331.7       0.3409561657  0.6686617185 -0.406031062 -0.3427279964
@@ -507,61 +513,61 @@ div.csl-indent {
 ## Oak.1331.7              0.2726983399 -0.5845646815  0.006397835 -0.5679731406
 ## Burned.1331.7           0.9347565617  0.2337330908 -0.031914519  0.1144208471
 ....</code></pre>
-<div class="sourceCode" id="cb395"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb395-1"><a href="multiple-factorial-analysis-mfa.html#cb395-1" tabindex="-1"></a>descriptive_mfa<span class="sc">$</span>global.pca<span class="sc">$</span>var<span class="sc">$</span>cor <span class="sc">%&gt;%</span></span>
-<span id="cb395-2"><a href="multiple-factorial-analysis-mfa.html#cb395-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;descriptor&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb395-3"><a href="multiple-factorial-analysis-mfa.html#cb395-3" tabindex="-1"></a>  <span class="fu">separate</span>(descriptor, </span>
-<span id="cb395-4"><a href="multiple-factorial-analysis-mfa.html#cb395-4" tabindex="-1"></a>           <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;descriptor&quot;</span>, <span class="st">&quot;panelist&quot;</span>, <span class="st">&quot;rep&quot;</span>),</span>
-<span id="cb395-5"><a href="multiple-factorial-analysis-mfa.html#cb395-5" tabindex="-1"></a>           <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">.&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb395-6"><a href="multiple-factorial-analysis-mfa.html#cb395-6" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">color =</span> descriptor)) <span class="sc">+</span> </span>
-<span id="cb395-7"><a href="multiple-factorial-analysis-mfa.html#cb395-7" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span></span>
-<span id="cb395-8"><a href="multiple-factorial-analysis-mfa.html#cb395-8" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
-<span id="cb395-9"><a href="multiple-factorial-analysis-mfa.html#cb395-9" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> <span class="dv">0</span>, <span class="at">yend =</span> <span class="dv">0</span>),</span>
-<span id="cb395-10"><a href="multiple-factorial-analysis-mfa.html#cb395-10" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.02</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>), <span class="at">ends =</span> <span class="st">&quot;first&quot;</span>),</span>
-<span id="cb395-11"><a href="multiple-factorial-analysis-mfa.html#cb395-11" tabindex="-1"></a>               <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb395-12"><a href="multiple-factorial-analysis-mfa.html#cb395-12" tabindex="-1"></a>  ggforce<span class="sc">::</span><span class="fu">geom_circle</span>(<span class="fu">aes</span>(<span class="at">x0 =</span> <span class="dv">0</span>, <span class="at">y0 =</span> <span class="dv">0</span>, <span class="at">r =</span> <span class="dv">1</span>),</span>
-<span id="cb395-13"><a href="multiple-factorial-analysis-mfa.html#cb395-13" tabindex="-1"></a>                       <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>, <span class="at">linetype =</span> <span class="dv">3</span>,</span>
-<span id="cb395-14"><a href="multiple-factorial-analysis-mfa.html#cb395-14" tabindex="-1"></a>                       <span class="at">color =</span> <span class="st">&quot;grey&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb395-15"><a href="multiple-factorial-analysis-mfa.html#cb395-15" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> </span>
-<span id="cb395-16"><a href="multiple-factorial-analysis-mfa.html#cb395-16" tabindex="-1"></a>  <span class="fu">scale_color_paletteer_d</span>(<span class="st">&quot;ggthemes::Classic_20&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb395-17"><a href="multiple-factorial-analysis-mfa.html#cb395-17" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)) <span class="sc">+</span> </span>
-<span id="cb395-18"><a href="multiple-factorial-analysis-mfa.html#cb395-18" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)) <span class="sc">+</span> </span>
-<span id="cb395-19"><a href="multiple-factorial-analysis-mfa.html#cb395-19" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb395-20"><a href="multiple-factorial-analysis-mfa.html#cb395-20" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>,</span>
-<span id="cb395-21"><a href="multiple-factorial-analysis-mfa.html#cb395-21" tabindex="-1"></a>        <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">6</span>)) <span class="sc">+</span> </span>
-<span id="cb395-22"><a href="multiple-factorial-analysis-mfa.html#cb395-22" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>descriptor) <span class="sc">+</span> </span>
-<span id="cb395-23"><a href="multiple-factorial-analysis-mfa.html#cb395-23" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;MFA correlation plot for variables with</span><span class="sc">\n</span><span class="st">overall consensus space&quot;</span>,</span>
-<span id="cb395-24"><a href="multiple-factorial-analysis-mfa.html#cb395-24" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 1, &quot;</span>, <span class="fu">round</span>(descriptive_mfa<span class="sc">$</span>eig[<span class="dv">1</span>, <span class="dv">2</span>], <span class="dv">1</span>), <span class="st">&quot;% of variance&quot;</span>),</span>
-<span id="cb395-25"><a href="multiple-factorial-analysis-mfa.html#cb395-25" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 2, &quot;</span>, <span class="fu">round</span>(descriptive_mfa<span class="sc">$</span>eig[<span class="dv">2</span>, <span class="dv">2</span>], <span class="dv">1</span>), <span class="st">&quot;% of variance&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb403"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb403-1"><a href="multiple-factorial-analysis-mfa.html#cb403-1" tabindex="-1"></a>descriptive_mfa<span class="sc">$</span>global.pca<span class="sc">$</span>var<span class="sc">$</span>cor <span class="sc">%&gt;%</span></span>
+<span id="cb403-2"><a href="multiple-factorial-analysis-mfa.html#cb403-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;descriptor&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb403-3"><a href="multiple-factorial-analysis-mfa.html#cb403-3" tabindex="-1"></a>  <span class="fu">separate</span>(descriptor, </span>
+<span id="cb403-4"><a href="multiple-factorial-analysis-mfa.html#cb403-4" tabindex="-1"></a>           <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;descriptor&quot;</span>, <span class="st">&quot;panelist&quot;</span>, <span class="st">&quot;rep&quot;</span>),</span>
+<span id="cb403-5"><a href="multiple-factorial-analysis-mfa.html#cb403-5" tabindex="-1"></a>           <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">.&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb403-6"><a href="multiple-factorial-analysis-mfa.html#cb403-6" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">color =</span> descriptor)) <span class="sc">+</span> </span>
+<span id="cb403-7"><a href="multiple-factorial-analysis-mfa.html#cb403-7" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span></span>
+<span id="cb403-8"><a href="multiple-factorial-analysis-mfa.html#cb403-8" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb403-9"><a href="multiple-factorial-analysis-mfa.html#cb403-9" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> <span class="dv">0</span>, <span class="at">yend =</span> <span class="dv">0</span>),</span>
+<span id="cb403-10"><a href="multiple-factorial-analysis-mfa.html#cb403-10" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.02</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>), <span class="at">ends =</span> <span class="st">&quot;first&quot;</span>),</span>
+<span id="cb403-11"><a href="multiple-factorial-analysis-mfa.html#cb403-11" tabindex="-1"></a>               <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb403-12"><a href="multiple-factorial-analysis-mfa.html#cb403-12" tabindex="-1"></a>  ggforce<span class="sc">::</span><span class="fu">geom_circle</span>(<span class="fu">aes</span>(<span class="at">x0 =</span> <span class="dv">0</span>, <span class="at">y0 =</span> <span class="dv">0</span>, <span class="at">r =</span> <span class="dv">1</span>),</span>
+<span id="cb403-13"><a href="multiple-factorial-analysis-mfa.html#cb403-13" tabindex="-1"></a>                       <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>, <span class="at">linetype =</span> <span class="dv">3</span>,</span>
+<span id="cb403-14"><a href="multiple-factorial-analysis-mfa.html#cb403-14" tabindex="-1"></a>                       <span class="at">color =</span> <span class="st">&quot;grey&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb403-15"><a href="multiple-factorial-analysis-mfa.html#cb403-15" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> </span>
+<span id="cb403-16"><a href="multiple-factorial-analysis-mfa.html#cb403-16" tabindex="-1"></a>  <span class="fu">scale_color_paletteer_d</span>(<span class="st">&quot;ggthemes::Classic_20&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb403-17"><a href="multiple-factorial-analysis-mfa.html#cb403-17" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)) <span class="sc">+</span> </span>
+<span id="cb403-18"><a href="multiple-factorial-analysis-mfa.html#cb403-18" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)) <span class="sc">+</span> </span>
+<span id="cb403-19"><a href="multiple-factorial-analysis-mfa.html#cb403-19" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb403-20"><a href="multiple-factorial-analysis-mfa.html#cb403-20" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>,</span>
+<span id="cb403-21"><a href="multiple-factorial-analysis-mfa.html#cb403-21" tabindex="-1"></a>        <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">6</span>)) <span class="sc">+</span> </span>
+<span id="cb403-22"><a href="multiple-factorial-analysis-mfa.html#cb403-22" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>descriptor) <span class="sc">+</span> </span>
+<span id="cb403-23"><a href="multiple-factorial-analysis-mfa.html#cb403-23" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;MFA correlation plot for variables with</span><span class="sc">\n</span><span class="st">overall consensus space&quot;</span>,</span>
+<span id="cb403-24"><a href="multiple-factorial-analysis-mfa.html#cb403-24" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 1, &quot;</span>, <span class="fu">round</span>(descriptive_mfa<span class="sc">$</span>eig[<span class="dv">1</span>, <span class="dv">2</span>], <span class="dv">1</span>), <span class="st">&quot;% of variance&quot;</span>),</span>
+<span id="cb403-25"><a href="multiple-factorial-analysis-mfa.html#cb403-25" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 2, &quot;</span>, <span class="fu">round</span>(descriptive_mfa<span class="sc">$</span>eig[<span class="dv">2</span>, <span class="dv">2</span>], <span class="dv">1</span>), <span class="st">&quot;% of variance&quot;</span>))</span></code></pre></div>
 <p><img src="12-MFA_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>From this plot, we can tell that there is reasonable consensus among judges for some attributes–like <code>Leather</code>, <code>Jam</code>, <code>Chocolate</code>, and <code>Sour</code>, and very little for some other attributes, like <code>Red_berry</code>, <code>Oak</code>, <code>Alcohol</code>, and <code>Dried_fruit</code>. For some of these, it is quite possible that these two dimensions do not correlate well with the attributes at all–notably <code>Alcohol</code> and <code>Astringent</code> and possibly <code>Chocolate</code>. Again, this gives us the ability, over PCA, to look at some of the ways in which the group coheres around or departs from the consensus.</p>
 <p>We could (and would want to!) investigate the contributions of the observations, variables, and sets of variables (“tables”) to the consensus solution to understand what is most important. Here, to save space, we will look primarily at the <em>tables</em>: which <code>NR:NJ</code> combination is most important for the space? We will visualize this as a scatterplot, with contributions to the 1st and 2nd dimensions on the axes.</p>
-<div class="sourceCode" id="cb396"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb396-1"><a href="multiple-factorial-analysis-mfa.html#cb396-1" tabindex="-1"></a><span class="co"># Some nicer labels </span></span>
-<span id="cb396-2"><a href="multiple-factorial-analysis-mfa.html#cb396-2" tabindex="-1"></a>nice_names <span class="ot">&lt;-</span> </span>
-<span id="cb396-3"><a href="multiple-factorial-analysis-mfa.html#cb396-3" tabindex="-1"></a>  <span class="fu">crossing</span>(<span class="at">subject =</span> descriptive_data<span class="sc">$</span>NJ <span class="sc">%&gt;%</span> unique, </span>
-<span id="cb396-4"><a href="multiple-factorial-analysis-mfa.html#cb396-4" tabindex="-1"></a>           <span class="at">rep =</span> descriptive_data<span class="sc">$</span>NR <span class="sc">%&gt;%</span> unique) <span class="sc">%&gt;%</span></span>
-<span id="cb396-5"><a href="multiple-factorial-analysis-mfa.html#cb396-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">name =</span> <span class="fu">str_c</span>(subject, <span class="st">&quot;:&quot;</span>, rep))</span>
-<span id="cb396-6"><a href="multiple-factorial-analysis-mfa.html#cb396-6" tabindex="-1"></a></span>
-<span id="cb396-7"><a href="multiple-factorial-analysis-mfa.html#cb396-7" tabindex="-1"></a>descriptive_mfa<span class="sc">$</span>group<span class="sc">$</span>contrib <span class="sc">%&gt;%</span></span>
-<span id="cb396-8"><a href="multiple-factorial-analysis-mfa.html#cb396-8" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;group&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb396-9"><a href="multiple-factorial-analysis-mfa.html#cb396-9" tabindex="-1"></a>  <span class="co"># Once again we&#39;re matching by position, which is risky (but fast)</span></span>
-<span id="cb396-10"><a href="multiple-factorial-analysis-mfa.html#cb396-10" tabindex="-1"></a>  <span class="fu">bind_cols</span>(nice_names) <span class="sc">%&gt;%</span></span>
-<span id="cb396-11"><a href="multiple-factorial-analysis-mfa.html#cb396-11" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">color =</span> subject)) <span class="sc">+</span> </span>
-<span id="cb396-12"><a href="multiple-factorial-analysis-mfa.html#cb396-12" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">1</span> <span class="sc">/</span> <span class="dv">42</span> <span class="sc">*</span> <span class="dv">100</span>, <span class="at">color =</span> <span class="st">&quot;darkred&quot;</span>, <span class="at">linetype =</span> <span class="dv">3</span>) <span class="sc">+</span> </span>
-<span id="cb396-13"><a href="multiple-factorial-analysis-mfa.html#cb396-13" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">1</span> <span class="sc">/</span> <span class="dv">42</span> <span class="sc">*</span> <span class="dv">100</span>, <span class="at">color =</span> <span class="st">&quot;darkred&quot;</span>, <span class="at">linetype =</span> <span class="dv">3</span>) <span class="sc">+</span> </span>
-<span id="cb396-14"><a href="multiple-factorial-analysis-mfa.html#cb396-14" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb396-15"><a href="multiple-factorial-analysis-mfa.html#cb396-15" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_label_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> name), <span class="at">size =</span> <span class="dv">2</span>, <span class="at">box.padding =</span> <span class="fl">0.1</span>) <span class="sc">+</span> </span>
-<span id="cb396-16"><a href="multiple-factorial-analysis-mfa.html#cb396-16" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
-<span id="cb396-17"><a href="multiple-factorial-analysis-mfa.html#cb396-17" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> </span>
-<span id="cb396-18"><a href="multiple-factorial-analysis-mfa.html#cb396-18" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="st">&quot;Contribution to Dimension 1&quot;</span>, </span>
-<span id="cb396-19"><a href="multiple-factorial-analysis-mfa.html#cb396-19" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="sc">~</span><span class="fu">str_c</span>(., <span class="st">&quot;%&quot;</span>),</span>
-<span id="cb396-20"><a href="multiple-factorial-analysis-mfa.html#cb396-20" tabindex="-1"></a>                     <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">4</span>)) <span class="sc">+</span> </span>
-<span id="cb396-21"><a href="multiple-factorial-analysis-mfa.html#cb396-21" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="st">&quot;Contribution to Dimension 2&quot;</span>, </span>
-<span id="cb396-22"><a href="multiple-factorial-analysis-mfa.html#cb396-22" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="sc">~</span><span class="fu">str_c</span>(., <span class="st">&quot;%&quot;</span>),</span>
-<span id="cb396-23"><a href="multiple-factorial-analysis-mfa.html#cb396-23" tabindex="-1"></a>                     <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">4</span>)) <span class="sc">+</span></span>
-<span id="cb396-24"><a href="multiple-factorial-analysis-mfa.html#cb396-24" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;Table contributions to Dimensions 1 and 2</span><span class="sc">\n</span><span class="st">of MFA consensus&quot;</span>,</span>
-<span id="cb396-25"><a href="multiple-factorial-analysis-mfa.html#cb396-25" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">&quot;Dashed lines represent the expected (change) contribution.&quot;</span>) <span class="sc">+</span></span>
-<span id="cb396-26"><a href="multiple-factorial-analysis-mfa.html#cb396-26" tabindex="-1"></a>  <span class="fu">scale_color_paletteer_d</span>(<span class="st">&quot;ggthemes::Classic_20&quot;</span>) <span class="sc">+</span></span>
-<span id="cb396-27"><a href="multiple-factorial-analysis-mfa.html#cb396-27" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb404"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb404-1"><a href="multiple-factorial-analysis-mfa.html#cb404-1" tabindex="-1"></a><span class="co"># Some nicer labels </span></span>
+<span id="cb404-2"><a href="multiple-factorial-analysis-mfa.html#cb404-2" tabindex="-1"></a>nice_names <span class="ot">&lt;-</span> </span>
+<span id="cb404-3"><a href="multiple-factorial-analysis-mfa.html#cb404-3" tabindex="-1"></a>  <span class="fu">crossing</span>(<span class="at">subject =</span> descriptive_data<span class="sc">$</span>NJ <span class="sc">%&gt;%</span> unique, </span>
+<span id="cb404-4"><a href="multiple-factorial-analysis-mfa.html#cb404-4" tabindex="-1"></a>           <span class="at">rep =</span> descriptive_data<span class="sc">$</span>NR <span class="sc">%&gt;%</span> unique) <span class="sc">%&gt;%</span></span>
+<span id="cb404-5"><a href="multiple-factorial-analysis-mfa.html#cb404-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">name =</span> <span class="fu">str_c</span>(subject, <span class="st">&quot;:&quot;</span>, rep))</span>
+<span id="cb404-6"><a href="multiple-factorial-analysis-mfa.html#cb404-6" tabindex="-1"></a></span>
+<span id="cb404-7"><a href="multiple-factorial-analysis-mfa.html#cb404-7" tabindex="-1"></a>descriptive_mfa<span class="sc">$</span>group<span class="sc">$</span>contrib <span class="sc">%&gt;%</span></span>
+<span id="cb404-8"><a href="multiple-factorial-analysis-mfa.html#cb404-8" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;group&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb404-9"><a href="multiple-factorial-analysis-mfa.html#cb404-9" tabindex="-1"></a>  <span class="co"># Once again we&#39;re matching by position, which is risky (but fast)</span></span>
+<span id="cb404-10"><a href="multiple-factorial-analysis-mfa.html#cb404-10" tabindex="-1"></a>  <span class="fu">bind_cols</span>(nice_names) <span class="sc">%&gt;%</span></span>
+<span id="cb404-11"><a href="multiple-factorial-analysis-mfa.html#cb404-11" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">color =</span> subject)) <span class="sc">+</span> </span>
+<span id="cb404-12"><a href="multiple-factorial-analysis-mfa.html#cb404-12" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">1</span> <span class="sc">/</span> <span class="dv">42</span> <span class="sc">*</span> <span class="dv">100</span>, <span class="at">color =</span> <span class="st">&quot;darkred&quot;</span>, <span class="at">linetype =</span> <span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb404-13"><a href="multiple-factorial-analysis-mfa.html#cb404-13" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">1</span> <span class="sc">/</span> <span class="dv">42</span> <span class="sc">*</span> <span class="dv">100</span>, <span class="at">color =</span> <span class="st">&quot;darkred&quot;</span>, <span class="at">linetype =</span> <span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb404-14"><a href="multiple-factorial-analysis-mfa.html#cb404-14" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb404-15"><a href="multiple-factorial-analysis-mfa.html#cb404-15" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_label_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> name), <span class="at">size =</span> <span class="dv">2</span>, <span class="at">box.padding =</span> <span class="fl">0.1</span>) <span class="sc">+</span> </span>
+<span id="cb404-16"><a href="multiple-factorial-analysis-mfa.html#cb404-16" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
+<span id="cb404-17"><a href="multiple-factorial-analysis-mfa.html#cb404-17" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> </span>
+<span id="cb404-18"><a href="multiple-factorial-analysis-mfa.html#cb404-18" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="st">&quot;Contribution to Dimension 1&quot;</span>, </span>
+<span id="cb404-19"><a href="multiple-factorial-analysis-mfa.html#cb404-19" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="sc">~</span><span class="fu">str_c</span>(., <span class="st">&quot;%&quot;</span>),</span>
+<span id="cb404-20"><a href="multiple-factorial-analysis-mfa.html#cb404-20" tabindex="-1"></a>                     <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">4</span>)) <span class="sc">+</span> </span>
+<span id="cb404-21"><a href="multiple-factorial-analysis-mfa.html#cb404-21" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="st">&quot;Contribution to Dimension 2&quot;</span>, </span>
+<span id="cb404-22"><a href="multiple-factorial-analysis-mfa.html#cb404-22" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="sc">~</span><span class="fu">str_c</span>(., <span class="st">&quot;%&quot;</span>),</span>
+<span id="cb404-23"><a href="multiple-factorial-analysis-mfa.html#cb404-23" tabindex="-1"></a>                     <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">4</span>)) <span class="sc">+</span></span>
+<span id="cb404-24"><a href="multiple-factorial-analysis-mfa.html#cb404-24" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;Table contributions to Dimensions 1 and 2</span><span class="sc">\n</span><span class="st">of MFA consensus&quot;</span>,</span>
+<span id="cb404-25"><a href="multiple-factorial-analysis-mfa.html#cb404-25" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">&quot;Dashed lines represent the expected (change) contribution.&quot;</span>) <span class="sc">+</span></span>
+<span id="cb404-26"><a href="multiple-factorial-analysis-mfa.html#cb404-26" tabindex="-1"></a>  <span class="fu">scale_color_paletteer_d</span>(<span class="st">&quot;ggthemes::Classic_20&quot;</span>) <span class="sc">+</span></span>
+<span id="cb404-27"><a href="multiple-factorial-analysis-mfa.html#cb404-27" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span></code></pre></div>
 <p><img src="12-MFA_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>We could do the same thing for per-table variables and observations. The dotted red lines represent the average (expected) contribution, and so points in the lower left quadrant are contributing less than expected to both dimensions. I colored this by subject so that I could see if there were any patterns for subjects who did not ever contribute to the solution, but I don’t see anything that obvious. Closer inspection might show some patterns.</p>
 <p>From <span class="citation">Hervé Abdi, Williams, and Valentin (<a href="#ref-abdiMultiple2013">2013, 11–12</a>)</span> we are told that computing bootstrap samples from MFA is as simple as averaging the partial factor scores for a bootstrapped index of tables. We could use bootstrapping in this case to investigate the contribution of our samples to the dimensions. However, that seems like it may be drawing me too far outside the scope of this project! A variation on the bootstrap we built for our PCA would work in this case; I leave it as a (rather involved) exercise for the reader.</p>
@@ -569,31 +575,31 @@ div.csl-indent {
 </div>
 <div id="mfa-with-different-measurements" class="section level2 hasAnchor" number="12.2">
 <h2><span class="header-section-number">12.2</span> MFA with different measurements<a href="multiple-factorial-analysis-mfa.html#mfa-with-different-measurements" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb397"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb397-1"><a href="multiple-factorial-analysis-mfa.html#cb397-1" tabindex="-1"></a>preference_mfa <span class="ot">&lt;-</span> </span>
-<span id="cb397-2"><a href="multiple-factorial-analysis-mfa.html#cb397-2" tabindex="-1"></a>  <span class="co"># Get the means of the product attributes from the DA</span></span>
-<span id="cb397-3"><a href="multiple-factorial-analysis-mfa.html#cb397-3" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
-<span id="cb397-4"><a href="multiple-factorial-analysis-mfa.html#cb397-4" tabindex="-1"></a>  <span class="fu">group_by</span>(ProductName) <span class="sc">%&gt;%</span></span>
-<span id="cb397-5"><a href="multiple-factorial-analysis-mfa.html#cb397-5" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), mean)) <span class="sc">%&gt;%</span></span>
-<span id="cb397-6"><a href="multiple-factorial-analysis-mfa.html#cb397-6" tabindex="-1"></a>  </span>
-<span id="cb397-7"><a href="multiple-factorial-analysis-mfa.html#cb397-7" tabindex="-1"></a>  <span class="co"># Merge these with the (wide: product x consumer) consumer data </span></span>
-<span id="cb397-8"><a href="multiple-factorial-analysis-mfa.html#cb397-8" tabindex="-1"></a>  </span>
-<span id="cb397-9"><a href="multiple-factorial-analysis-mfa.html#cb397-9" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
-<span id="cb397-10"><a href="multiple-factorial-analysis-mfa.html#cb397-10" tabindex="-1"></a>    consumer_data <span class="sc">%&gt;%</span></span>
-<span id="cb397-11"><a href="multiple-factorial-analysis-mfa.html#cb397-11" tabindex="-1"></a>      <span class="fu">pivot_longer</span>(<span class="sc">-</span>Judge, <span class="at">names_to =</span> <span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb397-12"><a href="multiple-factorial-analysis-mfa.html#cb397-12" tabindex="-1"></a>      <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Judge, <span class="at">values_from =</span> value),</span>
-<span id="cb397-13"><a href="multiple-factorial-analysis-mfa.html#cb397-13" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;ProductName&quot;</span> <span class="ot">=</span> <span class="st">&quot;wine&quot;</span>)</span>
-<span id="cb397-14"><a href="multiple-factorial-analysis-mfa.html#cb397-14" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb397-15"><a href="multiple-factorial-analysis-mfa.html#cb397-15" tabindex="-1"></a>  </span>
-<span id="cb397-16"><a href="multiple-factorial-analysis-mfa.html#cb397-16" tabindex="-1"></a>  <span class="co"># Cast to row-names for compatibility with `MFA()`</span></span>
-<span id="cb397-17"><a href="multiple-factorial-analysis-mfa.html#cb397-17" tabindex="-1"></a>  </span>
-<span id="cb397-18"><a href="multiple-factorial-analysis-mfa.html#cb397-18" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;ProductName&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb397-19"><a href="multiple-factorial-analysis-mfa.html#cb397-19" tabindex="-1"></a>  </span>
-<span id="cb397-20"><a href="multiple-factorial-analysis-mfa.html#cb397-20" tabindex="-1"></a>  <span class="co"># Finally, run MFA.  Remember that columns 1-20 are DA, 21-126 are consumer</span></span>
-<span id="cb397-21"><a href="multiple-factorial-analysis-mfa.html#cb397-21" tabindex="-1"></a>  </span>
-<span id="cb397-22"><a href="multiple-factorial-analysis-mfa.html#cb397-22" tabindex="-1"></a>  <span class="fu">MFA</span>(<span class="at">group =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">106</span>), <span class="at">graph =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb397-23"><a href="multiple-factorial-analysis-mfa.html#cb397-23" tabindex="-1"></a></span>
-<span id="cb397-24"><a href="multiple-factorial-analysis-mfa.html#cb397-24" tabindex="-1"></a><span class="co"># What did we get?</span></span>
-<span id="cb397-25"><a href="multiple-factorial-analysis-mfa.html#cb397-25" tabindex="-1"></a>preference_mfa</span></code></pre></div>
+<div class="sourceCode" id="cb405"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb405-1"><a href="multiple-factorial-analysis-mfa.html#cb405-1" tabindex="-1"></a>preference_mfa <span class="ot">&lt;-</span> </span>
+<span id="cb405-2"><a href="multiple-factorial-analysis-mfa.html#cb405-2" tabindex="-1"></a>  <span class="co"># Get the means of the product attributes from the DA</span></span>
+<span id="cb405-3"><a href="multiple-factorial-analysis-mfa.html#cb405-3" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb405-4"><a href="multiple-factorial-analysis-mfa.html#cb405-4" tabindex="-1"></a>  <span class="fu">group_by</span>(ProductName) <span class="sc">%&gt;%</span></span>
+<span id="cb405-5"><a href="multiple-factorial-analysis-mfa.html#cb405-5" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), mean)) <span class="sc">%&gt;%</span></span>
+<span id="cb405-6"><a href="multiple-factorial-analysis-mfa.html#cb405-6" tabindex="-1"></a>  </span>
+<span id="cb405-7"><a href="multiple-factorial-analysis-mfa.html#cb405-7" tabindex="-1"></a>  <span class="co"># Merge these with the (wide: product x consumer) consumer data </span></span>
+<span id="cb405-8"><a href="multiple-factorial-analysis-mfa.html#cb405-8" tabindex="-1"></a>  </span>
+<span id="cb405-9"><a href="multiple-factorial-analysis-mfa.html#cb405-9" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb405-10"><a href="multiple-factorial-analysis-mfa.html#cb405-10" tabindex="-1"></a>    consumer_data <span class="sc">%&gt;%</span></span>
+<span id="cb405-11"><a href="multiple-factorial-analysis-mfa.html#cb405-11" tabindex="-1"></a>      <span class="fu">pivot_longer</span>(<span class="sc">-</span>Judge, <span class="at">names_to =</span> <span class="st">&quot;wine&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb405-12"><a href="multiple-factorial-analysis-mfa.html#cb405-12" tabindex="-1"></a>      <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Judge, <span class="at">values_from =</span> value),</span>
+<span id="cb405-13"><a href="multiple-factorial-analysis-mfa.html#cb405-13" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;ProductName&quot;</span> <span class="ot">=</span> <span class="st">&quot;wine&quot;</span>)</span>
+<span id="cb405-14"><a href="multiple-factorial-analysis-mfa.html#cb405-14" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb405-15"><a href="multiple-factorial-analysis-mfa.html#cb405-15" tabindex="-1"></a>  </span>
+<span id="cb405-16"><a href="multiple-factorial-analysis-mfa.html#cb405-16" tabindex="-1"></a>  <span class="co"># Cast to row-names for compatibility with `MFA()`</span></span>
+<span id="cb405-17"><a href="multiple-factorial-analysis-mfa.html#cb405-17" tabindex="-1"></a>  </span>
+<span id="cb405-18"><a href="multiple-factorial-analysis-mfa.html#cb405-18" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;ProductName&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb405-19"><a href="multiple-factorial-analysis-mfa.html#cb405-19" tabindex="-1"></a>  </span>
+<span id="cb405-20"><a href="multiple-factorial-analysis-mfa.html#cb405-20" tabindex="-1"></a>  <span class="co"># Finally, run MFA.  Remember that columns 1-20 are DA, 21-126 are consumer</span></span>
+<span id="cb405-21"><a href="multiple-factorial-analysis-mfa.html#cb405-21" tabindex="-1"></a>  </span>
+<span id="cb405-22"><a href="multiple-factorial-analysis-mfa.html#cb405-22" tabindex="-1"></a>  <span class="fu">MFA</span>(<span class="at">group =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">106</span>), <span class="at">graph =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb405-23"><a href="multiple-factorial-analysis-mfa.html#cb405-23" tabindex="-1"></a></span>
+<span id="cb405-24"><a href="multiple-factorial-analysis-mfa.html#cb405-24" tabindex="-1"></a><span class="co"># What did we get?</span></span>
+<span id="cb405-25"><a href="multiple-factorial-analysis-mfa.html#cb405-25" tabindex="-1"></a>preference_mfa</span></code></pre></div>
 <pre><code>## **Results of the Multiple Factor Analysis (MFA)**
 ## The analysis was performed on 8 individuals, described by 126 variables
 ## *Results are available in the following objects :
@@ -610,113 +616,113 @@ div.csl-indent {
 ## 9 &quot;$global.pca&quot;        &quot;results for the global PCA&quot;</code></pre>
 <p>We can dive into these results in the same way we did with the DA data, but we are presented with a situation that is simpler in some ways and more complex in others. First, we only have two “groups” or “tables”: the DA (means) data and the consumer data. We don’t have to, for example, investigate contributions from 42 different tables!</p>
 <p>However, we also don’t have the same variables measured across both tables, so we need to be a little careful with how we interpret the results. Let’s start by looking at the consensus map for the wines, enriched with projections for both how the DA panel and the consumers saw the wines:</p>
-<div class="sourceCode" id="cb399"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb399-1"><a href="multiple-factorial-analysis-mfa.html#cb399-1" tabindex="-1"></a>p_preference_scores <span class="ot">&lt;-</span> </span>
-<span id="cb399-2"><a href="multiple-factorial-analysis-mfa.html#cb399-2" tabindex="-1"></a>  </span>
-<span id="cb399-3"><a href="multiple-factorial-analysis-mfa.html#cb399-3" tabindex="-1"></a>  <span class="co"># First we need to get our consensus and partial factor scores into a single</span></span>
-<span id="cb399-4"><a href="multiple-factorial-analysis-mfa.html#cb399-4" tabindex="-1"></a>  <span class="co"># tibble.  Specifically, it will be easiest if we have the scores (coordinates)</span></span>
-<span id="cb399-5"><a href="multiple-factorial-analysis-mfa.html#cb399-5" tabindex="-1"></a>  <span class="co"># for the partial axes in their own columns.</span></span>
-<span id="cb399-6"><a href="multiple-factorial-analysis-mfa.html#cb399-6" tabindex="-1"></a>  </span>
-<span id="cb399-7"><a href="multiple-factorial-analysis-mfa.html#cb399-7" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
-<span id="cb399-8"><a href="multiple-factorial-analysis-mfa.html#cb399-8" tabindex="-1"></a>    </span>
-<span id="cb399-9"><a href="multiple-factorial-analysis-mfa.html#cb399-9" tabindex="-1"></a>    <span class="co"># These are our consensus scores</span></span>
-<span id="cb399-10"><a href="multiple-factorial-analysis-mfa.html#cb399-10" tabindex="-1"></a>    </span>
-<span id="cb399-11"><a href="multiple-factorial-analysis-mfa.html#cb399-11" tabindex="-1"></a>    preference_mfa<span class="sc">$</span>ind<span class="sc">$</span>coord <span class="sc">%&gt;%</span></span>
-<span id="cb399-12"><a href="multiple-factorial-analysis-mfa.html#cb399-12" tabindex="-1"></a>      <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;product&quot;</span>),</span>
-<span id="cb399-13"><a href="multiple-factorial-analysis-mfa.html#cb399-13" tabindex="-1"></a>    </span>
-<span id="cb399-14"><a href="multiple-factorial-analysis-mfa.html#cb399-14" tabindex="-1"></a>    <span class="co"># And here are our partial scores, manipulated to have per-table dimensional</span></span>
-<span id="cb399-15"><a href="multiple-factorial-analysis-mfa.html#cb399-15" tabindex="-1"></a>    <span class="co"># coordinates.</span></span>
-<span id="cb399-16"><a href="multiple-factorial-analysis-mfa.html#cb399-16" tabindex="-1"></a>    </span>
-<span id="cb399-17"><a href="multiple-factorial-analysis-mfa.html#cb399-17" tabindex="-1"></a>    preference_mfa<span class="sc">$</span>ind<span class="sc">$</span>coord.partiel <span class="sc">%&gt;%</span></span>
-<span id="cb399-18"><a href="multiple-factorial-analysis-mfa.html#cb399-18" tabindex="-1"></a>      <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;product&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb399-19"><a href="multiple-factorial-analysis-mfa.html#cb399-19" tabindex="-1"></a>      <span class="fu">separate</span>(product, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;product&quot;</span>, <span class="st">&quot;group&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">.&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb399-20"><a href="multiple-factorial-analysis-mfa.html#cb399-20" tabindex="-1"></a>      <span class="fu">pivot_longer</span>(<span class="sc">-</span><span class="fu">c</span>(product, group)) <span class="sc">%&gt;%</span></span>
-<span id="cb399-21"><a href="multiple-factorial-analysis-mfa.html#cb399-21" tabindex="-1"></a>      <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> <span class="fu">c</span>(name, group), <span class="at">values_from =</span> value)</span>
-<span id="cb399-22"><a href="multiple-factorial-analysis-mfa.html#cb399-22" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb399-23"><a href="multiple-factorial-analysis-mfa.html#cb399-23" tabindex="-1"></a>  </span>
-<span id="cb399-24"><a href="multiple-factorial-analysis-mfa.html#cb399-24" tabindex="-1"></a>  <span class="co"># And now we plot!</span></span>
-<span id="cb399-25"><a href="multiple-factorial-analysis-mfa.html#cb399-25" tabindex="-1"></a>  </span>
-<span id="cb399-26"><a href="multiple-factorial-analysis-mfa.html#cb399-26" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>)) <span class="sc">+</span></span>
-<span id="cb399-27"><a href="multiple-factorial-analysis-mfa.html#cb399-27" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
-<span id="cb399-28"><a href="multiple-factorial-analysis-mfa.html#cb399-28" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
-<span id="cb399-29"><a href="multiple-factorial-analysis-mfa.html#cb399-29" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>_Gr1, <span class="at">y =</span> Dim<span class="fl">.2</span>_Gr1), </span>
-<span id="cb399-30"><a href="multiple-factorial-analysis-mfa.html#cb399-30" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">&quot;darkgreen&quot;</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span> </span>
-<span id="cb399-31"><a href="multiple-factorial-analysis-mfa.html#cb399-31" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>_Gr2, <span class="at">y =</span> Dim<span class="fl">.2</span>_Gr2), </span>
-<span id="cb399-32"><a href="multiple-factorial-analysis-mfa.html#cb399-32" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">&quot;tan&quot;</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span> </span>
-<span id="cb399-33"><a href="multiple-factorial-analysis-mfa.html#cb399-33" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> Dim<span class="fl">.1</span>_Gr1, <span class="at">yend =</span> Dim<span class="fl">.2</span>_Gr1), </span>
-<span id="cb399-34"><a href="multiple-factorial-analysis-mfa.html#cb399-34" tabindex="-1"></a>               <span class="at">color =</span> <span class="st">&quot;darkgreen&quot;</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>) <span class="sc">+</span> </span>
-<span id="cb399-35"><a href="multiple-factorial-analysis-mfa.html#cb399-35" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> Dim<span class="fl">.1</span>_Gr2, <span class="at">yend =</span> Dim<span class="fl">.2</span>_Gr2),</span>
-<span id="cb399-36"><a href="multiple-factorial-analysis-mfa.html#cb399-36" tabindex="-1"></a>               <span class="at">color =</span> <span class="st">&quot;tan&quot;</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>) <span class="sc">+</span> </span>
-<span id="cb399-37"><a href="multiple-factorial-analysis-mfa.html#cb399-37" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> product), </span>
-<span id="cb399-38"><a href="multiple-factorial-analysis-mfa.html#cb399-38" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">2</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
-<span id="cb399-39"><a href="multiple-factorial-analysis-mfa.html#cb399-39" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">color =</span> product, <span class="at">label =</span> product), <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
-<span id="cb399-40"><a href="multiple-factorial-analysis-mfa.html#cb399-40" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span></span>
-<span id="cb399-41"><a href="multiple-factorial-analysis-mfa.html#cb399-41" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
-<span id="cb399-42"><a href="multiple-factorial-analysis-mfa.html#cb399-42" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb399-43"><a href="multiple-factorial-analysis-mfa.html#cb399-43" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 1, &quot;</span>, <span class="fu">round</span>(preference_mfa<span class="sc">$</span>eig[<span class="dv">1</span>, <span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;% variance&quot;</span>),</span>
-<span id="cb399-44"><a href="multiple-factorial-analysis-mfa.html#cb399-44" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 2, &quot;</span>, <span class="fu">round</span>(preference_mfa<span class="sc">$</span>eig[<span class="dv">2</span>, <span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;% variance&quot;</span>),</span>
-<span id="cb399-45"><a href="multiple-factorial-analysis-mfa.html#cb399-45" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;MFA consensus map for DA and preference data</span><span class="sc">\n</span><span class="st">with projected individual table scores&quot;</span>,</span>
-<span id="cb399-46"><a href="multiple-factorial-analysis-mfa.html#cb399-46" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">&quot;DA scores are plotted in green, Consumer scores are plotted in tan.&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb399-47"><a href="multiple-factorial-analysis-mfa.html#cb399-47" tabindex="-1"></a>  <span class="fu">scale_color_paletteer_d</span>(<span class="st">&quot;RSkittleBrewer::smarties&quot;</span>)</span>
-<span id="cb399-48"><a href="multiple-factorial-analysis-mfa.html#cb399-48" tabindex="-1"></a></span>
-<span id="cb399-49"><a href="multiple-factorial-analysis-mfa.html#cb399-49" tabindex="-1"></a>p_preference_scores</span></code></pre></div>
+<div class="sourceCode" id="cb407"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb407-1"><a href="multiple-factorial-analysis-mfa.html#cb407-1" tabindex="-1"></a>p_preference_scores <span class="ot">&lt;-</span> </span>
+<span id="cb407-2"><a href="multiple-factorial-analysis-mfa.html#cb407-2" tabindex="-1"></a>  </span>
+<span id="cb407-3"><a href="multiple-factorial-analysis-mfa.html#cb407-3" tabindex="-1"></a>  <span class="co"># First we need to get our consensus and partial factor scores into a single</span></span>
+<span id="cb407-4"><a href="multiple-factorial-analysis-mfa.html#cb407-4" tabindex="-1"></a>  <span class="co"># tibble.  Specifically, it will be easiest if we have the scores (coordinates)</span></span>
+<span id="cb407-5"><a href="multiple-factorial-analysis-mfa.html#cb407-5" tabindex="-1"></a>  <span class="co"># for the partial axes in their own columns.</span></span>
+<span id="cb407-6"><a href="multiple-factorial-analysis-mfa.html#cb407-6" tabindex="-1"></a>  </span>
+<span id="cb407-7"><a href="multiple-factorial-analysis-mfa.html#cb407-7" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb407-8"><a href="multiple-factorial-analysis-mfa.html#cb407-8" tabindex="-1"></a>    </span>
+<span id="cb407-9"><a href="multiple-factorial-analysis-mfa.html#cb407-9" tabindex="-1"></a>    <span class="co"># These are our consensus scores</span></span>
+<span id="cb407-10"><a href="multiple-factorial-analysis-mfa.html#cb407-10" tabindex="-1"></a>    </span>
+<span id="cb407-11"><a href="multiple-factorial-analysis-mfa.html#cb407-11" tabindex="-1"></a>    preference_mfa<span class="sc">$</span>ind<span class="sc">$</span>coord <span class="sc">%&gt;%</span></span>
+<span id="cb407-12"><a href="multiple-factorial-analysis-mfa.html#cb407-12" tabindex="-1"></a>      <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;product&quot;</span>),</span>
+<span id="cb407-13"><a href="multiple-factorial-analysis-mfa.html#cb407-13" tabindex="-1"></a>    </span>
+<span id="cb407-14"><a href="multiple-factorial-analysis-mfa.html#cb407-14" tabindex="-1"></a>    <span class="co"># And here are our partial scores, manipulated to have per-table dimensional</span></span>
+<span id="cb407-15"><a href="multiple-factorial-analysis-mfa.html#cb407-15" tabindex="-1"></a>    <span class="co"># coordinates.</span></span>
+<span id="cb407-16"><a href="multiple-factorial-analysis-mfa.html#cb407-16" tabindex="-1"></a>    </span>
+<span id="cb407-17"><a href="multiple-factorial-analysis-mfa.html#cb407-17" tabindex="-1"></a>    preference_mfa<span class="sc">$</span>ind<span class="sc">$</span>coord.partiel <span class="sc">%&gt;%</span></span>
+<span id="cb407-18"><a href="multiple-factorial-analysis-mfa.html#cb407-18" tabindex="-1"></a>      <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;product&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb407-19"><a href="multiple-factorial-analysis-mfa.html#cb407-19" tabindex="-1"></a>      <span class="fu">separate</span>(product, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;product&quot;</span>, <span class="st">&quot;group&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">.&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb407-20"><a href="multiple-factorial-analysis-mfa.html#cb407-20" tabindex="-1"></a>      <span class="fu">pivot_longer</span>(<span class="sc">-</span><span class="fu">c</span>(product, group)) <span class="sc">%&gt;%</span></span>
+<span id="cb407-21"><a href="multiple-factorial-analysis-mfa.html#cb407-21" tabindex="-1"></a>      <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> <span class="fu">c</span>(name, group), <span class="at">values_from =</span> value)</span>
+<span id="cb407-22"><a href="multiple-factorial-analysis-mfa.html#cb407-22" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb407-23"><a href="multiple-factorial-analysis-mfa.html#cb407-23" tabindex="-1"></a>  </span>
+<span id="cb407-24"><a href="multiple-factorial-analysis-mfa.html#cb407-24" tabindex="-1"></a>  <span class="co"># And now we plot!</span></span>
+<span id="cb407-25"><a href="multiple-factorial-analysis-mfa.html#cb407-25" tabindex="-1"></a>  </span>
+<span id="cb407-26"><a href="multiple-factorial-analysis-mfa.html#cb407-26" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>)) <span class="sc">+</span></span>
+<span id="cb407-27"><a href="multiple-factorial-analysis-mfa.html#cb407-27" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb407-28"><a href="multiple-factorial-analysis-mfa.html#cb407-28" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb407-29"><a href="multiple-factorial-analysis-mfa.html#cb407-29" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>_Gr1, <span class="at">y =</span> Dim<span class="fl">.2</span>_Gr1), </span>
+<span id="cb407-30"><a href="multiple-factorial-analysis-mfa.html#cb407-30" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">&quot;darkgreen&quot;</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span> </span>
+<span id="cb407-31"><a href="multiple-factorial-analysis-mfa.html#cb407-31" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>_Gr2, <span class="at">y =</span> Dim<span class="fl">.2</span>_Gr2), </span>
+<span id="cb407-32"><a href="multiple-factorial-analysis-mfa.html#cb407-32" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">&quot;tan&quot;</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span> </span>
+<span id="cb407-33"><a href="multiple-factorial-analysis-mfa.html#cb407-33" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> Dim<span class="fl">.1</span>_Gr1, <span class="at">yend =</span> Dim<span class="fl">.2</span>_Gr1), </span>
+<span id="cb407-34"><a href="multiple-factorial-analysis-mfa.html#cb407-34" tabindex="-1"></a>               <span class="at">color =</span> <span class="st">&quot;darkgreen&quot;</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb407-35"><a href="multiple-factorial-analysis-mfa.html#cb407-35" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> Dim<span class="fl">.1</span>_Gr2, <span class="at">yend =</span> Dim<span class="fl">.2</span>_Gr2),</span>
+<span id="cb407-36"><a href="multiple-factorial-analysis-mfa.html#cb407-36" tabindex="-1"></a>               <span class="at">color =</span> <span class="st">&quot;tan&quot;</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb407-37"><a href="multiple-factorial-analysis-mfa.html#cb407-37" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> product), </span>
+<span id="cb407-38"><a href="multiple-factorial-analysis-mfa.html#cb407-38" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">2</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb407-39"><a href="multiple-factorial-analysis-mfa.html#cb407-39" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">color =</span> product, <span class="at">label =</span> product), <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb407-40"><a href="multiple-factorial-analysis-mfa.html#cb407-40" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span></span>
+<span id="cb407-41"><a href="multiple-factorial-analysis-mfa.html#cb407-41" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
+<span id="cb407-42"><a href="multiple-factorial-analysis-mfa.html#cb407-42" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb407-43"><a href="multiple-factorial-analysis-mfa.html#cb407-43" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 1, &quot;</span>, <span class="fu">round</span>(preference_mfa<span class="sc">$</span>eig[<span class="dv">1</span>, <span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;% variance&quot;</span>),</span>
+<span id="cb407-44"><a href="multiple-factorial-analysis-mfa.html#cb407-44" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 2, &quot;</span>, <span class="fu">round</span>(preference_mfa<span class="sc">$</span>eig[<span class="dv">2</span>, <span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;% variance&quot;</span>),</span>
+<span id="cb407-45"><a href="multiple-factorial-analysis-mfa.html#cb407-45" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;MFA consensus map for DA and preference data</span><span class="sc">\n</span><span class="st">with projected individual table scores&quot;</span>,</span>
+<span id="cb407-46"><a href="multiple-factorial-analysis-mfa.html#cb407-46" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">&quot;DA scores are plotted in green, Consumer scores are plotted in tan.&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb407-47"><a href="multiple-factorial-analysis-mfa.html#cb407-47" tabindex="-1"></a>  <span class="fu">scale_color_paletteer_d</span>(<span class="st">&quot;RSkittleBrewer::smarties&quot;</span>)</span>
+<span id="cb407-48"><a href="multiple-factorial-analysis-mfa.html#cb407-48" tabindex="-1"></a></span>
+<span id="cb407-49"><a href="multiple-factorial-analysis-mfa.html#cb407-49" tabindex="-1"></a>p_preference_scores</span></code></pre></div>
 <p><img src="12-MFA_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p>Once again, we find ourselves in slight disagreement with HGH’s results for the original <strong>R Opus</strong>: the overall configuration is similar but not identical. As <a href="preference-mapping.html#external-preference-mapping">with PLS-R</a>, I wonder if this might have to do with the dropped subject #1? I re-ran the MFA and the plot with that subject dropped (the reader can do this as an exercise: just use <code>select(-</code>1<code>)</code> in the appropriate part of the workflow above, and make sure to adjust the group indices for the <code>MFA()</code> call), and I got results that were almost identical to HGH, but with slightly different projected points. I am not sure if this is an adjustment to MFA plotting (the <code>FactoMineR</code> package has changes signficantly since 2015) or if there is something else I am missing.</p>
 <p>One thing that is worth noting is that the disagreement between our two score plots is reasonably small. We can take a look at the <span class="math inline">\(RV\)</span> coefficient between the two projections to get a better picture of this:</p>
-<div class="sourceCode" id="cb400"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb400-1"><a href="multiple-factorial-analysis-mfa.html#cb400-1" tabindex="-1"></a>preference_mfa<span class="sc">$</span>group<span class="sc">$</span>RV <span class="sc">%&gt;%</span></span>
-<span id="cb400-2"><a href="multiple-factorial-analysis-mfa.html#cb400-2" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb408"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb408-1"><a href="multiple-factorial-analysis-mfa.html#cb408-1" tabindex="-1"></a>preference_mfa<span class="sc">$</span>group<span class="sc">$</span>RV <span class="sc">%&gt;%</span></span>
+<span id="cb408-2"><a href="multiple-factorial-analysis-mfa.html#cb408-2" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">3</span>)</span></code></pre></div>
 <pre><code>##       Gr1   Gr2   MFA
 ## Gr1 1.000 0.804 0.932
 ## Gr2 0.804 1.000 0.965
 ## MFA 0.932 0.965 1.000</code></pre>
 <p>We can see that with an <span class="math inline">\(RV\approx0.8\)</span> between the two data sets, we are quite close in agreement. They also both strongly agree with the consensus score plot (<span class="math inline">\(RV&gt;0.92\)</span> for both). Although the <span class="math inline">\(RV\)</span> is biased upwards for large matrices <span class="citation">(see <a href="#ref-josseMeasuring2016">Josse and Holmes 2016</a>)</span>, this is still confirmatory information that our perspective is accurate: the two very different data tables are showing us something similar for the same products.</p>
 <p>Given this high level of agreement, it will be informative to inspect the loadings from both plots together: while MFA is strictly a descriptive method, we can use these loadings to give us some hypotheses about the relationship between descriptive attributes and “vectors of liking” from the consumers.</p>
-<div class="sourceCode" id="cb402"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb402-1"><a href="multiple-factorial-analysis-mfa.html#cb402-1" tabindex="-1"></a><span class="co"># For whatever reason, we tend to visualize correlations in MFA. These are the</span></span>
-<span id="cb402-2"><a href="multiple-factorial-analysis-mfa.html#cb402-2" tabindex="-1"></a><span class="co"># same as loadings up to a scale factor, so our interpretations will be the</span></span>
-<span id="cb402-3"><a href="multiple-factorial-analysis-mfa.html#cb402-3" tabindex="-1"></a><span class="co"># same.  We can access them in `$quanti.var$cor`.</span></span>
-<span id="cb402-4"><a href="multiple-factorial-analysis-mfa.html#cb402-4" tabindex="-1"></a></span>
-<span id="cb402-5"><a href="multiple-factorial-analysis-mfa.html#cb402-5" tabindex="-1"></a>preference_mfa<span class="sc">$</span>quanti.var<span class="sc">$</span>cor <span class="sc">%&gt;%</span></span>
-<span id="cb402-6"><a href="multiple-factorial-analysis-mfa.html#cb402-6" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;name&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb402-7"><a href="multiple-factorial-analysis-mfa.html#cb402-7" tabindex="-1"></a>  </span>
-<span id="cb402-8"><a href="multiple-factorial-analysis-mfa.html#cb402-8" tabindex="-1"></a><span class="co"># This one is easy, we just have to keep track of which meausres come from which</span></span>
-<span id="cb402-9"><a href="multiple-factorial-analysis-mfa.html#cb402-9" tabindex="-1"></a><span class="co"># data set--`MFA()` does this sequentially, by the index we set through `group =`</span></span>
-<span id="cb402-10"><a href="multiple-factorial-analysis-mfa.html#cb402-10" tabindex="-1"></a>  </span>
-<span id="cb402-11"><a href="multiple-factorial-analysis-mfa.html#cb402-11" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">type =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;descriptor&quot;</span>, <span class="dv">20</span>), <span class="fu">rep</span>(<span class="st">&quot;liking&quot;</span>, <span class="dv">106</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb402-12"><a href="multiple-factorial-analysis-mfa.html#cb402-12" tabindex="-1"></a>  </span>
-<span id="cb402-13"><a href="multiple-factorial-analysis-mfa.html#cb402-13" tabindex="-1"></a><span class="co"># But it might be nice if we grabbed the clusters we found previously from our</span></span>
-<span id="cb402-14"><a href="multiple-factorial-analysis-mfa.html#cb402-14" tabindex="-1"></a><span class="co"># internal preference map...</span></span>
-<span id="cb402-15"><a href="multiple-factorial-analysis-mfa.html#cb402-15" tabindex="-1"></a>  </span>
-<span id="cb402-16"><a href="multiple-factorial-analysis-mfa.html#cb402-16" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
-<span id="cb402-17"><a href="multiple-factorial-analysis-mfa.html#cb402-17" tabindex="-1"></a>    consumer_data <span class="sc">%&gt;%</span></span>
-<span id="cb402-18"><a href="multiple-factorial-analysis-mfa.html#cb402-18" tabindex="-1"></a>      <span class="fu">column_to_rownames</span>(<span class="st">&quot;Judge&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb402-19"><a href="multiple-factorial-analysis-mfa.html#cb402-19" tabindex="-1"></a>      <span class="fu">dist</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb402-20"><a href="multiple-factorial-analysis-mfa.html#cb402-20" tabindex="-1"></a>      <span class="fu">hclust</span>(<span class="at">method =</span> <span class="st">&quot;ward.D2&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb402-21"><a href="multiple-factorial-analysis-mfa.html#cb402-21" tabindex="-1"></a>      <span class="fu">cutree</span>(<span class="at">k =</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb402-22"><a href="multiple-factorial-analysis-mfa.html#cb402-22" tabindex="-1"></a>      <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;name&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb402-23"><a href="multiple-factorial-analysis-mfa.html#cb402-23" tabindex="-1"></a>      <span class="fu">transmute</span>(<span class="at">name =</span> <span class="fu">as.character</span>(name),</span>
-<span id="cb402-24"><a href="multiple-factorial-analysis-mfa.html#cb402-24" tabindex="-1"></a>                <span class="at">cluster =</span> <span class="fu">as.character</span>(value))</span>
-<span id="cb402-25"><a href="multiple-factorial-analysis-mfa.html#cb402-25" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb402-26"><a href="multiple-factorial-analysis-mfa.html#cb402-26" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cluster =</span> <span class="fu">replace_na</span>(cluster, <span class="st">&quot;DA attribute&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb402-27"><a href="multiple-factorial-analysis-mfa.html#cb402-27" tabindex="-1"></a>  </span>
-<span id="cb402-28"><a href="multiple-factorial-analysis-mfa.html#cb402-28" tabindex="-1"></a><span class="co"># And now we plot!</span></span>
-<span id="cb402-29"><a href="multiple-factorial-analysis-mfa.html#cb402-29" tabindex="-1"></a>  </span>
-<span id="cb402-30"><a href="multiple-factorial-analysis-mfa.html#cb402-30" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>)) <span class="sc">+</span> </span>
-<span id="cb402-31"><a href="multiple-factorial-analysis-mfa.html#cb402-31" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
-<span id="cb402-32"><a href="multiple-factorial-analysis-mfa.html#cb402-32" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
-<span id="cb402-33"><a href="multiple-factorial-analysis-mfa.html#cb402-33" tabindex="-1"></a>  ggforce<span class="sc">::</span><span class="fu">geom_circle</span>(<span class="fu">aes</span>(<span class="at">x0 =</span> <span class="dv">0</span>, <span class="at">y0 =</span> <span class="dv">0</span>, <span class="at">r =</span> <span class="dv">1</span>), </span>
-<span id="cb402-34"><a href="multiple-factorial-analysis-mfa.html#cb402-34" tabindex="-1"></a>                       <span class="at">linetype =</span> <span class="dv">3</span>, <span class="at">color =</span> <span class="st">&quot;grey&quot;</span>, <span class="at">size =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>) <span class="sc">+</span> </span>
-<span id="cb402-35"><a href="multiple-factorial-analysis-mfa.html#cb402-35" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> <span class="dv">0</span>, <span class="at">yend =</span> <span class="dv">0</span>, <span class="at">color =</span> cluster, <span class="at">linewidth =</span> type),</span>
-<span id="cb402-36"><a href="multiple-factorial-analysis-mfa.html#cb402-36" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.05</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>), <span class="at">ends =</span> <span class="st">&quot;first&quot;</span>)) <span class="sc">+</span></span>
-<span id="cb402-37"><a href="multiple-factorial-analysis-mfa.html#cb402-37" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_label_repel</span>(<span class="at">data =</span> . <span class="sc">%&gt;%</span> <span class="fu">filter</span>(type <span class="sc">==</span> <span class="st">&quot;descriptor&quot;</span>),</span>
-<span id="cb402-38"><a href="multiple-factorial-analysis-mfa.html#cb402-38" tabindex="-1"></a>                           <span class="fu">aes</span>(<span class="at">label =</span> name),</span>
-<span id="cb402-39"><a href="multiple-factorial-analysis-mfa.html#cb402-39" tabindex="-1"></a>                           <span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="dv">3</span><span class="sc">/</span><span class="dv">4</span>, <span class="at">label.padding =</span> <span class="fl">0.1</span>) <span class="sc">+</span> </span>
-<span id="cb402-40"><a href="multiple-factorial-analysis-mfa.html#cb402-40" tabindex="-1"></a>  <span class="fu">scale_linewidth_manual</span>(<span class="at">guide =</span> <span class="st">&quot;none&quot;</span>, <span class="at">values =</span> <span class="fu">c</span>(<span class="dv">3</span><span class="sc">/</span><span class="dv">4</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>)) <span class="sc">+</span> </span>
-<span id="cb402-41"><a href="multiple-factorial-analysis-mfa.html#cb402-41" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> </span>
-<span id="cb402-42"><a href="multiple-factorial-analysis-mfa.html#cb402-42" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb402-43"><a href="multiple-factorial-analysis-mfa.html#cb402-43" tabindex="-1"></a>  <span class="fu">scale_color_paletteer_d</span>(<span class="st">&quot;ggthemes::calc&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb402-44"><a href="multiple-factorial-analysis-mfa.html#cb402-44" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb402-45"><a href="multiple-factorial-analysis-mfa.html#cb402-45" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 1, &quot;</span>, <span class="fu">round</span>(preference_mfa<span class="sc">$</span>eig[<span class="dv">1</span>, <span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;% variance&quot;</span>),</span>
-<span id="cb402-46"><a href="multiple-factorial-analysis-mfa.html#cb402-46" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 2, &quot;</span>, <span class="fu">round</span>(preference_mfa<span class="sc">$</span>eig[<span class="dv">2</span>, <span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;% variance&quot;</span>),</span>
-<span id="cb402-47"><a href="multiple-factorial-analysis-mfa.html#cb402-47" tabindex="-1"></a>       <span class="at">color =</span> <span class="cn">NULL</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb410"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb410-1"><a href="multiple-factorial-analysis-mfa.html#cb410-1" tabindex="-1"></a><span class="co"># For whatever reason, we tend to visualize correlations in MFA. These are the</span></span>
+<span id="cb410-2"><a href="multiple-factorial-analysis-mfa.html#cb410-2" tabindex="-1"></a><span class="co"># same as loadings up to a scale factor, so our interpretations will be the</span></span>
+<span id="cb410-3"><a href="multiple-factorial-analysis-mfa.html#cb410-3" tabindex="-1"></a><span class="co"># same.  We can access them in `$quanti.var$cor`.</span></span>
+<span id="cb410-4"><a href="multiple-factorial-analysis-mfa.html#cb410-4" tabindex="-1"></a></span>
+<span id="cb410-5"><a href="multiple-factorial-analysis-mfa.html#cb410-5" tabindex="-1"></a>preference_mfa<span class="sc">$</span>quanti.var<span class="sc">$</span>cor <span class="sc">%&gt;%</span></span>
+<span id="cb410-6"><a href="multiple-factorial-analysis-mfa.html#cb410-6" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;name&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb410-7"><a href="multiple-factorial-analysis-mfa.html#cb410-7" tabindex="-1"></a>  </span>
+<span id="cb410-8"><a href="multiple-factorial-analysis-mfa.html#cb410-8" tabindex="-1"></a><span class="co"># This one is easy, we just have to keep track of which meausres come from which</span></span>
+<span id="cb410-9"><a href="multiple-factorial-analysis-mfa.html#cb410-9" tabindex="-1"></a><span class="co"># data set--`MFA()` does this sequentially, by the index we set through `group =`</span></span>
+<span id="cb410-10"><a href="multiple-factorial-analysis-mfa.html#cb410-10" tabindex="-1"></a>  </span>
+<span id="cb410-11"><a href="multiple-factorial-analysis-mfa.html#cb410-11" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">type =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;descriptor&quot;</span>, <span class="dv">20</span>), <span class="fu">rep</span>(<span class="st">&quot;liking&quot;</span>, <span class="dv">106</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb410-12"><a href="multiple-factorial-analysis-mfa.html#cb410-12" tabindex="-1"></a>  </span>
+<span id="cb410-13"><a href="multiple-factorial-analysis-mfa.html#cb410-13" tabindex="-1"></a><span class="co"># But it might be nice if we grabbed the clusters we found previously from our</span></span>
+<span id="cb410-14"><a href="multiple-factorial-analysis-mfa.html#cb410-14" tabindex="-1"></a><span class="co"># internal preference map...</span></span>
+<span id="cb410-15"><a href="multiple-factorial-analysis-mfa.html#cb410-15" tabindex="-1"></a>  </span>
+<span id="cb410-16"><a href="multiple-factorial-analysis-mfa.html#cb410-16" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb410-17"><a href="multiple-factorial-analysis-mfa.html#cb410-17" tabindex="-1"></a>    consumer_data <span class="sc">%&gt;%</span></span>
+<span id="cb410-18"><a href="multiple-factorial-analysis-mfa.html#cb410-18" tabindex="-1"></a>      <span class="fu">column_to_rownames</span>(<span class="st">&quot;Judge&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb410-19"><a href="multiple-factorial-analysis-mfa.html#cb410-19" tabindex="-1"></a>      <span class="fu">dist</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb410-20"><a href="multiple-factorial-analysis-mfa.html#cb410-20" tabindex="-1"></a>      <span class="fu">hclust</span>(<span class="at">method =</span> <span class="st">&quot;ward.D2&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb410-21"><a href="multiple-factorial-analysis-mfa.html#cb410-21" tabindex="-1"></a>      <span class="fu">cutree</span>(<span class="at">k =</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb410-22"><a href="multiple-factorial-analysis-mfa.html#cb410-22" tabindex="-1"></a>      <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;name&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb410-23"><a href="multiple-factorial-analysis-mfa.html#cb410-23" tabindex="-1"></a>      <span class="fu">transmute</span>(<span class="at">name =</span> <span class="fu">as.character</span>(name),</span>
+<span id="cb410-24"><a href="multiple-factorial-analysis-mfa.html#cb410-24" tabindex="-1"></a>                <span class="at">cluster =</span> <span class="fu">as.character</span>(value))</span>
+<span id="cb410-25"><a href="multiple-factorial-analysis-mfa.html#cb410-25" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb410-26"><a href="multiple-factorial-analysis-mfa.html#cb410-26" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cluster =</span> <span class="fu">replace_na</span>(cluster, <span class="st">&quot;DA attribute&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb410-27"><a href="multiple-factorial-analysis-mfa.html#cb410-27" tabindex="-1"></a>  </span>
+<span id="cb410-28"><a href="multiple-factorial-analysis-mfa.html#cb410-28" tabindex="-1"></a><span class="co"># And now we plot!</span></span>
+<span id="cb410-29"><a href="multiple-factorial-analysis-mfa.html#cb410-29" tabindex="-1"></a>  </span>
+<span id="cb410-30"><a href="multiple-factorial-analysis-mfa.html#cb410-30" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>)) <span class="sc">+</span> </span>
+<span id="cb410-31"><a href="multiple-factorial-analysis-mfa.html#cb410-31" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb410-32"><a href="multiple-factorial-analysis-mfa.html#cb410-32" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb410-33"><a href="multiple-factorial-analysis-mfa.html#cb410-33" tabindex="-1"></a>  ggforce<span class="sc">::</span><span class="fu">geom_circle</span>(<span class="fu">aes</span>(<span class="at">x0 =</span> <span class="dv">0</span>, <span class="at">y0 =</span> <span class="dv">0</span>, <span class="at">r =</span> <span class="dv">1</span>), </span>
+<span id="cb410-34"><a href="multiple-factorial-analysis-mfa.html#cb410-34" tabindex="-1"></a>                       <span class="at">linetype =</span> <span class="dv">3</span>, <span class="at">color =</span> <span class="st">&quot;grey&quot;</span>, <span class="at">size =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>) <span class="sc">+</span> </span>
+<span id="cb410-35"><a href="multiple-factorial-analysis-mfa.html#cb410-35" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> <span class="dv">0</span>, <span class="at">yend =</span> <span class="dv">0</span>, <span class="at">color =</span> cluster, <span class="at">linewidth =</span> type),</span>
+<span id="cb410-36"><a href="multiple-factorial-analysis-mfa.html#cb410-36" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.05</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>), <span class="at">ends =</span> <span class="st">&quot;first&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb410-37"><a href="multiple-factorial-analysis-mfa.html#cb410-37" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_label_repel</span>(<span class="at">data =</span> . <span class="sc">%&gt;%</span> <span class="fu">filter</span>(type <span class="sc">==</span> <span class="st">&quot;descriptor&quot;</span>),</span>
+<span id="cb410-38"><a href="multiple-factorial-analysis-mfa.html#cb410-38" tabindex="-1"></a>                           <span class="fu">aes</span>(<span class="at">label =</span> name),</span>
+<span id="cb410-39"><a href="multiple-factorial-analysis-mfa.html#cb410-39" tabindex="-1"></a>                           <span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="dv">3</span><span class="sc">/</span><span class="dv">4</span>, <span class="at">label.padding =</span> <span class="fl">0.1</span>) <span class="sc">+</span> </span>
+<span id="cb410-40"><a href="multiple-factorial-analysis-mfa.html#cb410-40" tabindex="-1"></a>  <span class="fu">scale_linewidth_manual</span>(<span class="at">guide =</span> <span class="st">&quot;none&quot;</span>, <span class="at">values =</span> <span class="fu">c</span>(<span class="dv">3</span><span class="sc">/</span><span class="dv">4</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>)) <span class="sc">+</span> </span>
+<span id="cb410-41"><a href="multiple-factorial-analysis-mfa.html#cb410-41" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> </span>
+<span id="cb410-42"><a href="multiple-factorial-analysis-mfa.html#cb410-42" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb410-43"><a href="multiple-factorial-analysis-mfa.html#cb410-43" tabindex="-1"></a>  <span class="fu">scale_color_paletteer_d</span>(<span class="st">&quot;ggthemes::calc&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb410-44"><a href="multiple-factorial-analysis-mfa.html#cb410-44" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb410-45"><a href="multiple-factorial-analysis-mfa.html#cb410-45" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 1, &quot;</span>, <span class="fu">round</span>(preference_mfa<span class="sc">$</span>eig[<span class="dv">1</span>, <span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;% variance&quot;</span>),</span>
+<span id="cb410-46"><a href="multiple-factorial-analysis-mfa.html#cb410-46" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Dimension 2, &quot;</span>, <span class="fu">round</span>(preference_mfa<span class="sc">$</span>eig[<span class="dv">2</span>, <span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;% variance&quot;</span>),</span>
+<span id="cb410-47"><a href="multiple-factorial-analysis-mfa.html#cb410-47" tabindex="-1"></a>       <span class="at">color =</span> <span class="cn">NULL</span>)</span></code></pre></div>
 <pre><code>## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
 ## ℹ Please use `linewidth` instead.
 ## This warning is displayed once every 8 hours.
@@ -726,24 +732,24 @@ div.csl-indent {
 <p>By some careful inspection, we can see that two of the consumer clusters are reasonably well-aligned with some directions in the DA correlation plot: cluster 1 (blue) is aligned with attributes stemming from barrel aging: <code>Burned</code>, <code>Oak</code>, <code>Chocolate</code>, and somewhat with <code>Vanilla</code>. Cluster 2 (orange) is aligned more with fruit-related attributes: <code>Jam</code>, <code>Red_berry</code>, <code>Dark_berry</code>, and <code>Artificial_frui</code> (sic). Cluster 3, however, does not have any clear alignment with the DA scores. Compare these results to the preference-mapping results from the previous section!</p>
 <p>I am not sure that there is any real benefit to pulling the other visualizations that HGH rendered in the original <strong>R Opus</strong>: I think that they were mainly there to demonstrate the functionality of the <code>MFA()</code>, which I feel like we have done in sufficient detail, and since she didn’t add any commentary I am assuming, like me, that she did not find them to be actually useful for interpreting the data. Given the additional work we put in above, I will not dig into them.</p>
 <p>Instead, we will wrap up with a contribution plot to understand which dimensions are being driven by DA and which by consumer data:</p>
-<div class="sourceCode" id="cb404"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb404-1"><a href="multiple-factorial-analysis-mfa.html#cb404-1" tabindex="-1"></a><span class="co"># Grab the contribution data</span></span>
-<span id="cb404-2"><a href="multiple-factorial-analysis-mfa.html#cb404-2" tabindex="-1"></a>preference_mfa<span class="sc">$</span>group<span class="sc">$</span>contrib <span class="sc">%&gt;%</span></span>
-<span id="cb404-3"><a href="multiple-factorial-analysis-mfa.html#cb404-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb404-4"><a href="multiple-factorial-analysis-mfa.html#cb404-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">table =</span> <span class="fu">c</span>(<span class="st">&quot;DA&quot;</span>, <span class="st">&quot;consumer&quot;</span>)) <span class="sc">%&gt;%</span> <span class="co"># positional matching :(</span></span>
-<span id="cb404-5"><a href="multiple-factorial-analysis-mfa.html#cb404-5" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>table) <span class="sc">%&gt;%</span></span>
-<span id="cb404-6"><a href="multiple-factorial-analysis-mfa.html#cb404-6" tabindex="-1"></a>  </span>
-<span id="cb404-7"><a href="multiple-factorial-analysis-mfa.html#cb404-7" tabindex="-1"></a><span class="co"># And plot!</span></span>
-<span id="cb404-8"><a href="multiple-factorial-analysis-mfa.html#cb404-8" tabindex="-1"></a>  </span>
-<span id="cb404-9"><a href="multiple-factorial-analysis-mfa.html#cb404-9" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> name, <span class="at">y =</span> value)) <span class="sc">+</span> </span>
-<span id="cb404-10"><a href="multiple-factorial-analysis-mfa.html#cb404-10" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">fill =</span> table), <span class="at">color =</span> <span class="cn">NA</span>, <span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>, <span class="at">width =</span> <span class="dv">2</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span> </span>
-<span id="cb404-11"><a href="multiple-factorial-analysis-mfa.html#cb404-11" tabindex="-1"></a>  <span class="fu">scale_fill_paletteer_d</span>(<span class="st">&quot;IslamicArt::ottoman&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb404-12"><a href="multiple-factorial-analysis-mfa.html#cb404-12" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
-<span id="cb404-13"><a href="multiple-factorial-analysis-mfa.html#cb404-13" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> <span class="sc">~</span><span class="fu">str_c</span>(., <span class="st">&quot;%&quot;</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">100</span>)) <span class="sc">+</span> </span>
-<span id="cb404-14"><a href="multiple-factorial-analysis-mfa.html#cb404-14" tabindex="-1"></a>  <span class="fu">scale_x_discrete</span>(<span class="at">labels =</span> <span class="fu">str_c</span>(<span class="st">&quot;Dimension &quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)) <span class="sc">+</span> </span>
-<span id="cb404-15"><a href="multiple-factorial-analysis-mfa.html#cb404-15" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>,</span>
-<span id="cb404-16"><a href="multiple-factorial-analysis-mfa.html#cb404-16" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;contribution&quot;</span>,</span>
-<span id="cb404-17"><a href="multiple-factorial-analysis-mfa.html#cb404-17" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">&quot;dataset&quot;</span>,</span>
-<span id="cb404-18"><a href="multiple-factorial-analysis-mfa.html#cb404-18" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;Contribution of different datasets to MFA dimensions&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb412"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb412-1"><a href="multiple-factorial-analysis-mfa.html#cb412-1" tabindex="-1"></a><span class="co"># Grab the contribution data</span></span>
+<span id="cb412-2"><a href="multiple-factorial-analysis-mfa.html#cb412-2" tabindex="-1"></a>preference_mfa<span class="sc">$</span>group<span class="sc">$</span>contrib <span class="sc">%&gt;%</span></span>
+<span id="cb412-3"><a href="multiple-factorial-analysis-mfa.html#cb412-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb412-4"><a href="multiple-factorial-analysis-mfa.html#cb412-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">table =</span> <span class="fu">c</span>(<span class="st">&quot;DA&quot;</span>, <span class="st">&quot;consumer&quot;</span>)) <span class="sc">%&gt;%</span> <span class="co"># positional matching :(</span></span>
+<span id="cb412-5"><a href="multiple-factorial-analysis-mfa.html#cb412-5" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>table) <span class="sc">%&gt;%</span></span>
+<span id="cb412-6"><a href="multiple-factorial-analysis-mfa.html#cb412-6" tabindex="-1"></a>  </span>
+<span id="cb412-7"><a href="multiple-factorial-analysis-mfa.html#cb412-7" tabindex="-1"></a><span class="co"># And plot!</span></span>
+<span id="cb412-8"><a href="multiple-factorial-analysis-mfa.html#cb412-8" tabindex="-1"></a>  </span>
+<span id="cb412-9"><a href="multiple-factorial-analysis-mfa.html#cb412-9" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> name, <span class="at">y =</span> value)) <span class="sc">+</span> </span>
+<span id="cb412-10"><a href="multiple-factorial-analysis-mfa.html#cb412-10" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">fill =</span> table), <span class="at">color =</span> <span class="cn">NA</span>, <span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>, <span class="at">width =</span> <span class="dv">2</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb412-11"><a href="multiple-factorial-analysis-mfa.html#cb412-11" tabindex="-1"></a>  <span class="fu">scale_fill_paletteer_d</span>(<span class="st">&quot;IslamicArt::ottoman&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb412-12"><a href="multiple-factorial-analysis-mfa.html#cb412-12" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb412-13"><a href="multiple-factorial-analysis-mfa.html#cb412-13" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> <span class="sc">~</span><span class="fu">str_c</span>(., <span class="st">&quot;%&quot;</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">100</span>)) <span class="sc">+</span> </span>
+<span id="cb412-14"><a href="multiple-factorial-analysis-mfa.html#cb412-14" tabindex="-1"></a>  <span class="fu">scale_x_discrete</span>(<span class="at">labels =</span> <span class="fu">str_c</span>(<span class="st">&quot;Dimension &quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)) <span class="sc">+</span> </span>
+<span id="cb412-15"><a href="multiple-factorial-analysis-mfa.html#cb412-15" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>,</span>
+<span id="cb412-16"><a href="multiple-factorial-analysis-mfa.html#cb412-16" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;contribution&quot;</span>,</span>
+<span id="cb412-17"><a href="multiple-factorial-analysis-mfa.html#cb412-17" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">&quot;dataset&quot;</span>,</span>
+<span id="cb412-18"><a href="multiple-factorial-analysis-mfa.html#cb412-18" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;Contribution of different datasets to MFA dimensions&quot;</span>)</span></code></pre></div>
 <p><img src="12-MFA_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <p>We can see from this that the first dimension has more contribution by the DA data, and the second dimension is dominated by the consumer data; all dimensions must of course add up to 100%.</p>
 </div>
@@ -753,14 +759,14 @@ div.csl-indent {
 </div>
 <div id="packages-used-in-this-chapter-11" class="section level2 hasAnchor" number="12.4">
 <h2><span class="header-section-number">12.4</span> Packages used in this chapter<a href="multiple-factorial-analysis-mfa.html#packages-used-in-this-chapter-11" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb405"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb405-1"><a href="multiple-factorial-analysis-mfa.html#cb405-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
-<pre><code>## R version 4.3.1 (2023-06-16)
-## Platform: aarch64-apple-darwin20 (64-bit)
-## Running under: macOS Ventura 13.6.1
+<div class="sourceCode" id="cb413"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb413-1"><a href="multiple-factorial-analysis-mfa.html#cb413-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.4.1 (2024-06-14)
+## Platform: x86_64-apple-darwin20
+## Running under: macOS 15.2
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -769,39 +775,39 @@ div.csl-indent {
 ## tzcode source: internal
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] stats     graphics  grDevices datasets  utils     methods   base     
 ## 
 ## other attached packages:
-##  [1] patchwork_1.1.2 paletteer_1.5.0 FactoMineR_2.8  here_1.0.1     
-##  [5] lubridate_1.9.2 forcats_1.0.0   stringr_1.5.0   dplyr_1.1.2    
-##  [9] purrr_1.0.1     readr_2.1.4     tidyr_1.3.0     tibble_3.2.1   
-## [13] ggplot2_3.4.3   tidyverse_2.0.0
+##  [1] patchwork_1.2.0 paletteer_1.6.0 FactoMineR_2.11 here_1.0.1     
+##  [5] lubridate_1.9.3 forcats_1.0.0   stringr_1.5.1   dplyr_1.1.4    
+##  [9] purrr_1.0.2     readr_2.1.5     tidyr_1.3.1     tibble_3.2.1   
+## [13] ggplot2_3.5.1   tidyverse_2.0.0
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] gtable_0.3.4         xfun_0.39            bslib_0.5.1         
-##  [4] htmlwidgets_1.6.2    ggrepel_0.9.3        lattice_0.21-8      
-##  [7] tzdb_0.4.0           vctrs_0.6.3          tools_4.3.1         
-## [10] generics_0.1.3       parallel_4.3.1       fansi_1.0.4         
-## [13] highr_0.10           cluster_2.1.4        pkgconfig_2.0.3     
-## [16] scatterplot3d_0.3-44 lifecycle_1.0.3      farver_2.1.1        
-## [19] compiler_4.3.1       munsell_0.5.0        ggforce_0.4.1       
-## [22] leaps_3.1            htmltools_0.5.6      sass_0.4.7          
-## [25] yaml_2.3.7           pillar_1.9.0         crayon_1.5.2        
-## [28] jquerylib_0.1.4      MASS_7.3-60          flashClust_1.01-2   
-## [31] DT_0.28              cachem_1.0.8         tidyselect_1.2.0    
-## [34] digest_0.6.33        mvtnorm_1.2-2        stringi_1.7.12      
-## [37] rematch2_2.1.2       bookdown_0.37        labeling_0.4.3      
-## [40] polyclip_1.10-4      rprojroot_2.0.3      fastmap_1.1.1       
-## [43] grid_4.3.1           colorspace_2.1-0     cli_3.6.1           
-## [46] magrittr_2.0.3       utf8_1.2.3           withr_2.5.0         
-## [49] scales_1.2.1         bit64_4.0.5          estimability_1.4.1  
-## [52] timechange_0.2.0     rmarkdown_2.23       emmeans_1.8.7       
-## [55] bit_4.0.5            hms_1.1.3            coda_0.19-4         
-## [58] evaluate_0.21        knitr_1.43           rlang_1.1.1         
-## [61] Rcpp_1.0.11          xtable_1.8-4         glue_1.6.2          
-## [64] tweenr_2.0.2         rstudioapi_0.15.0    vroom_1.6.3         
-## [67] jsonlite_1.8.7       R6_2.5.1             prismatic_1.1.1     
-## [70] multcompView_0.1-9</code></pre>
+##  [1] gtable_0.3.5         xfun_0.49            bslib_0.7.0         
+##  [4] htmlwidgets_1.6.4    ggrepel_0.9.5        lattice_0.22-6      
+##  [7] tzdb_0.4.0           vctrs_0.6.5          tools_4.4.1         
+## [10] generics_0.1.3       parallel_4.4.1       fansi_1.0.6         
+## [13] highr_0.10           cluster_2.1.6        pkgconfig_2.0.3     
+## [16] scatterplot3d_0.3-44 lifecycle_1.0.4      farver_2.1.2        
+## [19] compiler_4.4.1       munsell_0.5.1        ggforce_0.4.2       
+## [22] leaps_3.1            htmltools_0.5.8.1    sass_0.4.9          
+## [25] yaml_2.3.8           crayon_1.5.2         pillar_1.9.0        
+## [28] jquerylib_0.1.4      MASS_7.3-60.2        flashClust_1.01-2   
+## [31] DT_0.33              cachem_1.1.0         tidyselect_1.2.1    
+## [34] digest_0.6.37        mvtnorm_1.2-5        stringi_1.8.4       
+## [37] rematch2_2.1.2       bookdown_0.39        labeling_0.4.3      
+## [40] polyclip_1.10-6      rprojroot_2.0.4      fastmap_1.2.0       
+## [43] grid_4.4.1           colorspace_2.1-0     cli_3.6.3           
+## [46] magrittr_2.0.3       utf8_1.2.4           withr_3.0.0         
+## [49] scales_1.3.0         bit64_4.0.5          estimability_1.5.1  
+## [52] timechange_0.3.0     rmarkdown_2.27       emmeans_1.10.2      
+## [55] bit_4.0.5            hms_1.1.3            coda_0.19-4.1       
+## [58] evaluate_0.23        knitr_1.46           rlang_1.1.4         
+## [61] Rcpp_1.0.13          xtable_1.8-4         glue_1.7.0          
+## [64] tweenr_2.0.3         renv_1.0.9           rstudioapi_0.16.0   
+## [67] vroom_1.6.5          jsonlite_1.8.8       R6_2.5.1            
+## [70] prismatic_1.1.2      multcompView_0.1-10</code></pre>
 
 </div>
 </div>

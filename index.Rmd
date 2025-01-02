@@ -98,13 +98,13 @@ I'm an [associate professor of Food Science & Technology at Virginia Tech](https
 
 ---
 
-## Changelog
+## Changelog {-}
 
-### v0.2 (December 2024)
+### v0.2 (December 2024) {-}
 
 Update to fix typos, inconsistencies, and for use as "textbook" for FST 5984 (Spring 2025).
 
-### v0.1 (December 2023)
+### v0.1 (December 2023) {-}
 
 Initial commit.  Everything works.  There are typos and sections that need to be expanded (hi, Preference Mapping!).  
 

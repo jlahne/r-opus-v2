@@ -11,7 +11,7 @@ We could also use cluster analysis to explore possible hypotheses, if we have so
 We start by loading our results, as before.  We will also define a tibble of product means, which will be our main data input to start with.
 
 
-```r
+``` r
 library(tidyverse)
 library(here)
 library(factoextra) # this is new
@@ -32,10 +32,10 @@ We're going to mostly use the built in `stats::hclust()` function for most of th
 In the **R Opus**, HGH *scales* the mean data to have zero-means and unit-variance.  This choice (it is not necessary for calculation) means that all descriptors will have equal impact on our estimates of proximity for the purpose of clustering.  We'll follow along.
 
 
-```r
+``` r
 descriptive_means_scaled <- 
   descriptive_means %>%
-  # This line is desnse - notice the "lambda" ("~") function that uses multiple
+  # This line is dense - notice the "lambda" ("~") function that uses multiple
   # references to the same column: we are subtracting the column mean and
   # dividing by the column sd for each column.
   mutate(across(where(is.numeric), ~ (. - mean(.)) / sd(.)))
@@ -44,7 +44,7 @@ descriptive_means_scaled <-
 Now we're ready to think about "close".  As the word implies, we're going to examine the distances among all of our products.  The built in function in `R` to calculate distance is `stats::dist()`.  This will serve our purposes well.  
 
 
-```r
+``` r
 descriptive_distance <- 
   descriptive_means_scaled %>%
   # We need to remember to move our variable column to the "rownames" attribute
@@ -81,7 +81,7 @@ Technically, all (mathematical) distances must fulfill 4 properties:
 
 1. For any object, $dist(a,a) = 0$ (the distance of an object to itself is always 0)
 1. For all pairs of objects, $dist(a,b) ≥ 0$ (all distances are positive or 0)
-1. For any pair of objects, $dist(a,b) = dist(b,a)$ (distane is symmetric)
+1. For any pair of objects, $dist(a,b) = dist(b,a)$ (distance is symmetric)
 2. For any three objects, $dist(a,b) + dist(b,c) ≥ dist(a,c)$ (the triangle inequality - I like the [Wikipedia description](https://en.wikipedia.org/wiki/Distance#Mathematical_formalization) as "intermediate objects can't speed you up")
 
 Enough about distance!  Let's get on with it.  We can see that our distance matrix is all positive entries that give us some idea of "how close" each pair of objects is. Smaller numbers indicate proximity.  
@@ -101,7 +101,7 @@ Ward's Method is probably the most commonly used (and intellectually satisfying 
 Ward's method, qualitatively, tends to find balanced clusters that result from the merge of smaller clusters.
 
 
-```r
+``` r
 cluster_ward <-
   descriptive_distance %>%
   hclust(method = "ward.D2")
@@ -112,7 +112,7 @@ Note that the original **R Opus** used `method = "ward"`--according to the docum
 > Two different algorithms are found in the literature for Ward clustering. The one used by option "ward.D" (equivalent to the only Ward option "ward" in R versions ≤ 3.0.3) does not implement Ward's (1963) clustering criterion, whereas option "ward.D2" implements that criterion (Murtagh and Legendre 2014). With the latter, the dissimilarities are squared before cluster updating. Note that agnes(*, method="ward") corresponds to hclust(*, "ward.D2").
 
 
-```r
+``` r
 p_ward <- 
   cluster_ward %>%
   fviz_dend(k = 3, cex = 2/3)
@@ -121,14 +121,15 @@ p_ward <-
 We're going to use the `factoextra::fviz_dend()` function for drawing our clusters.  Long-story-short, the native `ggplot2` functions for plotting tree- and graph-like structures like "dendrograms" (the tree plots that are common for HCA results) don't really exist, and `fviz_dend()` is going to do a lot of heavy lifting for us in the background by giving us a basic dendrogram `ggplot2` object that we can alter as we see fit using more familiar syntax.
 
 
-```r
+``` r
 p_ward <- 
   p_ward + 
   # Stretch out the y-axis so that we can see the labels
   expand_limits(y = -6) + 
   # Clean up the messiness
   labs(title = "Clustering with Ward's method", y = NULL) +
-  scale_color_viridis_d()
+  scale_color_viridis_d() + 
+  scale_y_continuous(breaks = c(0, 5, 10))
 
 p_ward
 ```
@@ -142,7 +143,7 @@ Notice that we had to *tell* the program (in this case `fviz_dend()`) how many g
 Single linkage is also called "nearest neighbor" clustering.  In single-linkage, the key element is that the distance between any two *clusters* $A$ and $B$ is defined as the *minimum* distance between a point $a$ in $A$ and a point $b$ in $B$.  Single linkage is, therefore, "greedy", because big clusters will tend to get bigger: there is a greater chance that a large cluster will have a small distance between *some* point within it and another point outside it.
 
 
-```r
+``` r
 cluster_single <- 
   descriptive_distance %>%
   hclust(method = "single")
@@ -151,13 +152,14 @@ cluster_single <-
 We can use the same number of groups (`k = 3`) so we can have a consistent comparison among the methods.
 
 
-```r
+``` r
 p_single <- 
   cluster_single %>%
   fviz_dend(k = 3, cex = 2/3) + 
-  expand_limits(y = -6) + 
+  expand_limits(y = -3) + 
   scale_color_viridis_d() +
-  labs(y = NULL, title = "Clustering with Single Linkage")
+  labs(y = NULL, title = "Clustering with Single Linkage") + 
+  scale_y_continuous(breaks = c(0, 5, 10))
 
 p_single
 ```
@@ -171,7 +173,7 @@ Notice the "greediness": large single group keeps adding a single new observatio
 The complete linkage approach is just the opposite of the single linkage method: the distance between two clusters is the *maximum* distance between all two points $a$ and $b$ in clusters $A$ and $B$, respectively.  With this definition, the same iterative approach is carried out and the two closest clusters are merged at each step.
 
 
-```r
+``` r
 cluster_complete <- 
   descriptive_distance %>%
   hclust(method = "complete")
@@ -179,9 +181,10 @@ cluster_complete <-
 p_complete <-
   cluster_complete %>%
   fviz_dend(k = 3, cex = 2/3) + 
-  expand_limits(y = -6) + 
+  expand_limits(y = -3) + 
   labs(y = NULL, title = "Clustering with Complete Linkage") +
-  scale_color_viridis_d()
+  scale_color_viridis_d() +
+  scale_y_continuous(breaks = c(0, 5, 10))
 
 p_complete
 ```
@@ -195,7 +198,7 @@ Intuitively, complete linkage avoids the "greediness" problem of single linkage.
 As the name implies, in the average linkage method, the distance between two clusters is defined as the average distance between all objects $a_i$ in $A$ and all objects $b_j$ in $B$. 
 
 
-```r
+``` r
 cluster_average <-
   descriptive_distance %>%
   hclust(method = "average")
@@ -203,9 +206,10 @@ cluster_average <-
 p_average <- 
   cluster_average %>%
   fviz_dend(k = 3, cex = 2/3) +
-  expand_limits(y = -6) + 
+  expand_limits(y = -3) + 
   labs(title = "Clustering with Average Linkage", y = NULL) + 
-  scale_color_viridis_d()
+  scale_color_viridis_d() + 
+  scale_y_continuous(breaks = c(0, 5, 10))
 
 p_average
 ```
@@ -217,7 +221,7 @@ p_average
 Let's look at the results of our cluster analyses side by side.
 
 
-```r
+``` r
 library(patchwork)
 
 (p_ward + p_single) / (p_complete + p_average)
@@ -228,7 +232,7 @@ library(patchwork)
 Only single linkage gives us very different results; the others are a matter of scaling.  This could be quite different if we had a larger number of more dissimilar objects - recall our distance matrix:
 
 
-```r
+``` r
 descriptive_distance
 ```
 
@@ -256,7 +260,7 @@ Not actually that much variation!
 We can do the same thing with our individual observations.
 
 
-```r
+``` r
 individual_distances <- 
   descriptive_data %>%
   unite(NJ, ProductName, NR, col = "ID") %>%
@@ -292,7 +296,7 @@ Above we played a little bit to see if, for the raw data, clustering provided a 
 From our original clustering results, we can pull out a tibble that tells us which sample belongs to which cluster:
 
 
-```r
+``` r
 # We use `cutree()` with `k = 3` to get 3 groups from the "tree" (clustering)
 groups_from_ward <- 
   cluster_ward %>%
@@ -343,7 +347,7 @@ glimpse(descriptive_data)
 Now we have a `factor` identifying which cluster (from an HCA with Ward's Method and 3 groups) each wine belongs to.  We can use this structure as a new possible input for M/ANOVA, like we did in [MANOVA (Multivariate Analysis of Variance)].
 
 
-```r
+``` r
 cluster_manova <- 
   manova(formula = as.matrix(descriptive_data[, 4:23]) ~ ward_group, 
          data = descriptive_data)
@@ -361,7 +365,7 @@ summary(cluster_manova, test = "W")
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
-```r
+``` r
 # Let's review how to use nest() and map() functions to tidily apply 1-way ANOVA
 # to each variable.
 
@@ -417,7 +421,7 @@ Once the $k$ seeds are chosen, every other item that is to be clustered is assig
 A common workflow is to use HCA to get an idea of the appropriate $k$ for k-means clustering, and then to use k-means clustering to get a final, optimized clustering solution.  We will take this approach, using `k = 3`.
 
 
-```r
+``` r
 clusters_kmeans <-
   descriptive_means_scaled %>%
   column_to_rownames("ProductName") %>%
@@ -433,7 +437,7 @@ clusters_kmeans$cluster
 ##           2           1
 ```
 
-```r
+``` r
 clusters_kmeans$centers %>%
   as_tibble(rownames = "cluster")
 ```
@@ -455,7 +459,7 @@ HGH shows how to replicate the same workflow as we did above with the HCA result
 We'll first run a simple means PCA to get the product score plot, and then we'll draw some hulls around the groups.
 
 
-```r
+``` r
 means_pca <- 
   descriptive_means %>%
   column_to_rownames("ProductName") %>%
@@ -490,18 +494,18 @@ Looks like those California wines end up grouped together even though there is a
 ## Packages used in this chapter
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: aarch64-apple-darwin20 (64-bit)
-## Running under: macOS Ventura 13.6.1
+## R version 4.4.1 (2024-06-14)
+## Platform: x86_64-apple-darwin20
+## Running under: macOS 15.2
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -510,39 +514,39 @@ sessionInfo()
 ## tzcode source: internal
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] stats     graphics  grDevices datasets  utils     methods   base     
 ## 
 ## other attached packages:
-##  [1] patchwork_1.1.2  factoextra_1.0.7 here_1.0.1       lubridate_1.9.2 
-##  [5] forcats_1.0.0    stringr_1.5.0    dplyr_1.1.2      purrr_1.0.1     
-##  [9] readr_2.1.4      tidyr_1.3.0      tibble_3.2.1     ggplot2_3.4.3   
+##  [1] patchwork_1.2.0  factoextra_1.0.7 here_1.0.1       lubridate_1.9.3 
+##  [5] forcats_1.0.0    stringr_1.5.1    dplyr_1.1.4      purrr_1.0.2     
+##  [9] readr_2.1.5      tidyr_1.3.1      tibble_3.2.1     ggplot2_3.5.1   
 ## [13] tidyverse_2.0.0 
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] tidyselect_1.2.0     viridisLite_0.4.2    farver_2.1.1        
-##  [4] viridis_0.6.4        fastmap_1.1.1        tweenr_2.0.2        
-##  [7] digest_0.6.33        timechange_0.2.0     estimability_1.4.1  
-## [10] lifecycle_1.0.3      cluster_2.1.4        multcompView_0.1-9  
-## [13] magrittr_2.0.3       compiler_4.3.1       rlang_1.1.1         
-## [16] tools_4.3.1          utf8_1.2.3           yaml_2.3.7          
-## [19] knitr_1.43           ggsignif_0.6.4       labeling_0.4.3      
-## [22] htmlwidgets_1.6.2    bit_4.0.5            scatterplot3d_0.3-44
-## [25] abind_1.4-5          withr_2.5.0          grid_4.3.1          
-## [28] polyclip_1.10-4      fansi_1.0.4          ggpubr_0.6.0        
-## [31] xtable_1.8-4         colorspace_2.1-0     emmeans_1.8.7       
-## [34] scales_1.2.1         MASS_7.3-60          flashClust_1.01-2   
-## [37] cli_3.6.1            mvtnorm_1.2-2        rmarkdown_2.23      
-## [40] crayon_1.5.2         generics_0.1.3       rstudioapi_0.15.0   
-## [43] tzdb_0.4.0           ggforce_0.4.1        parallel_4.3.1      
-## [46] vctrs_0.6.3          carData_3.0-5        bookdown_0.37       
+##  [1] tidyselect_1.2.1     viridisLite_0.4.2    farver_2.1.2        
+##  [4] viridis_0.6.5        fastmap_1.2.0        tweenr_2.0.3        
+##  [7] digest_0.6.37        timechange_0.3.0     estimability_1.5.1  
+## [10] lifecycle_1.0.4      cluster_2.1.6        multcompView_0.1-10 
+## [13] magrittr_2.0.3       compiler_4.4.1       rlang_1.1.4         
+## [16] tools_4.4.1          utf8_1.2.4           yaml_2.3.8          
+## [19] knitr_1.46           ggsignif_0.6.4       labeling_0.4.3      
+## [22] htmlwidgets_1.6.4    bit_4.0.5            scatterplot3d_0.3-44
+## [25] abind_1.4-5          withr_3.0.0          grid_4.4.1          
+## [28] polyclip_1.10-6      fansi_1.0.6          ggpubr_0.6.0        
+## [31] xtable_1.8-4         colorspace_2.1-0     emmeans_1.10.2      
+## [34] scales_1.3.0         MASS_7.3-60.2        flashClust_1.01-2   
+## [37] cli_3.6.3            mvtnorm_1.2-5        rmarkdown_2.27      
+## [40] crayon_1.5.2         generics_0.1.3       rstudioapi_0.16.0   
+## [43] tzdb_0.4.0           ggforce_0.4.2        parallel_4.4.1      
+## [46] vctrs_0.6.5          carData_3.0-5        bookdown_0.39       
 ## [49] car_3.1-2            hms_1.1.3            bit64_4.0.5         
-## [52] rstatix_0.7.2        ggrepel_0.9.3        FactoMineR_2.8      
-## [55] dendextend_1.17.1    glue_1.6.2           DT_0.28             
-## [58] stringi_1.7.12       gtable_0.3.4         munsell_0.5.0       
-## [61] pillar_1.9.0         htmltools_0.5.6      R6_2.5.1            
-## [64] rprojroot_2.0.3      vroom_1.6.3          evaluate_0.21       
-## [67] lattice_0.21-8       highr_0.10           backports_1.4.1     
-## [70] leaps_3.1            broom_1.0.5          Rcpp_1.0.11         
-## [73] coda_0.19-4          gridExtra_2.3        xfun_0.39           
-## [76] pkgconfig_2.0.3
+## [52] rstatix_0.7.2        ggrepel_0.9.5        FactoMineR_2.11     
+## [55] dendextend_1.17.1    glue_1.7.0           DT_0.33             
+## [58] stringi_1.8.4        gtable_0.3.5         munsell_0.5.1       
+## [61] pillar_1.9.0         htmltools_0.5.8.1    R6_2.5.1            
+## [64] rprojroot_2.0.4      vroom_1.6.5          evaluate_0.23       
+## [67] lattice_0.22-6       highr_0.10           backports_1.5.0     
+## [70] leaps_3.1            broom_1.0.6          renv_1.0.9          
+## [73] Rcpp_1.0.13          coda_0.19-4.1        gridExtra_2.3       
+## [76] xfun_0.49            pkgconfig_2.0.3
 ```

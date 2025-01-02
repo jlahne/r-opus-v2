@@ -7,7 +7,7 @@ output: html_document
 In this short section, we'll look at "single imputation" using the Expectation Maximization approach.  First, let's get our data imported and our packages set up.
 
 
-```r
+``` r
 library(tidyverse)
 library(here)
 
@@ -20,7 +20,7 @@ missing_data_example <-read_csv(here("data/torrimiss.csv"))
 In the original **R Opus**, HGH used the `missmda` package, from Susan Josse and Francois Husson, which to my understanding uses a PCA approach to do single imputation.  Reading through their documentation, they note that this is equivalent to the "expectation maximization" (EM) approach to single imputation.  We're going to use a slightly more modern package that combines approaches from a number of different missing-data packages, called `simputation`.  It gives standard syntax for a number of different formula-based methods for imputation.  We're going to also use the `skimr` package to easily see where we have missing data, and the `naniar` package to visualize.
 
 
-```r
+``` r
 library(simputation)
 library(skimr)
 library(naniar)
@@ -29,7 +29,7 @@ library(naniar)
 First off, let's take a look at our `missing_data_example` data set using the `skim()` method.
 
 
-```r
+``` r
 skim(missing_data_example) %>% 
   # This is purely to allow the skimr::skim() to be rendered in PDF, ignore otherwise
   knitr::kable()
@@ -91,7 +91,7 @@ numeric & Astringent & 10 & 0.9702381 & NA & NA & NA & NA & NA & 4.6358896 & 2.6
 This shows us that we have (induced) missingness in all of our outcome variables (the sensory descriptors), but our predictors (`ProductName`, `NJ`, and `NR`) have no missingness, which is good.  It also shows us that we need to `mutate()` the latter two of those 3 variables into factors, as right now `R` will treat them as numeric predictors.
 
 
-```r
+``` r
 # Here we mutate the first 3 variables to all be factors
 missing_data_example <- 
   missing_data_example %>%
@@ -106,14 +106,14 @@ descriptive_data <-
 We can then get a look at the patternness of missingness using `naniar`, which has a bunch of utilities for easily visualizing missing data.
 
 
-```r
+``` r
 missing_data_example %>%
   vis_miss()
 ```
 
 ![](03-missing-data_files/figure-latex/unnamed-chunk-5-1.pdf)<!-- --> 
 
-```r
+``` r
 # We see above that HGH just replaced some rows with NAs.  In this case, the
 # data is NOT missing "completely at random", as we can confirm with a
 # statistical test.
@@ -131,7 +131,7 @@ missing_data_example %>%
 As we know that every row in our dataset is a "case" rather than an observation (i.e., our data is *wide* rather than *long*), we can use the `miss_case_summary()` function from `naniar` to give us a bit more info about how the missingness was introduced:
 
 
-```r
+``` r
 missing_data_example %>%
   miss_case_summary() %>%
   filter(n_miss > 0)
@@ -161,7 +161,7 @@ The problem of missing data is a complex one, and if you have large quantities o
 I am certainly no expert on missing data, but [after doing some reading into the package HGH used in the original **R Opus**, `missMDA`](https://www.jstatsoft.org/article/view/v070i01), my understanding is that this package uses a Principal Component Analysis (PCA)-based approach to imputation which is both useful for the unique problems that sensory scientists typically tackle (e.g., dealing with highly multivariate data with high uncertainty and high multicollinearity) and is competitive with current methods.  Therefore, we'll use this package for imputation here, as well as showing some alternatives below.
 
 
-```r
+``` r
 library(missMDA)
 
 # We can first estimate the number of components to use in our imputation.
@@ -174,11 +174,11 @@ estim_ncpFAMD(missing_data_example, verbose = FALSE)
 ## [1] 5
 ## 
 ## $criterion
-##          0          1          2          3          4          5 
-## 0.07237303 0.05963937 0.05307163 0.04978856 0.04753247 0.04611633
+##        0        1        2        3        4        5 
+## 2.161350 1.770345 1.577860 1.483996 1.412857 1.370000
 ```
 
-```r
+``` r
 # Then we run the imputation itself with the recommended number of components.
 # In contrast to the original R Opus, which used ncp = 2, this function
 # recommends we use ncp = 5.
@@ -193,12 +193,12 @@ missing_data_imputed$completeObs %>%
 ## # A tibble: 336 x 23
 ##    NJ    ProductName NR    Red_berry Dark_berry   Jam Dried_fruit
 ##    <fct> <fct>       <fct>     <dbl>      <dbl> <dbl>       <dbl>
-##  1 1331  C_MERLOT    7          4.71       5.8   2.1         4.7 
+##  1 1331  C_MERLOT    7          4.66       5.8   2.1         4.7 
 ##  2 1331  C_SYRAH     7          5.6        1.9   3.9         1.2 
 ##  3 1331  C_ZINFANDEL 7          4.9        2.6   1.4         5.9 
 ##  4 1331  C_REFOSCO   7          5          1.9   7.8         0.6 
 ##  5 1331  I__MERLOT   7          3.3        7.2   0.5         5.8 
-##  6 1331  I_SYRAH     7          4.02       5.01  4.41        2.86
+##  6 1331  I_SYRAH     7          3.96       4.90  4.23        2.81
 ##  7 1331  I_PRIMITIVO 7          2.9        5.1   8.7         0.4 
 ##  8 1331  I_REFOSCO   7          3.2        6     4           0.7 
 ##  9 1400  C_MERLOT    7          0.1        0.1   0.2         2.9 
@@ -213,7 +213,7 @@ missing_data_imputed$completeObs %>%
 We see that values have been filled in.  Let's compare them to our original data visually.
 
 
-```r
+``` r
 descriptive_data
 ```
 
@@ -241,7 +241,7 @@ descriptive_data
 In the first row, both `Red_berry` and `Vanilla` were imputed.  These get reasonably close.  Let's compare the results of an ANOVA on the `Red_berry` variable for the imputed and the original data.
 
 
-```r
+``` r
 # Imputed data
 aov(Red_berry ~ (ProductName + NJ + NR)^2, 
     data = missing_data_imputed$completeObs) %>%
@@ -250,18 +250,18 @@ aov(Red_berry ~ (ProductName + NJ + NR)^2,
 
 ```
 ##                 Df Sum Sq Mean Sq F value   Pr(>F)    
-## ProductName      7   84.4   12.06   3.546  0.00135 ** 
-## NJ              13  599.8   46.14  13.571  < 2e-16 ***
-## NR               2    2.9    1.46   0.429  0.65189    
-## ProductName:NJ  91  639.7    7.03   2.068 1.76e-05 ***
-## ProductName:NR  14   47.9    3.42   1.005  0.44992    
-## NJ:NR           26   93.0    3.58   1.052  0.40305    
-## Residuals      182  618.8    3.40                     
+## ProductName      7   84.1   12.01   3.532   0.0014 ** 
+## NJ              13  597.3   45.95  13.510  < 2e-16 ***
+## NR               2    2.9    1.45   0.425   0.6541    
+## ProductName:NJ  91  639.6    7.03   2.067 1.78e-05 ***
+## ProductName:NR  14   47.8    3.42   1.004   0.4509    
+## NJ:NR           26   93.7    3.60   1.059   0.3940    
+## Residuals      182  619.0    3.40                     
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
-```r
+``` r
 # Complete data
 aov(Red_berry ~ (ProductName + NJ + NR)^2, 
     data = descriptive_data) %>%
@@ -290,7 +290,7 @@ While it is powerful, `missMDA` is not very fast, and may not be the best tool f
 Something I've found with `simputation` is that it is flummoxed by non-syntactic names in `R`, such as `Band-aid` (you cannot typically use "-" in a name in `R`).  We're going to quickly fix the names of our dataset in order to make it play nice before we proceed.
 
 
-```r
+``` r
 missing_data_imputed_lm <-
   missing_data_example %>%
   rename_all(~str_replace_all(., "-", "_")) %>%
@@ -300,7 +300,7 @@ missing_data_imputed_lm <-
 If we run the same checks as before on `Red_berry`, let's see what we get:
 
 
-```r
+``` r
 # Imputed data
 aov(Red_berry ~ (ProductName + NJ + NR)^2, 
     data = missing_data_imputed_lm) %>%
@@ -320,7 +320,7 @@ aov(Red_berry ~ (ProductName + NJ + NR)^2,
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
-```r
+``` r
 # Complete data
 aov(Red_berry ~ (ProductName + NJ + NR)^2, 
     data = descriptive_data) %>%
@@ -345,18 +345,18 @@ Why is our *p*-value even smaller?  If you think about it, we've filled in missi
 ## Packages used in this chapter
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: aarch64-apple-darwin20 (64-bit)
-## Running under: macOS Ventura 13.6.1
+## R version 4.4.1 (2024-06-14)
+## Platform: x86_64-apple-darwin20
+## Running under: macOS 15.2
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -365,43 +365,43 @@ sessionInfo()
 ## tzcode source: internal
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] stats     graphics  grDevices datasets  utils     methods   base     
 ## 
 ## other attached packages:
-##  [1] missMDA_1.18      naniar_1.0.0      skimr_2.1.5       simputation_0.2.8
-##  [5] here_1.0.1        lubridate_1.9.2   forcats_1.0.0     stringr_1.5.0    
-##  [9] dplyr_1.1.2       purrr_1.0.1       readr_2.1.4       tidyr_1.3.0      
-## [13] tibble_3.2.1      ggplot2_3.4.3     tidyverse_2.0.0  
+##  [1] missMDA_1.19      naniar_1.1.0      skimr_2.1.5       simputation_0.2.9
+##  [5] here_1.0.1        lubridate_1.9.3   forcats_1.0.0     stringr_1.5.1    
+##  [9] dplyr_1.1.4       purrr_1.0.2       readr_2.1.5       tidyr_1.3.1      
+## [13] tibble_3.2.1      ggplot2_3.5.1     tidyverse_2.0.0  
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] tidyselect_1.2.0     farver_2.1.1         fastmap_1.1.1       
-##  [4] digest_0.6.33        rpart_4.1.19         timechange_0.2.0    
-##  [7] estimability_1.4.1   lifecycle_1.0.3      cluster_2.1.4       
-## [10] multcompView_0.1-9   survival_3.5-5       magrittr_2.0.3      
-## [13] compiler_4.3.1       rlang_1.1.1          tools_4.3.1         
-## [16] utf8_1.2.3           yaml_2.3.7           knitr_1.43          
-## [19] labeling_0.4.3       htmlwidgets_1.6.2    bit_4.0.5           
-## [22] scatterplot3d_0.3-44 repr_1.1.6           norm_1.0-11.1       
-## [25] withr_2.5.0          nnet_7.3-19          grid_4.3.1          
-## [28] fansi_1.0.4          jomo_2.7-6           xtable_1.8-4        
-## [31] colorspace_2.1-0     mice_3.16.0          emmeans_1.8.7       
-## [34] scales_1.2.1         iterators_1.0.14     MASS_7.3-60         
-## [37] flashClust_1.01-2    cli_3.6.1            mvtnorm_1.2-2       
-## [40] rmarkdown_2.23       crayon_1.5.2         generics_0.1.3      
-## [43] rstudioapi_0.15.0    tzdb_0.4.0           minqa_1.2.5         
-## [46] splines_4.3.1        parallel_4.3.1       base64enc_0.1-3     
-## [49] vctrs_0.6.3          boot_1.3-28.1        Matrix_1.6-0        
-## [52] glmnet_4.1-8         jsonlite_1.8.7       bookdown_0.37       
+##  [1] tidyselect_1.2.1     farver_2.1.2         fastmap_1.2.0       
+##  [4] digest_0.6.37        rpart_4.1.23         timechange_0.3.0    
+##  [7] estimability_1.5.1   lifecycle_1.0.4      cluster_2.1.6       
+## [10] multcompView_0.1-10  survival_3.6-4       magrittr_2.0.3      
+## [13] compiler_4.4.1       rlang_1.1.4          tools_4.4.1         
+## [16] utf8_1.2.4           yaml_2.3.8           knitr_1.46          
+## [19] labeling_0.4.3       htmlwidgets_1.6.4    bit_4.0.5           
+## [22] scatterplot3d_0.3-44 repr_1.1.7           norm_1.0-11.1       
+## [25] withr_3.0.0          nnet_7.3-19          grid_4.4.1          
+## [28] fansi_1.0.6          jomo_2.7-6           xtable_1.8-4        
+## [31] colorspace_2.1-0     mice_3.17.0          emmeans_1.10.2      
+## [34] scales_1.3.0         iterators_1.0.14     MASS_7.3-60.2       
+## [37] flashClust_1.01-2    cli_3.6.3            mvtnorm_1.2-5       
+## [40] rmarkdown_2.27       crayon_1.5.2         generics_0.1.3      
+## [43] rstudioapi_0.16.0    tzdb_0.4.0           minqa_1.2.7         
+## [46] splines_4.4.1        parallel_4.4.1       base64enc_0.1-3     
+## [49] vctrs_0.6.5          boot_1.3-30          Matrix_1.7-0        
+## [52] glmnet_4.1-8         jsonlite_1.8.8       bookdown_0.39       
 ## [55] hms_1.1.3            mitml_0.4-5          bit64_4.0.5         
-## [58] visdat_0.6.0         ggrepel_0.9.3        FactoMineR_2.8      
-## [61] foreach_1.5.2        gower_1.0.1          glue_1.6.2          
-## [64] pan_1.9              nloptr_2.0.3         codetools_0.2-19    
-## [67] DT_0.28              shape_1.4.6          stringi_1.7.12      
-## [70] gtable_0.3.4         lme4_1.1-34          munsell_0.5.0       
-## [73] pillar_1.9.0         htmltools_0.5.6      R6_2.5.1            
-## [76] doParallel_1.0.17    rprojroot_2.0.3      vroom_1.6.3         
-## [79] evaluate_0.21        lattice_0.21-8       highr_0.10          
-## [82] backports_1.4.1      leaps_3.1            broom_1.0.5         
-## [85] Rcpp_1.0.11          nlme_3.1-162         coda_0.19-4         
-## [88] xfun_0.39            pkgconfig_2.0.3
+## [58] visdat_0.6.0         ggrepel_0.9.5        FactoMineR_2.11     
+## [61] foreach_1.5.2        gower_1.0.2          glue_1.7.0          
+## [64] pan_1.9              nloptr_2.0.3         codetools_0.2-20    
+## [67] DT_0.33              shape_1.4.6.1        stringi_1.8.4       
+## [70] gtable_0.3.5         lme4_1.1-35.3        munsell_0.5.1       
+## [73] pillar_1.9.0         htmltools_0.5.8.1    R6_2.5.1            
+## [76] doParallel_1.0.17    rprojroot_2.0.4      vroom_1.6.5         
+## [79] evaluate_0.23        lattice_0.22-6       highr_0.10          
+## [82] backports_1.5.0      leaps_3.1            broom_1.0.6         
+## [85] renv_1.0.9           Rcpp_1.0.13          nlme_3.1-164        
+## [88] coda_0.19-4.1        xfun_0.49            pkgconfig_2.0.3
 ```

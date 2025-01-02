@@ -6,10 +6,10 @@ output: html_document
 
 In the analysis of sensory data, many of the steps are concerned with "dimensionality reduction": finding optimal, low-dimensional representations of sensory data, which is typically highly multivariate.  The definition of "optimal" will vary, depending on the particular method chosen.  In this section, we're going to focus on **Canonical Variate Analysis (CVA)**, which HGH tends to prefer for sensory data over the more common Principal Components Analysis (we'll get to that, too!).
 
-First, we'll start with loading our data and the relevant libraries.  Note that here we will be loading a new library: `candisc`.  This is the library that HGH uses in the original **R Opus**, and as far as I can tell it remains the best way to conduct CVA.  A good alternative would be Beaton & Abdi's `MExPosition`, but that package appears to be defunct as of the time of this writing (late 2022), and uses a closely related approach called Barycentric Discriminant Analysis instead of the typical CVA.
+First, we'll start with loading our data and the relevant libraries.  Note that here we will be loading a new library: `candisc`.  This is the library that HGH uses in the original **R Opus**, and as far as I can tell it remains the best way to conduct CVA.  A good alternative would be Beaton & Abdi's `MExPosition`, but that package appears to be defunct as of the time of this writing (late 2024), and uses a closely related approach called Barycentric Discriminant Analysis instead of the typical CVA.
 
 
-```r
+``` r
 # Attempted fix for the rgl error documented here: https://stackoverflow.com/a/66127391/2554330
 
 #options(rgl.useNULL = TRUE)
@@ -27,12 +27,12 @@ descriptive_data <- read_csv(here("data/torriDAFinal.csv")) %>%
 
 Canonical Variate Analysis is also often called (Linear) Discriminant Analysis.  It is closely related to Canonical Correlation Analysis, and is even sometimes called Fisher's Linear Descriminant Analysis (phew).  The basic goal of this analysis is to find linear combinations of variables that best separate groups of observations.  In this way, we could say that CVA/LDA is a "supervised" learning method, in that we need to provide a vector of group IDs for the observations (rows) in order to allow the algorithm to find a combinaton of variables to separate them.   
 
-CVA builds on the same matrix-math calculations that underly MANOVA, and so, according to Rencher **CITE Rencher 2012**, we can think of CVA as the multivariate equivalent of univariate post-hoc testing, like Tukey's HSD.  In post-hoc testing, we calculate various intervals around group means in order to see if we can separate observations from multiple groups according to their group IDs.  We do much the same with CVA, except that we use group mean *vectors*.  
+CVA builds on the same matrix-math calculations that underly MANOVA, and so, according to @rencherMethods2002, we can think of CVA as the multivariate equivalent of univariate post-hoc testing, like Tukey's HSD.  In post-hoc testing, we calculate various intervals around group means in order to see if we can separate observations from multiple groups according to their group IDs.  We do much the same with CVA, except that we use group mean *vectors*.  
 
 Recall that we had a significant 3-way MANOVA for our data:
 
 
-```r
+``` r
 manova_res <- 
   manova(as.matrix(descriptive_data[, 4:23]) ~ (ProductName + NJ + NR)^2, 
          data = descriptive_data)
@@ -56,7 +56,7 @@ summary(manova_res, test = "W")
 We are interested in building on our intuition about Mahalanobis distances, etc, and seeing if we can use, in our case, `ProductName` to separate our observations in multidimensional descriptor space.  Specifically, we have a 20-dimensional data set:
 
 
-```r
+``` r
 descriptive_data %>%
   glimpse()
 ```
@@ -106,7 +106,7 @@ In the original **R Opus**, HGH recommends using CVA only on one-way MANOVA, and
 First, let's run a one-way MANOVA with just ProductName as the predictor and then send it off to CVA (using the `candisc()` function, whose name comes from "canonical discriminant analysis"):
 
 
-```r
+``` r
 manova_res_oneway <- 
   manova(as.matrix(descriptive_data[, 4:23]) ~ ProductName, 
          data = descriptive_data)
@@ -148,7 +148,7 @@ The likelihood-ratio tests given in the summary from the `cva_res_oneway` object
 However, compare these results to those from our original MANOVA:
 
 
-```r
+``` r
 cva_res <- candisc(manova_res, term = "ProductName")
 cva_res
 ```
@@ -188,7 +188,7 @@ While the exact numbers are different (and we see more significant dimensions ac
 We'll start by examining the placement of the group means in the resultant "CVA-space", which is just the scores (linear combinations of original variables) for the first and second canonical variate functions for each product mean vector.
 
 
-```r
+``` r
 # Here is the plot of canonical variates 1 and 2 from the one-way approach
 scores_p_1 <- 
   cva_res_oneway$means %>%
@@ -208,7 +208,7 @@ scores_p_1
 
 ![](05-CVA_files/figure-latex/unnamed-chunk-6-1.pdf)<!-- --> 
 
-```r
+``` r
 # And here is the plot of the canonical variates 1 and 2 from the multiway MANOVA
 scores_p_2 <- 
   cva_res$means %>%
@@ -235,7 +235,7 @@ Next, we want to examine how the original variables are related to the resulting
 In the `candisc()` output, the `$coeffs.raw` list holds the linear combinations of variables that contribute to each dimension:
 
 
-```r
+``` r
 cva_res_oneway$coeffs.raw %>%
   round(2) %>%
   as_tibble(rownames = "descriptor")
@@ -272,7 +272,7 @@ This tell us that to get an observation's (call it $i$) score on Canonical Varia
 To visualize this, rather than plotting the raw coefficients, we typically plot the correlations between the raw coefficients and the original variables, which are stored in the `$structure` list.  We can consider the "loadings" or "structure coefficients" themselves as coordinates in the same CVA space, which gives us an idea of how each variable contributes to the dimensions.
 
 
-```r
+``` r
 cva_res_oneway$structure %>%
   as_tibble(rownames = "descriptor") %>%
   ggplot(aes(x = Can1, y = Can2)) + 
@@ -290,10 +290,10 @@ cva_res_oneway$structure %>%
 
 We can see from this plot that the first canonical variate has large positive contributions from "Burned" characteristics and smaller contributions from "Oak", and strong negative contributions from fruit-related terms like "Jam", "Artificial_frui [sic]", etc.  The second canonical variate has large positive contributions from both "Vanilla" and "Chocolate", and negative contributions from flaw/complex terms like "Medicinal", "Band-aid", etc.
 
-If we examine the results from the multiway MANOVA we'll see similar results, with the exception of a reversed x-axis (first canonical variate).
+If we examine the results from the multiway MANOVA we'll see similar results, with the exception of a reversed x-axis (first canonical variate).  The main differences seem to be better separation among the fruit-like contributors, with "Artificial_frui" and "Jam" being better separated, and an implication that the "Red_berry" and "Dark_berry" attributes are probably contributing more to a higher dimension.
 
 
-```r
+``` r
 cva_res$structure %>%
   as_tibble(rownames = "descriptor") %>%
   ggplot(aes(x = Can1, y = Can2)) + 
@@ -320,7 +320,7 @@ You will also need to specify arguments for `height = ` and `width = `, as well 
 An example of this workflow, the following (not executed) code will take the last plot of the CVA loadings for the multiway ANOVA, save it as an object called `p`, and then save that plot to my home folder:
 
 
-```r
+``` r
 p <-
   cva_res$structure %>%
   as_tibble(rownames = "descriptor") %>%
@@ -341,10 +341,10 @@ ggsave(filename = "~/my_new_plot.png",
 
 ## Plotting uncertainty in CVA
 
-One of the advantages of CVA is that it is based on raw data, which PCA is *typically* not [an exception is so-called Tucker-1 PCA; @dettmarPrincipal2020].  So far we've only visualized the *group* means for the wines in our CVA plots, but we can investigate the `$scores` data frame in the CVA results to see the raw observation scores, and use them to plot confidence ellipses.
+One of the advantages of CVA is that it is based on raw data, which PCA is *typically* not [an exception is so-called Tucker-1 PCA, @dettmarPrincipal2020].  So far we've only visualized the *group* means for the wines in our CVA plots, but we can investigate the `$scores` data frame in the CVA results to see the raw observation scores, and use them to plot confidence ellipses.
 
 
-```r
+``` r
 cva_res_oneway$scores %>% 
   as_tibble()
 ```
@@ -366,7 +366,7 @@ cva_res_oneway$scores %>%
 ## # i 326 more rows
 ```
 
-```r
+``` r
 cva_res$scores %>%
   as_tibble()
 ```
@@ -391,7 +391,7 @@ cva_res$scores %>%
 We can add these to our mean-scores plots using the `ggplot2` layering capabilities--another example of using `ggplot2` over base R graphics.
 
 
-```r
+``` r
 scores_p_1 + 
   stat_ellipse(data = cva_res_oneway$scores,
                mapping = aes(group = ProductName),
@@ -406,7 +406,7 @@ scores_p_1 +
 
 ![](05-CVA_files/figure-latex/unnamed-chunk-12-1.pdf)<!-- --> 
 
-```r
+``` r
 # This is in some contrast to the original R Opus, in which HGH used 95% confidence circles
 
 scores_p_1 +
@@ -427,7 +427,7 @@ scores_p_1 +
 While I don't have immediate access to the original reference HGH cites, the calculation provided in the original **R Opus** and repeated above draws a circle of confidence based on the number of observations in each group, which to my mind seems likely to underestimate the overlap between samples.  On the other hand, my simple confidence ellipses are for the raw observations, rather than the "barycentric" (mean vector) confidence intervals that the method given by HGH hopes to provide.  We can look at this by looking at the actual observations plotted in the CVA space.
 
 
-```r
+``` r
 scores_p_1 +
   geom_point(data = cva_res_oneway$scores,
              aes(color = ProductName),
@@ -455,7 +455,7 @@ When we plot the actual observations, it is apparent that the proposed confidenc
 In the original **R Opus**, HGH provides a function from Helene Hopfer, Peter Buffon, and Vince Buffalo to calculate barycentric confidence ellipses based on, I believe, a similar method as that given in @peltierCanonical2015.  These functions rely on assumptions of bivariate normality for mean scores on the represented CVA axes, which is reasonable, but I think the function is quite opaque.  As noted in @peltierCanonical2015, a resampling approach could be used, so we're going to take this approach to illustrate such an approach.  Resampling, which involves perturbing the original data randomly and then examining its stability, is a nonparametric approach that is useful because it makes very few assumptions about either our data or analysis.
 
 
-```r
+``` r
 # This is still going to be a bit complicated, but I will walk through the steps
 # in my thinking.
 
@@ -507,19 +507,19 @@ get_bootstrapped_means()
 
 ```
 ## # A tibble: 8 x 3
-##   ProductName     Can1    Can2
-##   <fct>          <dbl>   <dbl>
-## 1 C_MERLOT     0.423    0.0956
-## 2 C_REFOSCO    1.43     0.601 
-## 3 C_SYRAH      0.190    0.248 
-## 4 C_ZINFANDEL -0.240    0.239 
-## 5 I_MERLOT     0.342   -0.651 
-## 6 I_PRIMITIVO -1.24     0.336 
-## 7 I_REFOSCO    0.00388 -1.29  
-## 8 I_SYRAH     -0.903    0.426
+##   ProductName    Can1    Can2
+##   <fct>         <dbl>   <dbl>
+## 1 C_MERLOT     0.398  -0.0316
+## 2 C_REFOSCO    1.77    0.768 
+## 3 C_SYRAH     -0.0148 -0.138 
+## 4 C_ZINFANDEL -0.346   0.227 
+## 5 I_MERLOT     0.201  -0.681 
+## 6 I_PRIMITIVO -1.01    0.178 
+## 7 I_REFOSCO   -0.141  -0.973 
+## 8 I_SYRAH     -0.856   0.650
 ```
 
-```r
+``` r
 # In order to generate a set of resampled confidence ellipses for our results,
 # we'll run this 100 times for speed (for accuracy, 1000x would be better) and use
 # stat_ellipse() to draw those.
@@ -545,25 +545,25 @@ scores_p_1 +
 
 ![](05-CVA_files/figure-latex/unnamed-chunk-14-1.pdf)<!-- --> 
 
-While this requires a bit of computation time (around 5 seconds on my 2017 iMac, writing in 2022), this is still pretty tractable.  It would take about 1 minute to do a "publishable" bootstrap of 1000 samples, which is still fine.  As we'll see, this resampling approach will generalize easily to other needs.
+While this requires a bit of computation time (around 5 seconds on my M2 Mac Mini, writing in 2024), this is still pretty tractable.  It would take about 1 minute to do a "publishable" bootstrap of 1000 samples, which is still fine.  As we'll see, this resampling approach will generalize easily to other needs.
 
 This is a more conservative result than that given by the bivariate normal ellipses in the original **R Opus**, although the actual conclusions of pairwise sample discrimination are identical.
 
 ## Packages used in this chapter
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: aarch64-apple-darwin20 (64-bit)
-## Running under: macOS Ventura 13.6.1
+## R version 4.4.1 (2024-06-14)
+## Platform: x86_64-apple-darwin20
+## Running under: macOS 15.2
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -572,27 +572,27 @@ sessionInfo()
 ## tzcode source: internal
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] stats     graphics  grDevices datasets  utils     methods   base     
 ## 
 ## other attached packages:
-##  [1] here_1.0.1      candisc_0.8-6   heplots_1.6.0   broom_1.0.5    
-##  [5] car_3.1-2       carData_3.0-5   lubridate_1.9.2 forcats_1.0.0  
-##  [9] stringr_1.5.0   dplyr_1.1.2     purrr_1.0.1     readr_2.1.4    
-## [13] tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.3   tidyverse_2.0.0
-## [17] rgl_1.2.1      
+##  [1] here_1.0.1      candisc_0.9.0   heplots_1.7.3   broom_1.0.6    
+##  [5] lubridate_1.9.3 forcats_1.0.0   stringr_1.5.1   dplyr_1.1.4    
+##  [9] purrr_1.0.2     readr_2.1.5     tidyr_1.3.1     tibble_3.2.1   
+## [13] ggplot2_3.5.1   tidyverse_2.0.0 rgl_1.3.14     
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] utf8_1.2.3        generics_0.1.3    stringi_1.7.12    hms_1.1.3        
-##  [5] digest_0.6.33     magrittr_2.0.3    evaluate_0.21     grid_4.3.1       
-##  [9] timechange_0.2.0  bookdown_0.37     fastmap_1.1.1     rprojroot_2.0.3  
-## [13] jsonlite_1.8.7    ggrepel_0.9.3     backports_1.4.1   fansi_1.0.4      
-## [17] scales_1.2.1      abind_1.4-5       cli_3.6.1         crayon_1.5.2     
-## [21] rlang_1.1.1       bit64_4.0.5       munsell_0.5.0     base64enc_0.1-3  
-## [25] withr_2.5.0       yaml_2.3.7        parallel_4.3.1    tools_4.3.1      
-## [29] tzdb_0.4.0        colorspace_2.1-0  vctrs_0.6.3       R6_2.5.1         
-## [33] lifecycle_1.0.3   bit_4.0.5         htmlwidgets_1.6.2 vroom_1.6.3      
-## [37] MASS_7.3-60       pkgconfig_2.0.3   pillar_1.9.0      gtable_0.3.4     
-## [41] Rcpp_1.0.11       glue_1.6.2        highr_0.10        xfun_0.39        
-## [45] tidyselect_1.2.0  rstudioapi_0.15.0 knitr_1.43        farver_2.1.1     
-## [49] htmltools_0.5.6   labeling_0.4.3    rmarkdown_2.23    compiler_4.3.1
+##  [1] utf8_1.2.4        generics_0.1.3    renv_1.0.9        stringi_1.8.4    
+##  [5] hms_1.1.3         digest_0.6.37     magrittr_2.0.3    evaluate_0.23    
+##  [9] grid_4.4.1        timechange_0.3.0  bookdown_0.39     fastmap_1.2.0    
+## [13] rprojroot_2.0.4   jsonlite_1.8.8    ggrepel_0.9.5     backports_1.5.0  
+## [17] fansi_1.0.6       scales_1.3.0      abind_1.4-5       cli_3.6.3        
+## [21] crayon_1.5.2      rlang_1.1.4       bit64_4.0.5       munsell_0.5.1    
+## [25] base64enc_0.1-3   withr_3.0.0       yaml_2.3.8        parallel_4.4.1   
+## [29] tools_4.4.1       tzdb_0.4.0        colorspace_2.1-0  vctrs_0.6.5      
+## [33] R6_2.5.1          lifecycle_1.0.4   bit_4.0.5         car_3.1-2        
+## [37] htmlwidgets_1.6.4 vroom_1.6.5       MASS_7.3-60.2     pkgconfig_2.0.3  
+## [41] pillar_1.9.0      gtable_0.3.5      Rcpp_1.0.13       glue_1.7.0       
+## [45] highr_0.10        xfun_0.49         tidyselect_1.2.1  rstudioapi_0.16.0
+## [49] knitr_1.46        farver_2.1.2      htmltools_0.5.8.1 labeling_0.4.3   
+## [53] rmarkdown_2.27    carData_3.0-5     compiler_4.4.1
 ```

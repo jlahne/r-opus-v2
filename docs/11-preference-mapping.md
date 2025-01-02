@@ -18,7 +18,7 @@ On top of that, I personally find that many of the approaches are technically an
 To do preference mapping, we of course need some consumer data.  We have data on consumer responses to the wines profiled in our DA example in the `torriconsFinal.csv` file.  Let's load our standard packages and import the data.
 
 
-```r
+``` r
 library(tidyverse)
 library(here)
 
@@ -70,7 +70,7 @@ numeric & I\_REFOSCO & 0 & 1 & 4.820755 & 2.2116452 & 1 & 3.00 & 5.0 & 7.00 & 9 
 So we have a lot of rows, each one of which represents a judge.  In fact, we have two kinds of data in this wide data frame: data about consumer preferences (titled with wine names, like `I_SYRAH`) and data about the judges themselves (`Wine Frequency`, `Age`, etc).  Let's break these up for ease of use.
 
 
-```r
+``` r
 consumer_demo <- 
   consumer_data %>%
   select(Judge:Age) %>%
@@ -86,7 +86,7 @@ consumer_data <-
 OK, now we're ready to start working!  Before we do, let's do a little summary work to get some insight into the data.  We might be curious, for example, to get some kind of $mean±se$ estimate for our liking for each wine.  Easy enough to do with what we've learned so far:
 
 
-```r
+``` r
 consumer_data %>%
   pivot_longer(-Judge) %>%
   ggplot(aes(x = name, y = value)) + 
@@ -98,7 +98,8 @@ consumer_data %>%
 ```
 
 ```
-## Warning: Removed 15 rows containing missing values (`geom_point()`).
+## Warning: Removed 23 rows containing missing values or values outside the scale range
+## (`geom_point()`).
 ```
 
 ![](11-preference-mapping_files/figure-latex/unnamed-chunk-3-1.pdf)<!-- --> 
@@ -114,7 +115,7 @@ We'll start out nice and easy with an **internal preference map**.  In this appr
 First, we need to transpose our table so that judges are the variables and wines are the observations:
 
 
-```r
+``` r
 internal_map <- 
   consumer_data %>%
   column_to_rownames("Judge") %>%
@@ -128,11 +129,13 @@ Notice that I just used `t()` to transpose; HGH demonstrated a workflow using th
 Let's take a look at what we got.  
 
 
-```r
+``` r
 internal_coordinates <- 
+  # we use a tibble of tibbles to easily combine our row and column coords
   tibble(point_type = c("subject", "product"),
          data = list(internal_map$var$coord,
                      internal_map$ind$coord)) %>%
+  # and as_tibble() will turn our matrices into legible tables
   mutate(data = map(data, as_tibble, rownames = "label")) %>%
   unnest(everything())
 
@@ -152,7 +155,7 @@ internal_coordinates %>%
 ## 2 subject    0.639 0.573 0.542 0.496 0.477
 ```
 
-```r
+``` r
 # This is just to avoid re-typing
 
 axis_labels <- 
@@ -188,7 +191,7 @@ p_internal_consumers <-
   ggrepel::geom_text_repel(aes(label = label), size = 3) + 
   coord_equal() + 
   axis_labels + 
-  labs(subtitle = "Consumers, plotted in wine-linking space") + 
+  labs(subtitle = "Consumers, plotted as loadings in the\nconsumer-liking space") + 
   theme_bw()
 
 library(patchwork)
@@ -206,7 +209,7 @@ p_internal_consumers + p_internal_products
 In the original **R Opus**, HGH filtered the consumers to show those with the highest $cos^2$ values: this measures their effect (in my head I always read "leverage") on the spatial arrangement of the plotted dimensions.  She did this using the base-`R` plotting options for the `carto()` function, and I have no idea how it specifies selection - I have not tried to figure out how that function works in detail.  Instead, if we wanted to do something similar we could look into the output of `PCA()` and create a list of influential subjects:
 
 
-```r
+``` r
 influential_subjects <- 
   internal_map$var$cos2 %>%
   as_tibble(rownames = "subject") %>%
@@ -238,7 +241,7 @@ We get fewer points than HGH did; I am assuming that the `SensoMineR` function i
 One step that HGH didn't take was to cluster the consumers according to their patterns of liking.  This is a common end goal of preference mapping in general, and HGH pursued it in the original **R Opus** section on *external* preference mapping.  However, there is no reason we can't do it with the results of an internal preference map:
 
 
-```r
+``` r
 internal_consumer_cluster <- 
   consumer_data %>%
   column_to_rownames("Judge") %>%
@@ -262,7 +265,7 @@ I think there are plausibly 3 clusters of consumers; we could also explore the p
 We can take this grouping information and project it back into our preference maps in different ways.  I am going to opt for simply replacing the original labels with labels colored by group membership. 
 
 
-```r
+``` r
 p_internal_consumers <- 
   p_internal_consumers %>%
   ggedit::remove_geom(geom = "text") +
@@ -279,7 +282,7 @@ p_internal_consumers <-
 ##   +.gg   ggplot2
 ```
 
-```r
+``` r
 p_internal_consumers + p_internal_products
 ```
 
@@ -292,10 +295,10 @@ p_internal_consumers + p_internal_products
 
 We can see that the purple and teal-ish groups are well-separated in this space, whereas the bright green group is not.  I suspect (and leave it as an exercise to find out) that this group would be better separated in a third dimension.
 
-We can then use the clusteres identified here to ask questions about, for example, consumer demographic groups.  A quick way to do per-group summaries of (often qualitative) variables is using the `skimr::skim()` function with `group_by()`.
+We can then use the clusters identified here to ask questions about, for example, consumer demographic groups.  A quick way to do per-group summaries of (often qualitative) variables is using the `skimr::skim()` function with `group_by()`.
 
 
-```r
+``` r
 consumer_demo %>%
   bind_cols(cluster = cutree(internal_consumer_cluster, k = 3)) %>%
   group_by(cluster) %>%
@@ -345,7 +348,7 @@ We can see some interesting (if minor!) differences in these groups.  Group 1, f
 
 ## External preference mapping
 
-As I mentioned above, the range of possible approaches to external preference mapping is quite large [@yenketCOMPARISON2011], and I have little interest in exploring all of them.  In particular, I find both the interface and the documentation for `SensoMineR` a little hard to grasp, so I am going to avoid its use in favor of approaches that will yield largely the same answers but with more transparencyt (for me).  
+As I mentioned above, the range of possible approaches to external preference mapping is quite large [@yenketCOMPARISON2011], and I have little interest in exploring all of them.  In particular, I find both the interface and the documentation for `SensoMineR` a little hard to grasp, so I am going to avoid its use in favor of approaches that will yield largely the same answers but with more transparency (for me).  
 
 ### Partial Least Squares Regression
 
@@ -360,7 +363,7 @@ That all sounds pretty good!  To paraphrase the same authors, PLS-R finds a *sin
 I am not going to try to do further explanation of PLS-R, because it is a rather complex, iterative fitting procedure.  The outcome, however, is relatively easy to understand, and we will talk through it once we generate it.  For this, we're going to need to load some new packages!
 
 
-```r
+``` r
 library(pls)
 
 descriptive_means <- 
@@ -409,7 +412,7 @@ I only printed out the first few lines (as otherwise the `summary()` function wi
 HGH decided to only examine 2 components, but I believe that if we investigate cross-validation we would probably choose to retain only a single component based on $PRESS$ values:
 
 
-```r
+``` r
 pls_val <- plsr(y ~ x, data = pls_data, scale = TRUE, validation = "LOO")
 
 # PRESS values for the predictor (DA) variables
@@ -423,12 +426,12 @@ pls_val$validation$PRESS[1, ]
 
 We can see that $PRESS$ is lowest with only a single component.
 
-...but, I am lazy and more interested in showing *how* to do things than making the multiple plots and analyses we'd need for 3 dimensions.  I leave investigating the 3rd component as an exercise for the reader.
+...but, I am lazy and more interested in showing *how* to do things, and in replicating the original **R Opus** workflow, so we will stick with a 2-component solution.
 
 Following our typical practice, we will see how to extract elements of the output of `plsr()` to produce nicer looking plots in `ggplot2`.  This will take a little digging because the `pls` package makes use of a lot of (what I consider) tricky and obtuse indexing and object formats.  Bear with me.
 
 
-```r
+``` r
 # The "scores" are the factor scores for the observations (wines) based on the
 # predictor (DA) variables
 pls_scores <- scores(pls_fit)
@@ -439,14 +442,14 @@ pls_scores
 
 ```
 ##                  Comp 1     Comp 2     Comp 3      Comp 4      Comp 5
-## C_MERLOT     1.48290560 -1.0856932  1.6664093  0.08429563  0.67322911
-## C_SYRAH      2.84859866 -2.6602500 -1.6667701  1.55380857 -1.32209708
-## C_ZINFANDEL  0.03184129 -0.9422643 -1.6209039 -2.16194022  0.08136815
-## C_REFOSCO   -0.43645910 -1.8055096  0.6126194  0.10221889  2.47673917
-## I_MERLOT     2.34624636  2.6446633  1.9018586  0.80383273 -0.57175907
-## I_SYRAH     -3.51138619 -1.1718605  1.6098890 -1.03261515 -1.84741358
-## I_PRIMITIVO  1.58414715  3.3609231 -1.1958901 -1.20118210  0.15460504
-## I_REFOSCO   -4.34589378  1.6599913 -1.3072122  1.85158164  0.35532825
+## C_MERLOT     1.48290560 -1.0856932  1.6664093 -0.08429563  0.67322911
+## C_SYRAH      2.84859866 -2.6602500 -1.6667701 -1.55380857 -1.32209708
+## C_ZINFANDEL  0.03184129 -0.9422643 -1.6209039  2.16194022  0.08136815
+## C_REFOSCO   -0.43645910 -1.8055096  0.6126194 -0.10221889  2.47673917
+## I_MERLOT     2.34624636  2.6446633  1.9018586 -0.80383273 -0.57175907
+## I_SYRAH     -3.51138619 -1.1718605  1.6098890  1.03261515 -1.84741358
+## I_PRIMITIVO  1.58414715  3.3609231 -1.1958901  1.20118210  0.15460504
+## I_REFOSCO   -4.34589378  1.6599913 -1.3072122 -1.85158164  0.35532825
 ##                 Comp 6       Comp 7
 ## C_MERLOT    -1.1483719 -0.938560264
 ## C_SYRAH      0.4962983 -0.009963997
@@ -463,7 +466,7 @@ pls_scores
 ## 36.598160 25.286782 12.841009  9.829632  8.774663  5.176661  1.493093
 ```
 
-```r
+``` r
 # My solution is old-fashioned class coercion: 
 class(pls_scores) <- "matrix"
 
@@ -478,20 +481,20 @@ pls_scores
 ## # A tibble: 8 x 8
 ##   wine        `Comp 1` `Comp 2` `Comp 3` `Comp 4` `Comp 5` `Comp 6` `Comp 7`
 ##   <chr>          <dbl>    <dbl>    <dbl>    <dbl>    <dbl>    <dbl>    <dbl>
-## 1 C_MERLOT      1.48     -1.09     1.67    0.0843   0.673    -1.15  -0.939  
-## 2 C_SYRAH       2.85     -2.66    -1.67    1.55    -1.32      0.496 -0.00996
-## 3 C_ZINFANDEL   0.0318   -0.942   -1.62   -2.16     0.0814   -1.36   0.471  
-## 4 C_REFOSCO    -0.436    -1.81     0.613   0.102    2.48      1.12   0.409  
-## 5 I_MERLOT      2.35      2.64     1.90    0.804   -0.572    -0.433  0.739  
-## 6 I_SYRAH      -3.51     -1.17     1.61   -1.03    -1.85      0.780 -0.0571 
-## 7 I_PRIMITIVO   1.58      3.36    -1.20   -1.20     0.155     1.17  -0.509  
-## 8 I_REFOSCO    -4.35      1.66    -1.31    1.85     0.355    -0.628 -0.105
+## 1 C_MERLOT      1.48     -1.09     1.67   -0.0843   0.673    -1.15  -0.939  
+## 2 C_SYRAH       2.85     -2.66    -1.67   -1.55    -1.32      0.496 -0.00996
+## 3 C_ZINFANDEL   0.0318   -0.942   -1.62    2.16     0.0814   -1.36   0.471  
+## 4 C_REFOSCO    -0.436    -1.81     0.613  -0.102    2.48      1.12   0.409  
+## 5 I_MERLOT      2.35      2.64     1.90   -0.804   -0.572    -0.433  0.739  
+## 6 I_SYRAH      -3.51     -1.17     1.61    1.03    -1.85      0.780 -0.0571 
+## 7 I_PRIMITIVO   1.58      3.36    -1.20    1.20     0.155     1.17  -0.509  
+## 8 I_REFOSCO    -4.35      1.66    -1.31   -1.85     0.355    -0.628 -0.105
 ```
 
 We have to take the same approach for the loadings:
 
 
-```r
+``` r
 # The "scores" are the factor loadings for the predictor (DA) variables that
 # explain how the scores for the wines are generated.
 pls_loadings <- loadings(pls_fit)
@@ -509,32 +512,32 @@ pls_loadings
 ## # A tibble: 20 x 8
 ##    descriptor     `Comp 1` `Comp 2` `Comp 3` `Comp 4` `Comp 5` `Comp 6` `Comp 7`
 ##    <chr>             <dbl>    <dbl>    <dbl>    <dbl>    <dbl>    <dbl>    <dbl>
-##  1 Red_berry      -0.299    -0.0372  0.255     0.0284 -0.161     0.333   0.317  
-##  2 Dark_berry     -0.331     0.0726 -0.124     0.127   0.135    -0.108  -0.517  
-##  3 Jam            -0.362    -0.0338  0.0276   -0.0759 -0.102     0.155  -0.174  
-##  4 Dried_fruit    -0.0884    0.214   0.00334   0.192   0.600    -0.129  -0.0280 
-##  5 Artificial_fr~ -0.340     0.0425 -0.0836    0.111  -0.215     0.113  -0.337  
-##  6 Chocolate       0.00735  -0.329  -0.265     0.126  -0.367    -0.0988 -0.133  
-##  7 Vanilla        -0.227    -0.335  -0.0582    0.0340 -0.0204    0.251   0.0659 
-##  8 Oak             0.205    -0.243  -0.0606    0.153   0.401     0.248  -0.192  
-##  9 Burned          0.239    -0.217  -0.245     0.239  -0.214    -0.119  -0.0742 
-## 10 Leather         0.261     0.244  -0.174    -0.139   0.00743   0.314  -0.103  
-## 11 Earthy          0.299     0.188  -0.164    -0.115  -0.201    -0.157   0.0185 
-## 12 Spicy           0.118     0.0269 -0.0704    0.580  -0.0442    0.433   0.313  
-## 13 Pepper          0.188     0.187   0.359     0.273  -0.00282  -0.286  -0.234  
-## 14 Grassy         -0.253     0.224   0.199     0.157  -0.203    -0.251   0.178  
-## 15 Medicinal       0.187     0.281  -0.0652   -0.385  -0.0773    0.214   0.00614
-## 16 Band-aid        0.250     0.275  -0.0976   -0.0698 -0.231     0.221  -0.0170 
-## 17 Sour           -0.0778    0.370  -0.262    -0.129   0.0735    0.226  -0.112  
-## 18 Bitter         -0.166     0.270  -0.344     0.145  -0.0339   -0.247   0.325  
-## 19 Alcohol        -0.0999   -0.103  -0.475    -0.287   0.230    -0.126   0.317  
-## 20 Astringent      0.120     0.282  -0.349     0.307   0.00121  -0.0517 -0.0935
+##  1 Red_berry      -0.299    -0.0372  0.255    -0.0284 -0.161     0.333   0.317  
+##  2 Dark_berry     -0.331     0.0726 -0.124    -0.127   0.135    -0.108  -0.517  
+##  3 Jam            -0.362    -0.0338  0.0276    0.0759 -0.102     0.155  -0.174  
+##  4 Dried_fruit    -0.0884    0.214   0.00334  -0.192   0.600    -0.129  -0.0280 
+##  5 Artificial_fr~ -0.340     0.0425 -0.0836   -0.111  -0.215     0.113  -0.337  
+##  6 Chocolate       0.00735  -0.329  -0.265    -0.126  -0.367    -0.0988 -0.133  
+##  7 Vanilla        -0.227    -0.335  -0.0582   -0.0340 -0.0204    0.251   0.0659 
+##  8 Oak             0.205    -0.243  -0.0606   -0.153   0.401     0.248  -0.192  
+##  9 Burned          0.239    -0.217  -0.245    -0.239  -0.214    -0.119  -0.0742 
+## 10 Leather         0.261     0.244  -0.174     0.139   0.00743   0.314  -0.103  
+## 11 Earthy          0.299     0.188  -0.164     0.115  -0.201    -0.157   0.0185 
+## 12 Spicy           0.118     0.0269 -0.0704   -0.580  -0.0442    0.433   0.313  
+## 13 Pepper          0.188     0.187   0.359    -0.273  -0.00282  -0.286  -0.234  
+## 14 Grassy         -0.253     0.224   0.199    -0.157  -0.203    -0.251   0.178  
+## 15 Medicinal       0.187     0.281  -0.0652    0.385  -0.0773    0.214   0.00614
+## 16 Band-aid        0.250     0.275  -0.0976    0.0698 -0.231     0.221  -0.0170 
+## 17 Sour           -0.0778    0.370  -0.262     0.129   0.0735    0.226  -0.112  
+## 18 Bitter         -0.166     0.270  -0.344    -0.145  -0.0339   -0.247   0.325  
+## 19 Alcohol        -0.0999   -0.103  -0.475     0.287   0.230    -0.126   0.317  
+## 20 Astringent      0.120     0.282  -0.349    -0.307   0.00121  -0.0517 -0.0935
 ```
 
 Now we can make the first two plots that HGH showed:
 
 
-```r
+``` r
 # We'll reuse this
 
 axis_labels <- 
@@ -560,7 +563,7 @@ This plot is quite different from HGH's, but I confirmed that even using the sam
 As you might guess, our loadings are also going to end up somewhat different:
 
 
-```r
+``` r
 pls_loadings %>%
   ggplot(aes(x = `Comp 1`, y = `Comp 2`)) + 
   geom_vline(xintercept = 0, linewidth = 1/4) + 
@@ -580,7 +583,7 @@ pls_loadings %>%
 
 
 
-```r
+``` r
 # We start with calculating the correlation betwee the original predictors and
 # the factor scores for the wines from the DA in the PLS fit.
 cor(pls_data$x, column_to_rownames(pls_scores, "wine")) %>%
@@ -610,7 +613,7 @@ The correlation plot gives us similar information to the loadings plot, above, b
 We can take the same approach to understand our outcome (consumer) variables:
 
 
-```r
+``` r
 cor(pls_data$y, column_to_rownames(pls_scores, "wine")) %>%
   as_tibble(rownames = "consumer") %>%
   ggplot(aes(x = `Comp 1`, y = `Comp 2`)) + 
@@ -633,7 +636,7 @@ cor(pls_data$y, column_to_rownames(pls_scores, "wine")) %>%
 And this is where our external preference map can come in.  Let's go ahead and segment these consumers by the clusters we identified previously:
 
 
-```r
+``` r
 cor(pls_data$y, column_to_rownames(pls_scores, "wine")) %>%
   as_tibble(rownames = "consumer") %>% 
   # Notice we are relying on positional matching here, generally a bad idea
@@ -683,18 +686,18 @@ Inspecting the results that HGH got for PCR in the original **R Opus**, it appea
 ## Packages used in this chapter
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: aarch64-apple-darwin20 (64-bit)
-## Running under: macOS Ventura 13.6.1
+## R version 4.4.1 (2024-06-14)
+## Platform: x86_64-apple-darwin20
+## Running under: macOS 15.2
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -703,44 +706,44 @@ sessionInfo()
 ## tzcode source: internal
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] stats     graphics  grDevices datasets  utils     methods   base     
 ## 
 ## other attached packages:
-##  [1] pls_2.8-2       patchwork_1.1.2 here_1.0.1      lubridate_1.9.2
-##  [5] forcats_1.0.0   stringr_1.5.0   dplyr_1.1.2     purrr_1.0.1    
-##  [9] readr_2.1.4     tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.3  
+##  [1] pls_2.8-3       patchwork_1.2.0 here_1.0.1      lubridate_1.9.3
+##  [5] forcats_1.0.0   stringr_1.5.1   dplyr_1.1.4     purrr_1.0.2    
+##  [9] readr_2.1.5     tidyr_1.3.1     tibble_3.2.1    ggplot2_3.5.1  
 ## [13] tidyverse_2.0.0
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] tidyselect_1.2.0     viridisLite_0.4.2    farver_2.1.1        
-##  [4] viridis_0.6.4        fastmap_1.1.1        tweenr_2.0.2        
-##  [7] promises_1.2.1       digest_0.6.33        mime_0.12           
-## [10] estimability_1.4.1   timechange_0.2.0     lifecycle_1.0.3     
-## [13] factoextra_1.0.7     cluster_2.1.4        ellipsis_0.3.2      
-## [16] multcompView_0.1-9   magrittr_2.0.3       compiler_4.3.1      
-## [19] rlang_1.1.1          tools_4.3.1          utf8_1.2.3          
-## [22] yaml_2.3.7           knitr_1.43           ggsignif_0.6.4      
-## [25] skimr_2.1.5          labeling_0.4.3       htmlwidgets_1.6.2   
-## [28] bit_4.0.5            scatterplot3d_0.3-44 shinyAce_0.4.2      
-## [31] plyr_1.8.8           repr_1.1.6           abind_1.4-5         
-## [34] miniUI_0.1.1.1       withr_2.5.0          polyclip_1.10-4     
-## [37] grid_4.3.1           fansi_1.0.4          ggpubr_0.6.0        
-## [40] xtable_1.8-4         colorspace_2.1-0     emmeans_1.8.7       
-## [43] scales_1.2.1         MASS_7.3-60          flashClust_1.01-2   
-## [46] cli_3.6.1            mvtnorm_1.2-2        rmarkdown_2.23      
-## [49] crayon_1.5.2         generics_0.1.3       rstudioapi_0.15.0   
-## [52] tzdb_0.4.0           ggforce_0.4.1        ggedit_0.3.1        
-## [55] parallel_4.3.1       base64enc_0.1-3      vctrs_0.6.3         
-## [58] jsonlite_1.8.7       carData_3.0-5        bookdown_0.37       
-## [61] car_3.1-2            hms_1.1.3            bit64_4.0.5         
-## [64] ggrepel_0.9.3        rstatix_0.7.2        FactoMineR_2.8      
-## [67] dendextend_1.17.1    shinyBS_0.61.1       glue_1.6.2          
-## [70] DT_0.28              stringi_1.7.12       gtable_0.3.4        
-## [73] later_1.3.1          munsell_0.5.0        pillar_1.9.0        
-## [76] htmltools_0.5.6      R6_2.5.1             rprojroot_2.0.3     
-## [79] shiny_1.7.5          vroom_1.6.3          evaluate_0.21       
-## [82] lattice_0.21-8       highr_0.10           backports_1.4.1     
-## [85] leaps_3.1            broom_1.0.5          httpuv_1.6.11       
-## [88] Rcpp_1.0.11          coda_0.19-4          gridExtra_2.3       
-## [91] xfun_0.39            pkgconfig_2.0.3
+##  [1] tidyselect_1.2.1     viridisLite_0.4.2    farver_2.1.2        
+##  [4] viridis_0.6.5        fastmap_1.2.0        tweenr_2.0.3        
+##  [7] promises_1.3.0       digest_0.6.37        mime_0.12           
+## [10] estimability_1.5.1   timechange_0.3.0     lifecycle_1.0.4     
+## [13] factoextra_1.0.7     cluster_2.1.6        multcompView_0.1-10 
+## [16] magrittr_2.0.3       compiler_4.4.1       rlang_1.1.4         
+## [19] tools_4.4.1          utf8_1.2.4           yaml_2.3.8          
+## [22] knitr_1.46           ggsignif_0.6.4       skimr_2.1.5         
+## [25] labeling_0.4.3       htmlwidgets_1.6.4    bit_4.0.5           
+## [28] scatterplot3d_0.3-44 shinyAce_0.4.3       repr_1.1.7          
+## [31] abind_1.4-5          miniUI_0.1.1.1       withr_3.0.0         
+## [34] polyclip_1.10-6      grid_4.4.1           fansi_1.0.6         
+## [37] ggpubr_0.6.0         xtable_1.8-4         colorspace_2.1-0    
+## [40] emmeans_1.10.2       scales_1.3.0         MASS_7.3-60.2       
+## [43] flashClust_1.01-2    cli_3.6.3            mvtnorm_1.2-5       
+## [46] rmarkdown_2.27       crayon_1.5.2         generics_0.1.3      
+## [49] rstudioapi_0.16.0    tzdb_0.4.0           ggforce_0.4.2       
+## [52] ggedit_0.4.1         parallel_4.4.1       base64enc_0.1-3     
+## [55] vctrs_0.6.5          jsonlite_1.8.8       carData_3.0-5       
+## [58] bookdown_0.39        car_3.1-2            hms_1.1.3           
+## [61] bit64_4.0.5          ggrepel_0.9.5        rstatix_0.7.2       
+## [64] FactoMineR_2.11      dendextend_1.17.1    shinyBS_0.61.1      
+## [67] glue_1.7.0           DT_0.33              stringi_1.8.4       
+## [70] gtable_0.3.5         later_1.3.2          munsell_0.5.1       
+## [73] pillar_1.9.0         htmltools_0.5.8.1    R6_2.5.1            
+## [76] rprojroot_2.0.4      shiny_1.8.1.1        vroom_1.6.5         
+## [79] evaluate_0.23        lattice_0.22-6       highr_0.10          
+## [82] backports_1.5.0      leaps_3.1            broom_1.0.6         
+## [85] httpuv_1.6.15        renv_1.0.9           Rcpp_1.0.13         
+## [88] coda_0.19-4.1        gridExtra_2.3        xfun_0.49           
+## [91] pkgconfig_2.0.3
 ```

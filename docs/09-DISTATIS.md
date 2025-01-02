@@ -8,7 +8,7 @@ DISTATIS is the "discriminant sorting" version of STATIS, which according to @ab
 
 > "Structuration des Tableaux à Trois Indices de la Statistique" (which can, approximately, be translated as "structuring three way statistical tables").
 
-Whereas STATIS is a methodology that is closely related to Multiple Factor Analysis [MFA: @abdiMultiple2013], DISTATIS is a slght elaboration of the method primarily for analyzing the results of **sorting tasks**.  In a sorting task, subjects receive a set of samples all at the same time (simultaneous sample presentation) and are asked to sort them into groups.  Typically, subjects are not given specific criteria for sorting, although variations of the method do exist that specify this.  Also typically, with $n$ samples, subjects are told to make between $2$ and $n-1$ groups (i.e., they cannot say all samples are identical or all samples are different).  With this simple set of instructions, a set of 15-25 subjects can evaluate a set of samples in a relatively efficient fashion.  The results are often not as well-defined or discriminating as traditional profiling methods (Descriptive Analysis, for the most part), but as a "first look" into the structure of a sample set, sorting tasks are often quite useful.
+Whereas STATIS is a methodology that is closely related to Multiple Factor Analysis [MFA: @abdiMultiple2013], DISTATIS is an elaboration of the method primarily for analyzing the results of **sorting tasks**.  In a sorting task, subjects receive a set of samples all at the same time (simultaneous sample presentation) and are asked to sort them into groups.  Typically, subjects are not given specific criteria for sorting, although variations of the method do exist that specify this.  Also typically, with $n$ samples, subjects are told to make between $2$ and $n-1$ groups (i.e., they cannot say all samples are identical or all samples are different).  With this simple set of instructions, a set of 15-25 subjects can evaluate a set of samples in a relatively efficient fashion.  The results are often not as well-defined or discriminating as traditional profiling methods (Descriptive Analysis, for the most part), but as a "first look" into the structure of a sample set, sorting tasks are often quite useful.
 
 Two further points are worth mentioning: 
 
@@ -26,7 +26,7 @@ We're actually going to use another dataset for this analysis, not the results o
 Thus, the data pertain to the same wine, but is sorted into groups *by appearance* by 15 panelists.
 
 
-```r
+``` r
 library(tidyverse)
 library(here)
 
@@ -56,7 +56,7 @@ It looks like the data are presented as follows: each row corresponds to 1 of th
 We are going to use the `DistatisR` package for much of the analysis in this section.  It has a utility function, `DistanceFromSort()`, that will transform this kind of grouping information into dissimilarities: symmetrical matrices for each panelist that show dissimilarity.  Let's check it out:
 
 
-```r
+``` r
 library(DistatisR)
 
 sorting_dissimilarities <- 
@@ -77,7 +77,7 @@ str(sorting_dissimilarities)
 ##   ..$ : chr [1:15] "263" "1331" "1400" "1401" ...
 ```
 
-```r
+``` r
 # And here is a "slice" of the sorting "brick" (3D array or tensor)
 sorting_dissimilarities[, , 1]
 ```
@@ -120,7 +120,7 @@ This multistep approach means that not only do we have the consensus results, bu
 Luckily, the `DistatisR` package makes it quite easy to run DISTATIS.
 
 
-```r
+``` r
 distatis_results <- distatis(sorting_dissimilarities)
 
 # We will also generate some bootstrapped results while we're at it so as to be
@@ -136,7 +136,7 @@ distatis_boots <- BootFromCompromise(sorting_dissimilarities)
 Before we proceed, let's look at what we've done:
 
 
-```r
+``` r
 distatis_results
 ```
 
@@ -154,32 +154,32 @@ distatis_results
 You'll notice that the output from `distatis()` is a complex list object that is reasonably well-annotated (similar to what can be found in the `FactoMineR` package outputs).  We'll dig into this in a minute.
 
 
-```r
+``` r
 distatis_boots %>% str
 ```
 
 ```
-##  num [1:8, 1:3, 1:1000] -0.32576 0.37128 -0.13673 -0.25202 -0.00556 ...
+##  num [1:8, 1:3, 1:1000] -0.2708 0.299 -0.0393 -0.162 -0.0385 ...
 ##  - attr(*, "dimnames")=List of 3
 ##   ..$ : chr [1:8] "I_REFOSCO" "I_MERLOT" "I_SYRAH" "I_PRIMITIVO" ...
 ##   ..$ : chr [1:3] "Factor 1" "Factor 2" "Factor 3"
 ##   ..$ : NULL
 ```
 
-```r
+``` r
 distatis_boots[, , 1]
 ```
 
 ```
-##                 Factor 1     Factor 2    Factor 3
-## I_REFOSCO   -0.325762283 -0.234999695  0.39074493
-## I_MERLOT     0.371277180 -0.003027493  0.16353546
-## I_SYRAH     -0.136734779  0.394274017 -0.14196500
-## I_PRIMITIVO -0.252018600  0.436810628 -0.15259934
-## C_SYRAH     -0.005564724 -0.335995944 -0.27095128
-## C_REFOSCO   -0.392376125 -0.291145253 -0.04957815
-## C_MERLOT     0.367381297 -0.021209623 -0.03525187
-## C_ZINFANDEL  0.373798034  0.055293361  0.09606526
+##                Factor 1    Factor 2    Factor 3
+## I_REFOSCO   -0.27081856 -0.22376063  0.32274448
+## I_MERLOT     0.29900986  0.01107633  0.15298217
+## I_SYRAH     -0.03926297  0.28803623 -0.10708587
+## I_PRIMITIVO -0.16197581  0.36833791 -0.12750989
+## C_SYRAH     -0.03851128 -0.28608015 -0.24590602
+## C_REFOSCO   -0.33649621 -0.29241575 -0.02637067
+## C_MERLOT     0.27417375  0.01893888 -0.06176821
+## C_ZINFANDEL  0.27388121  0.11586718  0.09291401
 ```
 
 The `BootFromCompromise()` function gives us another array: in this case a set of factor scores for the samples on the first 3 factors/components, over 1000 (the default) bootstrapped iterations.  Each slice is a single bootstrapped iteration.
@@ -189,22 +189,14 @@ Finally, let's examine our results.  The output from `distatis()` stores results
 Let's follow along in the order that HGH did in her workflow.  She starts by examining first the overall explained variances.  These are found in the `distatis_results$res4Splus$tau` vector.  
 
 
-```r
+``` r
 distatis_results$res4Splus$tau %>%
   as_tibble(rownames = "dim") %>%
   mutate(dim = str_c("Dimension ", dim)) %>%
   ggplot(aes(x = dim, y = value)) + 
-  geom_col(fill = "grey", color = "black", size = 1/2) + 
+  geom_col(fill = "grey", color = "black", linewidth = 1/2) + 
   theme_classic() + 
   labs(x = NULL, y = "% variance explained")
-```
-
-```
-## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-## i Please use `linewidth` instead.
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-## generated.
 ```
 
 ![](09-DISTATIS_files/figure-latex/unnamed-chunk-6-1.pdf)<!-- --> 
@@ -214,7 +206,7 @@ These results look the same as HGH's (good news!), and we can see our first two 
 Let's look at how the products project into those first 2 dimensions.
 
 
-```r
+``` r
 p_splus <- 
   distatis_results$res4Splus$F %>%
   as_tibble(rownames = "sample") %>%
@@ -237,7 +229,7 @@ These results are the same as HGH's, again, which is good news.
 HGH plotted the individual subjects as projected into this space.  It's a little annoying to do, and I do not think it is typically particularly illuminating, but we'll do it here for practice.  
 
 
-```r
+``` r
 p_splus_augmented <- p_splus
 for(i in 1:dim(distatis_results$res4Splus$PartialF)[3]){
   augmented_data <- 
@@ -259,7 +251,17 @@ for(i in 1:dim(distatis_results$res4Splus$PartialF)[3]){
                      xend = xend, yend = yend),
                  size = 1/4)
 }
+```
 
+```
+## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+## i Please use `linewidth` instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.
+```
+
+``` r
 p_splus_augmented + 
   labs(title = "DISTATIS compromise plot",
        subtitle = "Individual subjects are projected as hollow diamonds")
@@ -272,7 +274,7 @@ We can see how each wine's position is actually the (weighted) barycenter of all
 Before we move on to examining the subjects and comparing to MDS, let's take a look at the bootstrapped confidence ellipses we generated.
 
 
-```r
+``` r
 # We will need to reshape these arrays into a tibble that we can more easily
 # feed into `stat_ellipse()`
 
@@ -316,7 +318,7 @@ With bootstrapping, we can see that there are 4 distinct groups of samples that 
 We can now turn our consideration to the subjects: how much did they agree?  We use the $RV$ matrix to examine this.
 
 
-```r
+``` r
 distatis_results$res4Cmat$C %>%
   round(3)
 ```
@@ -361,7 +363,7 @@ $RV$ is a generalization of the concept of (Pearson) correlation to multivariate
 If we use eigendecomposition on the $RV$ matrix, the coordinates of each subject on the first dimension indicate their maximum agreement.  We can use the first 2 dimensions to examine whether there are groups of subjects, as well as how well they agree in general:
 
 
-```r
+``` r
 p_cmat <-
   distatis_results$res4Cmat$G %>%
   as_tibble(rownames = "subject") %>%
@@ -386,7 +388,7 @@ Subjects' positions on the x-axis here are proportional to the weight their sort
 HGH goes on to also analyze these data via metric and non-metric MDS.  We will use metric MDS for convenience.  Because MDS requires a distance matrix, we have to convert our original sorting data into some kind of consensus.  HGH used the `cluster::daisy()` function.  Reading the `?daisy` file, it appears that this is a general dissimilarity tool.  We'll compare it to simply summing up the observed groups.
 
 
-```r
+``` r
 daisy_data <- 
   sorting_data %>% 
   column_to_rownames("wine") %>%
@@ -438,29 +440,29 @@ We can see that the dissimilarities produced from `daisy()` and from our simple 
 Finally, we can compare this alignment to that from DISTATIS:
 
 
-```r
+``` r
 p_splus + p_mds_simple
 ```
 
 ![](09-DISTATIS_files/figure-latex/unnamed-chunk-13-1.pdf)<!-- --> 
 
-We can see that overall our results are extremely similar, although there are some changes (the incerased spread between the Merlot wines in the DISTATIS plot, and the decreased spread between the Refosco wines).  
+We can see that overall our results are extremely similar, although there are some changes (the increased spread between the Merlot wines in the DISTATIS plot, and the decreased spread between the Refosco wines).  
 
 ## Packages used in this chapter
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: aarch64-apple-darwin20 (64-bit)
-## Running under: macOS Ventura 13.6.1
+## R version 4.4.1 (2024-06-14)
+## Platform: x86_64-apple-darwin20
+## Running under: macOS 15.2
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -469,29 +471,29 @@ sessionInfo()
 ## tzcode source: internal
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] stats     graphics  grDevices datasets  utils     methods   base     
 ## 
 ## other attached packages:
-##  [1] patchwork_1.1.2 DistatisR_1.1.1 here_1.0.1      lubridate_1.9.2
-##  [5] forcats_1.0.0   stringr_1.5.0   dplyr_1.1.2     purrr_1.0.1    
-##  [9] readr_2.1.4     tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.3  
+##  [1] patchwork_1.2.0 DistatisR_1.1.1 here_1.0.1      lubridate_1.9.3
+##  [5] forcats_1.0.0   stringr_1.5.1   dplyr_1.1.4     purrr_1.0.2    
+##  [9] readr_2.1.5     tidyr_1.3.1     tibble_3.2.1    ggplot2_3.5.1  
 ## [13] tidyverse_2.0.0
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] gtable_0.3.4       xfun_0.39          ggrepel_0.9.3      lattice_0.21-8    
-##  [5] tzdb_0.4.0         vctrs_0.6.3        tools_4.3.1        generics_0.1.3    
-##  [9] parallel_4.3.1     fansi_1.0.4        cluster_2.1.4      highr_0.10        
+##  [1] gtable_0.3.5       xfun_0.49          ggrepel_0.9.5      lattice_0.22-6    
+##  [5] tzdb_0.4.0         vctrs_0.6.5        tools_4.4.1        generics_0.1.3    
+##  [9] parallel_4.4.1     fansi_1.0.6        cluster_2.1.6      highr_0.10        
 ## [13] janeaustenr_1.0.0  pkgconfig_2.0.3    prettyGraphs_2.1.6 tokenizers_0.3.0  
-## [17] Matrix_1.6-0       readxl_1.4.3       lifecycle_1.0.3    compiler_4.3.1    
-## [21] farver_2.1.1       munsell_0.5.0      carData_3.0-5      htmltools_0.5.6   
-## [25] SnowballC_0.7.1    yaml_2.3.7         tidytext_0.4.1     pillar_1.9.0      
-## [29] car_3.1-2          crayon_1.5.2       MASS_7.3-60        abind_1.4-5       
-## [33] tidyselect_1.2.0   digest_0.6.33      stringi_1.7.12     bookdown_0.37     
-## [37] labeling_0.4.3     rprojroot_2.0.3    fastmap_1.1.1      grid_4.3.1        
-## [41] colorspace_2.1-0   cli_3.6.1          magrittr_2.0.3     utf8_1.2.3        
-## [45] withr_2.5.0        scales_1.2.1       bit64_4.0.5        timechange_0.2.0  
-## [49] rmarkdown_2.23     bit_4.0.5          cellranger_1.1.0   hms_1.1.3         
-## [53] evaluate_0.21      knitr_1.43         viridisLite_0.4.2  rlang_1.1.1       
-## [57] Rcpp_1.0.11        glue_1.6.2         rstudioapi_0.15.0  vroom_1.6.3       
-## [61] R6_2.5.1
+## [17] Matrix_1.7-0       readxl_1.4.3       lifecycle_1.0.4    compiler_4.4.1    
+## [21] farver_2.1.2       munsell_0.5.1      carData_3.0-5      htmltools_0.5.8.1 
+## [25] SnowballC_0.7.1    yaml_2.3.8         tidytext_0.4.2     pillar_1.9.0      
+## [29] car_3.1-2          crayon_1.5.2       MASS_7.3-60.2      abind_1.4-5       
+## [33] tidyselect_1.2.1   digest_0.6.37      stringi_1.8.4      bookdown_0.39     
+## [37] labeling_0.4.3     rprojroot_2.0.4    fastmap_1.2.0      grid_4.4.1        
+## [41] colorspace_2.1-0   cli_3.6.3          magrittr_2.0.3     utf8_1.2.4        
+## [45] withr_3.0.0        scales_1.3.0       bit64_4.0.5        timechange_0.3.0  
+## [49] rmarkdown_2.27     bit_4.0.5          cellranger_1.1.0   hms_1.1.3         
+## [53] evaluate_0.23      knitr_1.46         viridisLite_0.4.2  rlang_1.1.4       
+## [57] Rcpp_1.0.13        glue_1.7.0         renv_1.0.9         rstudioapi_0.16.0 
+## [61] vroom_1.6.5        R6_2.5.1
 ```

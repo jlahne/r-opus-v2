@@ -1,11 +1,11 @@
 --- 
 title: "The R Opus v2"
 author: "Jacob Lahne"
-date: "2024-01-10"
+date: "2025-01-02"
 site: bookdown::bookdown_site
 documentclass: book
 bibliography: [bib/references.bib, bib/packages.bib]
-# url: your book url like https://bookdown.org/yihui/bookdown
+url: https://jlahne.github.io/r-opus-v2/
 cover-image: img/r-opus-cover.jpg
 description: |
   This bookdown is a complete update of Hildegarde Heymann's "R Opus"
@@ -13,6 +13,7 @@ description: |
   walkthroughs on common multivariate analyses in `R` for sensory-evaluation data.
 link-citations: yes
 github-repo: jlahne/r-opus-v2
+monofont: "Fira Code"
 ---
 
 
@@ -111,7 +112,7 @@ pls\\
 Once you have set up `R` (and RStudio), you can run the following lines of code to install the packages I use in this bookdown.  This might take a minute--and you might have to restart `R` to do it.  Go get a snack!
 
 
-```r
+``` r
 packages <- c("tidyverse", "FactoMineR", "patchwork", "ggrepel", "ggedit", "ggforce", "DistatisR", "SensoMineR", "paletteer", "here", "broom", "skimr", "factoextra", "naniar", "agricolae", "tidytext", "brms", "tidybayes", "simputation", "missMDA", "corrr", "widyr", "rgl", "candisc", "MASS", "ca", "pls")
 
 install.packages(packages, dependencies = TRUE)
@@ -127,25 +128,34 @@ I will not be going over the basics of `R` coding and programming.  You can pick
 
 I'm an [associate professor of Food Science & Technology at Virginia Tech](https://www.fst.vt.edu/aboutus/faculty/jlahne.html).  I teach about sensory evaluation and about applied data analysis for food and ag scientists.  I am not a statistician, but I interact with and consume a lot of statistics.
 
+---
 
-As you work, you may start a local server to live preview this HTML book. This preview will update as you edit the book when you save individual .Rmd files. You can start the server in a work session by using the RStudio add-in "Preview book", or from the R console:
+## Changelog {-}
 
+### v0.2 (December 2024) {-}
 
+Update to fix typos, inconsistencies, and for use as "textbook" for FST 5984 (Spring 2025).
+
+### v0.1 (December 2023) {-}
+
+Initial commit.  Everything works.  There are typos and sections that need to be expanded (hi, Preference Mapping!).  
+
+---
 
 ## Session Info {-}
 
 At the end of chapter, I will be including a `sessionInfo()` chunk to try to make it easier to reproduce the work, as well as to diagnose any problems.
 
 
-```r
+``` r
 sessionInfo()
-#> R version 4.3.1 (2023-06-16)
-#> Platform: aarch64-apple-darwin20 (64-bit)
-#> Running under: macOS Ventura 13.6.1
+#> R version 4.4.1 (2024-06-14)
+#> Platform: x86_64-apple-darwin20
+#> Running under: macOS 15.2
 #> 
 #> Matrix products: default
-#> BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
-#> LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+#> BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib 
+#> LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
 #> 
 #> locale:
 #> [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -154,27 +164,27 @@ sessionInfo()
 #> tzcode source: internal
 #> 
 #> attached base packages:
-#> [1] stats     graphics  grDevices utils     datasets 
+#> [1] stats     graphics  grDevices datasets  utils    
 #> [6] methods   base     
 #> 
 #> other attached packages:
-#>  [1] lubridate_1.9.2 forcats_1.0.0   stringr_1.5.0  
-#>  [4] dplyr_1.1.2     purrr_1.0.1     readr_2.1.4    
-#>  [7] tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.3  
+#>  [1] lubridate_1.9.3 forcats_1.0.0   stringr_1.5.1  
+#>  [4] dplyr_1.1.4     purrr_1.0.2     readr_2.1.5    
+#>  [7] tidyr_1.3.1     tibble_3.2.1    ggplot2_3.5.1  
 #> [10] tidyverse_2.0.0
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] gtable_0.3.4      compiler_4.3.1    tidyselect_1.2.0 
-#>  [4] scales_1.2.1      yaml_2.3.7        fastmap_1.1.1    
-#>  [7] R6_2.5.1          generics_0.1.3    knitr_1.43       
-#> [10] bookdown_0.37     munsell_0.5.0     pillar_1.9.0     
-#> [13] tzdb_0.4.0        rlang_1.1.1       utf8_1.2.3       
-#> [16] stringi_1.7.12    xfun_0.39         timechange_0.2.0 
-#> [19] cli_3.6.1         withr_2.5.0       magrittr_2.0.3   
-#> [22] digest_0.6.33     grid_4.3.1        rstudioapi_0.15.0
-#> [25] hms_1.1.3         lifecycle_1.0.3   vctrs_0.6.3      
-#> [28] evaluate_0.21     glue_1.6.2        fansi_1.0.4      
-#> [31] colorspace_2.1-0  rmarkdown_2.23    tools_4.3.1      
-#> [34] pkgconfig_2.0.3   htmltools_0.5.6
+#>  [1] gtable_0.3.5      compiler_4.4.1    renv_1.0.9       
+#>  [4] tidyselect_1.2.1  scales_1.3.0      yaml_2.3.8       
+#>  [7] fastmap_1.2.0     R6_2.5.1          generics_0.1.3   
+#> [10] knitr_1.46        bookdown_0.39     munsell_0.5.1    
+#> [13] pillar_1.9.0      tzdb_0.4.0        rlang_1.1.4      
+#> [16] utf8_1.2.4        stringi_1.8.4     xfun_0.49        
+#> [19] timechange_0.3.0  cli_3.6.3         withr_3.0.0      
+#> [22] magrittr_2.0.3    digest_0.6.37     grid_4.4.1       
+#> [25] rstudioapi_0.16.0 hms_1.1.3         lifecycle_1.0.4  
+#> [28] vctrs_0.6.5       evaluate_0.23     glue_1.7.0       
+#> [31] fansi_1.0.6       colorspace_2.1-0  rmarkdown_2.27   
+#> [34] tools_4.4.1       pkgconfig_2.0.3   htmltools_0.5.8.1
 ```
 

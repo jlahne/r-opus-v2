@@ -21,7 +21,7 @@ For non-metric MDS, the assumption of the distances being meaningful metrics is 
 As usual, we begin by loading our required packages and the data.
 
 
-```r
+``` r
 library(tidyverse)
 library(here)
 
@@ -44,7 +44,7 @@ Note that as in the previous chapter, HGH scales (normalizes) the data to $\bar{
 We then need to get the distances among all of our observations.
 
 
-```r
+``` r
 descriptive_distances <- 
   descriptive_means %>%
   # get the rownames as we go back to older functions 
@@ -55,7 +55,7 @@ descriptive_distances <-
 The `cmdscale()` function in the base `R` `stats` package will do metric MDS for us.
 
 
-```r
+``` r
 metric_mds <- 
   descriptive_distances %>%
   # `k` defines the # of dimensions to extract, `eig` returns the eigenvalues
@@ -79,7 +79,7 @@ metric_mds
 ## 
 ## $eig
 ## [1] 5.343721e+01 3.392126e+01 1.755089e+01 1.363281e+01 1.225350e+01
-## [6] 7.141861e+00 2.062458e+00 1.796329e-15
+## [6] 7.141861e+00 2.062458e+00 2.787237e-15
 ## 
 ## $x
 ## NULL
@@ -94,7 +94,7 @@ metric_mds
 At this point you are familiar with our plot and wrangle approach - we're going to get that `$points` table and pipe it into `ggplot2` to make a nicer looking plot.
 
 
-```r
+``` r
 p_metric <- 
   metric_mds$points %>%
   as_tibble(rownames = "sample") %>%
@@ -116,7 +116,7 @@ p_metric <-
 ## generated.
 ```
 
-```r
+``` r
 p_metric
 ```
 
@@ -125,7 +125,7 @@ p_metric
 We can also examine a scree-plot of the eigenvalues to get a (qualitative) view of this solution.
 
 
-```r
+``` r
 metric_mds$eig %>%
   as_tibble() %>%
   mutate(dim = str_c("Dimension ", row_number()),
@@ -145,7 +145,7 @@ We can see that, arguably, a 2-dimensional solution is not great for capturing t
 Let's compare the distances from our MDS solution to the actual distances:
 
 
-```r
+``` r
 # Actual distances
 descriptive_distances
 ```
@@ -169,7 +169,7 @@ descriptive_distances
 ## I_SYRAH      7.537424
 ```
 
-```r
+``` r
 # Approximate distances
 metric_mds$points %>%
   dist(method = "euclidean")
@@ -199,7 +199,7 @@ Here we can see that the distances are indeed only approximate (and not that goo
 Would this get better if we went up to 3 dimensions?  We can answer that pretty easily:
 
 
-```r
+``` r
 descriptive_distances %>%
   cmdscale(k = 3, eig = TRUE) %>%
   .$points %>%
@@ -230,7 +230,7 @@ It does look like we're getting closer to the original distances as we go up in 
 Let's examine one more thing that will lead us to *non*-metric MDS: does our 2-dimensional MDS solution capture the correct *rank order* of distances?  In other words, is each pairwise distance in the MDS approximation in the same *order* as it would be in the actual distance matrix?
 
 
-```r
+``` r
 # I am getting sick of manually tidying distance matrices, so we're going to
 # enlist the `widyr` package to automate this.
 library(widyr)
@@ -248,6 +248,22 @@ tidy_descriptive_distances <-
   pairwise_dist(item = ProductName, feature = descriptor, value = rating,
                 upper = FALSE, method = "euclidean")
 
+head(tidy_descriptive_distances)
+```
+
+```
+## # A tibble: 6 x 3
+##   item1     item2       distance
+##   <fct>     <fct>          <dbl>
+## 1 C_MERLOT  C_REFOSCO       5.08
+## 2 C_MERLOT  C_SYRAH         4.53
+## 3 C_REFOSCO C_SYRAH         5.47
+## 4 C_MERLOT  C_ZINFANDEL     3.91
+## 5 C_REFOSCO C_ZINFANDEL     5.86
+## 6 C_SYRAH   C_ZINFANDEL     4.82
+```
+
+``` r
 # We'll do the same thing with our MDS results
 tidy_mds_distances <- 
   metric_mds$points %>%
@@ -256,30 +272,67 @@ tidy_mds_distances <-
   pivot_longer(-product) %>%
   pairwise_dist(item = product, feature = name, value = value,
                 upper = FALSE, method = "euclidean")
+
+head(tidy_mds_distances)
+```
+
+```
+## # A tibble: 6 x 3
+##   item1     item2       distance
+##   <chr>     <chr>          <dbl>
+## 1 C_MERLOT  C_REFOSCO       2.34
+## 2 C_MERLOT  C_SYRAH         1.14
+## 3 C_REFOSCO C_SYRAH         3.47
+## 4 C_MERLOT  C_ZINFANDEL     1.87
+## 5 C_REFOSCO C_ZINFANDEL     3.69
+## 6 C_SYRAH   C_ZINFANDEL     1.70
 ```
 
 We can now look at the ranks of pairwise distances and see how many are misaligned.
 
 
-```r
+``` r
 # We will rank the pairwise distances from the original data
-tidy_descriptive_distances %>%
+distance_rankings <-
+  tidy_descriptive_distances %>%
   unite(item1, item2, col = "items", sep = " <--> ") %>%
-  transmute(observed_rank = items,
-            distance_rank = dense_rank(distance)) %>%
-  arrange(distance_rank) %>%
+  transmute(items,
+            desc_distance_rank = dense_rank(distance)) %>%
+  arrange(items) %>%
   # And now we'll line this up with the MDS results
   left_join(
     tidy_mds_distances %>%
       unite(item1, item2, col = "items", sep = " <--> ") %>%
-      transmute(mds_rank = items,
-                distance_rank = dense_rank(distance)) %>%
-      arrange(distance_rank),
+      transmute(items,
+                mds_distance_rank = dense_rank(distance)) %>%
+      arrange(items),
     # This is the line that lines them up (`by = `)
-    by = "distance_rank"
-  ) %>%
+    by = "items")
+
+distance_rankings
+```
+
+```
+## # A tibble: 28 x 3
+##    items                      desc_distance_rank mds_distance_rank
+##    <chr>                                   <int>             <int>
+##  1 C_MERLOT <--> C_REFOSCO                     6                 5
+##  2 C_MERLOT <--> C_SYRAH                       4                 1
+##  3 C_MERLOT <--> C_ZINFANDEL                   1                 4
+##  4 C_MERLOT <--> I_MERLOT                      3                11
+##  5 C_MERLOT <--> I_PRIMITIVO                  13                16
+##  6 C_MERLOT <--> I_REFOSCO                    16                18
+##  7 C_MERLOT <--> I_SYRAH                      20                20
+##  8 C_REFOSCO <--> C_SYRAH                      8                 9
+##  9 C_REFOSCO <--> C_ZINFANDEL                 11                10
+## 10 C_REFOSCO <--> I_MERLOT                    18                17
+## # i 18 more rows
+```
+
+``` r
   # And finally we'll check which are the same
-  mutate(match = observed_rank == mds_rank) %>%
+distance_rankings %>%
+  mutate(match = desc_distance_rank == mds_distance_rank) %>%
   count(match)
 ```
 
@@ -300,7 +353,7 @@ Let's take a look and see if a non-metric MDS can do better.
 In non-metric MDS, we assume that the observed distances are non-metric: they only represent an *ordination* of the distances among the items.  An example would be, in our actual data, that the observed distances represent estimates or opinions from our panelists:
 
 
-```r
+``` r
 tidy_descriptive_distances %>%
   arrange(distance)
 ```
@@ -324,7 +377,7 @@ tidy_descriptive_distances %>%
 The closest samples are `C_MERLOT` and `C_ZINFANDEL`, and the second closest are `I_MERLOT` and `I_REFOSCO`.  If our distances are merely ordinations, we can only say that--we can't compare the actual "differences of distances" as we could if these were metric.  In the metric case, we could subtract the distance between `C_MERLOT` and `C_ZINFANDEL` and `I_MERLOT` and `I_REFOSCO` ($\approx4.5-3.9\approx0.6$) and say that the difference between those distances is larger than that between the second and third smallest distances (`I_MERLOT` and `I_REFOSCO` vs `C_MERLOT` and `I_MERLOT`, which is $\approx4.5-4.45\approx0$).  So we could say something like "the difference between the two closest pairs of samples is quite large, but the difference between the next two closest is approximately the same".  We can't do that with an ordination, because we only know the relative ranks:
 
 
-```r
+``` r
 tidy_descriptive_distances %>%
   transmute(item1, item2, 
             distance_rank = dense_rank(distance)) %>%
@@ -353,7 +406,7 @@ We can no longer know if the difference between 1st and 2nd place (so to speak, 
 OK, with that out of the way, let's take a look at non-metric MDS.  For this, we will use the `MASS` package.  `MASS` is bundled with `R`, but is not loaded by default.  It contains many useful core functions for statistics, especially non-linear and multivariate stats.  You can learn more about it [at the authors' website](https://www.stats.ox.ac.uk/pub/MASS4/).
 
 
-```r
+``` r
 library(MASS)
 
 # the `isoMDS()` function will be what we use.
@@ -373,7 +426,7 @@ nonmetric_mds <-
 As mentioned, non-metric MDS is an iterative optimization problem.  We are told that the solution has "converged" because the $STRESS$ value is no longer going down with subsequent iterations.  Let's look at our results.
 
 
-```r
+``` r
 p_nonmetric <-
   nonmetric_mds$points %>%
   as_tibble(rownames = "sample") %>%
@@ -393,7 +446,7 @@ p_nonmetric
 I'd like to compare our metric and non-metric configurations.  To do so we can use the `patchwork` package, as we have before.
 
 
-```r
+``` r
 library(patchwork)
 
 p_metric + p_nonmetric
@@ -401,12 +454,12 @@ p_metric + p_nonmetric
 
 ![](08-MDS_files/figure-latex/unnamed-chunk-14-1.pdf)<!-- --> 
 
-Note that the configurations are quite similar, but with some notable sifts (e.g., the positioning of `I_MERLOT` pops out).  This makes sense: if you read the `?isoMDS` documentation, you'll see that the initial configuration for the non-metric MDS *is* the metric MDS solution, so this approach starts with our metric MDS configuration and improves on it.
+Note that the configurations are quite similar, but with some notable shifts (e.g., the positioning of `I_MERLOT` pops out).  This makes sense: if you read the `?isoMDS` documentation, you'll see that the initial configuration for the non-metric MDS *is* the metric MDS solution, so this approach starts with our metric MDS configuration and improves on it.
 
 Let's see if we've improved the representation of our relative ranks for distances:
 
 
-```r
+``` r
 tidy_nonmetric_mds_distances <- 
   nonmetric_mds$points %>%
   as_tibble(rownames = "product") %>%
@@ -472,18 +525,18 @@ As we can see, while indeed there are rank reversals, they are relatively minor:
 ## Packages used in this chapter
 
 
-```r
+``` r
 sessionInfo()
 ```
 
 ```
-## R version 4.3.1 (2023-06-16)
-## Platform: aarch64-apple-darwin20 (64-bit)
-## Running under: macOS Ventura 13.6.1
+## R version 4.4.1 (2024-06-14)
+## Platform: x86_64-apple-darwin20
+## Running under: macOS 15.2
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -492,26 +545,27 @@ sessionInfo()
 ## tzcode source: internal
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] stats     graphics  grDevices datasets  utils     methods   base     
 ## 
 ## other attached packages:
-##  [1] patchwork_1.1.2 MASS_7.3-60     widyr_0.1.5     here_1.0.1     
-##  [5] lubridate_1.9.2 forcats_1.0.0   stringr_1.5.0   dplyr_1.1.2    
-##  [9] purrr_1.0.1     readr_2.1.4     tidyr_1.3.0     tibble_3.2.1   
-## [13] ggplot2_3.4.3   tidyverse_2.0.0
+##  [1] patchwork_1.2.0 MASS_7.3-60.2   widyr_0.1.5     here_1.0.1     
+##  [5] lubridate_1.9.3 forcats_1.0.0   stringr_1.5.1   dplyr_1.1.4    
+##  [9] purrr_1.0.2     readr_2.1.5     tidyr_1.3.1     tibble_3.2.1   
+## [13] ggplot2_3.5.1   tidyverse_2.0.0
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] utf8_1.2.3        generics_0.1.3    lattice_0.21-8    stringi_1.7.12   
-##  [5] hms_1.1.3         digest_0.6.33     magrittr_2.0.3    evaluate_0.21    
-##  [9] grid_4.3.1        timechange_0.2.0  bookdown_0.37     fastmap_1.1.1    
-## [13] plyr_1.8.8        Matrix_1.6-0      rprojroot_2.0.3   ggrepel_0.9.3    
-## [17] backports_1.4.1   fansi_1.0.4       scales_1.2.1      cli_3.6.1        
-## [21] rlang_1.1.1       crayon_1.5.2      bit64_4.0.5       munsell_0.5.0    
-## [25] withr_2.5.0       yaml_2.3.7        tools_4.3.1       parallel_4.3.1   
-## [29] reshape2_1.4.4    tzdb_0.4.0        colorspace_2.1-0  broom_1.0.5      
-## [33] vctrs_0.6.3       R6_2.5.1          lifecycle_1.0.3   bit_4.0.5        
-## [37] vroom_1.6.3       pkgconfig_2.0.3   pillar_1.9.0      gtable_0.3.4     
-## [41] glue_1.6.2        Rcpp_1.0.11       highr_0.10        xfun_0.39        
-## [45] tidyselect_1.2.0  rstudioapi_0.15.0 knitr_1.43        farver_2.1.1     
-## [49] htmltools_0.5.6   labeling_0.4.3    rmarkdown_2.23    compiler_4.3.1
+##  [1] utf8_1.2.4        generics_0.1.3    renv_1.0.9        lattice_0.22-6   
+##  [5] stringi_1.8.4     hms_1.1.3         digest_0.6.37     magrittr_2.0.3   
+##  [9] evaluate_0.23     grid_4.4.1        timechange_0.3.0  bookdown_0.39    
+## [13] fastmap_1.2.0     plyr_1.8.9        Matrix_1.7-0      rprojroot_2.0.4  
+## [17] ggrepel_0.9.5     backports_1.5.0   fansi_1.0.6       scales_1.3.0     
+## [21] cli_3.6.3         rlang_1.1.4       crayon_1.5.2      bit64_4.0.5      
+## [25] munsell_0.5.1     withr_3.0.0       yaml_2.3.8        tools_4.4.1      
+## [29] parallel_4.4.1    reshape2_1.4.4    tzdb_0.4.0        colorspace_2.1-0 
+## [33] broom_1.0.6       vctrs_0.6.5       R6_2.5.1          lifecycle_1.0.4  
+## [37] bit_4.0.5         vroom_1.6.5       pkgconfig_2.0.3   pillar_1.9.0     
+## [41] gtable_0.3.5      glue_1.7.0        Rcpp_1.0.13       highr_0.10       
+## [45] xfun_0.49         tidyselect_1.2.1  rstudioapi_0.16.0 knitr_1.46       
+## [49] farver_2.1.2      htmltools_0.5.8.1 labeling_0.4.3    rmarkdown_2.27   
+## [53] compiler_4.4.1
 ```

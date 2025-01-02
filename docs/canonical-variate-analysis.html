@@ -8,11 +8,11 @@
   <meta name="description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
 walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
-  <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.39 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 5 Canonical Variate Analysis | The R Opus v2" />
   <meta property="og:type" content="book" />
-  <meta property="og:image" content="/img/r-opus-cover.jpg" />
+  <meta property="og:image" content="https://jlahne.github.io/r-opus-v2/img/r-opus-cover.jpg" />
   <meta property="og:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
 walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
@@ -24,12 +24,12 @@ walkthroughs on common multivariate analyses in <code>R</code> for sensory-evalu
   <meta name="twitter:description" content="<p>This bookdown is a complete update of Hildegarde Heymann’s “R Opus”
 documentation, originally compiled in 2015. It gives helpful details and
 walkthroughs on common multivariate analyses in <code>R</code> for sensory-evaluation data.</p>" />
-  <meta name="twitter:image" content="/img/r-opus-cover.jpg" />
+  <meta name="twitter:image" content="https://jlahne.github.io/r-opus-v2/img/r-opus-cover.jpg" />
 
 <meta name="author" content="Jacob Lahne" />
 
 
-<meta name="date" content="2024-01-10" />
+<meta name="date" content="2025-01-02" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -61,8 +61,9 @@ walkthroughs on common multivariate analyses in <code>R</code> for sensory-evalu
 
 
 <style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -175,6 +176,11 @@ div.csl-indent {
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#r-setup"><i class="fa fa-check"></i><code>R</code> Setup</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#what-this-is-not"><i class="fa fa-check"></i>What this is not</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#about-me"><i class="fa fa-check"></i>About me</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#changelog"><i class="fa fa-check"></i>Changelog</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#v0.2-december-2024"><i class="fa fa-check"></i>v0.2 (December 2024)</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#v0.1-december-2023"><i class="fa fa-check"></i>v0.1 (December 2023)</a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#session-info"><i class="fa fa-check"></i>Session Info</a></li>
 </ul></li>
 <li class="chapter" data-level="1" data-path="data-import-and-set-up.html"><a href="data-import-and-set-up.html"><i class="fa fa-check"></i><b>1</b> Data import and set up</a>
@@ -317,28 +323,28 @@ div.csl-indent {
 <div id="canonical-variate-analysis" class="section level1 hasAnchor" number="5">
 <h1><span class="header-section-number">Chapter 5</span> Canonical Variate Analysis<a href="canonical-variate-analysis.html#canonical-variate-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>In the analysis of sensory data, many of the steps are concerned with “dimensionality reduction”: finding optimal, low-dimensional representations of sensory data, which is typically highly multivariate. The definition of “optimal” will vary, depending on the particular method chosen. In this section, we’re going to focus on <strong>Canonical Variate Analysis (CVA)</strong>, which HGH tends to prefer for sensory data over the more common Principal Components Analysis (we’ll get to that, too!).</p>
-<p>First, we’ll start with loading our data and the relevant libraries. Note that here we will be loading a new library: <code>candisc</code>. This is the library that HGH uses in the original <strong>R Opus</strong>, and as far as I can tell it remains the best way to conduct CVA. A good alternative would be Beaton &amp; Abdi’s <code>MExPosition</code>, but that package appears to be defunct as of the time of this writing (late 2022), and uses a closely related approach called Barycentric Discriminant Analysis instead of the typical CVA.</p>
-<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="canonical-variate-analysis.html#cb155-1" tabindex="-1"></a><span class="co"># Attempted fix for the rgl error documented here: https://stackoverflow.com/a/66127391/2554330</span></span>
-<span id="cb155-2"><a href="canonical-variate-analysis.html#cb155-2" tabindex="-1"></a></span>
-<span id="cb155-3"><a href="canonical-variate-analysis.html#cb155-3" tabindex="-1"></a><span class="co">#options(rgl.useNULL = TRUE)</span></span>
-<span id="cb155-4"><a href="canonical-variate-analysis.html#cb155-4" tabindex="-1"></a><span class="fu">library</span>(rgl)</span>
-<span id="cb155-5"><a href="canonical-variate-analysis.html#cb155-5" tabindex="-1"></a></span>
-<span id="cb155-6"><a href="canonical-variate-analysis.html#cb155-6" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb155-7"><a href="canonical-variate-analysis.html#cb155-7" tabindex="-1"></a><span class="fu">library</span>(candisc) <span class="co"># this is new</span></span>
-<span id="cb155-8"><a href="canonical-variate-analysis.html#cb155-8" tabindex="-1"></a><span class="fu">library</span>(here)</span>
-<span id="cb155-9"><a href="canonical-variate-analysis.html#cb155-9" tabindex="-1"></a></span>
-<span id="cb155-10"><a href="canonical-variate-analysis.html#cb155-10" tabindex="-1"></a>descriptive_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriDAFinal.csv&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb155-11"><a href="canonical-variate-analysis.html#cb155-11" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="at">.vars =</span> <span class="fu">vars</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>), <span class="sc">~</span><span class="fu">as.factor</span>(.))</span></code></pre></div>
+<p>First, we’ll start with loading our data and the relevant libraries. Note that here we will be loading a new library: <code>candisc</code>. This is the library that HGH uses in the original <strong>R Opus</strong>, and as far as I can tell it remains the best way to conduct CVA. A good alternative would be Beaton &amp; Abdi’s <code>MExPosition</code>, but that package appears to be defunct as of the time of this writing (late 2024), and uses a closely related approach called Barycentric Discriminant Analysis instead of the typical CVA.</p>
+<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb159-1"><a href="canonical-variate-analysis.html#cb159-1" tabindex="-1"></a><span class="co"># Attempted fix for the rgl error documented here: https://stackoverflow.com/a/66127391/2554330</span></span>
+<span id="cb159-2"><a href="canonical-variate-analysis.html#cb159-2" tabindex="-1"></a></span>
+<span id="cb159-3"><a href="canonical-variate-analysis.html#cb159-3" tabindex="-1"></a><span class="co">#options(rgl.useNULL = TRUE)</span></span>
+<span id="cb159-4"><a href="canonical-variate-analysis.html#cb159-4" tabindex="-1"></a><span class="fu">library</span>(rgl)</span>
+<span id="cb159-5"><a href="canonical-variate-analysis.html#cb159-5" tabindex="-1"></a></span>
+<span id="cb159-6"><a href="canonical-variate-analysis.html#cb159-6" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb159-7"><a href="canonical-variate-analysis.html#cb159-7" tabindex="-1"></a><span class="fu">library</span>(candisc) <span class="co"># this is new</span></span>
+<span id="cb159-8"><a href="canonical-variate-analysis.html#cb159-8" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb159-9"><a href="canonical-variate-analysis.html#cb159-9" tabindex="-1"></a></span>
+<span id="cb159-10"><a href="canonical-variate-analysis.html#cb159-10" tabindex="-1"></a>descriptive_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data/torriDAFinal.csv&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb159-11"><a href="canonical-variate-analysis.html#cb159-11" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="at">.vars =</span> <span class="fu">vars</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>), <span class="sc">~</span><span class="fu">as.factor</span>(.))</span></code></pre></div>
 <div id="what-is-cva" class="section level2 hasAnchor" number="5.1">
 <h2><span class="header-section-number">5.1</span> What is CVA?<a href="canonical-variate-analysis.html#what-is-cva" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Canonical Variate Analysis is also often called (Linear) Discriminant Analysis. It is closely related to Canonical Correlation Analysis, and is even sometimes called Fisher’s Linear Descriminant Analysis (phew). The basic goal of this analysis is to find linear combinations of variables that best separate groups of observations. In this way, we could say that CVA/LDA is a “supervised” learning method, in that we need to provide a vector of group IDs for the observations (rows) in order to allow the algorithm to find a combinaton of variables to separate them.</p>
-<p>CVA builds on the same matrix-math calculations that underly MANOVA, and so, according to Rencher <strong>CITE Rencher 2012</strong>, we can think of CVA as the multivariate equivalent of univariate post-hoc testing, like Tukey’s HSD. In post-hoc testing, we calculate various intervals around group means in order to see if we can separate observations from multiple groups according to their group IDs. We do much the same with CVA, except that we use group mean <em>vectors</em>.</p>
+<p>CVA builds on the same matrix-math calculations that underly MANOVA, and so, according to <span class="citation">Rencher (<a href="#ref-rencherMethods2002">2002</a>)</span>, we can think of CVA as the multivariate equivalent of univariate post-hoc testing, like Tukey’s HSD. In post-hoc testing, we calculate various intervals around group means in order to see if we can separate observations from multiple groups according to their group IDs. We do much the same with CVA, except that we use group mean <em>vectors</em>.</p>
 <p>Recall that we had a significant 3-way MANOVA for our data:</p>
-<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb156-1"><a href="canonical-variate-analysis.html#cb156-1" tabindex="-1"></a>manova_res <span class="ot">&lt;-</span> </span>
-<span id="cb156-2"><a href="canonical-variate-analysis.html#cb156-2" tabindex="-1"></a>  <span class="fu">manova</span>(<span class="fu">as.matrix</span>(descriptive_data[, <span class="dv">4</span><span class="sc">:</span><span class="dv">23</span>]) <span class="sc">~</span> (ProductName <span class="sc">+</span> NJ <span class="sc">+</span> NR)<span class="sc">^</span><span class="dv">2</span>, </span>
-<span id="cb156-3"><a href="canonical-variate-analysis.html#cb156-3" tabindex="-1"></a>         <span class="at">data =</span> descriptive_data)</span>
-<span id="cb156-4"><a href="canonical-variate-analysis.html#cb156-4" tabindex="-1"></a></span>
-<span id="cb156-5"><a href="canonical-variate-analysis.html#cb156-5" tabindex="-1"></a><span class="fu">summary</span>(manova_res, <span class="at">test =</span> <span class="st">&quot;W&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="canonical-variate-analysis.html#cb160-1" tabindex="-1"></a>manova_res <span class="ot">&lt;-</span> </span>
+<span id="cb160-2"><a href="canonical-variate-analysis.html#cb160-2" tabindex="-1"></a>  <span class="fu">manova</span>(<span class="fu">as.matrix</span>(descriptive_data[, <span class="dv">4</span><span class="sc">:</span><span class="dv">23</span>]) <span class="sc">~</span> (ProductName <span class="sc">+</span> NJ <span class="sc">+</span> NR)<span class="sc">^</span><span class="dv">2</span>, </span>
+<span id="cb160-3"><a href="canonical-variate-analysis.html#cb160-3" tabindex="-1"></a>         <span class="at">data =</span> descriptive_data)</span>
+<span id="cb160-4"><a href="canonical-variate-analysis.html#cb160-4" tabindex="-1"></a></span>
+<span id="cb160-5"><a href="canonical-variate-analysis.html#cb160-5" tabindex="-1"></a><span class="fu">summary</span>(manova_res, <span class="at">test =</span> <span class="st">&quot;W&quot;</span>)</span></code></pre></div>
 <pre><code>##                 Df   Wilks approx F num Df den Df    Pr(&gt;F)    
 ## ProductName      7 0.04243   4.7575    140 1093.6 &lt; 2.2e-16 ***
 ## NJ              13 0.00001  12.5493    260 1819.7 &lt; 2.2e-16 ***
@@ -350,8 +356,8 @@ div.csl-indent {
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>We are interested in building on our intuition about Mahalanobis distances, etc, and seeing if we can use, in our case, <code>ProductName</code> to separate our observations in multidimensional descriptor space. Specifically, we have a 20-dimensional data set:</p>
-<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="canonical-variate-analysis.html#cb158-1" tabindex="-1"></a>descriptive_data <span class="sc">%&gt;%</span></span>
-<span id="cb158-2"><a href="canonical-variate-analysis.html#cb158-2" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="canonical-variate-analysis.html#cb162-1" tabindex="-1"></a>descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb162-2"><a href="canonical-variate-analysis.html#cb162-2" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code></pre></div>
 <pre><code>## Rows: 336
 ## Columns: 23
 ## $ NJ              &lt;fct&gt; 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1331, 1400, …
@@ -392,12 +398,12 @@ div.csl-indent {
 <h2><span class="header-section-number">5.2</span> Application of CVA<a href="canonical-variate-analysis.html#application-of-cva" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>In the original <strong>R Opus</strong>, HGH recommends using CVA only on one-way MANOVA, and we ran a 3-way MANOVA. This makes sense if you think in analogy to univariate post-hoc tests: these are sometimes called “marginal means” tests because we marginalize across the other factors to collapse our data to only a single categorical predictor in which we’re interested. However, we are able to run post-hoc tests on multi-way ANOVA, and we can do the same thing in MANOVA/CVA land. Let’s compare the approach for the two.</p>
 <p>First, let’s run a one-way MANOVA with just ProductName as the predictor and then send it off to CVA (using the <code>candisc()</code> function, whose name comes from “canonical discriminant analysis”):</p>
-<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="canonical-variate-analysis.html#cb160-1" tabindex="-1"></a>manova_res_oneway <span class="ot">&lt;-</span> </span>
-<span id="cb160-2"><a href="canonical-variate-analysis.html#cb160-2" tabindex="-1"></a>  <span class="fu">manova</span>(<span class="fu">as.matrix</span>(descriptive_data[, <span class="dv">4</span><span class="sc">:</span><span class="dv">23</span>]) <span class="sc">~</span> ProductName, </span>
-<span id="cb160-3"><a href="canonical-variate-analysis.html#cb160-3" tabindex="-1"></a>         <span class="at">data =</span> descriptive_data)</span>
-<span id="cb160-4"><a href="canonical-variate-analysis.html#cb160-4" tabindex="-1"></a></span>
-<span id="cb160-5"><a href="canonical-variate-analysis.html#cb160-5" tabindex="-1"></a>cva_res_oneway <span class="ot">&lt;-</span> <span class="fu">candisc</span>(manova_res_oneway)</span>
-<span id="cb160-6"><a href="canonical-variate-analysis.html#cb160-6" tabindex="-1"></a>cva_res_oneway</span></code></pre></div>
+<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb164-1"><a href="canonical-variate-analysis.html#cb164-1" tabindex="-1"></a>manova_res_oneway <span class="ot">&lt;-</span> </span>
+<span id="cb164-2"><a href="canonical-variate-analysis.html#cb164-2" tabindex="-1"></a>  <span class="fu">manova</span>(<span class="fu">as.matrix</span>(descriptive_data[, <span class="dv">4</span><span class="sc">:</span><span class="dv">23</span>]) <span class="sc">~</span> ProductName, </span>
+<span id="cb164-3"><a href="canonical-variate-analysis.html#cb164-3" tabindex="-1"></a>         <span class="at">data =</span> descriptive_data)</span>
+<span id="cb164-4"><a href="canonical-variate-analysis.html#cb164-4" tabindex="-1"></a></span>
+<span id="cb164-5"><a href="canonical-variate-analysis.html#cb164-5" tabindex="-1"></a>cva_res_oneway <span class="ot">&lt;-</span> <span class="fu">candisc</span>(manova_res_oneway)</span>
+<span id="cb164-6"><a href="canonical-variate-analysis.html#cb164-6" tabindex="-1"></a>cva_res_oneway</span></code></pre></div>
 <pre><code>## 
 ## Canonical Discriminant Analysis for ProductName:
 ## 
@@ -425,8 +431,8 @@ div.csl-indent {
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>The likelihood-ratio tests given in the summary from the <code>cva_res_oneway</code> object gives tests derived from the <em>F</em>-statistic approximation to the Wilk’s <span class="math inline">\(\Lambda\)</span> results from the original MANOVA (another reason we prefer to use that statistic).</p>
 <p>However, compare these results to those from our original MANOVA:</p>
-<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="canonical-variate-analysis.html#cb162-1" tabindex="-1"></a>cva_res <span class="ot">&lt;-</span> <span class="fu">candisc</span>(manova_res, <span class="at">term =</span> <span class="st">&quot;ProductName&quot;</span>)</span>
-<span id="cb162-2"><a href="canonical-variate-analysis.html#cb162-2" tabindex="-1"></a>cva_res</span></code></pre></div>
+<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb166-1"><a href="canonical-variate-analysis.html#cb166-1" tabindex="-1"></a>cva_res <span class="ot">&lt;-</span> <span class="fu">candisc</span>(manova_res, <span class="at">term =</span> <span class="st">&quot;ProductName&quot;</span>)</span>
+<span id="cb166-2"><a href="canonical-variate-analysis.html#cb166-2" tabindex="-1"></a>cva_res</span></code></pre></div>
 <pre><code>## 
 ## Canonical Discriminant Analysis for ProductName:
 ## 
@@ -456,44 +462,44 @@ div.csl-indent {
 <div id="basic-visualization-of-cva" class="section level3 hasAnchor" number="5.2.1">
 <h3><span class="header-section-number">5.2.1</span> Basic visualization of CVA<a href="canonical-variate-analysis.html#basic-visualization-of-cva" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>We’ll start by examining the placement of the group means in the resultant “CVA-space”, which is just the scores (linear combinations of original variables) for the first and second canonical variate functions for each product mean vector.</p>
-<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb164-1"><a href="canonical-variate-analysis.html#cb164-1" tabindex="-1"></a><span class="co"># Here is the plot of canonical variates 1 and 2 from the one-way approach</span></span>
-<span id="cb164-2"><a href="canonical-variate-analysis.html#cb164-2" tabindex="-1"></a>scores_p_1 <span class="ot">&lt;-</span> </span>
-<span id="cb164-3"><a href="canonical-variate-analysis.html#cb164-3" tabindex="-1"></a>  cva_res_oneway<span class="sc">$</span>means <span class="sc">%&gt;%</span></span>
-<span id="cb164-4"><a href="canonical-variate-analysis.html#cb164-4" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;product&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb164-5"><a href="canonical-variate-analysis.html#cb164-5" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Can1, <span class="at">y =</span> Can2)) <span class="sc">+</span></span>
-<span id="cb164-6"><a href="canonical-variate-analysis.html#cb164-6" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb164-7"><a href="canonical-variate-analysis.html#cb164-7" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> product)) <span class="sc">+</span> </span>
-<span id="cb164-8"><a href="canonical-variate-analysis.html#cb164-8" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
-<span id="cb164-9"><a href="canonical-variate-analysis.html#cb164-9" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 1, (&quot;</span>, <span class="fu">round</span>(cva_res_oneway<span class="sc">$</span>pct[<span class="dv">1</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
-<span id="cb164-10"><a href="canonical-variate-analysis.html#cb164-10" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 2, (&quot;</span>, <span class="fu">round</span>(cva_res_oneway<span class="sc">$</span>pct[<span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
-<span id="cb164-11"><a href="canonical-variate-analysis.html#cb164-11" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">&quot;CVA Group Means (Scores) Plot&quot;</span>,</span>
-<span id="cb164-12"><a href="canonical-variate-analysis.html#cb164-12" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;based on the effect of wines in a 1-way MANOVA&quot;</span>) <span class="sc">+</span></span>
-<span id="cb164-13"><a href="canonical-variate-analysis.html#cb164-13" tabindex="-1"></a>  <span class="fu">coord_equal</span>()</span>
-<span id="cb164-14"><a href="canonical-variate-analysis.html#cb164-14" tabindex="-1"></a></span>
-<span id="cb164-15"><a href="canonical-variate-analysis.html#cb164-15" tabindex="-1"></a>scores_p_1</span></code></pre></div>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb168-1"><a href="canonical-variate-analysis.html#cb168-1" tabindex="-1"></a><span class="co"># Here is the plot of canonical variates 1 and 2 from the one-way approach</span></span>
+<span id="cb168-2"><a href="canonical-variate-analysis.html#cb168-2" tabindex="-1"></a>scores_p_1 <span class="ot">&lt;-</span> </span>
+<span id="cb168-3"><a href="canonical-variate-analysis.html#cb168-3" tabindex="-1"></a>  cva_res_oneway<span class="sc">$</span>means <span class="sc">%&gt;%</span></span>
+<span id="cb168-4"><a href="canonical-variate-analysis.html#cb168-4" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;product&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb168-5"><a href="canonical-variate-analysis.html#cb168-5" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Can1, <span class="at">y =</span> Can2)) <span class="sc">+</span></span>
+<span id="cb168-6"><a href="canonical-variate-analysis.html#cb168-6" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb168-7"><a href="canonical-variate-analysis.html#cb168-7" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> product)) <span class="sc">+</span> </span>
+<span id="cb168-8"><a href="canonical-variate-analysis.html#cb168-8" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb168-9"><a href="canonical-variate-analysis.html#cb168-9" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 1, (&quot;</span>, <span class="fu">round</span>(cva_res_oneway<span class="sc">$</span>pct[<span class="dv">1</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
+<span id="cb168-10"><a href="canonical-variate-analysis.html#cb168-10" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 2, (&quot;</span>, <span class="fu">round</span>(cva_res_oneway<span class="sc">$</span>pct[<span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
+<span id="cb168-11"><a href="canonical-variate-analysis.html#cb168-11" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">&quot;CVA Group Means (Scores) Plot&quot;</span>,</span>
+<span id="cb168-12"><a href="canonical-variate-analysis.html#cb168-12" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;based on the effect of wines in a 1-way MANOVA&quot;</span>) <span class="sc">+</span></span>
+<span id="cb168-13"><a href="canonical-variate-analysis.html#cb168-13" tabindex="-1"></a>  <span class="fu">coord_equal</span>()</span>
+<span id="cb168-14"><a href="canonical-variate-analysis.html#cb168-14" tabindex="-1"></a></span>
+<span id="cb168-15"><a href="canonical-variate-analysis.html#cb168-15" tabindex="-1"></a>scores_p_1</span></code></pre></div>
 <p><img src="05-CVA_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<div class="sourceCode" id="cb165"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb165-1"><a href="canonical-variate-analysis.html#cb165-1" tabindex="-1"></a><span class="co"># And here is the plot of the canonical variates 1 and 2 from the multiway MANOVA</span></span>
-<span id="cb165-2"><a href="canonical-variate-analysis.html#cb165-2" tabindex="-1"></a>scores_p_2 <span class="ot">&lt;-</span> </span>
-<span id="cb165-3"><a href="canonical-variate-analysis.html#cb165-3" tabindex="-1"></a>  cva_res<span class="sc">$</span>means <span class="sc">%&gt;%</span></span>
-<span id="cb165-4"><a href="canonical-variate-analysis.html#cb165-4" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;product&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb165-5"><a href="canonical-variate-analysis.html#cb165-5" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Can1, <span class="at">y =</span> Can2)) <span class="sc">+</span></span>
-<span id="cb165-6"><a href="canonical-variate-analysis.html#cb165-6" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb165-7"><a href="canonical-variate-analysis.html#cb165-7" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> product)) <span class="sc">+</span> </span>
-<span id="cb165-8"><a href="canonical-variate-analysis.html#cb165-8" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
-<span id="cb165-9"><a href="canonical-variate-analysis.html#cb165-9" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 1, (&quot;</span>, <span class="fu">round</span>(cva_res<span class="sc">$</span>pct[<span class="dv">1</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
-<span id="cb165-10"><a href="canonical-variate-analysis.html#cb165-10" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 2, (&quot;</span>, <span class="fu">round</span>(cva_res<span class="sc">$</span>pct[<span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
-<span id="cb165-11"><a href="canonical-variate-analysis.html#cb165-11" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">&quot;CVA Group Means (Scores) Plot&quot;</span>,</span>
-<span id="cb165-12"><a href="canonical-variate-analysis.html#cb165-12" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;based on the effect of wines from the multiway MANOVA&quot;</span>) <span class="sc">+</span></span>
-<span id="cb165-13"><a href="canonical-variate-analysis.html#cb165-13" tabindex="-1"></a>  <span class="fu">coord_equal</span>()</span>
-<span id="cb165-14"><a href="canonical-variate-analysis.html#cb165-14" tabindex="-1"></a></span>
-<span id="cb165-15"><a href="canonical-variate-analysis.html#cb165-15" tabindex="-1"></a>scores_p_2</span></code></pre></div>
+<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb169-1"><a href="canonical-variate-analysis.html#cb169-1" tabindex="-1"></a><span class="co"># And here is the plot of the canonical variates 1 and 2 from the multiway MANOVA</span></span>
+<span id="cb169-2"><a href="canonical-variate-analysis.html#cb169-2" tabindex="-1"></a>scores_p_2 <span class="ot">&lt;-</span> </span>
+<span id="cb169-3"><a href="canonical-variate-analysis.html#cb169-3" tabindex="-1"></a>  cva_res<span class="sc">$</span>means <span class="sc">%&gt;%</span></span>
+<span id="cb169-4"><a href="canonical-variate-analysis.html#cb169-4" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;product&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb169-5"><a href="canonical-variate-analysis.html#cb169-5" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Can1, <span class="at">y =</span> Can2)) <span class="sc">+</span></span>
+<span id="cb169-6"><a href="canonical-variate-analysis.html#cb169-6" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb169-7"><a href="canonical-variate-analysis.html#cb169-7" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> product)) <span class="sc">+</span> </span>
+<span id="cb169-8"><a href="canonical-variate-analysis.html#cb169-8" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb169-9"><a href="canonical-variate-analysis.html#cb169-9" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 1, (&quot;</span>, <span class="fu">round</span>(cva_res<span class="sc">$</span>pct[<span class="dv">1</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
+<span id="cb169-10"><a href="canonical-variate-analysis.html#cb169-10" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 2, (&quot;</span>, <span class="fu">round</span>(cva_res<span class="sc">$</span>pct[<span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
+<span id="cb169-11"><a href="canonical-variate-analysis.html#cb169-11" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">&quot;CVA Group Means (Scores) Plot&quot;</span>,</span>
+<span id="cb169-12"><a href="canonical-variate-analysis.html#cb169-12" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;based on the effect of wines from the multiway MANOVA&quot;</span>) <span class="sc">+</span></span>
+<span id="cb169-13"><a href="canonical-variate-analysis.html#cb169-13" tabindex="-1"></a>  <span class="fu">coord_equal</span>()</span>
+<span id="cb169-14"><a href="canonical-variate-analysis.html#cb169-14" tabindex="-1"></a></span>
+<span id="cb169-15"><a href="canonical-variate-analysis.html#cb169-15" tabindex="-1"></a>scores_p_2</span></code></pre></div>
 <p><img src="05-CVA_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
 <p>Besides a reversal of the x-axis (a trivial reflection which does not change meaning), the product mean separation appears to be identical in these two solutions, and the proportion of explained variation remains almost identical. We’ll keep up this comparison as we investigate the rest of the solution.</p>
 <p>Next, we want to examine how the original variables are related to the resulting “CVA-space”. This is usually visualized as a vector plot, so we’re going to follow convention. This will make our <code>ggplot2</code> calls a little messsier, but I think it is worth it.</p>
 <p>In the <code>candisc()</code> output, the <code>$coeffs.raw</code> list holds the linear combinations of variables that contribute to each dimension:</p>
-<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb166-1"><a href="canonical-variate-analysis.html#cb166-1" tabindex="-1"></a>cva_res_oneway<span class="sc">$</span>coeffs.raw <span class="sc">%&gt;%</span></span>
-<span id="cb166-2"><a href="canonical-variate-analysis.html#cb166-2" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb166-3"><a href="canonical-variate-analysis.html#cb166-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;descriptor&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb170-1"><a href="canonical-variate-analysis.html#cb170-1" tabindex="-1"></a>cva_res_oneway<span class="sc">$</span>coeffs.raw <span class="sc">%&gt;%</span></span>
+<span id="cb170-2"><a href="canonical-variate-analysis.html#cb170-2" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb170-3"><a href="canonical-variate-analysis.html#cb170-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;descriptor&quot;</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 20 × 8
 ##    descriptor       Can1  Can2  Can3  Can4  Can5  Can6  Can7
 ##    &lt;chr&gt;           &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
@@ -519,31 +525,31 @@ div.csl-indent {
 ## 20 Astringent       0.1  -0.13  0.11  0.16 -0.06 -0.02  0.02</code></pre>
 <p>This tell us that to get an observation’s (call it <span class="math inline">\(i\)</span>) score on Canonical Variate 1, we’d take the following linear sum: <span class="math inline">\(Can1_i = -0.01*Red\_berry_i + -0.12*Dark\_berry_i + ... + -0.22*Astringent_i\)</span>. We do this for every observation to find their score in the space.</p>
 <p>To visualize this, rather than plotting the raw coefficients, we typically plot the correlations between the raw coefficients and the original variables, which are stored in the <code>$structure</code> list. We can consider the “loadings” or “structure coefficients” themselves as coordinates in the same CVA space, which gives us an idea of how each variable contributes to the dimensions.</p>
-<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb168-1"><a href="canonical-variate-analysis.html#cb168-1" tabindex="-1"></a>cva_res_oneway<span class="sc">$</span>structure <span class="sc">%&gt;%</span></span>
-<span id="cb168-2"><a href="canonical-variate-analysis.html#cb168-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;descriptor&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb168-3"><a href="canonical-variate-analysis.html#cb168-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Can1, <span class="at">y =</span> Can2)) <span class="sc">+</span> </span>
-<span id="cb168-4"><a href="canonical-variate-analysis.html#cb168-4" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> <span class="dv">0</span>, <span class="at">yend =</span> <span class="dv">0</span>), </span>
-<span id="cb168-5"><a href="canonical-variate-analysis.html#cb168-5" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.2</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>), <span class="at">ends =</span> <span class="st">&quot;first&quot;</span>)) <span class="sc">+</span></span>
-<span id="cb168-6"><a href="canonical-variate-analysis.html#cb168-6" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> descriptor)) <span class="sc">+</span></span>
-<span id="cb168-7"><a href="canonical-variate-analysis.html#cb168-7" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 1, (&quot;</span>, <span class="fu">round</span>(cva_res_oneway<span class="sc">$</span>pct[<span class="dv">1</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
-<span id="cb168-8"><a href="canonical-variate-analysis.html#cb168-8" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 2, (&quot;</span>, <span class="fu">round</span>(cva_res_oneway<span class="sc">$</span>pct[<span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
-<span id="cb168-9"><a href="canonical-variate-analysis.html#cb168-9" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">&quot;CVA Loadings Plot&quot;</span>,</span>
-<span id="cb168-10"><a href="canonical-variate-analysis.html#cb168-10" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;based on the variable loadings from the 1-way MANOVA&quot;</span>) <span class="sc">+</span></span>
-<span id="cb168-11"><a href="canonical-variate-analysis.html#cb168-11" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb172-1"><a href="canonical-variate-analysis.html#cb172-1" tabindex="-1"></a>cva_res_oneway<span class="sc">$</span>structure <span class="sc">%&gt;%</span></span>
+<span id="cb172-2"><a href="canonical-variate-analysis.html#cb172-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;descriptor&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb172-3"><a href="canonical-variate-analysis.html#cb172-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Can1, <span class="at">y =</span> Can2)) <span class="sc">+</span> </span>
+<span id="cb172-4"><a href="canonical-variate-analysis.html#cb172-4" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> <span class="dv">0</span>, <span class="at">yend =</span> <span class="dv">0</span>), </span>
+<span id="cb172-5"><a href="canonical-variate-analysis.html#cb172-5" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.2</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>), <span class="at">ends =</span> <span class="st">&quot;first&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb172-6"><a href="canonical-variate-analysis.html#cb172-6" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> descriptor)) <span class="sc">+</span></span>
+<span id="cb172-7"><a href="canonical-variate-analysis.html#cb172-7" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 1, (&quot;</span>, <span class="fu">round</span>(cva_res_oneway<span class="sc">$</span>pct[<span class="dv">1</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
+<span id="cb172-8"><a href="canonical-variate-analysis.html#cb172-8" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 2, (&quot;</span>, <span class="fu">round</span>(cva_res_oneway<span class="sc">$</span>pct[<span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
+<span id="cb172-9"><a href="canonical-variate-analysis.html#cb172-9" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">&quot;CVA Loadings Plot&quot;</span>,</span>
+<span id="cb172-10"><a href="canonical-variate-analysis.html#cb172-10" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;based on the variable loadings from the 1-way MANOVA&quot;</span>) <span class="sc">+</span></span>
+<span id="cb172-11"><a href="canonical-variate-analysis.html#cb172-11" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
 <p><img src="05-CVA_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>We can see from this plot that the first canonical variate has large positive contributions from “Burned” characteristics and smaller contributions from “Oak”, and strong negative contributions from fruit-related terms like “Jam”, “Artificial_frui [sic]”, etc. The second canonical variate has large positive contributions from both “Vanilla” and “Chocolate”, and negative contributions from flaw/complex terms like “Medicinal”, “Band-aid”, etc.</p>
-<p>If we examine the results from the multiway MANOVA we’ll see similar results, with the exception of a reversed x-axis (first canonical variate).</p>
-<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb169-1"><a href="canonical-variate-analysis.html#cb169-1" tabindex="-1"></a>cva_res<span class="sc">$</span>structure <span class="sc">%&gt;%</span></span>
-<span id="cb169-2"><a href="canonical-variate-analysis.html#cb169-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;descriptor&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb169-3"><a href="canonical-variate-analysis.html#cb169-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Can1, <span class="at">y =</span> Can2)) <span class="sc">+</span> </span>
-<span id="cb169-4"><a href="canonical-variate-analysis.html#cb169-4" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> <span class="dv">0</span>, <span class="at">yend =</span> <span class="dv">0</span>), </span>
-<span id="cb169-5"><a href="canonical-variate-analysis.html#cb169-5" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.2</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>), <span class="at">ends =</span> <span class="st">&quot;first&quot;</span>)) <span class="sc">+</span></span>
-<span id="cb169-6"><a href="canonical-variate-analysis.html#cb169-6" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> descriptor)) <span class="sc">+</span></span>
-<span id="cb169-7"><a href="canonical-variate-analysis.html#cb169-7" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 1, (&quot;</span>, <span class="fu">round</span>(cva_res<span class="sc">$</span>pct[<span class="dv">1</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
-<span id="cb169-8"><a href="canonical-variate-analysis.html#cb169-8" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 2, (&quot;</span>, <span class="fu">round</span>(cva_res<span class="sc">$</span>pct[<span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
-<span id="cb169-9"><a href="canonical-variate-analysis.html#cb169-9" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">&quot;CVA Loadings Plot&quot;</span>,</span>
-<span id="cb169-10"><a href="canonical-variate-analysis.html#cb169-10" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;based on the variable loadings from the multiway MANOVA&quot;</span>) <span class="sc">+</span></span>
-<span id="cb169-11"><a href="canonical-variate-analysis.html#cb169-11" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p>If we examine the results from the multiway MANOVA we’ll see similar results, with the exception of a reversed x-axis (first canonical variate). The main differences seem to be better separation among the fruit-like contributors, with “Artificial_frui” and “Jam” being better separated, and an implication that the “Red_berry” and “Dark_berry” attributes are probably contributing more to a higher dimension.</p>
+<div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb173-1"><a href="canonical-variate-analysis.html#cb173-1" tabindex="-1"></a>cva_res<span class="sc">$</span>structure <span class="sc">%&gt;%</span></span>
+<span id="cb173-2"><a href="canonical-variate-analysis.html#cb173-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;descriptor&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb173-3"><a href="canonical-variate-analysis.html#cb173-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Can1, <span class="at">y =</span> Can2)) <span class="sc">+</span> </span>
+<span id="cb173-4"><a href="canonical-variate-analysis.html#cb173-4" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> <span class="dv">0</span>, <span class="at">yend =</span> <span class="dv">0</span>), </span>
+<span id="cb173-5"><a href="canonical-variate-analysis.html#cb173-5" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.2</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>), <span class="at">ends =</span> <span class="st">&quot;first&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb173-6"><a href="canonical-variate-analysis.html#cb173-6" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> descriptor)) <span class="sc">+</span></span>
+<span id="cb173-7"><a href="canonical-variate-analysis.html#cb173-7" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 1, (&quot;</span>, <span class="fu">round</span>(cva_res<span class="sc">$</span>pct[<span class="dv">1</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
+<span id="cb173-8"><a href="canonical-variate-analysis.html#cb173-8" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 2, (&quot;</span>, <span class="fu">round</span>(cva_res<span class="sc">$</span>pct[<span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
+<span id="cb173-9"><a href="canonical-variate-analysis.html#cb173-9" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">&quot;CVA Loadings Plot&quot;</span>,</span>
+<span id="cb173-10"><a href="canonical-variate-analysis.html#cb173-10" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;based on the variable loadings from the multiway MANOVA&quot;</span>) <span class="sc">+</span></span>
+<span id="cb173-11"><a href="canonical-variate-analysis.html#cb173-11" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
 <p><img src="05-CVA_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 </div>
 <div id="an-aside-on-exporting-r-plots" class="section level3 hasAnchor" number="5.2.2">
@@ -552,29 +558,29 @@ div.csl-indent {
 <p>To use <code>ggsave()</code>, you can either save an executed <code>ggplot2</code> plot as an object and pass it to the function, or let the default <code>ggsave(plot = last_plot())</code> behavior grab the current visual you’re looking at in the <code>Plots</code> pane. Either way, you then need to specify a destination file <em>with extension</em> (e.g., <code>/path/to/your/image.png</code>), which <code>ggsave()</code> will parse to get the correct output format. I tend to output as <code>.png</code>, but you might also want to output <code>.jpg</code> or <code>.tif</code>, depending on the usecase. Use <code>?ggsave</code> for more details.</p>
 <p>You will also need to specify arguments for <code>height =</code> and <code>width =</code>, as well as a <code>units =</code>, which takes a character string indicating pixels, inches, centimeters, etc. Finally, the <code>scale =</code> argument is equivalent to the base <code>R</code> <code>cex =</code> arguments: it dictates the degree to which the plot will be “zoomed”. <code>scale =</code> values that are greather than 1 will cause the plot to “zoom out” (elements in the plot will appear smaller), and values less than 1 will cause a “zoom in” effect.</p>
 <p>An example of this workflow, the following (not executed) code will take the last plot of the CVA loadings for the multiway ANOVA, save it as an object called <code>p</code>, and then save that plot to my home folder:</p>
-<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb170-1"><a href="canonical-variate-analysis.html#cb170-1" tabindex="-1"></a>p <span class="ot">&lt;-</span></span>
-<span id="cb170-2"><a href="canonical-variate-analysis.html#cb170-2" tabindex="-1"></a>  cva_res<span class="sc">$</span>structure <span class="sc">%&gt;%</span></span>
-<span id="cb170-3"><a href="canonical-variate-analysis.html#cb170-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;descriptor&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb170-4"><a href="canonical-variate-analysis.html#cb170-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Can1, <span class="at">y =</span> Can2)) <span class="sc">+</span> </span>
-<span id="cb170-5"><a href="canonical-variate-analysis.html#cb170-5" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> <span class="dv">0</span>, <span class="at">yend =</span> <span class="dv">0</span>), </span>
-<span id="cb170-6"><a href="canonical-variate-analysis.html#cb170-6" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.2</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>), <span class="at">ends =</span> <span class="st">&quot;first&quot;</span>)) <span class="sc">+</span></span>
-<span id="cb170-7"><a href="canonical-variate-analysis.html#cb170-7" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> descriptor)) <span class="sc">+</span></span>
-<span id="cb170-8"><a href="canonical-variate-analysis.html#cb170-8" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 1, (&quot;</span>, <span class="fu">round</span>(cva_res<span class="sc">$</span>pct[<span class="dv">1</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
-<span id="cb170-9"><a href="canonical-variate-analysis.html#cb170-9" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 2, (&quot;</span>, <span class="fu">round</span>(cva_res<span class="sc">$</span>pct[<span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
-<span id="cb170-10"><a href="canonical-variate-analysis.html#cb170-10" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">&quot;CVA Loadings Plot&quot;</span>,</span>
-<span id="cb170-11"><a href="canonical-variate-analysis.html#cb170-11" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;based on the variable loadings from the multiway MANOVA&quot;</span>) <span class="sc">+</span></span>
-<span id="cb170-12"><a href="canonical-variate-analysis.html#cb170-12" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
-<span id="cb170-13"><a href="canonical-variate-analysis.html#cb170-13" tabindex="-1"></a></span>
-<span id="cb170-14"><a href="canonical-variate-analysis.html#cb170-14" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="st">&quot;~/my_new_plot.png&quot;</span>, </span>
-<span id="cb170-15"><a href="canonical-variate-analysis.html#cb170-15" tabindex="-1"></a>       <span class="at">plot =</span> p, <span class="at">height =</span> <span class="dv">6</span>, <span class="at">width =</span> <span class="dv">8</span>, </span>
-<span id="cb170-16"><a href="canonical-variate-analysis.html#cb170-16" tabindex="-1"></a>       <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">scale =</span> <span class="fl">1.2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb174-1"><a href="canonical-variate-analysis.html#cb174-1" tabindex="-1"></a>p <span class="ot">&lt;-</span></span>
+<span id="cb174-2"><a href="canonical-variate-analysis.html#cb174-2" tabindex="-1"></a>  cva_res<span class="sc">$</span>structure <span class="sc">%&gt;%</span></span>
+<span id="cb174-3"><a href="canonical-variate-analysis.html#cb174-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">&quot;descriptor&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb174-4"><a href="canonical-variate-analysis.html#cb174-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Can1, <span class="at">y =</span> Can2)) <span class="sc">+</span> </span>
+<span id="cb174-5"><a href="canonical-variate-analysis.html#cb174-5" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> <span class="dv">0</span>, <span class="at">yend =</span> <span class="dv">0</span>), </span>
+<span id="cb174-6"><a href="canonical-variate-analysis.html#cb174-6" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.2</span>, <span class="at">units =</span> <span class="st">&quot;in&quot;</span>), <span class="at">ends =</span> <span class="st">&quot;first&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb174-7"><a href="canonical-variate-analysis.html#cb174-7" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> descriptor)) <span class="sc">+</span></span>
+<span id="cb174-8"><a href="canonical-variate-analysis.html#cb174-8" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 1, (&quot;</span>, <span class="fu">round</span>(cva_res<span class="sc">$</span>pct[<span class="dv">1</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
+<span id="cb174-9"><a href="canonical-variate-analysis.html#cb174-9" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;Canonical Variate 2, (&quot;</span>, <span class="fu">round</span>(cva_res<span class="sc">$</span>pct[<span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>),</span>
+<span id="cb174-10"><a href="canonical-variate-analysis.html#cb174-10" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">&quot;CVA Loadings Plot&quot;</span>,</span>
+<span id="cb174-11"><a href="canonical-variate-analysis.html#cb174-11" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;based on the variable loadings from the multiway MANOVA&quot;</span>) <span class="sc">+</span></span>
+<span id="cb174-12"><a href="canonical-variate-analysis.html#cb174-12" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb174-13"><a href="canonical-variate-analysis.html#cb174-13" tabindex="-1"></a></span>
+<span id="cb174-14"><a href="canonical-variate-analysis.html#cb174-14" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="st">&quot;~/my_new_plot.png&quot;</span>, </span>
+<span id="cb174-15"><a href="canonical-variate-analysis.html#cb174-15" tabindex="-1"></a>       <span class="at">plot =</span> p, <span class="at">height =</span> <span class="dv">6</span>, <span class="at">width =</span> <span class="dv">8</span>, </span>
+<span id="cb174-16"><a href="canonical-variate-analysis.html#cb174-16" tabindex="-1"></a>       <span class="at">units =</span> <span class="st">&quot;in&quot;</span>, <span class="at">scale =</span> <span class="fl">1.2</span>)</span></code></pre></div>
 </div>
 </div>
 <div id="plotting-uncertainty-in-cva" class="section level2 hasAnchor" number="5.3">
 <h2><span class="header-section-number">5.3</span> Plotting uncertainty in CVA<a href="canonical-variate-analysis.html#plotting-uncertainty-in-cva" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>One of the advantages of CVA is that it is based on raw data, which PCA is <em>typically</em> not [an exception is so-called Tucker-1 PCA; <span class="citation">Dettmar, Peltier, and Schlich (<a href="#ref-dettmarPrincipal2020">2020</a>)</span>]. So far we’ve only visualized the <em>group</em> means for the wines in our CVA plots, but we can investigate the <code>$scores</code> data frame in the CVA results to see the raw observation scores, and use them to plot confidence ellipses.</p>
-<div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb171-1"><a href="canonical-variate-analysis.html#cb171-1" tabindex="-1"></a>cva_res_oneway<span class="sc">$</span>scores <span class="sc">%&gt;%</span> </span>
-<span id="cb171-2"><a href="canonical-variate-analysis.html#cb171-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code></pre></div>
+<p>One of the advantages of CVA is that it is based on raw data, which PCA is <em>typically</em> not <span class="citation">(an exception is so-called Tucker-1 PCA, <a href="#ref-dettmarPrincipal2020">Dettmar, Peltier, and Schlich 2020</a>)</span>. So far we’ve only visualized the <em>group</em> means for the wines in our CVA plots, but we can investigate the <code>$scores</code> data frame in the CVA results to see the raw observation scores, and use them to plot confidence ellipses.</p>
+<div class="sourceCode" id="cb175"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb175-1"><a href="canonical-variate-analysis.html#cb175-1" tabindex="-1"></a>cva_res_oneway<span class="sc">$</span>scores <span class="sc">%&gt;%</span> </span>
+<span id="cb175-2"><a href="canonical-variate-analysis.html#cb175-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 336 × 8
 ##    ProductName   Can1   Can2   Can3   Can4     Can5   Can6    Can7
 ##    &lt;fct&gt;        &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
@@ -589,8 +595,8 @@ div.csl-indent {
 ##  9 C_MERLOT     2.39   1.16   0.794  0.678 -0.340   -0.469  1.06  
 ## 10 C_SYRAH      1.95   0.928 -1.09   0.847  1.01     0.644 -0.155 
 ## # ℹ 326 more rows</code></pre>
-<div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb173-1"><a href="canonical-variate-analysis.html#cb173-1" tabindex="-1"></a>cva_res<span class="sc">$</span>scores <span class="sc">%&gt;%</span></span>
-<span id="cb173-2"><a href="canonical-variate-analysis.html#cb173-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb177-1"><a href="canonical-variate-analysis.html#cb177-1" tabindex="-1"></a>cva_res<span class="sc">$</span>scores <span class="sc">%&gt;%</span></span>
+<span id="cb177-2"><a href="canonical-variate-analysis.html#cb177-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 336 × 10
 ##    ProductName NJ    NR      Can1   Can2   Can3    Can4    Can5   Can6    Can7
 ##    &lt;fct&gt;       &lt;fct&gt; &lt;fct&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
@@ -606,134 +612,134 @@ div.csl-indent {
 ## 10 C_SYRAH     1400  7     -3.49   1.72  -1.04  -1.39   -2.38   -0.338  0.563 
 ## # ℹ 326 more rows</code></pre>
 <p>We can add these to our mean-scores plots using the <code>ggplot2</code> layering capabilities–another example of using <code>ggplot2</code> over base R graphics.</p>
-<div class="sourceCode" id="cb175"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb175-1"><a href="canonical-variate-analysis.html#cb175-1" tabindex="-1"></a>scores_p_1 <span class="sc">+</span> </span>
-<span id="cb175-2"><a href="canonical-variate-analysis.html#cb175-2" tabindex="-1"></a>  <span class="fu">stat_ellipse</span>(<span class="at">data =</span> cva_res_oneway<span class="sc">$</span>scores,</span>
-<span id="cb175-3"><a href="canonical-variate-analysis.html#cb175-3" tabindex="-1"></a>               <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">group =</span> ProductName),</span>
-<span id="cb175-4"><a href="canonical-variate-analysis.html#cb175-4" tabindex="-1"></a>               <span class="at">type =</span> <span class="st">&quot;t&quot;</span>) <span class="sc">+</span></span>
-<span id="cb175-5"><a href="canonical-variate-analysis.html#cb175-5" tabindex="-1"></a>  <span class="fu">coord_fixed</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb179-1"><a href="canonical-variate-analysis.html#cb179-1" tabindex="-1"></a>scores_p_1 <span class="sc">+</span> </span>
+<span id="cb179-2"><a href="canonical-variate-analysis.html#cb179-2" tabindex="-1"></a>  <span class="fu">stat_ellipse</span>(<span class="at">data =</span> cva_res_oneway<span class="sc">$</span>scores,</span>
+<span id="cb179-3"><a href="canonical-variate-analysis.html#cb179-3" tabindex="-1"></a>               <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">group =</span> ProductName),</span>
+<span id="cb179-4"><a href="canonical-variate-analysis.html#cb179-4" tabindex="-1"></a>               <span class="at">type =</span> <span class="st">&quot;t&quot;</span>) <span class="sc">+</span></span>
+<span id="cb179-5"><a href="canonical-variate-analysis.html#cb179-5" tabindex="-1"></a>  <span class="fu">coord_fixed</span>()</span></code></pre></div>
 <pre><code>## Coordinate system already present. Adding new coordinate system, which will
 ## replace the existing one.</code></pre>
 <p><img src="05-CVA_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
-<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb177-1"><a href="canonical-variate-analysis.html#cb177-1" tabindex="-1"></a><span class="co"># This is in some contrast to the original R Opus, in which HGH used 95% confidence circles</span></span>
-<span id="cb177-2"><a href="canonical-variate-analysis.html#cb177-2" tabindex="-1"></a></span>
-<span id="cb177-3"><a href="canonical-variate-analysis.html#cb177-3" tabindex="-1"></a>scores_p_1 <span class="sc">+</span></span>
-<span id="cb177-4"><a href="canonical-variate-analysis.html#cb177-4" tabindex="-1"></a>  <span class="fu">stat_ellipse</span>(<span class="at">data =</span> cva_res_oneway<span class="sc">$</span>scores,</span>
-<span id="cb177-5"><a href="canonical-variate-analysis.html#cb177-5" tabindex="-1"></a>               <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">group =</span> ProductName),</span>
-<span id="cb177-6"><a href="canonical-variate-analysis.html#cb177-6" tabindex="-1"></a>               <span class="at">type =</span> <span class="st">&quot;euclid&quot;</span>,</span>
-<span id="cb177-7"><a href="canonical-variate-analysis.html#cb177-7" tabindex="-1"></a>               <span class="at">level =</span> <span class="dv">2</span> <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">table</span>(cva_res_oneway<span class="sc">$</span>scores[,<span class="dv">1</span>]))[<span class="dv">1</span>]) <span class="sc">+</span> </span>
-<span id="cb177-8"><a href="canonical-variate-analysis.html#cb177-8" tabindex="-1"></a>  <span class="fu">coord_fixed</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb181-1"><a href="canonical-variate-analysis.html#cb181-1" tabindex="-1"></a><span class="co"># This is in some contrast to the original R Opus, in which HGH used 95% confidence circles</span></span>
+<span id="cb181-2"><a href="canonical-variate-analysis.html#cb181-2" tabindex="-1"></a></span>
+<span id="cb181-3"><a href="canonical-variate-analysis.html#cb181-3" tabindex="-1"></a>scores_p_1 <span class="sc">+</span></span>
+<span id="cb181-4"><a href="canonical-variate-analysis.html#cb181-4" tabindex="-1"></a>  <span class="fu">stat_ellipse</span>(<span class="at">data =</span> cva_res_oneway<span class="sc">$</span>scores,</span>
+<span id="cb181-5"><a href="canonical-variate-analysis.html#cb181-5" tabindex="-1"></a>               <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">group =</span> ProductName),</span>
+<span id="cb181-6"><a href="canonical-variate-analysis.html#cb181-6" tabindex="-1"></a>               <span class="at">type =</span> <span class="st">&quot;euclid&quot;</span>,</span>
+<span id="cb181-7"><a href="canonical-variate-analysis.html#cb181-7" tabindex="-1"></a>               <span class="at">level =</span> <span class="dv">2</span> <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">table</span>(cva_res_oneway<span class="sc">$</span>scores[,<span class="dv">1</span>]))[<span class="dv">1</span>]) <span class="sc">+</span> </span>
+<span id="cb181-8"><a href="canonical-variate-analysis.html#cb181-8" tabindex="-1"></a>  <span class="fu">coord_fixed</span>()</span></code></pre></div>
 <pre><code>## Coordinate system already present. Adding new coordinate system, which will
 ## replace the existing one.</code></pre>
 <p><img src="05-CVA_files/figure-html/unnamed-chunk-12-2.png" width="672" /></p>
 <p>While I don’t have immediate access to the original reference HGH cites, the calculation provided in the original <strong>R Opus</strong> and repeated above draws a circle of confidence based on the number of observations in each group, which to my mind seems likely to underestimate the overlap between samples. On the other hand, my simple confidence ellipses are for the raw observations, rather than the “barycentric” (mean vector) confidence intervals that the method given by HGH hopes to provide. We can look at this by looking at the actual observations plotted in the CVA space.</p>
-<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb179-1"><a href="canonical-variate-analysis.html#cb179-1" tabindex="-1"></a>scores_p_1 <span class="sc">+</span></span>
-<span id="cb179-2"><a href="canonical-variate-analysis.html#cb179-2" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> cva_res_oneway<span class="sc">$</span>scores,</span>
-<span id="cb179-3"><a href="canonical-variate-analysis.html#cb179-3" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">color =</span> ProductName),</span>
-<span id="cb179-4"><a href="canonical-variate-analysis.html#cb179-4" tabindex="-1"></a>             <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb179-5"><a href="canonical-variate-analysis.html#cb179-5" tabindex="-1"></a>  <span class="fu">stat_ellipse</span>(<span class="at">data =</span> cva_res_oneway<span class="sc">$</span>scores,</span>
-<span id="cb179-6"><a href="canonical-variate-analysis.html#cb179-6" tabindex="-1"></a>               <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> ProductName), </span>
-<span id="cb179-7"><a href="canonical-variate-analysis.html#cb179-7" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">&quot;polygon&quot;</span>,</span>
-<span id="cb179-8"><a href="canonical-variate-analysis.html#cb179-8" tabindex="-1"></a>               <span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb179-9"><a href="canonical-variate-analysis.html#cb179-9" tabindex="-1"></a>  <span class="fu">stat_ellipse</span>(<span class="at">data =</span> cva_res_oneway<span class="sc">$</span>scores,</span>
-<span id="cb179-10"><a href="canonical-variate-analysis.html#cb179-10" tabindex="-1"></a>               <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">group =</span> ProductName, <span class="at">color =</span> ProductName),</span>
-<span id="cb179-11"><a href="canonical-variate-analysis.html#cb179-11" tabindex="-1"></a>               <span class="at">type =</span> <span class="st">&quot;euclid&quot;</span>,</span>
-<span id="cb179-12"><a href="canonical-variate-analysis.html#cb179-12" tabindex="-1"></a>               <span class="at">level =</span> <span class="dv">2</span> <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">table</span>(cva_res_oneway<span class="sc">$</span>scores[,<span class="dv">1</span>]))[<span class="dv">1</span>]) <span class="sc">+</span></span>
-<span id="cb179-13"><a href="canonical-variate-analysis.html#cb179-13" tabindex="-1"></a>  <span class="fu">coord_fixed</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb183"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb183-1"><a href="canonical-variate-analysis.html#cb183-1" tabindex="-1"></a>scores_p_1 <span class="sc">+</span></span>
+<span id="cb183-2"><a href="canonical-variate-analysis.html#cb183-2" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> cva_res_oneway<span class="sc">$</span>scores,</span>
+<span id="cb183-3"><a href="canonical-variate-analysis.html#cb183-3" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">color =</span> ProductName),</span>
+<span id="cb183-4"><a href="canonical-variate-analysis.html#cb183-4" tabindex="-1"></a>             <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb183-5"><a href="canonical-variate-analysis.html#cb183-5" tabindex="-1"></a>  <span class="fu">stat_ellipse</span>(<span class="at">data =</span> cva_res_oneway<span class="sc">$</span>scores,</span>
+<span id="cb183-6"><a href="canonical-variate-analysis.html#cb183-6" tabindex="-1"></a>               <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> ProductName), </span>
+<span id="cb183-7"><a href="canonical-variate-analysis.html#cb183-7" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">&quot;polygon&quot;</span>,</span>
+<span id="cb183-8"><a href="canonical-variate-analysis.html#cb183-8" tabindex="-1"></a>               <span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb183-9"><a href="canonical-variate-analysis.html#cb183-9" tabindex="-1"></a>  <span class="fu">stat_ellipse</span>(<span class="at">data =</span> cva_res_oneway<span class="sc">$</span>scores,</span>
+<span id="cb183-10"><a href="canonical-variate-analysis.html#cb183-10" tabindex="-1"></a>               <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">group =</span> ProductName, <span class="at">color =</span> ProductName),</span>
+<span id="cb183-11"><a href="canonical-variate-analysis.html#cb183-11" tabindex="-1"></a>               <span class="at">type =</span> <span class="st">&quot;euclid&quot;</span>,</span>
+<span id="cb183-12"><a href="canonical-variate-analysis.html#cb183-12" tabindex="-1"></a>               <span class="at">level =</span> <span class="dv">2</span> <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">table</span>(cva_res_oneway<span class="sc">$</span>scores[,<span class="dv">1</span>]))[<span class="dv">1</span>]) <span class="sc">+</span></span>
+<span id="cb183-13"><a href="canonical-variate-analysis.html#cb183-13" tabindex="-1"></a>  <span class="fu">coord_fixed</span>()</span></code></pre></div>
 <pre><code>## Coordinate system already present. Adding new coordinate system, which will
 ## replace the existing one.</code></pre>
 <p><img src="05-CVA_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <p>When we plot the actual observations, it is apparent that the proposed confidence circles don’t do a good job of capturing the observed variability in the data. They are probably overgenerous in their estimation of the separability of the individual observations, as from what I can tell the radius of the circles is simply a function of the number of observations. This would decrease as the number of observations go up, which makes sense as more observations will give more stable mean vectors, but it doesn’t really take advantage of the raw data. On the other hand, the confidence intervals based on raw observations (which are no longer barycentric) don’t tell us much about mean separation–they are more akin to predicting the orientation of other new observations for each wine in the CVA space.</p>
 <p>In the original <strong>R Opus</strong>, HGH provides a function from Helene Hopfer, Peter Buffon, and Vince Buffalo to calculate barycentric confidence ellipses based on, I believe, a similar method as that given in <span class="citation">Peltier, Visalli, and Schlich (<a href="#ref-peltierCanonical2015">2015</a>)</span>. These functions rely on assumptions of bivariate normality for mean scores on the represented CVA axes, which is reasonable, but I think the function is quite opaque. As noted in <span class="citation">Peltier, Visalli, and Schlich (<a href="#ref-peltierCanonical2015">2015</a>)</span>, a resampling approach could be used, so we’re going to take this approach to illustrate such an approach. Resampling, which involves perturbing the original data randomly and then examining its stability, is a nonparametric approach that is useful because it makes very few assumptions about either our data or analysis.</p>
-<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb181-1"><a href="canonical-variate-analysis.html#cb181-1" tabindex="-1"></a><span class="co"># This is still going to be a bit complicated, but I will walk through the steps</span></span>
-<span id="cb181-2"><a href="canonical-variate-analysis.html#cb181-2" tabindex="-1"></a><span class="co"># in my thinking.</span></span>
-<span id="cb181-3"><a href="canonical-variate-analysis.html#cb181-3" tabindex="-1"></a></span>
-<span id="cb181-4"><a href="canonical-variate-analysis.html#cb181-4" tabindex="-1"></a></span>
-<span id="cb181-5"><a href="canonical-variate-analysis.html#cb181-5" tabindex="-1"></a><span class="co"># First, we will write two functions that just calculate the canonical variate</span></span>
-<span id="cb181-6"><a href="canonical-variate-analysis.html#cb181-6" tabindex="-1"></a><span class="co"># scores for the means of our data.  These are based on the equations from</span></span>
-<span id="cb181-7"><a href="canonical-variate-analysis.html#cb181-7" tabindex="-1"></a><span class="co"># Rencher 2002.</span></span>
-<span id="cb181-8"><a href="canonical-variate-analysis.html#cb181-8" tabindex="-1"></a>get_cva_1 <span class="ot">&lt;-</span> <span class="cf">function</span>(means){</span>
-<span id="cb181-9"><a href="canonical-variate-analysis.html#cb181-9" tabindex="-1"></a>  </span>
-<span id="cb181-10"><a href="canonical-variate-analysis.html#cb181-10" tabindex="-1"></a>  cva_res_oneway<span class="sc">$</span>coeffs.raw[, <span class="dv">1</span>] <span class="sc">%*%</span> means</span>
-<span id="cb181-11"><a href="canonical-variate-analysis.html#cb181-11" tabindex="-1"></a>  </span>
-<span id="cb181-12"><a href="canonical-variate-analysis.html#cb181-12" tabindex="-1"></a>}</span>
-<span id="cb181-13"><a href="canonical-variate-analysis.html#cb181-13" tabindex="-1"></a></span>
-<span id="cb181-14"><a href="canonical-variate-analysis.html#cb181-14" tabindex="-1"></a>get_cva_2 <span class="ot">&lt;-</span> <span class="cf">function</span>(means){</span>
-<span id="cb181-15"><a href="canonical-variate-analysis.html#cb181-15" tabindex="-1"></a>  </span>
-<span id="cb181-16"><a href="canonical-variate-analysis.html#cb181-16" tabindex="-1"></a>  cva_res_oneway<span class="sc">$</span>coeffs.raw[, <span class="dv">2</span>] <span class="sc">%*%</span> means</span>
-<span id="cb181-17"><a href="canonical-variate-analysis.html#cb181-17" tabindex="-1"></a>  </span>
-<span id="cb181-18"><a href="canonical-variate-analysis.html#cb181-18" tabindex="-1"></a>}</span>
-<span id="cb181-19"><a href="canonical-variate-analysis.html#cb181-19" tabindex="-1"></a></span>
-<span id="cb181-20"><a href="canonical-variate-analysis.html#cb181-20" tabindex="-1"></a><span class="co"># Then, we write a convenience function that will resample our data with</span></span>
-<span id="cb181-21"><a href="canonical-variate-analysis.html#cb181-21" tabindex="-1"></a><span class="co"># replacement, calculate centered means for our samples, and then project them</span></span>
-<span id="cb181-22"><a href="canonical-variate-analysis.html#cb181-22" tabindex="-1"></a><span class="co"># into our original CVA space using the convenience functions we wrote above.</span></span>
-<span id="cb181-23"><a href="canonical-variate-analysis.html#cb181-23" tabindex="-1"></a>get_bootstrapped_means <span class="ot">&lt;-</span> <span class="cf">function</span>(){</span>
-<span id="cb181-24"><a href="canonical-variate-analysis.html#cb181-24" tabindex="-1"></a>  </span>
-<span id="cb181-25"><a href="canonical-variate-analysis.html#cb181-25" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
-<span id="cb181-26"><a href="canonical-variate-analysis.html#cb181-26" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>NJ, <span class="sc">-</span>NR) <span class="sc">%&gt;%</span></span>
-<span id="cb181-27"><a href="canonical-variate-analysis.html#cb181-27" tabindex="-1"></a>  <span class="fu">group_by</span>(ProductName) <span class="sc">%&gt;%</span></span>
-<span id="cb181-28"><a href="canonical-variate-analysis.html#cb181-28" tabindex="-1"></a>    <span class="co"># Here we resample each wine - we draw 42 new observations for each wine</span></span>
-<span id="cb181-29"><a href="canonical-variate-analysis.html#cb181-29" tabindex="-1"></a>    <span class="co"># with replacement</span></span>
-<span id="cb181-30"><a href="canonical-variate-analysis.html#cb181-30" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">prop =</span> <span class="dv">1</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb181-31"><a href="canonical-variate-analysis.html#cb181-31" tabindex="-1"></a>    <span class="co"># We calculate the mean for the newly drawn samples</span></span>
-<span id="cb181-32"><a href="canonical-variate-analysis.html#cb181-32" tabindex="-1"></a>  <span class="fu">summarize_if</span>(is.numeric, <span class="sc">~</span><span class="fu">mean</span>(.)) <span class="sc">%&gt;%</span> </span>
-<span id="cb181-33"><a href="canonical-variate-analysis.html#cb181-33" tabindex="-1"></a>    <span class="co"># And then we center the means (by subtracting the column means)</span></span>
-<span id="cb181-34"><a href="canonical-variate-analysis.html#cb181-34" tabindex="-1"></a>  <span class="fu">mutate_if</span>(is.numeric, <span class="sc">~</span>. <span class="sc">-</span> <span class="fu">mean</span>(.)) <span class="sc">%&gt;%</span></span>
-<span id="cb181-35"><a href="canonical-variate-analysis.html#cb181-35" tabindex="-1"></a>    <span class="co"># Finally, we apply our projection functions (the linear combinations from</span></span>
-<span id="cb181-36"><a href="canonical-variate-analysis.html#cb181-36" tabindex="-1"></a>    <span class="co"># our CVA) to project the bootstrapped means into our new space</span></span>
-<span id="cb181-37"><a href="canonical-variate-analysis.html#cb181-37" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">data =</span> <span class="sc">-</span>ProductName) <span class="sc">%&gt;%</span></span>
-<span id="cb181-38"><a href="canonical-variate-analysis.html#cb181-38" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">means =</span> <span class="fu">map</span>(data, <span class="sc">~</span><span class="fu">as.matrix</span>(.x) <span class="sc">%&gt;%</span> <span class="fu">t</span>()),</span>
-<span id="cb181-39"><a href="canonical-variate-analysis.html#cb181-39" tabindex="-1"></a>         <span class="at">Can1 =</span> <span class="fu">map_dbl</span>(means, <span class="sc">~</span><span class="fu">get_cva_1</span>(.x)),</span>
-<span id="cb181-40"><a href="canonical-variate-analysis.html#cb181-40" tabindex="-1"></a>         <span class="at">Can2 =</span> <span class="fu">map_dbl</span>(means, <span class="sc">~</span><span class="fu">get_cva_2</span>(.x)),</span>
-<span id="cb181-41"><a href="canonical-variate-analysis.html#cb181-41" tabindex="-1"></a>         ) <span class="sc">%&gt;%</span></span>
-<span id="cb181-42"><a href="canonical-variate-analysis.html#cb181-42" tabindex="-1"></a>    <span class="fu">select</span>(ProductName, Can1, Can2)</span>
-<span id="cb181-43"><a href="canonical-variate-analysis.html#cb181-43" tabindex="-1"></a>  </span>
-<span id="cb181-44"><a href="canonical-variate-analysis.html#cb181-44" tabindex="-1"></a>}</span>
-<span id="cb181-45"><a href="canonical-variate-analysis.html#cb181-45" tabindex="-1"></a></span>
-<span id="cb181-46"><a href="canonical-variate-analysis.html#cb181-46" tabindex="-1"></a><span class="co"># For example, here is the result of our function</span></span>
-<span id="cb181-47"><a href="canonical-variate-analysis.html#cb181-47" tabindex="-1"></a><span class="fu">get_bootstrapped_means</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb185"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb185-1"><a href="canonical-variate-analysis.html#cb185-1" tabindex="-1"></a><span class="co"># This is still going to be a bit complicated, but I will walk through the steps</span></span>
+<span id="cb185-2"><a href="canonical-variate-analysis.html#cb185-2" tabindex="-1"></a><span class="co"># in my thinking.</span></span>
+<span id="cb185-3"><a href="canonical-variate-analysis.html#cb185-3" tabindex="-1"></a></span>
+<span id="cb185-4"><a href="canonical-variate-analysis.html#cb185-4" tabindex="-1"></a></span>
+<span id="cb185-5"><a href="canonical-variate-analysis.html#cb185-5" tabindex="-1"></a><span class="co"># First, we will write two functions that just calculate the canonical variate</span></span>
+<span id="cb185-6"><a href="canonical-variate-analysis.html#cb185-6" tabindex="-1"></a><span class="co"># scores for the means of our data.  These are based on the equations from</span></span>
+<span id="cb185-7"><a href="canonical-variate-analysis.html#cb185-7" tabindex="-1"></a><span class="co"># Rencher 2002.</span></span>
+<span id="cb185-8"><a href="canonical-variate-analysis.html#cb185-8" tabindex="-1"></a>get_cva_1 <span class="ot">&lt;-</span> <span class="cf">function</span>(means){</span>
+<span id="cb185-9"><a href="canonical-variate-analysis.html#cb185-9" tabindex="-1"></a>  </span>
+<span id="cb185-10"><a href="canonical-variate-analysis.html#cb185-10" tabindex="-1"></a>  cva_res_oneway<span class="sc">$</span>coeffs.raw[, <span class="dv">1</span>] <span class="sc">%*%</span> means</span>
+<span id="cb185-11"><a href="canonical-variate-analysis.html#cb185-11" tabindex="-1"></a>  </span>
+<span id="cb185-12"><a href="canonical-variate-analysis.html#cb185-12" tabindex="-1"></a>}</span>
+<span id="cb185-13"><a href="canonical-variate-analysis.html#cb185-13" tabindex="-1"></a></span>
+<span id="cb185-14"><a href="canonical-variate-analysis.html#cb185-14" tabindex="-1"></a>get_cva_2 <span class="ot">&lt;-</span> <span class="cf">function</span>(means){</span>
+<span id="cb185-15"><a href="canonical-variate-analysis.html#cb185-15" tabindex="-1"></a>  </span>
+<span id="cb185-16"><a href="canonical-variate-analysis.html#cb185-16" tabindex="-1"></a>  cva_res_oneway<span class="sc">$</span>coeffs.raw[, <span class="dv">2</span>] <span class="sc">%*%</span> means</span>
+<span id="cb185-17"><a href="canonical-variate-analysis.html#cb185-17" tabindex="-1"></a>  </span>
+<span id="cb185-18"><a href="canonical-variate-analysis.html#cb185-18" tabindex="-1"></a>}</span>
+<span id="cb185-19"><a href="canonical-variate-analysis.html#cb185-19" tabindex="-1"></a></span>
+<span id="cb185-20"><a href="canonical-variate-analysis.html#cb185-20" tabindex="-1"></a><span class="co"># Then, we write a convenience function that will resample our data with</span></span>
+<span id="cb185-21"><a href="canonical-variate-analysis.html#cb185-21" tabindex="-1"></a><span class="co"># replacement, calculate centered means for our samples, and then project them</span></span>
+<span id="cb185-22"><a href="canonical-variate-analysis.html#cb185-22" tabindex="-1"></a><span class="co"># into our original CVA space using the convenience functions we wrote above.</span></span>
+<span id="cb185-23"><a href="canonical-variate-analysis.html#cb185-23" tabindex="-1"></a>get_bootstrapped_means <span class="ot">&lt;-</span> <span class="cf">function</span>(){</span>
+<span id="cb185-24"><a href="canonical-variate-analysis.html#cb185-24" tabindex="-1"></a>  </span>
+<span id="cb185-25"><a href="canonical-variate-analysis.html#cb185-25" tabindex="-1"></a>  descriptive_data <span class="sc">%&gt;%</span></span>
+<span id="cb185-26"><a href="canonical-variate-analysis.html#cb185-26" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>NJ, <span class="sc">-</span>NR) <span class="sc">%&gt;%</span></span>
+<span id="cb185-27"><a href="canonical-variate-analysis.html#cb185-27" tabindex="-1"></a>  <span class="fu">group_by</span>(ProductName) <span class="sc">%&gt;%</span></span>
+<span id="cb185-28"><a href="canonical-variate-analysis.html#cb185-28" tabindex="-1"></a>    <span class="co"># Here we resample each wine - we draw 42 new observations for each wine</span></span>
+<span id="cb185-29"><a href="canonical-variate-analysis.html#cb185-29" tabindex="-1"></a>    <span class="co"># with replacement</span></span>
+<span id="cb185-30"><a href="canonical-variate-analysis.html#cb185-30" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">prop =</span> <span class="dv">1</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb185-31"><a href="canonical-variate-analysis.html#cb185-31" tabindex="-1"></a>    <span class="co"># We calculate the mean for the newly drawn samples</span></span>
+<span id="cb185-32"><a href="canonical-variate-analysis.html#cb185-32" tabindex="-1"></a>  <span class="fu">summarize_if</span>(is.numeric, <span class="sc">~</span><span class="fu">mean</span>(.)) <span class="sc">%&gt;%</span> </span>
+<span id="cb185-33"><a href="canonical-variate-analysis.html#cb185-33" tabindex="-1"></a>    <span class="co"># And then we center the means (by subtracting the column means)</span></span>
+<span id="cb185-34"><a href="canonical-variate-analysis.html#cb185-34" tabindex="-1"></a>  <span class="fu">mutate_if</span>(is.numeric, <span class="sc">~</span>. <span class="sc">-</span> <span class="fu">mean</span>(.)) <span class="sc">%&gt;%</span></span>
+<span id="cb185-35"><a href="canonical-variate-analysis.html#cb185-35" tabindex="-1"></a>    <span class="co"># Finally, we apply our projection functions (the linear combinations from</span></span>
+<span id="cb185-36"><a href="canonical-variate-analysis.html#cb185-36" tabindex="-1"></a>    <span class="co"># our CVA) to project the bootstrapped means into our new space</span></span>
+<span id="cb185-37"><a href="canonical-variate-analysis.html#cb185-37" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">data =</span> <span class="sc">-</span>ProductName) <span class="sc">%&gt;%</span></span>
+<span id="cb185-38"><a href="canonical-variate-analysis.html#cb185-38" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">means =</span> <span class="fu">map</span>(data, <span class="sc">~</span><span class="fu">as.matrix</span>(.x) <span class="sc">%&gt;%</span> <span class="fu">t</span>()),</span>
+<span id="cb185-39"><a href="canonical-variate-analysis.html#cb185-39" tabindex="-1"></a>         <span class="at">Can1 =</span> <span class="fu">map_dbl</span>(means, <span class="sc">~</span><span class="fu">get_cva_1</span>(.x)),</span>
+<span id="cb185-40"><a href="canonical-variate-analysis.html#cb185-40" tabindex="-1"></a>         <span class="at">Can2 =</span> <span class="fu">map_dbl</span>(means, <span class="sc">~</span><span class="fu">get_cva_2</span>(.x)),</span>
+<span id="cb185-41"><a href="canonical-variate-analysis.html#cb185-41" tabindex="-1"></a>         ) <span class="sc">%&gt;%</span></span>
+<span id="cb185-42"><a href="canonical-variate-analysis.html#cb185-42" tabindex="-1"></a>    <span class="fu">select</span>(ProductName, Can1, Can2)</span>
+<span id="cb185-43"><a href="canonical-variate-analysis.html#cb185-43" tabindex="-1"></a>  </span>
+<span id="cb185-44"><a href="canonical-variate-analysis.html#cb185-44" tabindex="-1"></a>}</span>
+<span id="cb185-45"><a href="canonical-variate-analysis.html#cb185-45" tabindex="-1"></a></span>
+<span id="cb185-46"><a href="canonical-variate-analysis.html#cb185-46" tabindex="-1"></a><span class="co"># For example, here is the result of our function</span></span>
+<span id="cb185-47"><a href="canonical-variate-analysis.html#cb185-47" tabindex="-1"></a><span class="fu">get_bootstrapped_means</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 8 × 3
-##   ProductName     Can1    Can2
-##   &lt;fct&gt;          &lt;dbl&gt;   &lt;dbl&gt;
-## 1 C_MERLOT     0.397    0.0430
-## 2 C_REFOSCO    1.49     0.902 
-## 3 C_SYRAH      0.181   -0.160 
-## 4 C_ZINFANDEL -0.00191  0.0784
-## 5 I_MERLOT     0.383   -0.879 
-## 6 I_PRIMITIVO -1.39     0.648 
-## 7 I_REFOSCO    0.126   -1.08  
-## 8 I_SYRAH     -1.19     0.449</code></pre>
-<div class="sourceCode" id="cb183"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb183-1"><a href="canonical-variate-analysis.html#cb183-1" tabindex="-1"></a><span class="co"># In order to generate a set of resampled confidence ellipses for our results,</span></span>
-<span id="cb183-2"><a href="canonical-variate-analysis.html#cb183-2" tabindex="-1"></a><span class="co"># we&#39;ll run this 100 times for speed (for accuracy, 1000x would be better) and use</span></span>
-<span id="cb183-3"><a href="canonical-variate-analysis.html#cb183-3" tabindex="-1"></a><span class="co"># stat_ellipse() to draw those.</span></span>
-<span id="cb183-4"><a href="canonical-variate-analysis.html#cb183-4" tabindex="-1"></a></span>
-<span id="cb183-5"><a href="canonical-variate-analysis.html#cb183-5" tabindex="-1"></a>bootstrapped_cva_means <span class="ot">&lt;-</span> </span>
-<span id="cb183-6"><a href="canonical-variate-analysis.html#cb183-6" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">boot_id =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb183-7"><a href="canonical-variate-analysis.html#cb183-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">bootstrapped_data =</span> <span class="fu">map</span>(boot_id, <span class="sc">~</span><span class="fu">get_bootstrapped_means</span>())) <span class="sc">%&gt;%</span></span>
-<span id="cb183-8"><a href="canonical-variate-analysis.html#cb183-8" tabindex="-1"></a>  <span class="fu">unnest</span>(bootstrapped_data)</span>
-<span id="cb183-9"><a href="canonical-variate-analysis.html#cb183-9" tabindex="-1"></a></span>
-<span id="cb183-10"><a href="canonical-variate-analysis.html#cb183-10" tabindex="-1"></a>scores_p_1 <span class="sc">+</span> </span>
-<span id="cb183-11"><a href="canonical-variate-analysis.html#cb183-11" tabindex="-1"></a>  <span class="fu">stat_ellipse</span>(<span class="at">data =</span> bootstrapped_cva_means,</span>
-<span id="cb183-12"><a href="canonical-variate-analysis.html#cb183-12" tabindex="-1"></a>               <span class="fu">aes</span>(<span class="at">fill =</span> ProductName),</span>
-<span id="cb183-13"><a href="canonical-variate-analysis.html#cb183-13" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">&quot;polygon&quot;</span>,</span>
-<span id="cb183-14"><a href="canonical-variate-analysis.html#cb183-14" tabindex="-1"></a>               <span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb183-15"><a href="canonical-variate-analysis.html#cb183-15" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span> </span>
-<span id="cb183-16"><a href="canonical-variate-analysis.html#cb183-16" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+##   ProductName   Can1    Can2
+##   &lt;fct&gt;        &lt;dbl&gt;   &lt;dbl&gt;
+## 1 C_MERLOT     0.188  0.322 
+## 2 C_REFOSCO    1.42   0.791 
+## 3 C_SYRAH      0.266 -0.0977
+## 4 C_ZINFANDEL -0.185  0.103 
+## 5 I_MERLOT     0.373 -0.879 
+## 6 I_PRIMITIVO -1.08   0.476 
+## 7 I_REFOSCO    0.130 -0.999 
+## 8 I_SYRAH     -1.11   0.284</code></pre>
+<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="canonical-variate-analysis.html#cb187-1" tabindex="-1"></a><span class="co"># In order to generate a set of resampled confidence ellipses for our results,</span></span>
+<span id="cb187-2"><a href="canonical-variate-analysis.html#cb187-2" tabindex="-1"></a><span class="co"># we&#39;ll run this 100 times for speed (for accuracy, 1000x would be better) and use</span></span>
+<span id="cb187-3"><a href="canonical-variate-analysis.html#cb187-3" tabindex="-1"></a><span class="co"># stat_ellipse() to draw those.</span></span>
+<span id="cb187-4"><a href="canonical-variate-analysis.html#cb187-4" tabindex="-1"></a></span>
+<span id="cb187-5"><a href="canonical-variate-analysis.html#cb187-5" tabindex="-1"></a>bootstrapped_cva_means <span class="ot">&lt;-</span> </span>
+<span id="cb187-6"><a href="canonical-variate-analysis.html#cb187-6" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">boot_id =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb187-7"><a href="canonical-variate-analysis.html#cb187-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">bootstrapped_data =</span> <span class="fu">map</span>(boot_id, <span class="sc">~</span><span class="fu">get_bootstrapped_means</span>())) <span class="sc">%&gt;%</span></span>
+<span id="cb187-8"><a href="canonical-variate-analysis.html#cb187-8" tabindex="-1"></a>  <span class="fu">unnest</span>(bootstrapped_data)</span>
+<span id="cb187-9"><a href="canonical-variate-analysis.html#cb187-9" tabindex="-1"></a></span>
+<span id="cb187-10"><a href="canonical-variate-analysis.html#cb187-10" tabindex="-1"></a>scores_p_1 <span class="sc">+</span> </span>
+<span id="cb187-11"><a href="canonical-variate-analysis.html#cb187-11" tabindex="-1"></a>  <span class="fu">stat_ellipse</span>(<span class="at">data =</span> bootstrapped_cva_means,</span>
+<span id="cb187-12"><a href="canonical-variate-analysis.html#cb187-12" tabindex="-1"></a>               <span class="fu">aes</span>(<span class="at">fill =</span> ProductName),</span>
+<span id="cb187-13"><a href="canonical-variate-analysis.html#cb187-13" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">&quot;polygon&quot;</span>,</span>
+<span id="cb187-14"><a href="canonical-variate-analysis.html#cb187-14" tabindex="-1"></a>               <span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb187-15"><a href="canonical-variate-analysis.html#cb187-15" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span> </span>
+<span id="cb187-16"><a href="canonical-variate-analysis.html#cb187-16" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span></code></pre></div>
 <pre><code>## Coordinate system already present. Adding new coordinate system, which will
 ## replace the existing one.</code></pre>
 <p><img src="05-CVA_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
-<p>While this requires a bit of computation time (around 5 seconds on my 2017 iMac, writing in 2022), this is still pretty tractable. It would take about 1 minute to do a “publishable” bootstrap of 1000 samples, which is still fine. As we’ll see, this resampling approach will generalize easily to other needs.</p>
+<p>While this requires a bit of computation time (around 5 seconds on my M2 Mac Mini, writing in 2024), this is still pretty tractable. It would take about 1 minute to do a “publishable” bootstrap of 1000 samples, which is still fine. As we’ll see, this resampling approach will generalize easily to other needs.</p>
 <p>This is a more conservative result than that given by the bivariate normal ellipses in the original <strong>R Opus</strong>, although the actual conclusions of pairwise sample discrimination are identical.</p>
 </div>
 <div id="packages-used-in-this-chapter-4" class="section level2 hasAnchor" number="5.4">
 <h2><span class="header-section-number">5.4</span> Packages used in this chapter<a href="canonical-variate-analysis.html#packages-used-in-this-chapter-4" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb185"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb185-1"><a href="canonical-variate-analysis.html#cb185-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
-<pre><code>## R version 4.3.1 (2023-06-16)
-## Platform: aarch64-apple-darwin20 (64-bit)
-## Running under: macOS Ventura 13.6.1
+<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb189-1"><a href="canonical-variate-analysis.html#cb189-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.4.1 (2024-06-14)
+## Platform: x86_64-apple-darwin20
+## Running under: macOS 15.2
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -742,30 +748,30 @@ div.csl-indent {
 ## tzcode source: internal
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] stats     graphics  grDevices datasets  utils     methods   base     
 ## 
 ## other attached packages:
-##  [1] here_1.0.1      candisc_0.8-6   heplots_1.6.0   broom_1.0.5    
-##  [5] car_3.1-2       carData_3.0-5   lubridate_1.9.2 forcats_1.0.0  
-##  [9] stringr_1.5.0   dplyr_1.1.2     purrr_1.0.1     readr_2.1.4    
-## [13] tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.3   tidyverse_2.0.0
-## [17] rgl_1.2.1      
+##  [1] here_1.0.1      candisc_0.9.0   heplots_1.7.3   broom_1.0.6    
+##  [5] lubridate_1.9.3 forcats_1.0.0   stringr_1.5.1   dplyr_1.1.4    
+##  [9] purrr_1.0.2     readr_2.1.5     tidyr_1.3.1     tibble_3.2.1   
+## [13] ggplot2_3.5.1   tidyverse_2.0.0 rgl_1.3.14     
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] sass_0.4.7        utf8_1.2.3        generics_0.1.3    stringi_1.7.12   
-##  [5] hms_1.1.3         digest_0.6.33     magrittr_2.0.3    evaluate_0.21    
-##  [9] grid_4.3.1        timechange_0.2.0  bookdown_0.37     fastmap_1.1.1    
-## [13] rprojroot_2.0.3   jsonlite_1.8.7    ggrepel_0.9.3     backports_1.4.1  
-## [17] fansi_1.0.4       scales_1.2.1      jquerylib_0.1.4   abind_1.4-5      
-## [21] cli_3.6.1         crayon_1.5.2      rlang_1.1.1       bit64_4.0.5      
-## [25] munsell_0.5.0     base64enc_0.1-3   withr_2.5.0       cachem_1.0.8     
-## [29] yaml_2.3.7        parallel_4.3.1    tools_4.3.1       tzdb_0.4.0       
-## [33] colorspace_2.1-0  vctrs_0.6.3       R6_2.5.1          lifecycle_1.0.3  
-## [37] bit_4.0.5         htmlwidgets_1.6.2 vroom_1.6.3       MASS_7.3-60      
-## [41] pkgconfig_2.0.3   pillar_1.9.0      bslib_0.5.1       gtable_0.3.4     
-## [45] Rcpp_1.0.11       glue_1.6.2        highr_0.10        xfun_0.39        
-## [49] tidyselect_1.2.0  rstudioapi_0.15.0 knitr_1.43        farver_2.1.1     
-## [53] htmltools_0.5.6   labeling_0.4.3    rmarkdown_2.23    compiler_4.3.1</code></pre>
+##  [1] gtable_0.3.5      xfun_0.49         bslib_0.7.0       htmlwidgets_1.6.4
+##  [5] ggrepel_0.9.5     tzdb_0.4.0        vctrs_0.6.5       tools_4.4.1      
+##  [9] generics_0.1.3    parallel_4.4.1    fansi_1.0.6       highr_0.10       
+## [13] pkgconfig_2.0.3   lifecycle_1.0.4   farver_2.1.2      compiler_4.4.1   
+## [17] munsell_0.5.1     carData_3.0-5     htmltools_0.5.8.1 sass_0.4.9       
+## [21] yaml_2.3.8        pillar_1.9.0      car_3.1-2         crayon_1.5.2     
+## [25] jquerylib_0.1.4   MASS_7.3-60.2     cachem_1.1.0      abind_1.4-5      
+## [29] tidyselect_1.2.1  digest_0.6.37     stringi_1.8.4     bookdown_0.39    
+## [33] labeling_0.4.3    rprojroot_2.0.4   fastmap_1.2.0     grid_4.4.1       
+## [37] colorspace_2.1-0  cli_3.6.3         magrittr_2.0.3    base64enc_0.1-3  
+## [41] utf8_1.2.4        withr_3.0.0       scales_1.3.0      backports_1.5.0  
+## [45] bit64_4.0.5       timechange_0.3.0  rmarkdown_2.27    bit_4.0.5        
+## [49] hms_1.1.3         evaluate_0.23     knitr_1.46        rlang_1.1.4      
+## [53] Rcpp_1.0.13       glue_1.7.0        renv_1.0.9        rstudioapi_0.16.0
+## [57] vroom_1.6.5       jsonlite_1.8.8    R6_2.5.1</code></pre>
 
 </div>
 </div>
@@ -779,6 +785,9 @@ Heymann, H., and Susan E. Ebeler. 2017. <em>Sensory and <span>Instrumental Evalu
 </div>
 <div id="ref-peltierCanonical2015" class="csl-entry">
 Peltier, C., M. Visalli, and P. Schlich. 2015. <span>“Canonical <span>Variate Analysis</span> of <span>Sensory Profiling Data</span>.”</span> <em>Journal of Sensory Studies</em> 30 (2015): 316–28.
+</div>
+<div id="ref-rencherMethods2002" class="csl-entry">
+Rencher, Alvin C. 2002. <em>Methods of Multivariate Analysis</em>. 2nd ed. Wiley Series in Probability and Mathematical Statistics. <span>New York</span>: <span>J. Wiley</span>.
 </div>
 </div>
             </section>
