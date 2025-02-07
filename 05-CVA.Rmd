@@ -131,7 +131,7 @@ cva_res_oneway$coeffs.raw %>%
   as_tibble(rownames = "descriptor")
 ```
 
-This tell us that to get an observation's (call it $i$) score on Canonical Variate 1, we'd take the following linear sum: $Can1_i = -0.01*Red\_berry_i + -0.12*Dark\_berry_i + ... + -0.22*Astringent_i$.  We do this for every observation to find their score in the space.  
+This tell us that to get an observation's (call it $i$) score on Canonical Variate 1, we'd take the following linear sum: $Can1_i = 0.01*Red\_berry_i - 0.12*Dark\_berry_i + ...- 0.22*Astringent_i$.  We do this for every observation to find their score in the space.  
 
 To visualize this, rather than plotting the raw coefficients, we typically plot the correlations between the raw coefficients and the original variables, which are stored in the `$structure` list.  We can consider the "loadings" or "structure coefficients" themselves as coordinates in the same CVA space, which gives us an idea of how each variable contributes to the dimensions.
 
